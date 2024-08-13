@@ -10,12 +10,9 @@ kernelspec:
   name: python3
 ---
 # Overview
-This section diverges from the main focus of ASI/AC and addresses practical issues AI engineers face.
-
-# Pipeline
 An AI project consists of 4 parts:
 
-```{image} ../images/system_design_flow.png
+```{image} ../images/ml_system_design_flow.png
 :align: center
 ```
 
@@ -108,7 +105,7 @@ $$
         - Pros: Useful for long-term impact, reduces bias.
     - **Request-level**: Randomly determine variation per user request.
         - Pros: Useful for short-term impact, captures immediate or session-specific impact of the tested variations.
-5. **Measurement & Analysis**: 
+5. **Measurement & Analysis**:
     1. Track user interactions & conversions for both groups.
     2. Compare performance using statistical analysis.
     3. Determine if differences are statistically significant.

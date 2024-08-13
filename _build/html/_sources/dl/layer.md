@@ -10,24 +10,24 @@ kernelspec:
   name: python3
 ---
 # Layer
-A layer is a mapping from input $X$ to output $Y$.
+A layer is a mapping from input tensor $X$ to output tensor $Y$.
 
 Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readability.
 
+<br/>
+
 # Basic
 ## Linear
-**Intuition**
 - **What**: Linear transformation.
 - **Why**: Universal Approximation Theorem.
 - **How**: Multiply the input with a weight matrix and add a bias vector.
-- **When**:
-    - If input/output can be linearly approximated.
-    - If input features need to be converted to a different dimension.
-- **Where**: Anywhere.
+- **When**: Input & output can be linearly approximated.
+- **Where**: Anywhere. Typically used for feature dimension conversion.
 - **Pros**: Simple, efficient, foundational.
 - **Cons**: Cannot capture non-linear/complex patterns.
+- **FYI**: [paper](https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf)
 
-**Math**
+```{dropdown} **Math**
 - Notations
     - IO:
         - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
@@ -50,16 +50,20 @@ $$\begin{align*}
 &\frac{\partial\mathcal{L}}{\partial\textbf{b}}=g\\
 &\frac{\partial\mathcal{L}}{\partial\textbf{x}}=W^Tg
 \end{align*}$$
+```
 
-**Code**
+```{dropdown} **Code**
 ```python
 class Linear:
     def __init__(self, input_dim, output_dim, learning_rate=0.01):
+        # hyperparams
         self.input_dim = input_dim
         self.Y_dim = output_dim
+        self.lr = learning_rate
+
+        # params
         self.W = np.random.randn(input_dim, output_dim) * 0.01
         self.b = np.zeros((1, output_dim))
-        self.lr = learning_rate
 
     def forward(self, X):
         self.X = X
@@ -79,37 +83,46 @@ class Linear:
         # pass input gradient
         return self.dX
 ```
-<br/>
 
-## Regularization
-### Dropout
-**Intuition**
-- **What**: Randomly set a fraction ($p$) of neurons to 0 and scale the outputs/gradients on active neurons by $\frac{1}{1-p}$ during training.
+## Dropout
+- **What**: Randomly drop out some neurons during training.
 - **Why**: To reduce overfitting.
-- **When**: Training only.
-- **Where**: Typically on linear layers and convolutional layers.
+- **How**:
+    1. Randomly set a fraction ($p$) of neurons to 0.
+    2. Scale the outputs/gradients on active neurons by $\frac{1}{1-p}$.
+- **When**: The current model is overfitting on the current training data.
+- **Where**: Typically after linear layers & convolutional layers.
 - **Pros**: Simple, efficient regularization.
-- **Cons**: Requires hyperparameter tuning; Can slow down convergence.
+- **Cons**: Requires hyperparam tuning; Can slow down convergence.
+- **FYI**: [paper](https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)
 
-**Math**
-- Forward:
+```{dropdown} **Math**
+- Notations
+    - IO:
+        - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
+        - $\mathbf{y}\in\mathbb{R}^{H_{in}}$: Output vector.
+    - Hyperparams:
+        - $p$: Dropout probability.
+- Forward
 
 $$
 \textbf{y}=\frac{1}{1-p}\textbf{x}_\text{active}
 $$
-- Backward:
+- Backward
 
 $$
 \frac{\partial\mathcal{L}}{\partial\textbf{x}_\text{active}}= \frac{1}{1-p}\mathbf{g}
 $$
-- Hyperparams:
-    - $p$: Dropout probability.
+```
 
-**Code**
+```{dropdown} **Code**
 ```python
 class Dropout:
     def __init__(self, dropout_rate=0.5):
+        # hyperparams
         self.p = dropout_rate
+
+        # temp
         self.mask = None
 
     def forward(self, X, training=True):
@@ -123,42 +136,49 @@ class Dropout:
         return dY * self.mask
 ```
 
-#### Alpha
-#### Gaussian
-### L1/L2
-
 ## Residual Connection
-**Intuition**
 - **What**: Model the residual ($Y-X$) instead of the output ($Y$).
-- **Why**: To reduce vanishing/exploding gradient issues.
-- **When**: If convergence or gradient issues occur.
-- **Where**: Deep NNs.
-- **Pros**: Reduces vanishing/exploding gradients; Higher performance on complex tasks.
+- **Why**: To mitigate vanishing/exploding gradients.
+    - **Vanishing gradients**: The gradients become smaller and smaller during backprop that they have almost no effect to front layers, slowing and even stopping the learning process for front layers.
+    - **Exploding gradients**: The gradients become larger and larger during backprop that they change the front layer weights too much, causing instability and difficulty in convergence.
+- **How**:
+    1. Add the input $X$ to the block output $F(X)$.
+    2. If the feature dimension of $X$ and $F(X)$ doesn't match, use a linear layer on $X$ to change its feature dimension.
+- **When**: There is clear evidence of convergence failures or extreme gradient values.
+- **Where**: Inside deep NNs.
+- **Pros**: Higher performance on complex tasks.
 - **Cons**: Slightly higher computational cost.
+- **FYI**: [paper](https://arxiv.org/pdf/1512.03385)
 
-**Math**
-- Forward:
+```{dropdown} **Math**
+- Notation
+    - IO:
+        - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
+        - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
+    - Hyperparams:
+        - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
+- Forward
 
 $$
-\textbf{y}=\mathcal{F}(\textbf{x})+\textbf{x}
+\textbf{y}=F(\textbf{x})+\textbf{x}
 $$
-- Backward:
+- Backward
 
 $$
-\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial\mathcal{F}}{\partial\textbf{x}})
+\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial F(\textbf{x})}{\partial\textbf{x}})
 $$
-- Hyperparams:
-    - $\mathcal{F}(\cdot)$: The function of other layers within the residual block.
+```
 
-**Code**
+```{dropdown} **Code**
 ```python
 class ResidualBlock:
     def __init__(self, F, input_dim, output_dim, learning_rate=0.01):
-        self.lr = learning_rate
         self.F = F
 
-        # If input and output dimensions are different, add a linear layer for the shortcut connection
+        # If input and output dimensions are different,
+        # add a linear layer to unify the dimension.
         if input_dim != output_dim:
+            self.lr = learning_rate
             self.shortcut = Linear(input_dim, output_dim, learning_rate)
         else:
             self.shortcut = None
@@ -187,12 +207,276 @@ class ResidualBlock:
 ```
 
 ## Normalization
-### Batch
-### Layer
+### Batch Normalization
+- **What**: Normalize each feature across the input samples to zero mean and unit variance.
+- **Why**: To mitigate internal covariate shift.
+    - During training, the distribution of input to each layer can change due to updates in the params of all preceding layers. Each layer has to continuously adapt to the new distribution. This shift makes convergence difficult and slows down training.
+- **How**:
+    1. Calculate the mean and variance for each batch.
+    2. Normalize the batch.
+    3. Scale and shift the normalized output using learnable params.
+- **When**: Each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.
+- **Where**: Typically applied before activation functions, after linear layers & convolutional layers.
+- **Pros**:
+    - Accelerates training with higher learning rates.
+    - Reduces sensitivity to weight initialization.
+    - Mitigates [vanishing/exploding gradients](#residual-connection).
+- **Cons**:
+    - Adds computation overhead and complexity.
+    - Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
+- **FYI**: [paper](https://arxiv.org/pdf/1502.03167)
+
+```{dropdown} **Math**
+- Notation
+    - IO:
+        - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
+        - $\mathbf{Y}\in\mathbb{R}^{m\times n}$: Output matrix.
+    - Params:
+        - $\gamma\in\mathbb{R}$: Scale param.
+        - $\beta\in\mathbb{R}$: Shift param.
+- Forward
+    1. Calculate the mean and variance for each batch.
+
+        $$\begin{align*}
+        \boldsymbol{\mu}_B&=\frac{1}{m}\sum_{i=1}^{m}\textbf{x}_i\\
+        \boldsymbol{\sigma}_B^2&=\frac{1}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)^2
+        \end{align*}$$
+
+    2. Normalize each batch.
+
+        $$
+        \textbf{z}_i=\frac{\textbf{x}_i-\boldsymbol{\mu}_B}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}
+        $$
+
+        where $\epsilon$ is a small constant to avoid dividing by 0.
+
+    3. Scale and shift the normalized output.
+
+        $$
+        \textbf{y}_i=\gamma\textbf{z}_i+\beta
+        $$
+- Backward
+    1. Gradient w.r.t. params:
+
+        $$\begin{align*}
+        &\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{x}_i\\
+        &\frac{\partial\mathcal{L}}{\partial\beta}=\sum_{i=1}^{m}\textbf{g}_i
+        \end{align*}$$
+    2. Gradient w.r.t. input:
+
+        $$\begin{align*}
+        &\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}=\gamma\textbf{g}_i\\
+        &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}(\textbf{x}_i-\boldsymbol{\mu}_B)\left(-\frac{1}{2}(\boldsymbol{\sigma}_B^2+\epsilon)^{-\frac{3}{2}}\right)\\
+        &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
+        &\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
+        \end{align*}$$
+```
+
+```{dropdown} **Code**
+```python
+class BatchNorm:
+    def __init__(self, epsilon=1e-5, momentum=0.9, learning_rate=0.01):
+        # hyperparam
+        self.epsilon = epsilon
+        self.momentum = momentum    # weight of running stat per update
+        self.lr = learning_rate
+
+        # params
+        self.gamma = None
+        self.beta = None
+
+        # During inference, the test sample or batch is not representative of the overall data distribution.
+        # Hence, we need to store running averages of mean and variance and use them for inference.
+        self.running_mean = None
+        self.running_var = None
+
+    def forward(self, X, training=True):
+        self.X = X
+        if self.gamma is None:
+            self.gamma = np.ones(X.shape[1])
+            self.beta = np.zeros(X.shape[1])
+            self.running_mean = np.zeros(X.shape[1])
+            self.running_var = np.ones(X.shape[1])
+
+        if training:
+            # calculate batch mean and variance
+            mu_B = np.mean(X, axis=0)
+            var_B = np.var(X, axis=0)
+
+            # normalize the batch
+            Z = (X-mu_B) / np.sqrt(var_B+self.epsilon)
+
+            # scale & shift
+            Y = self.gamma*Z + self.beta
+
+            # update running mean and variance for inference
+            self.running_mean = self.momentum * self.running_mean + (1-self.momentum) * mu_B
+            self.running_var = self.momentum * self.running_var + (1-self.momentum) * var_B
+        else:
+            # normalize the batch
+            Z = (X-self.running_mean) / np.sqrt(self.running_var+self.epsilon)
+
+            # scale & shift
+            Y = self.gamma*Z + self.beta
+
+        return Y
+
+    def backward(self, dY):
+        m = dY.shape[0]
+
+        # gradient w.r.t. params
+        dbeta = np.sum(dY, axis=0)
+        dgamma = np.sum(self.Z*dY, axis=0)
+
+        # gradient w.r.t. input
+        ## w.r.t. normalized input
+        dZ = dY * self.gamma
+
+        ## w.r.t. variance
+        dvar = np.sum(-0.5*dZ*(self.X-self.mu_B) * (self.var_B+self.epsilon)**(-1.5), axis=0)
+
+        ## w.r.t. mean
+        dmu = np.sum(-1*dZ / np.sqrt(self.var_B+self.epsilon), axis=0)
+        dmu += dvar * np.sum(-2*(self.X-self.mu_B), axis=0) / m
+
+        ## w.r.t. input
+        dX = dZ + 2/m*dvar*(self.X-self.mu_B) + dmu/m
+        dX /= np.sqrt(self.var_B+self.epsilon)
+
+        # update params
+        self.gamma -= self.lr * dgamma
+        self.beta -= self.lr * dbeta
+
+        return dX
+```
+
+### Layer Normalization
+- **What**: Normalize each sample across the input features to zero mean and unit variance.
+- **Why**: Batch normalization depends on the batch size.
+    - When it's too big, high computational cost.
+    - When it's too small, the batch may not be representative of the underlying data distribution.
+    - Hyperparam tuning is required to find the optimal batch size, leading to high computational cost.
+- **How**:
+    1. Calculate the mean and variance for each feature.
+    2. Normalize the feature.
+    3. Scale and shift the normalized output using learnable params.
+- **When**: Layer-wise statistics are more representative than batch-wise statistics.
+- **Where**: Typically applied to NLP tasks that are sensitive to batch size.
+- **Pros**:
+    - Reduces hyperparam tuning effort.
+    - High consistency during training and inference.
+    - Mitigates [vanishing/exploding gradients](#residual-connection).
+- **Cons**:
+    - Adds computation overhead and complexity.
+    - Inapplicable in CNNs due to varied statistics of spatial features.
+- **FYI**: [paper](https://arxiv.org/pdf/1607.06450)
+
+```{dropdown} **Math**
+It's easy to explain with the vector form for batch normalization, but it's more intuitive to explain with the scalar form for layer normalization.
+
+- Notation
+    - IO:
+        - $x_{ij}\in\mathbb{R}$: $j$th feature value for $i$th input sample.
+        - $y_{ij}\in\mathbb{R}$: $j$th feature value for $i$th output sample.
+    - Params:
+        - $\boldsymbol{\gamma}\in\mathbb{R}^n$: Scale param.
+        - $\boldsymbol{\beta}\in\mathbb{R}^n$: Shift param.
+- Forward
+    1. Calculate the mean and variance for each feature.
+
+        $$\begin{align*}
+        \mu_i&=\frac{1}{n}\sum_{j=1}^{n}x_{ij}\\
+        \sigma_i^2&=\frac{1}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)^2
+        \end{align*}$$
+
+    2. Normalize each feature.
+
+        $$
+        z_{ij}=\frac{x_{ij}-\mu_i}{\sqrt{\sigma_i^2+\epsilon}}
+        $$
+
+        where $\epsilon$ is a small constant to avoid dividing by 0.
+
+    3. Scale and shift the normalized output.
+
+        $$
+        y_{ij}=\gamma_jz_{ij}+\beta_j
+        $$
+- Backward
+    1. Gradient w.r.t. params:
+
+        $$\begin{align*}
+        &\frac{\partial\mathcal{L}}{\partial\gamma_j}=\sum_{i=1}^{m}g_{ij}z_{ij}\\
+        &\frac{\partial\mathcal{L}}{\partial\beta_j}=\sum_{i=1}^{m}g_{ij}
+        \end{align*}$$
+    2. Gradient w.r.t. input:
+
+        $$\begin{align*}
+        &\frac{\partial\mathcal{L}}{\partial z_{ij}}=\gamma_jg_{ij}\\
+        &\frac{\partial\mathcal{L}}{\partial\sigma_i^2}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}(x_{ij}-\mu_i)\left(-\frac{1}{2}(\sigma_i^2+\epsilon)^{-\frac{3}{2}}\right)\\
+        &\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
+        &\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
+        \end{align*}$$
+```
+
+```{dropdown} **Code**
+```python
+class LayerNorm:
+    def __init__(self, n_features, epsilon=1e-5, learning_rate=1e-3):
+        # hyperparams
+        self.epsilon = epsilon
+        self.lr = learning_rate
+
+        # params
+        self.gamma = np.ones(n_features)
+        self.beta = np.zeros(n_features)
+
+    def forward(self, X):
+        self.X = X
+
+        # calculate mean and variance for each feature
+        self.mu = np.mean(X, axis=1, keepdims=True)
+        self.var = np.var(X, axis=1, keepdims=True)
+
+        # normalize
+        self.Z = (X-self.mu) / np.sqrt(self.var+self.epsilon)
+
+        # scale & shift
+        Y = self.gamma*self.Z + self.beta
+        return Y
+
+    def backward(self, dY):
+        n = dY.shape[1]
+
+        # gradient w.r.t. params
+        dbeta = np.sum(dY, axis=0)
+        dgamma = np.sum(dY*self.Z, axis=0)
+
+        # gradient w.r.t. input
+        ## w.r.t. normalized input
+        dZ = dY*self.gamma
+
+        ## w.r.t. variance
+        dvar = np.sum(-0.5*dZ*(self.X-self.mu) * (self.var+self.epsilon)**(-1.5), axis=1, keepdims=True)
+
+        ## w.r.t. mean
+        dmu = np.sum(-1*dZ / np.sqrt(self.var+self.epsilon), axis=1, keepdims=True)
+        dmu += dvar * np.mean(-2*(self.X-self.mu), axis=1, keepdims=True)
+
+        ## w.r.t. input
+        dX = dZ + 2/n*dvar*(self.X-self.mu) + dmu/n
+        dX /= np.sqrt(self.var+self.epsilon)
+
+        # Update parameters
+        self.gamma -= self.lr * dgamma
+        self.beta -= self.lr * dbeta
+
+        return dX
+```
+
 <br/>
 
 # Convolutional
-**Intuition**
 - **What**: Apply a set of filters to input data to extract local features.
 - **Why**: To learn spatial hierarchies of features.
 - **How**: Slide multiple filters/kernel (i.e., small matrices) over the input data.
@@ -205,9 +489,9 @@ class ResidualBlock:
 - **Cons**:
     - High computational cost for big data
     - Requires big data to be performant.
-    - Requires extensive hyperparameter tuning.
+    - Requires extensive hyperparam tuning.
 
-**Math**
+```{dropdown} **Math**
 - Notations
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
@@ -244,8 +528,9 @@ class ResidualBlock:
     \end{align*}$$
 
     Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
+```
 
-**Code**
+```{dropdown} **Code**
 ```python
 class Conv2d:
     def __init__(self, filter_size, n_filters, stride=1, padding=0, learning_rate=0.01):
@@ -311,8 +596,7 @@ class Conv2d:
         return dX
 ```
 
-## Depthwise Separable
-**Intuition**
+## Depthwise Separable Convolution
 - **What**: Depthwise convolution + Pointwise convolution.
 - **Why**: To significantly reduce computational cost and #params.
 - **How**:
@@ -323,7 +607,7 @@ class Conv2d:
 - **Pros**: Significantly higher computational efficiency (time & space).
 - **Cons**: Lower accuracy.
 
-**Math**
+```{dropdown} **Math**
 - Notations
     - IO:
         - $\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}$: Input volume.
@@ -367,14 +651,15 @@ class Conv2d:
         &\frac{\partial \mathcal{L}}{\partial Z_{h,w,c_{in}}} = \sum_{c_{out}=1}^{C_{out}} g^{p}_{h,w,c_{out}} \cdot W^p_{1,1,c_{in},c_{out}}
         \end{align*}$$
     2. Depthwise convolution: Let $g^{d}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Z}}$.
-    
+
         $$\begin{align*}
         &\frac{\partial \mathcal{L}}{\partial W^d_{i,j,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}}\\
         &\frac{\partial \mathcal{L}}{\partial b_{d,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}}\\
         &\frac{\partial \mathcal{L}}{\partial X_{i,j,c_{in}}} = \sum_{h=1}^{f_h} \sum_{w=1}^{f_w} g^d_{h,w,c_{in}} \cdot W^d_{i-sh+p,j-sw+p,c_{in}}
         \end{align*}$$
+```
 
-**Code**
+```{dropdown} **Code**
 ```python
 class DepthwiseSeparableConv2d:
     def __init__(self, filter_size, n_filters, stride=1, padding=0, learning_rate=0.01):
@@ -464,7 +749,6 @@ class DepthwiseSeparableConv2d:
         return dX
 ```
 ## Atrous/Dilated
-**Intuition**
 - **What**: Add holes between filter elements (i.e., dilation).
 - **Why**: The filters can capture larger contextual info without increasing #params.
 - **How**: Introduce a dilation rate $r$ to determine the space between the filter elements. Then compute convolution accordingly.
@@ -474,9 +758,9 @@ class DepthwiseSeparableConv2d:
     - Larger receptive fields without increasing #params.
     - Captures multi-scale info without upsampling layers.
 - **Cons**:
-    - Requires very careful hyperparameter tuning, or info loss.
+    - Requires very careful hyperparam tuning, or info loss.
 
-**Math**
+```{dropdown} **Math**
 - Notations
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
@@ -514,8 +798,9 @@ class DepthwiseSeparableConv2d:
     &\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
     &\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{r(i-1)-sh+p,r(j-1)-sw+p,c_{out},c_{in}}
     \end{align*}$$
+```
 
-**Code**
+```{dropdown} **Code**
 ```python
 class AtrousConv2d:
     def __init__(self, filter_size, n_filters, dilation_rate=1, stride=1, padding=0, learning_rate=0.01):
@@ -526,7 +811,7 @@ class AtrousConv2d:
         self.p = padding
         self.lr = learning_rate
         self.W = np.random.randn(filter_size, filter_size, n_filters) / filter_size**2
-        self.b = np.zeros((n_filters, 1)) 
+        self.b = np.zeros((n_filters, 1))
 
     def pad_input(self, X):
         if self.p > 0:
@@ -585,7 +870,6 @@ class AtrousConv2d:
 ```
 
 ## Pooling
-**Intuition**
 - **What**: Convolution but
     - computes a heuristic per scanned patch.
     - uses the same #channels.
@@ -594,7 +878,7 @@ class AtrousConv2d:
     - **Max**: Output the maximum value from each patch.
     - **Average**: Output the average value of each patch.
 - **When**: When downsampling is necessary.
-- **Where**: Anywhere with Convolutional layer.
+- **Where**: After convolutional layer.
 - **Pros**:
     - Significantly higher computational efficiency (time & space).
     - No params to train.
@@ -603,13 +887,13 @@ class AtrousConv2d:
     - High robustness.
 - **Cons**:
     - Slight spatial info loss.
-    - Requires hyperparameter tuning.
+    - Requires hyperparam tuning.
         - Large filter or stride results in coarse features.
 - **Max vs Average**:
     - **Max**: Captures most dominant features; higher robustness.
     - **Avg**: Preserves more info; provides smoother features; dilutes the importance of dominant features.
 
-**Math**
+```{dropdown} **Math**
 - Notations
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
@@ -642,8 +926,9 @@ class AtrousConv2d:
 
     - Max: Gradients only propagate to the max element of each window.
     - Avg: Gradients are equally distributed among all elements in each window.
+```
 
-**Code**
+```{dropdown} **Code**
 ```python
 import numpy as np
 
@@ -692,6 +977,8 @@ class Pooling2D:
 
         return dX
 ```
+
+<br/>
 
 # Recurrent
 ```{image} ../images/RNN.png
@@ -819,7 +1106,7 @@ Notations:
 - **Parameters**:
     - Encoder: $ \text{\\#params}=h\cdot d\_{\text{model}}\cdot (2d\_k+d\_v)+2\cdot d\_{\text{model}}\cdot d\_{\text{ff}} $
     - Decoder: $ \text{\\#params}=2\cdot h\cdot d\_{\text{model}}\cdot (2d\_k+d\_v)+2\cdot d\_{\text{model}}\cdot d\_{\text{ff}} $
-- **Hyperparameters**:
+- **Hyperparams**:
     - #layers
     - hidden size
     - #heads
@@ -1066,13 +1353,13 @@ $$
 Name: Parametric Rectified Linear Unit
 
 Params:
-- $ \alpha\in(0,1) $: learnable parameter (negative slope), default 0.25.
+- $ \alpha\in(0,1) $: learnable param (negative slope), default 0.25.
 
 Idea:
 - scale negative linear outputs by a learnable $ \alpha $.
 
 Pros:
-- a variable, adaptive parameter learned from data.
+- a variable, adaptive param learned from data.
 
 Cons:
 - slightly more computationally expensive than LReLU.

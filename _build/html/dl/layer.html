@@ -62,7 +62,6 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'dl/layer';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Overview" href="../irl/overview.html" />
     <link rel="prev" title="Hi👋" href="../intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -181,12 +180,6 @@
 
 
 
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">IRL</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../irl/overview.html">Overview</a></li>
-
-<li class="toctree-l1"><a class="reference internal" href="../irl/data.html">Data</a></li>
 </ul>
 
     </div>
@@ -385,25 +378,17 @@ document.write(`
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Layer</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basic">Basic</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear">Linear</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regularization">Regularization</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dropout">Dropout</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha">Alpha</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian">Gaussian</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l1-l2">L1/L2</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dropout">Dropout</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-connection">Residual Connection</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalization">Normalization</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#batch">Batch</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Layer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-normalization">Batch Normalization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-normalization">Layer Normalization</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolutional">Convolutional</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#depthwise-separable">Depthwise Separable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#depthwise-separable-convolution">Depthwise Separable Convolution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atrous-dilated">Atrous/Dilated</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pooling">Pooling</a></li>
 </ul>
@@ -468,60 +453,58 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="layer">
 <h1>Layer<a class="headerlink" href="#layer" title="Link to this heading">#</a></h1>
-<p>A layer is a mapping from input <span class="math notranslate nohighlight">\(X\)</span> to output <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<p>A layer is a mapping from input tensor <span class="math notranslate nohighlight">\(X\)</span> to output tensor <span class="math notranslate nohighlight">\(Y\)</span>.</p>
 <p>Let <span class="math notranslate nohighlight">\(g\)</span> denote the gradient <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial y}\)</span> for readability.</p>
+<br/>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="basic">
 <h1>Basic<a class="headerlink" href="#basic" title="Link to this heading">#</a></h1>
 <section id="linear">
 <h2>Linear<a class="headerlink" href="#linear" title="Link to this heading">#</a></h2>
-<p><strong>Intuition</strong></p>
 <ul class="simple">
 <li><p><strong>What</strong>: Linear transformation.</p></li>
 <li><p><strong>Why</strong>: Universal Approximation Theorem.</p></li>
 <li><p><strong>How</strong>: Multiply the input with a weight matrix and add a bias vector.</p></li>
-<li><p><strong>When</strong>:</p>
-<ul>
-<li><p>If input/output can be linearly approximated.</p></li>
-<li><p>If input features need to be converted to a different dimension.</p></li>
-</ul>
-</li>
-<li><p><strong>Where</strong>: Anywhere.</p></li>
+<li><p><strong>When</strong>: Input &amp; output can be linearly approximated.</p></li>
+<li><p><strong>Where</strong>: Anywhere. Typically used for feature dimension conversion.</p></li>
 <li><p><strong>Pros</strong>: Simple, efficient, foundational.</p></li>
 <li><p><strong>Cons</strong>: Cannot capture non-linear/complex patterns.</p></li>
+<li><p><strong>FYI</strong>: <a class="reference external" href="https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf">paper</a></p></li>
 </ul>
-<p><strong>Math</strong></p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Math</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <ul class="simple">
-<li><p>Notations</p>
+<li><p class="sd-card-text">Notations</p>
 <ul>
-<li><p>IO:</p>
+<li><p class="sd-card-text">IO:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{y}\in\mathbb{R}^{H_{out}}\)</span>: Output vector.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{y}\in\mathbb{R}^{H_{out}}\)</span>: Output vector.</p></li>
 </ul>
 </li>
-<li><p>Params:</p>
+<li><p class="sd-card-text">Params:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(W\in\mathbb{R}^{H_{out}\times H_{in}}\)</span>: Weight matrix.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\textbf{b}\in\mathbb{R}^{H_{out}}\)</span>: Bias vector.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(W\in\mathbb{R}^{H_{out}\times H_{in}}\)</span>: Weight matrix.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\textbf{b}\in\mathbb{R}^{H_{out}}\)</span>: Bias vector.</p></li>
 </ul>
 </li>
-<li><p>Hyperparams:</p>
+<li><p class="sd-card-text">Hyperparams:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(H_{in}\)</span>: Input feature dimension.</p></li>
-<li><p><span class="math notranslate nohighlight">\(H_{out}\)</span>: Output feature dimension.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(H_{in}\)</span>: Input feature dimension.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(H_{out}\)</span>: Output feature dimension.</p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>Forward</p></li>
+<li><p class="sd-card-text">Forward</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[
 \textbf{y}=W\textbf{x}+\textbf{b}
 \]</div>
 <ul class="simple">
-<li><p>Backward</p></li>
+<li><p class="sd-card-text">Backward</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
@@ -529,14 +512,20 @@ document.write(`
 &amp;\frac{\partial\mathcal{L}}{\partial\textbf{b}}=g\\
 &amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}}=W^Tg
 \end{align*}\end{split}\]</div>
-<p><strong>Code</strong></p>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Code</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Linear</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="c1"># hyperparams</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">input_dim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Y_dim</span> <span class="o">=</span> <span class="n">output_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
+
+        <span class="c1"># params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.01</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
@@ -557,47 +546,67 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dX</span>
 </pre></div>
 </div>
-<br/>
-</section>
-<section id="regularization">
-<h2>Regularization<a class="headerlink" href="#regularization" title="Link to this heading">#</a></h2>
+</div>
+</details></section>
 <section id="dropout">
-<h3>Dropout<a class="headerlink" href="#dropout" title="Link to this heading">#</a></h3>
-<p><strong>Intuition</strong></p>
+<h2>Dropout<a class="headerlink" href="#dropout" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Randomly set a fraction (<span class="math notranslate nohighlight">\(p\)</span>) of neurons to 0 and scale the outputs/gradients on active neurons by <span class="math notranslate nohighlight">\(\frac{1}{1-p}\)</span> during training.</p></li>
+<li><p><strong>What</strong>: Randomly drop out some neurons during training.</p></li>
 <li><p><strong>Why</strong>: To reduce overfitting.</p></li>
-<li><p><strong>When</strong>: Training only.</p></li>
-<li><p><strong>Where</strong>: Typically on linear layers and convolutional layers.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Randomly set a fraction (<span class="math notranslate nohighlight">\(p\)</span>) of neurons to 0.</p></li>
+<li><p>Scale the outputs/gradients on active neurons by <span class="math notranslate nohighlight">\(\frac{1}{1-p}\)</span>.</p></li>
+</ol>
+</li>
+<li><p><strong>When</strong>: The current model is overfitting on the current training data.</p></li>
+<li><p><strong>Where</strong>: Typically after linear layers &amp; convolutional layers.</p></li>
 <li><p><strong>Pros</strong>: Simple, efficient regularization.</p></li>
-<li><p><strong>Cons</strong>: Requires hyperparameter tuning; Can slow down convergence.</p></li>
+<li><p><strong>Cons</strong>: Requires hyperparam tuning; Can slow down convergence.</p></li>
+<li><p><strong>FYI</strong>: <a class="reference external" href="https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf">paper</a></p></li>
 </ul>
-<p><strong>Math</strong></p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Math</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <ul class="simple">
-<li><p>Forward:</p></li>
+<li><p class="sd-card-text">Notations</p>
+<ul>
+<li><p class="sd-card-text">IO:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{y}\in\mathbb{R}^{H_{in}}\)</span>: Output vector.</p></li>
+</ul>
+</li>
+<li><p class="sd-card-text">Hyperparams:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(p\)</span>: Dropout probability.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p class="sd-card-text">Forward</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[
 \textbf{y}=\frac{1}{1-p}\textbf{x}_\text{active}
 \]</div>
 <ul class="simple">
-<li><p>Backward:</p></li>
+<li><p class="sd-card-text">Backward</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[
 \frac{\partial\mathcal{L}}{\partial\textbf{x}_\text{active}}= \frac{1}{1-p}\mathbf{g}
 \]</div>
-<ul class="simple">
-<li><p>Hyperparams:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(p\)</span>: Dropout probability.</p></li>
-</ul>
-</li>
-</ul>
-<p><strong>Code</strong></p>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Code</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Dropout</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="c1"># hyperparams</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">dropout_rate</span>
+
+        <span class="c1"># temp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -611,58 +620,74 @@ document.write(`
         <span class="k">return</span> <span class="n">dY</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span>
 </pre></div>
 </div>
-<section id="alpha">
-<h4>Alpha<a class="headerlink" href="#alpha" title="Link to this heading">#</a></h4>
-</section>
-<section id="gaussian">
-<h4>Gaussian<a class="headerlink" href="#gaussian" title="Link to this heading">#</a></h4>
-</section>
-</section>
-<section id="l1-l2">
-<h3>L1/L2<a class="headerlink" href="#l1-l2" title="Link to this heading">#</a></h3>
-</section>
-</section>
+</div>
+</details></section>
 <section id="residual-connection">
 <h2>Residual Connection<a class="headerlink" href="#residual-connection" title="Link to this heading">#</a></h2>
-<p><strong>Intuition</strong></p>
 <ul class="simple">
 <li><p><strong>What</strong>: Model the residual (<span class="math notranslate nohighlight">\(Y-X\)</span>) instead of the output (<span class="math notranslate nohighlight">\(Y\)</span>).</p></li>
-<li><p><strong>Why</strong>: To reduce vanishing/exploding gradient issues.</p></li>
-<li><p><strong>When</strong>: If convergence or gradient issues occur.</p></li>
-<li><p><strong>Where</strong>: Deep NNs.</p></li>
-<li><p><strong>Pros</strong>: Reduces vanishing/exploding gradients; Higher performance on complex tasks.</p></li>
-<li><p><strong>Cons</strong>: Slightly higher computational cost.</p></li>
-</ul>
-<p><strong>Math</strong></p>
-<ul class="simple">
-<li><p>Forward:</p></li>
-</ul>
-<div class="math notranslate nohighlight">
-\[
-\textbf{y}=\mathcal{F}(\textbf{x})+\textbf{x}
-\]</div>
-<ul class="simple">
-<li><p>Backward:</p></li>
-</ul>
-<div class="math notranslate nohighlight">
-\[
-\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial\mathcal{F}}{\partial\textbf{x}})
-\]</div>
-<ul class="simple">
-<li><p>Hyperparams:</p>
+<li><p><strong>Why</strong>: To mitigate vanishing/exploding gradients.</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\mathcal{F}(\cdot)\)</span>: The function of other layers within the residual block.</p></li>
+<li><p><strong>Vanishing gradients</strong>: The gradients become smaller and smaller during backprop that they have almost no effect to front layers, slowing and even stopping the learning process for front layers.</p></li>
+<li><p><strong>Exploding gradients</strong>: The gradients become larger and larger during backprop that they change the front layer weights too much, causing instability and difficulty in convergence.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Add the input <span class="math notranslate nohighlight">\(X\)</span> to the block output <span class="math notranslate nohighlight">\(F(X)\)</span>.</p></li>
+<li><p>If the feature dimension of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(F(X)\)</span> doesn’t match, use a linear layer on <span class="math notranslate nohighlight">\(X\)</span> to change its feature dimension.</p></li>
+</ol>
+</li>
+<li><p><strong>When</strong>: There is clear evidence of convergence failures or extreme gradient values.</p></li>
+<li><p><strong>Where</strong>: Inside deep NNs.</p></li>
+<li><p><strong>Pros</strong>: Higher performance on complex tasks.</p></li>
+<li><p><strong>Cons</strong>: Slightly higher computational cost.</p></li>
+<li><p><strong>FYI</strong>: <a class="reference external" href="https://arxiv.org/pdf/1512.03385">paper</a></p></li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Math</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<ul class="simple">
+<li><p class="sd-card-text">Notation</p>
+<ul>
+<li><p class="sd-card-text">IO:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{y}\in\mathbb{R}^{H_{out}}\)</span>: Output vector.</p></li>
+</ul>
+</li>
+<li><p class="sd-card-text">Hyperparams:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(F(\cdot)\in\mathbb{R}^{H_{out}}\)</span>: The aggregate function of all layers within the residual block.</p></li>
 </ul>
 </li>
 </ul>
-<p><strong>Code</strong></p>
+</li>
+<li><p class="sd-card-text">Forward</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\textbf{y}=F(\textbf{x})+\textbf{x}
+\]</div>
+<ul class="simple">
+<li><p class="sd-card-text">Backward</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial F(\textbf{x})}{\partial\textbf{x}})
+\]</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Code</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ResidualBlock</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="n">F</span>
 
-        <span class="c1"># If input and output dimensions are different, add a linear layer for the shortcut connection</span>
+        <span class="c1"># If input and output dimensions are different,</span>
+        <span class="c1"># add a linear layer to unify the dimension.</span>
         <span class="k">if</span> <span class="n">input_dim</span> <span class="o">!=</span> <span class="n">output_dim</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shortcut</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shortcut</span> <span class="o">=</span> <span class="kc">None</span>
@@ -690,21 +715,355 @@ document.write(`
         <span class="k">return</span> <span class="n">d_input</span>
 </pre></div>
 </div>
-</section>
+</div>
+</details></section>
 <section id="normalization">
 <h2>Normalization<a class="headerlink" href="#normalization" title="Link to this heading">#</a></h2>
-<section id="batch">
-<h3>Batch<a class="headerlink" href="#batch" title="Link to this heading">#</a></h3>
-</section>
-<section id="id1">
-<h3>Layer<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-<br/>
+<section id="batch-normalization">
+<h3>Batch Normalization<a class="headerlink" href="#batch-normalization" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Normalize each feature across the input samples to zero mean and unit variance.</p></li>
+<li><p><strong>Why</strong>: To mitigate internal covariate shift.</p>
+<ul>
+<li><p>During training, the distribution of input to each layer can change due to updates in the params of all preceding layers. Each layer has to continuously adapt to the new distribution. This shift makes convergence difficult and slows down training.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Calculate the mean and variance for each batch.</p></li>
+<li><p>Normalize the batch.</p></li>
+<li><p>Scale and shift the normalized output using learnable params.</p></li>
+</ol>
+</li>
+<li><p><strong>When</strong>: Each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.</p></li>
+<li><p><strong>Where</strong>: Typically applied before activation functions, after linear layers &amp; convolutional layers.</p></li>
+<li><p><strong>Pros</strong>:</p>
+<ul>
+<li><p>Accelerates training with higher learning rates.</p></li>
+<li><p>Reduces sensitivity to weight initialization.</p></li>
+<li><p>Mitigates <a class="reference internal" href="#residual-connection"><span class="xref myst">vanishing/exploding gradients</span></a>.</p></li>
+</ul>
+</li>
+<li><p><strong>Cons</strong>:</p>
+<ul>
+<li><p>Adds computation overhead and complexity.</p></li>
+<li><p>Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.</p></li>
+</ul>
+</li>
+<li><p><strong>FYI</strong>: <a class="reference external" href="https://arxiv.org/pdf/1502.03167">paper</a></p></li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Math</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<ul>
+<li><p class="sd-card-text">Notation</p>
+<ul class="simple">
+<li><p class="sd-card-text">IO:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{m\times n}\)</span>: Input matrix.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{m\times n}\)</span>: Output matrix.</p></li>
+</ul>
+</li>
+<li><p class="sd-card-text">Params:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\gamma\in\mathbb{R}\)</span>: Scale param.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\beta\in\mathbb{R}\)</span>: Shift param.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p class="sd-card-text">Forward</p>
+<ol class="arabic">
+<li><p class="sd-card-text">Calculate the mean and variance for each batch.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+        \boldsymbol{\mu}_B&amp;=\frac{1}{m}\sum_{i=1}^{m}\textbf{x}_i\\
+        \boldsymbol{\sigma}_B^2&amp;=\frac{1}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)^2
+        \end{align*}\end{split}\]</div>
+</li>
+<li><p class="sd-card-text">Normalize each batch.</p>
+<div class="math notranslate nohighlight">
+\[
+        \textbf{z}_i=\frac{\textbf{x}_i-\boldsymbol{\mu}_B}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}
+        \]</div>
+<p class="sd-card-text">where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a small constant to avoid dividing by 0.</p>
+</li>
+<li><p class="sd-card-text">Scale and shift the normalized output.</p>
+<div class="math notranslate nohighlight">
+\[
+        \textbf{y}_i=\gamma\textbf{z}_i+\beta
+        \]</div>
+</li>
+</ol>
+</li>
+<li><p class="sd-card-text">Backward</p>
+<ol class="arabic">
+<li><p class="sd-card-text">Gradient w.r.t. params:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+        &amp;\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{x}_i\\
+        &amp;\frac{\partial\mathcal{L}}{\partial\beta}=\sum_{i=1}^{m}\textbf{g}_i
+        \end{align*}\end{split}\]</div>
+</li>
+<li><p class="sd-card-text">Gradient w.r.t. input:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+        &amp;\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}=\gamma\textbf{g}_i\\
+        &amp;\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}(\textbf{x}_i-\boldsymbol{\mu}_B)\left(-\frac{1}{2}(\boldsymbol{\sigma}_B^2+\epsilon)^{-\frac{3}{2}}\right)\\
+        &amp;\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
+        &amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
+        \end{align*}\end{split}\]</div>
+</li>
+</ol>
+</li>
+</ul>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Code</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BatchNorm</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="c1"># hyperparam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span> <span class="o">=</span> <span class="n">momentum</span>    <span class="c1"># weight of running stat per update</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
+
+        <span class="c1"># params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># During inference, the test sample or batch is not representative of the overall data distribution.</span>
+        <span class="c1"># Hence, we need to store running averages of mean and variance and use them for inference.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running_var</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">training</span><span class="p">:</span>
+            <span class="c1"># calculate batch mean and variance</span>
+            <span class="n">mu_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">var_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># normalize the batch</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="o">-</span><span class="n">mu_B</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_B</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
+
+            <span class="c1"># scale &amp; shift</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">Z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
+
+            <span class="c1"># update running mean and variance for inference</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">momentum</span><span class="p">)</span> <span class="o">*</span> <span class="n">mu_B</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_var</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">momentum</span><span class="p">)</span> <span class="o">*</span> <span class="n">var_B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># normalize the batch</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">running_var</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
+
+            <span class="c1"># scale &amp; shift</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">Z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
+
+        <span class="k">return</span> <span class="n">Y</span>
+
+    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dY</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">dY</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># gradient w.r.t. params</span>
+        <span class="n">dbeta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dY</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">dgamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="o">*</span><span class="n">dY</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># gradient w.r.t. input</span>
+        <span class="c1">## w.r.t. normalized input</span>
+        <span class="n">dZ</span> <span class="o">=</span> <span class="n">dY</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
+
+        <span class="c1">## w.r.t. variance</span>
+        <span class="n">dvar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">dZ</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_B</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_B</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1">## w.r.t. mean</span>
+        <span class="n">dmu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">dZ</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_B</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">dmu</span> <span class="o">+=</span> <span class="n">dvar</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_B</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">m</span>
+
+        <span class="c1">## w.r.t. input</span>
+        <span class="n">dX</span> <span class="o">=</span> <span class="n">dZ</span> <span class="o">+</span> <span class="mi">2</span><span class="o">/</span><span class="n">m</span><span class="o">*</span><span class="n">dvar</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_B</span><span class="p">)</span> <span class="o">+</span> <span class="n">dmu</span><span class="o">/</span><span class="n">m</span>
+        <span class="n">dX</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_B</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
+
+        <span class="c1"># update params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">dgamma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">dbeta</span>
+
+        <span class="k">return</span> <span class="n">dX</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="layer-normalization">
+<h3>Layer Normalization<a class="headerlink" href="#layer-normalization" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Normalize each sample across the input features to zero mean and unit variance.</p></li>
+<li><p><strong>Why</strong>: Batch normalization depends on the batch size.</p>
+<ul>
+<li><p>When it’s too big, high computational cost.</p></li>
+<li><p>When it’s too small, the batch may not be representative of the underlying data distribution.</p></li>
+<li><p>Hyperparam tuning is required to find the optimal batch size, leading to high computational cost.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Calculate the mean and variance for each feature.</p></li>
+<li><p>Normalize the feature.</p></li>
+<li><p>Scale and shift the normalized output using learnable params.</p></li>
+</ol>
+</li>
+<li><p><strong>When</strong>: Layer-wise statistics are more representative than batch-wise statistics.</p></li>
+<li><p><strong>Where</strong>: Typically applied to NLP tasks that are sensitive to batch size.</p></li>
+<li><p><strong>Pros</strong>:</p>
+<ul>
+<li><p>Reduces hyperparam tuning effort.</p></li>
+<li><p>High consistency during training and inference.</p></li>
+<li><p>Mitigates <a class="reference internal" href="#residual-connection"><span class="xref myst">vanishing/exploding gradients</span></a>.</p></li>
+</ul>
+</li>
+<li><p><strong>Cons</strong>:</p>
+<ul>
+<li><p>Adds computation overhead and complexity.</p></li>
+<li><p>Inapplicable in CNNs due to varied statistics of spatial features.</p></li>
+</ul>
+</li>
+<li><p><strong>FYI</strong>: <a class="reference external" href="https://arxiv.org/pdf/1607.06450">paper</a></p></li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Math</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">It’s easy to explain with the vector form for batch normalization, but it’s more intuitive to explain with the scalar form for layer normalization.</p>
+<ul>
+<li><p class="sd-card-text">Notation</p>
+<ul class="simple">
+<li><p class="sd-card-text">IO:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(x_{ij}\in\mathbb{R}\)</span>: <span class="math notranslate nohighlight">\(j\)</span>th feature value for <span class="math notranslate nohighlight">\(i\)</span>th input sample.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(y_{ij}\in\mathbb{R}\)</span>: <span class="math notranslate nohighlight">\(j\)</span>th feature value for <span class="math notranslate nohighlight">\(i\)</span>th output sample.</p></li>
+</ul>
+</li>
+<li><p class="sd-card-text">Params:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\boldsymbol{\gamma}\in\mathbb{R}^n\)</span>: Scale param.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\boldsymbol{\beta}\in\mathbb{R}^n\)</span>: Shift param.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p class="sd-card-text">Forward</p>
+<ol class="arabic">
+<li><p class="sd-card-text">Calculate the mean and variance for each feature.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+        \mu_i&amp;=\frac{1}{n}\sum_{j=1}^{n}x_{ij}\\
+        \sigma_i^2&amp;=\frac{1}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)^2
+        \end{align*}\end{split}\]</div>
+</li>
+<li><p class="sd-card-text">Normalize each feature.</p>
+<div class="math notranslate nohighlight">
+\[
+        z_{ij}=\frac{x_{ij}-\mu_i}{\sqrt{\sigma_i^2+\epsilon}}
+        \]</div>
+<p class="sd-card-text">where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a small constant to avoid dividing by 0.</p>
+</li>
+<li><p class="sd-card-text">Scale and shift the normalized output.</p>
+<div class="math notranslate nohighlight">
+\[
+        y_{ij}=\gamma_jz_{ij}+\beta_j
+        \]</div>
+</li>
+</ol>
+</li>
+<li><p class="sd-card-text">Backward</p>
+<ol class="arabic">
+<li><p class="sd-card-text">Gradient w.r.t. params:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+        &amp;\frac{\partial\mathcal{L}}{\partial\gamma_j}=\sum_{i=1}^{m}g_{ij}z_{ij}\\
+        &amp;\frac{\partial\mathcal{L}}{\partial\beta_j}=\sum_{i=1}^{m}g_{ij}
+        \end{align*}\end{split}\]</div>
+</li>
+<li><p class="sd-card-text">Gradient w.r.t. input:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+        &amp;\frac{\partial\mathcal{L}}{\partial z_{ij}}=\gamma_jg_{ij}\\
+        &amp;\frac{\partial\mathcal{L}}{\partial\sigma_i^2}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}(x_{ij}-\mu_i)\left(-\frac{1}{2}(\sigma_i^2+\epsilon)^{-\frac{3}{2}}\right)\\
+        &amp;\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
+        &amp;\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
+        \end{align*}\end{split}\]</div>
+</li>
+</ol>
+</li>
+</ul>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Code</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LayerNorm</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_features</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">):</span>
+        <span class="c1"># hyperparams</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
+
+        <span class="c1"># params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n_features</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_features</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+
+        <span class="c1"># calculate mean and variance for each feature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># normalize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
+
+        <span class="c1"># scale &amp; shift</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
+        <span class="k">return</span> <span class="n">Y</span>
+
+    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dY</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">dY</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># gradient w.r.t. params</span>
+        <span class="n">dbeta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dY</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">dgamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dY</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># gradient w.r.t. input</span>
+        <span class="c1">## w.r.t. normalized input</span>
+        <span class="n">dZ</span> <span class="o">=</span> <span class="n">dY</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
+
+        <span class="c1">## w.r.t. variance</span>
+        <span class="n">dvar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">dZ</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1">## w.r.t. mean</span>
+        <span class="n">dmu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">dZ</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">dmu</span> <span class="o">+=</span> <span class="n">dvar</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1">## w.r.t. input</span>
+        <span class="n">dX</span> <span class="o">=</span> <span class="n">dZ</span> <span class="o">+</span> <span class="mi">2</span><span class="o">/</span><span class="n">n</span><span class="o">*</span><span class="n">dvar</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span> <span class="o">+</span> <span class="n">dmu</span><span class="o">/</span><span class="n">n</span>
+        <span class="n">dX</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
+
+        <span class="c1"># Update parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">dgamma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">dbeta</span>
+
+        <span class="k">return</span> <span class="n">dX</span>
+</pre></div>
+</div>
+</div>
+</details><br/>
 </section>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="convolutional">
 <h1>Convolutional<a class="headerlink" href="#convolutional" title="Link to this heading">#</a></h1>
-<p><strong>Intuition</strong></p>
 <ul class="simple">
 <li><p><strong>What</strong>: Apply a set of filters to input data to extract local features.</p></li>
 <li><p><strong>Why</strong>: To learn spatial hierarchies of features.</p></li>
@@ -725,61 +1084,66 @@ document.write(`
 <ul>
 <li><p>High computational cost for big data</p></li>
 <li><p>Requires big data to be performant.</p></li>
-<li><p>Requires extensive hyperparameter tuning.</p></li>
+<li><p>Requires extensive hyperparam tuning.</p></li>
 </ul>
 </li>
 </ul>
-<p><strong>Math</strong></p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Math</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <ul>
-<li><p>Notations</p>
+<li><p class="sd-card-text">Notations</p>
 <ul class="simple">
-<li><p>IO:</p>
+<li><p class="sd-card-text">IO:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.</p></li>
 </ul>
 </li>
-<li><p>Params:</p>
+<li><p class="sd-card-text">Params:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}\)</span>: Filters.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\in\mathbb{R}^{C_{out}}\)</span>: Biases.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}\)</span>: Filters.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{b}\in\mathbb{R}^{C_{out}}\)</span>: Biases.</p></li>
 </ul>
 </li>
-<li><p>Hyperparams:</p>
+<li><p class="sd-card-text">Hyperparams:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{out}\)</span>: #Filters (i.e., #Output channels).</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
-<li><p><span class="math notranslate nohighlight">\(p\)</span>: Padding size.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(C_{out}\)</span>: #Filters (i.e., #Output channels).</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(p\)</span>: Padding size.</p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>Forward</p>
+<li><p class="sd-card-text">Forward</p>
 <div class="math notranslate nohighlight">
 \[
     Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
     \]</div>
-<p>where</p>
+<p class="sd-card-text">where</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
     H_{out}&amp;=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
     W_{out}&amp;=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
     \end{align*}\end{split}\]</div>
 </li>
-<li><p>Backward</p>
+<li><p class="sd-card-text">Backward</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
     &amp;\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
     &amp;\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
     &amp;\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-sh+p,j-sw+p,c_{out},c_{in}}
     \end{align*}\end{split}\]</div>
-<p>Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.</p>
+<p class="sd-card-text">Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.</p>
 </li>
 </ul>
-<p><strong>Code</strong></p>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Code</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Conv2d</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_size</span><span class="p">,</span> <span class="n">n_filters</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">filter_size</span>    <span class="c1"># assume equal height &amp; weight</span>
@@ -844,9 +1208,9 @@ document.write(`
         <span class="k">return</span> <span class="n">dX</span>
 </pre></div>
 </div>
-<section id="depthwise-separable">
-<h2>Depthwise Separable<a class="headerlink" href="#depthwise-separable" title="Link to this heading">#</a></h2>
-<p><strong>Intuition</strong></p>
+</div>
+</details><section id="depthwise-separable-convolution">
+<h2>Depthwise Separable Convolution<a class="headerlink" href="#depthwise-separable-convolution" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Depthwise convolution + Pointwise convolution.</p></li>
 <li><p><strong>Why</strong>: To significantly reduce computational cost and #params.</p></li>
@@ -861,50 +1225,52 @@ document.write(`
 <li><p><strong>Pros</strong>: Significantly higher computational efficiency (time &amp; space).</p></li>
 <li><p><strong>Cons</strong>: Lower accuracy.</p></li>
 </ul>
-<p><strong>Math</strong></p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Math</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <ul>
-<li><p>Notations</p>
+<li><p class="sd-card-text">Notations</p>
 <ul class="simple">
-<li><p>IO:</p>
+<li><p class="sd-card-text">IO:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}\)</span>: Input volume.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Y} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}\)</span>: Output volume.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}\)</span>: Input volume.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{Y} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}\)</span>: Output volume.</p></li>
 </ul>
 </li>
-<li><p>Params:</p>
+<li><p class="sd-card-text">Params:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{W^d} \in \mathbb{R}^{f_h \times f_w \times C_{in}}\)</span>: Depthwise filters.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{b^d} \in \mathbb{R}^{C_{in}}\)</span>: Depthwise biases.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{W^p} \in \mathbb{R}^{1 \times 1 \times C_{in} \times C_{out}}\)</span>: Pointwise filters.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{b^p} \in \mathbb{R}^{C_{out}}\)</span>: Pointwise biases.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{W^d} \in \mathbb{R}^{f_h \times f_w \times C_{in}}\)</span>: Depthwise filters.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{b^d} \in \mathbb{R}^{C_{in}}\)</span>: Depthwise biases.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{W^p} \in \mathbb{R}^{1 \times 1 \times C_{in} \times C_{out}}\)</span>: Pointwise filters.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{b^p} \in \mathbb{R}^{C_{out}}\)</span>: Pointwise biases.</p></li>
 </ul>
 </li>
-<li><p>Hyperparams:</p>
+<li><p class="sd-card-text">Hyperparams:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{out}\)</span>: #Output channels.</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
-<li><p><span class="math notranslate nohighlight">\(p\)</span>: Padding size.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(C_{out}\)</span>: #Output channels.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(p\)</span>: Padding size.</p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>Forward</p>
+<li><p class="sd-card-text">Forward</p>
 <ol class="arabic">
-<li><p>Depthwise convolution: Calculate <span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{in}}\)</span>:</p>
+<li><p class="sd-card-text">Depthwise convolution: Calculate <span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{in}}\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[
         Z_{h,w,c_{in}} = \sum_{i=1}^{f_h} \sum_{j=1}^{f_w} W^d_{i,j,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}} + b^d_{c_{in}}
         \]</div>
 </li>
-<li><p>Pointwise convolution:</p>
+<li><p class="sd-card-text">Pointwise convolution:</p>
 <div class="math notranslate nohighlight">
 \[
         Y_{h,w,c_{out}} = \sum_{c_{in}=1}^{C_{in}} W^p_{1,1,c_{in},c_{out}} \cdot Z_{h,w,c_{in}} + b^p_{c_{out}}
         \]</div>
-<p>where
+<p class="sd-card-text">where
 $<span class="math notranslate nohighlight">\(\begin{align*}
  H_{out} &amp;= \left\lfloor \frac{H_{in} + 2p - f_h}{s} \right\rfloor + 1 \\
  W_{out} &amp;= \left\lfloor \frac{W_{in} + 2p - f_w}{s} \right\rfloor + 1
@@ -912,9 +1278,9 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 </li>
 </ol>
 </li>
-<li><p>Backward</p>
+<li><p class="sd-card-text">Backward</p>
 <ol class="arabic">
-<li><p>Pointwise convolution: Let <span class="math notranslate nohighlight">\(g^{p}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span> be <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial\mathbf{Y}}\)</span>.</p>
+<li><p class="sd-card-text">Pointwise convolution: Let <span class="math notranslate nohighlight">\(g^{p}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span> be <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial\mathbf{Y}}\)</span>.</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
         &amp;\frac{\partial \mathcal{L}}{\partial W^p_{1,1,c_{in},c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}} \cdot Z_{h,w,c_{in}}\\
@@ -922,7 +1288,7 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
         &amp;\frac{\partial \mathcal{L}}{\partial Z_{h,w,c_{in}}} = \sum_{c_{out}=1}^{C_{out}} g^{p}_{h,w,c_{out}} \cdot W^p_{1,1,c_{in},c_{out}}
         \end{align*}\end{split}\]</div>
 </li>
-<li><p>Depthwise convolution: Let <span class="math notranslate nohighlight">\(g^{d}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}\)</span> be <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial\mathbf{Z}}\)</span>.</p>
+<li><p class="sd-card-text">Depthwise convolution: Let <span class="math notranslate nohighlight">\(g^{d}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}\)</span> be <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial\mathbf{Z}}\)</span>.</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
         &amp;\frac{\partial \mathcal{L}}{\partial W^d_{i,j,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}}\\
@@ -933,7 +1299,10 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 </ol>
 </li>
 </ul>
-<p><strong>Code</strong></p>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Code</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DepthwiseSeparableConv2d</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_size</span><span class="p">,</span> <span class="n">n_filters</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">filter_size</span>  <span class="c1"># assume equal height &amp; width</span>
@@ -1022,10 +1391,10 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
         <span class="k">return</span> <span class="n">dX</span>
 </pre></div>
 </div>
-</section>
+</div>
+</details></section>
 <section id="atrous-dilated">
 <h2>Atrous/Dilated<a class="headerlink" href="#atrous-dilated" title="Link to this heading">#</a></h2>
-<p><strong>Intuition</strong></p>
 <ul class="simple">
 <li><p><strong>What</strong>: Add holes between filter elements (i.e., dilation).</p></li>
 <li><p><strong>Why</strong>: The filters can capture larger contextual info without increasing #params.</p></li>
@@ -1040,48 +1409,50 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 </li>
 <li><p><strong>Cons</strong>:</p>
 <ul>
-<li><p>Requires very careful hyperparameter tuning, or info loss.</p></li>
+<li><p>Requires very careful hyperparam tuning, or info loss.</p></li>
 </ul>
 </li>
 </ul>
-<p><strong>Math</strong></p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Math</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <ul>
-<li><p>Notations</p>
+<li><p class="sd-card-text">Notations</p>
 <ul class="simple">
-<li><p>IO:</p>
+<li><p class="sd-card-text">IO:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.</p></li>
 </ul>
 </li>
-<li><p>Params:</p>
+<li><p class="sd-card-text">Params:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}\)</span>: Filters.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\in\mathbb{R}^{C_{out}}\)</span>: Biases.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}\)</span>: Filters.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{b}\in\mathbb{R}^{C_{out}}\)</span>: Biases.</p></li>
 </ul>
 </li>
-<li><p>Hyperparams:</p>
+<li><p class="sd-card-text">Hyperparams:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{out}\)</span>: #Filters (i.e., #Output channels).</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
-<li><p><span class="math notranslate nohighlight">\(p\)</span>: Padding size.</p></li>
-<li><p><span class="math notranslate nohighlight">\(r\)</span>: Dilation rate.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(C_{out}\)</span>: #Filters (i.e., #Output channels).</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(p\)</span>: Padding size.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(r\)</span>: Dilation rate.</p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>Forward</p>
+<li><p class="sd-card-text">Forward</p>
 <ol class="arabic">
-<li><p>(optional) Pad input tensor: <span class="math notranslate nohighlight">\(\mathbf{X}^\text{pad}\in\mathbb{R}^{(H_{in}+2p)\times (W_{in}+2p)\times C_{in}}\)</span></p></li>
-<li><p>Perform element-wise multiplication (i.e., convolution):</p>
+<li><p class="sd-card-text">(optional) Pad input tensor: <span class="math notranslate nohighlight">\(\mathbf{X}^\text{pad}\in\mathbb{R}^{(H_{in}+2p)\times (W_{in}+2p)\times C_{in}}\)</span></p></li>
+<li><p class="sd-card-text">Perform element-wise multiplication (i.e., convolution):</p>
 <div class="math notranslate nohighlight">
 \[
         Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+r(i-1)-p,sw+r(j-1)-p,c_{in}}+b_{c_{out}}
         \]</div>
-<p>where</p>
+<p class="sd-card-text">where</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
         H_{out}&amp;=\left\lfloor\frac{H_{in}+2p-r(f_h-1)-1}{s}\right\rfloor+1\\
@@ -1090,7 +1461,7 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 </li>
 </ol>
 </li>
-<li><p>Backward</p>
+<li><p class="sd-card-text">Backward</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
     &amp;\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+r(i-1)-p, sw+r(j-1)-p, c_{in}}\\
@@ -1099,7 +1470,10 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
     \end{align*}\end{split}\]</div>
 </li>
 </ul>
-<p><strong>Code</strong></p>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Code</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AtrousConv2d</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_size</span><span class="p">,</span> <span class="n">n_filters</span><span class="p">,</span> <span class="n">dilation_rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">filter_size</span>  <span class="c1"># assume equal height &amp; width</span>
@@ -1109,7 +1483,7 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
         <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">padding</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">filter_size</span><span class="p">,</span> <span class="n">filter_size</span><span class="p">,</span> <span class="n">n_filters</span><span class="p">)</span> <span class="o">/</span> <span class="n">filter_size</span><span class="o">**</span><span class="mi">2</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_filters</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_filters</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">pad_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -1167,10 +1541,10 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
         <span class="k">return</span> <span class="n">dX</span>
 </pre></div>
 </div>
-</section>
+</div>
+</details></section>
 <section id="pooling">
 <h2>Pooling<a class="headerlink" href="#pooling" title="Link to this heading">#</a></h2>
-<p><strong>Intuition</strong></p>
 <ul class="simple">
 <li><p><strong>What</strong>: Convolution but</p>
 <ul>
@@ -1186,7 +1560,7 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 </ul>
 </li>
 <li><p><strong>When</strong>: When downsampling is necessary.</p></li>
-<li><p><strong>Where</strong>: Anywhere with Convolutional layer.</p></li>
+<li><p><strong>Where</strong>: After convolutional layer.</p></li>
 <li><p><strong>Pros</strong>:</p>
 <ul>
 <li><p>Significantly higher computational efficiency (time &amp; space).</p></li>
@@ -1199,7 +1573,7 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 <li><p><strong>Cons</strong>:</p>
 <ul>
 <li><p>Slight spatial info loss.</p></li>
-<li><p>Requires hyperparameter tuning.</p>
+<li><p>Requires hyperparam tuning.</p>
 <ul>
 <li><p>Large filter or stride results in coarse features.</p></li>
 </ul>
@@ -1213,52 +1587,57 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 </ul>
 </li>
 </ul>
-<p><strong>Math</strong></p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Math</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <ul>
-<li><p>Notations</p>
+<li><p class="sd-card-text">Notations</p>
 <ul class="simple">
-<li><p>IO:</p>
+<li><p class="sd-card-text">IO:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}\)</span>: Output volume.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}\)</span>: Output volume.</p></li>
 </ul>
 </li>
-<li><p>Hyperparams:</p>
+<li><p class="sd-card-text">Hyperparams:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>Forward</p>
+<li><p class="sd-card-text">Forward</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{array}{ll}
     \text{Max:} &amp; Y_{h,w,c}=\max_{i=1,\cdots,f_h\ |\ j=1,\cdots,f_w}X_{sh+i,sw+j,c}\\
     \text{Avg:} &amp; Y_{h,w,c}=\frac{1}{f_hf_w}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}X_{sh+i,sw+j,c}
     \end{array}\end{split}\]</div>
-<p>where</p>
+<p class="sd-card-text">where</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
     H_{out}&amp;=\left\lfloor\frac{H_{in}-f_h}{s}\right\rfloor+1\\
     W_{out}&amp;=\left\lfloor\frac{W_{in}-f_h}{s}\right\rfloor+1
     \end{align*}\end{split}\]</div>
 </li>
-<li><p>Backward</p>
+<li><p class="sd-card-text">Backward</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{array}{ll}
     \text{Max:} &amp; \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=g_{h,w,c}\text{ if }X_{sh+i,sw+j,c}=Y_{h,w,c}\\
     \text{Avg:} &amp; \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=\frac{g_{h,w,c}}{f_hf_w}
     \end{array}\end{split}\]</div>
 <ul class="simple">
-<li><p>Max: Gradients only propagate to the max element of each window.</p></li>
-<li><p>Avg: Gradients are equally distributed among all elements in each window.</p></li>
+<li><p class="sd-card-text">Max: Gradients only propagate to the max element of each window.</p></li>
+<li><p class="sd-card-text">Avg: Gradients are equally distributed among all elements in each window.</p></li>
 </ul>
 </li>
 </ul>
-<p><strong>Code</strong></p>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><strong>Code</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="k">class</span> <span class="nc">Pooling2D</span><span class="p">:</span>
@@ -1307,6 +1686,8 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
         <span class="k">return</span> <span class="n">dX</span>
 </pre></div>
 </div>
+</div>
+</details><br/>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="recurrent">
@@ -1439,7 +1820,7 @@ h_t=\tanh(x_tW_{xh}^T+h_{t-1}W_{hh}^T)
 <li><p>Decoder: <span class="math notranslate nohighlight">\( \text{\\#params}=2\cdot h\cdot d\_{\text{model}}\cdot (2d\_k+d\_v)+2\cdot d\_{\text{model}}\cdot d\_{\text{ff}} \)</span></p></li>
 </ul>
 </li>
-<li><p><strong>Hyperparameters</strong>:</p>
+<li><p><strong>Hyperparams</strong>:</p>
 <ul>
 <li><p>#layers</p></li>
 <li><p>hidden size</p></li>
@@ -1712,7 +2093,7 @@ h_t=\tanh(x_tW_{xh}^T+h_{t-1}W_{hh}^T)
 <p>Name: Parametric Rectified Linear Unit</p>
 <p>Params:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( \alpha\in(0,1) \)</span>: learnable parameter (negative slope), default 0.25.</p></li>
+<li><p><span class="math notranslate nohighlight">\( \alpha\in(0,1) \)</span>: learnable param (negative slope), default 0.25.</p></li>
 </ul>
 <p>Idea:</p>
 <ul class="simple">
@@ -1720,7 +2101,7 @@ h_t=\tanh(x_tW_{xh}^T+h_{t-1}W_{hh}^T)
 </ul>
 <p>Pros:</p>
 <ul class="simple">
-<li><p>a variable, adaptive parameter learned from data.</p></li>
+<li><p>a variable, adaptive param learned from data.</p></li>
 </ul>
 <p>Cons:</p>
 <ul class="simple">
@@ -1993,15 +2374,6 @@ z &amp; \mathrm{if}\ z\geq0\\
         <p class="prev-next-title">Hi👋</p>
       </div>
     </a>
-    <a class="right-next"
-       href="../irl/overview.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Overview</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
@@ -2021,25 +2393,17 @@ z &amp; \mathrm{if}\ z\geq0\\
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Layer</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basic">Basic</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear">Linear</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regularization">Regularization</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dropout">Dropout</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha">Alpha</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian">Gaussian</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l1-l2">L1/L2</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dropout">Dropout</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-connection">Residual Connection</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalization">Normalization</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#batch">Batch</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Layer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-normalization">Batch Normalization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-normalization">Layer Normalization</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolutional">Convolutional</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#depthwise-separable">Depthwise Separable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#depthwise-separable-convolution">Depthwise Separable Convolution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atrous-dilated">Atrous/Dilated</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pooling">Pooling</a></li>
 </ul>

@@ -16,6 +16,26 @@ kernelspec:
 
 This guide focuses on ETL basics.
 
+## Chapter 8: Feature Engineering and Data Preprocessing
+- 8.1 Introduction to Feature Engineering
+- 8.2 Data Cleaning
+  - 8.2.1 Handling Missing Data
+  - 8.2.2 Outlier Detection and Treatment
+- 8.3 Feature Scaling
+  - 8.3.1 Normalization
+  - 8.3.2 Standardization
+- 8.4 Feature Selection Techniques
+  - 8.4.1 Filter Methods
+  - 8.4.2 Wrapper Methods
+  - 8.4.3 Embedded Methods
+- 8.5 Feature Transformation
+  - 8.5.1 Polynomial Features
+  - 8.5.2 Interaction Features
+  - 8.5.3 Binning and Discretization
+  - 8.5.4 Encoding Categorical Variables
+- 8.6 Handling High-Dimensional Data
+- 8.7 Data Augmentation Techniques
+
 ## Data Collection
 Sources:
 - **Internal**: Transaction logs, customer databases, sensor data, operational data.
@@ -164,7 +184,7 @@ Cons:
     $$
 
     - Requires $\mathbf{x}_i>0$.
-    
+
 Pros:
 - Maps data to Gaussian distribution (stabilizes variance & minimizes skewness)
 - Useful against heteroskedasticity.

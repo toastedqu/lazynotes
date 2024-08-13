@@ -3,12 +3,12 @@
 Welcome to my minimalist handbook on developing ASI/AC.
 
 Each concept is structured as follows:
-- **What**: intuition, mechanism, components.
-- **Why**: problem/motivation, necessity.
-- **How**: usage instructions.
-- **When**: applicable conditions/assumptions.
-- **Where**: application areas.
-- **Pros & Cons**: advantages & disadvantages.
+- **What**: Intuition.
+- **Why**: Problem/Motivation.
+- **How**: Functionality.
+- **When**: Assumptions/Conditions.
+- **Where**: Applications.
+- **Pros & Cons**: Advantages & Disadvantages.
 
 Common notations include (section-specific notations take priority):
 - $ a $: scalar / variable

@@ -12,14 +12,9 @@ parts:
   - caption: Deep Learning
     chapters:
     - file: dl/layer
-    - file: dl/activation
-    - file: dl/qa
   # - caption: Neuroscience
   #   chapters:
   #   - file: neuro/compneuro
   - caption: IRL
     chapters:
-    - file: irl/overview
-    - file: irl/data
-    - file: irl/coding
-  # - caption: Misc
+    - file: irl/dsa
