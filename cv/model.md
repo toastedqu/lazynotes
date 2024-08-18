@@ -24,6 +24,7 @@ kernelspec:
 ## Attention Mechanisms in CNNs
 ## Capsule Networks
 ## Multi-Task Learning in CNNs
+## Stable Diffusion
 
 # Object Detection
 ## Region-Based CNNs (R-CNN, Fast R-CNN, Faster R-CNN)
