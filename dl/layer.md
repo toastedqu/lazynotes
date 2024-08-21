@@ -27,7 +27,8 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 - **Cons**: Cannot capture non-linear/complex patterns.
 - **FYI**: [paper](https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf)
 
-```{dropdown} **Math**
+```{admonition} Math
+:class: note, dropdown
 - Notations
     - IO:
         - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
@@ -52,7 +53,8 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-```{dropdown} **Code**
+```{admonition} Code
+:class: tip, dropdown
 ```python
 class Linear:
     def __init__(self, input_dim, output_dim, learning_rate=0.01):
@@ -96,7 +98,8 @@ class Linear:
 - **Cons**: Requires hyperparam tuning; Can slow down convergence.
 - **FYI**: [paper](https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)
 
-```{dropdown} **Math**
+```{admonition} Math
+:class: note, dropdown
 - Notations
     - IO:
         - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
@@ -115,7 +118,8 @@ $$
 $$
 ```
 
-```{dropdown} **Code**
+```{admonition} Code
+:class: tip, dropdown
 ```python
 class Dropout:
     def __init__(self, dropout_rate=0.5):
@@ -150,7 +154,8 @@ class Dropout:
 - **Cons**: Slightly higher computational cost.
 - **FYI**: [paper](https://arxiv.org/pdf/1512.03385)
 
-```{dropdown} **Math**
+```{admonition} Math
+:class: note, dropdown
 - Notation
     - IO:
         - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
@@ -169,7 +174,8 @@ $$
 $$
 ```
 
-```{dropdown} **Code**
+```{admonition} Code
+:class: tip, dropdown
 ```python
 class ResidualBlock:
     def __init__(self, F, input_dim, output_dim, learning_rate=0.01):
@@ -226,7 +232,8 @@ class ResidualBlock:
     - Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
 - **FYI**: [paper](https://arxiv.org/pdf/1502.03167)
 
-```{dropdown} **Math**
+```{admonition} Math
+:class: note, dropdown
 - Notation
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
@@ -259,7 +266,7 @@ class ResidualBlock:
     1. Gradient w.r.t. params:
 
         $$\begin{align*}
-        &\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{x}_i\\
+        &\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{z}_i\\
         &\frac{\partial\mathcal{L}}{\partial\beta}=\sum_{i=1}^{m}\textbf{g}_i
         \end{align*}$$
     2. Gradient w.r.t. input:
@@ -272,7 +279,8 @@ class ResidualBlock:
         \end{align*}$$
 ```
 
-```{dropdown} **Code**
+```{admonition} Code
+:class: tip, dropdown
 ```python
 class BatchNorm:
     def __init__(self, epsilon=1e-5, momentum=0.9, learning_rate=0.01):
@@ -371,7 +379,8 @@ class BatchNorm:
     - Inapplicable in CNNs due to varied statistics of spatial features.
 - **FYI**: [paper](https://arxiv.org/pdf/1607.06450)
 
-```{dropdown} **Math**
+```{admonition} Math
+:class: note, dropdown
 It's easy to explain with the vector form for batch normalization, but it's more intuitive to explain with the scalar form for layer normalization.
 
 - Notation
@@ -419,7 +428,8 @@ It's easy to explain with the vector form for batch normalization, but it's more
         \end{align*}$$
 ```
 
-```{dropdown} **Code**
+```{admonition} Code
+:class: tip, dropdown
 ```python
 class LayerNorm:
     def __init__(self, n_features, epsilon=1e-5, learning_rate=1e-3):
@@ -491,7 +501,8 @@ class LayerNorm:
     - Requires big data to be performant.
     - Requires extensive hyperparam tuning.
 
-```{dropdown} **Math**
+```{admonition} Math
+:class: note, dropdown
 - Notations
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
@@ -530,7 +541,8 @@ class LayerNorm:
     Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
 ```
 
-```{dropdown} **Code**
+```{admonition} Code
+:class: tip, dropdown
 ```python
 class Conv2d:
     def __init__(self, filter_size, n_filters, stride=1, padding=0, learning_rate=0.01):
@@ -607,7 +619,8 @@ class Conv2d:
 - **Pros**: Significantly higher computational efficiency (time & space).
 - **Cons**: Lower accuracy.
 
-```{dropdown} **Math**
+```{admonition} Math
+:class: note, dropdown
 - Notations
     - IO:
         - $\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}$: Input volume.
@@ -659,7 +672,8 @@ class Conv2d:
         \end{align*}$$
 ```
 
-```{dropdown} **Code**
+```{admonition} Code
+:class: tip, dropdown
 ```python
 class DepthwiseSeparableConv2d:
     def __init__(self, filter_size, n_filters, stride=1, padding=0, learning_rate=0.01):
@@ -760,7 +774,8 @@ class DepthwiseSeparableConv2d:
 - **Cons**:
     - Requires very careful hyperparam tuning, or info loss.
 
-```{dropdown} **Math**
+```{admonition} Math
+:class: note, dropdown
 - Notations
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
@@ -800,7 +815,8 @@ class DepthwiseSeparableConv2d:
     \end{align*}$$
 ```
 
-```{dropdown} **Code**
+```{admonition} Code
+:class: tip, dropdown
 ```python
 class AtrousConv2d:
     def __init__(self, filter_size, n_filters, dilation_rate=1, stride=1, padding=0, learning_rate=0.01):
@@ -893,7 +909,8 @@ class AtrousConv2d:
     - **Max**: Captures most dominant features; higher robustness.
     - **Avg**: Preserves more info; provides smoother features; dilutes the importance of dominant features.
 
-```{dropdown} **Math**
+```{admonition} Math
+:class: note, dropdown
 - Notations
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
@@ -928,7 +945,8 @@ class AtrousConv2d:
     - Avg: Gradients are equally distributed among all elements in each window.
 ```
 
-```{dropdown} **Code**
+```{admonition} Code
+:class: tip, dropdown
 ```python
 class Pooling2D:
     def __init__(self, filter_size, stride=1, padding=0, mode: Literal['max', 'avg']='max'):

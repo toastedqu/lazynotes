@@ -22,7 +22,7 @@ Clustering groups similar samples together based on certain characteristics in o
 		2. Update the centroids based on the mean of all samples assigned to them.
     3. Break if required or until the centroids stabilize.
 - **When**:
-	- It can be reasonably estimated that there are exactly $k$ clusters in the data.
+	- There are exactly $k$ clusters in the data.
 	- The data is scale-independent.
 	- The clusters are spherical, equally sized, and well-separated with hard margins.
 - **Pros**:
