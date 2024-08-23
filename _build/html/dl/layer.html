@@ -18,12 +18,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
@@ -37,9 +37,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=dc1d5867" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -141,8 +141,6 @@
         <div class="sidebar-primary-item">
 
   
-    
-  
 
 <a class="navbar-brand logo" href="../intro.html">
   
@@ -164,7 +162,7 @@
 
  <script>
  document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
     <span class="search-button__default-text">Search</span>
     <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
@@ -342,10 +340,10 @@
 
 <script>
 document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -353,7 +351,7 @@ document.write(`
 
 <script>
 document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
@@ -468,14 +466,24 @@ document.write(`
 <section id="linear">
 <h2>Linear<a class="headerlink" href="#linear" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Linear transformation.</p></li>
-<li><p><strong>Why</strong>: Universal Approximation Theorem.</p></li>
-<li><p><strong>How</strong>: Multiply the input with a weight matrix and add a bias vector.</p></li>
+<li><p><strong>What</strong>: Linear transformation. (<a class="reference external" href="https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf">paper</a>)</p></li>
+<li><p><strong>Why</strong>: The simplest building block a human can think of that works.</p></li>
+<li><p><strong>How</strong>: Multiply the input features with weights and add a bias on top.</p></li>
 <li><p><strong>When</strong>: Input &amp; output can be linearly approximated.</p></li>
 <li><p><strong>Where</strong>: Anywhere. Typically used for feature dimension conversion.</p></li>
-<li><p><strong>Pros</strong>: Simple, efficient, foundational.</p></li>
-<li><p><strong>Cons</strong>: Cannot capture non-linear/complex patterns.</p></li>
-<li><p><strong>FYI</strong>: <a class="reference external" href="https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf">paper</a></p></li>
+<li><p><strong>Pros</strong>:</p>
+<ul>
+<li><p>Simple.</p></li>
+<li><p>High interpretability.</p></li>
+<li><p>High computational efficiency.</p></li>
+<li><p>Widely used.</p></li>
+</ul>
+</li>
+<li><p><strong>Cons</strong>:</p>
+<ul>
+<li><p>Cannot capture non-linear/complex patterns.</p></li>
+</ul>
+</li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -555,7 +563,7 @@ document.write(`
 <section id="dropout">
 <h2>Dropout<a class="headerlink" href="#dropout" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Randomly drop out some neurons during training.</p></li>
+<li><p><strong>What</strong>: Randomly ignore some neurons during training.</p></li>
 <li><p><strong>Why</strong>: To reduce overfitting.</p></li>
 <li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
@@ -752,43 +760,42 @@ document.write(`
 </li>
 <li><p><strong>FYI</strong>: <a class="reference external" href="https://arxiv.org/pdf/1502.03167">paper</a></p></li>
 </ul>
-<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
-<summary class="sd-summary-title sd-card-header">
-<span class="sd-summary-text"><strong>Derivation</strong></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
 <ul>
-<li><p class="sd-card-text">Notation</p>
+<li><p>Notation</p>
 <ul class="simple">
-<li><p class="sd-card-text">IO:</p>
+<li><p>IO:</p>
 <ul>
-<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{m\times n}\)</span>: Input matrix.</p></li>
-<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{m\times n}\)</span>: Output matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{m\times n}\)</span>: Input matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{m\times n}\)</span>: Output matrix.</p></li>
 </ul>
 </li>
-<li><p class="sd-card-text">Params:</p>
+<li><p>Params:</p>
 <ul>
-<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\gamma\in\mathbb{R}\)</span>: Scale param.</p></li>
-<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\beta\in\mathbb{R}\)</span>: Shift param.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\in\mathbb{R}\)</span>: Scale param.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\in\mathbb{R}\)</span>: Shift param.</p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p class="sd-card-text">Forward</p>
+<li><p>Forward</p>
 <ol class="arabic">
-<li><p class="sd-card-text">Calculate the mean and variance for each batch.</p>
+<li><p>Calculate the mean and variance for each batch.</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
         \boldsymbol{\mu}_B&amp;=\frac{1}{m}\sum_{i=1}^{m}\textbf{x}_i\\
         \boldsymbol{\sigma}_B^2&amp;=\frac{1}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)^2
         \end{align*}\end{split}\]</div>
 </li>
-<li><p class="sd-card-text">Normalize each batch.</p>
+<li><p>Normalize each batch.</p>
 <div class="math notranslate nohighlight">
 \[
         \textbf{z}_i=\frac{\textbf{x}_i-\boldsymbol{\mu}_B}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}
         \]</div>
-<p class="sd-card-text">where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a small constant to avoid dividing by 0.</p>
+<p>where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a small constant to avoid dividing by 0.</p>
 </li>
-<li><p class="sd-card-text">Scale and shift the normalized output.</p>
+<li><p>Scale and shift the normalized output.</p>
 <div class="math notranslate nohighlight">
 \[
         \textbf{y}_i=\gamma\textbf{z}_i+\beta
@@ -796,16 +803,16 @@ document.write(`
 </li>
 </ol>
 </li>
-<li><p class="sd-card-text">Backward</p>
+<li><p>Backward</p>
 <ol class="arabic">
-<li><p class="sd-card-text">Gradient w.r.t. params:</p>
+<li><p>Gradient w.r.t. params:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
         &amp;\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{z}_i\\
         &amp;\frac{\partial\mathcal{L}}{\partial\beta}=\sum_{i=1}^{m}\textbf{g}_i
         \end{align*}\end{split}\]</div>
 </li>
-<li><p class="sd-card-text">Gradient w.r.t. input:</p>
+<li><p>Gradient w.r.t. input:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
         &amp;\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}=\gamma\textbf{g}_i\\
@@ -818,7 +825,7 @@ document.write(`
 </li>
 </ul>
 </div>
-</details><div class="tip dropdown admonition">
+<div class="tip dropdown admonition">
 <p class="admonition-title">Code</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BatchNorm</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
@@ -2499,8 +2506,8 @@ By Renyi Qu
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -18,14 +18,18 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 
 # Basic
 ## Linear
-- **What**: Linear transformation.
-- **Why**: Universal Approximation Theorem.
-- **How**: Multiply the input with a weight matrix and add a bias vector.
+- **What**: Linear transformation. ([paper](https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf))
+- **Why**: The simplest building block a human can think of that works.
+- **How**: Multiply the input features with weights and add a bias on top.
 - **When**: Input & output can be linearly approximated.
 - **Where**: Anywhere. Typically used for feature dimension conversion.
-- **Pros**: Simple, efficient, foundational.
-- **Cons**: Cannot capture non-linear/complex patterns.
-- **FYI**: [paper](https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf)
+- **Pros**:
+    - Simple.
+    - High interpretability.
+    - High computational efficiency.
+    - Widely used.
+- **Cons**: 
+    - Cannot capture non-linear/complex patterns.
 
 ```{admonition} Math
 :class: note, dropdown
@@ -87,7 +91,7 @@ class Linear:
 ```
 
 ## Dropout
-- **What**: Randomly drop out some neurons during training.
+- **What**: Randomly ignore some neurons during training.
 - **Why**: To reduce overfitting.
 - **How**:
     1. Randomly set a fraction ($p$) of neurons to 0.
@@ -232,7 +236,8 @@ class ResidualBlock:
     - Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
 - **FYI**: [paper](https://arxiv.org/pdf/1502.03167)
 
-```{dropdown} **Derivation**
+```{admonition} Math
+:class: note, dropdown
 - Notation
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
