@@ -28,8 +28,7 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
     - High interpretability.
     - High computational efficiency.
     - Widely used.
-- **Cons**: 
-    - Cannot capture non-linear/complex patterns.
+- **Cons**:  Cannot capture non-linear/complex patterns.
 
 ```{admonition} Math
 :class: note, dropdown
@@ -91,7 +90,7 @@ class Linear:
 ```
 
 ## Dropout
-- **What**: Randomly ignore some neurons during training.
+- **What**: Randomly ignore some neurons during training. ([paper](https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf))
 - **Why**: To reduce overfitting.
 - **How**:
     1. Randomly set a fraction ($p$) of neurons to 0.
@@ -100,7 +99,6 @@ class Linear:
 - **Where**: Typically after linear layers & convolutional layers.
 - **Pros**: Simple, efficient regularization.
 - **Cons**: Requires hyperparam tuning; Can slow down convergence.
-- **FYI**: [paper](https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)
 
 ```{admonition} Math
 :class: note, dropdown
@@ -145,7 +143,7 @@ class Dropout:
 ```
 
 ## Residual Connection
-- **What**: Model the residual ($Y-X$) instead of the output ($Y$).
+- **What**: Model the residual ($Y-X$) instead of the output ($Y$). ([paper](https://arxiv.org/pdf/1512.03385))
 - **Why**: To mitigate vanishing/exploding gradients.
     - **Vanishing gradients**: The gradients become smaller and smaller during backprop that they have almost no effect to front layers, slowing and even stopping the learning process for front layers.
     - **Exploding gradients**: The gradients become larger and larger during backprop that they change the front layer weights too much, causing instability and difficulty in convergence.
@@ -155,8 +153,7 @@ class Dropout:
 - **When**: There is clear evidence of convergence failures or extreme gradient values.
 - **Where**: Inside deep NNs.
 - **Pros**: Higher performance on complex tasks.
-- **Cons**: Slightly higher computational cost.
-- **FYI**: [paper](https://arxiv.org/pdf/1512.03385)
+- **Cons**: Slightly low computational efficiency.
 
 ```{admonition} Math
 :class: note, dropdown
@@ -218,7 +215,7 @@ class ResidualBlock:
 
 ## Normalization
 ### Batch Normalization
-- **What**: Normalize each feature across the input samples to zero mean and unit variance.
+- **What**: Normalize each feature across the input samples to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1502.03167))
 - **Why**: To mitigate internal covariate shift.
     - During training, the distribution of input to each layer can change due to updates in the params of all preceding layers. Each layer has to continuously adapt to the new distribution. This shift makes convergence difficult and slows down training.
 - **How**:
@@ -234,7 +231,6 @@ class ResidualBlock:
 - **Cons**:
     - Adds computation overhead and complexity.
     - Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
-- **FYI**: [paper](https://arxiv.org/pdf/1502.03167)
 
 ```{admonition} Math
 :class: note, dropdown
@@ -363,7 +359,7 @@ class BatchNorm:
 ```
 
 ### Layer Normalization
-- **What**: Normalize each sample across the input features to zero mean and unit variance.
+- **What**: Normalize each sample across the input features to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1607.06450))
 - **Why**: Batch normalization depends on the batch size.
     - When it's too big, high computational cost.
     - When it's too small, the batch may not be representative of the underlying data distribution.
@@ -381,7 +377,6 @@ class BatchNorm:
 - **Cons**:
     - Adds computation overhead and complexity.
     - Inapplicable in CNNs due to varied statistics of spatial features.
-- **FYI**: [paper](https://arxiv.org/pdf/1607.06450)
 
 ```{admonition} Math
 :class: note, dropdown
@@ -491,7 +486,7 @@ class LayerNorm:
 <br/>
 
 # Convolutional
-- **What**: Apply a set of filters to input data to extract local features.
+- **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
 - **Why**: To learn spatial hierarchies of features.
 - **How**: Slide multiple filters/kernel (i.e., small matrices) over the input data.
     - At each step, perform element-wise multiplication and summation between each filter and the scanned area, producing a feature map.
@@ -613,7 +608,7 @@ class Conv2d:
 ```
 
 ## Depthwise Separable Convolution
-- **What**: Depthwise convolution + Pointwise convolution.
+- **What**: Depthwise convolution + Pointwise convolution. ([paper](https://arxiv.org/pdf/1610.02357))
 - **Why**: To significantly reduce computational cost and #params.
 - **How**:
     - **Depthwise**: Use a single filter independently per channel.
@@ -767,7 +762,7 @@ class DepthwiseSeparableConv2d:
         return dX
 ```
 ## Atrous/Dilated Convolution
-- **What**: Add holes between filter elements (i.e., dilation).
+- **What**: Add holes between filter elements (i.e., dilation). ([paper](https://arxiv.org/pdf/1511.07122))
 - **Why**: The filters can capture larger contextual info without increasing #params.
 - **How**: Introduce a dilation rate $r$ to determine the space between the filter elements. Then compute convolution accordingly.
 - **When**: When understanding the broader context is important.
@@ -890,7 +885,7 @@ class AtrousConv2d:
 ```
 
 ## Pooling
-- **What**: Convolution but
+- **What**: Convolution but ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
     - computes a heuristic per scanned patch.
     - uses the same #channels.
 - **Why**: Dimensionality reduction while preserving dominant features.

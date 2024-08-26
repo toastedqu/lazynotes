@@ -18,12 +18,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
@@ -37,9 +37,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=dc1d5867" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
-  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -141,6 +141,8 @@
         <div class="sidebar-primary-item">
 
   
+    
+  
 
 <a class="navbar-brand logo" href="../intro.html">
   
@@ -162,7 +164,7 @@
 
  <script>
  document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
     <span class="search-button__default-text">Search</span>
     <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
@@ -340,10 +342,10 @@
 
 <script>
 document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
   </button>
 `);
 </script>
@@ -351,7 +353,7 @@ document.write(`
 
 <script>
 document.write(`
-  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
@@ -467,9 +469,9 @@ document.write(`
 <h2>Linear<a class="headerlink" href="#linear" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Linear transformation. (<a class="reference external" href="https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf">paper</a>)</p></li>
-<li><p><strong>Why</strong>: The simplest building block a human can think of that works.</p></li>
+<li><p><strong>Why</strong>: Linear algebra. This is the simplest way to transform data, learn patterns, and make predictions.</p></li>
 <li><p><strong>How</strong>: Multiply the input features with weights and add a bias on top.</p></li>
-<li><p><strong>When</strong>: Input &amp; output can be linearly approximated.</p></li>
+<li><p><strong>When</strong>: There is a linear relationship between input &amp; output.</p></li>
 <li><p><strong>Where</strong>: Anywhere. Typically used for feature dimension conversion.</p></li>
 <li><p><strong>Pros</strong>:</p>
 <ul>
@@ -479,11 +481,7 @@ document.write(`
 <li><p>Widely used.</p></li>
 </ul>
 </li>
-<li><p><strong>Cons</strong>:</p>
-<ul>
-<li><p>Cannot capture non-linear/complex patterns.</p></li>
-</ul>
-</li>
+<li><p><strong>Cons</strong>:  Cannot capture non-linear/complex patterns.</p></li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -563,7 +561,7 @@ document.write(`
 <section id="dropout">
 <h2>Dropout<a class="headerlink" href="#dropout" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Randomly ignore some neurons during training.</p></li>
+<li><p><strong>What</strong>: Randomly ignore some neurons during training. (<a class="reference external" href="https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf">paper</a>)</p></li>
 <li><p><strong>Why</strong>: To reduce overfitting.</p></li>
 <li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
@@ -575,7 +573,6 @@ document.write(`
 <li><p><strong>Where</strong>: Typically after linear layers &amp; convolutional layers.</p></li>
 <li><p><strong>Pros</strong>: Simple, efficient regularization.</p></li>
 <li><p><strong>Cons</strong>: Requires hyperparam tuning; Can slow down convergence.</p></li>
-<li><p><strong>FYI</strong>: <a class="reference external" href="https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf">paper</a></p></li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -635,7 +632,7 @@ document.write(`
 <section id="residual-connection">
 <h2>Residual Connection<a class="headerlink" href="#residual-connection" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Model the residual (<span class="math notranslate nohighlight">\(Y-X\)</span>) instead of the output (<span class="math notranslate nohighlight">\(Y\)</span>).</p></li>
+<li><p><strong>What</strong>: Model the residual (<span class="math notranslate nohighlight">\(Y-X\)</span>) instead of the output (<span class="math notranslate nohighlight">\(Y\)</span>). (<a class="reference external" href="https://arxiv.org/pdf/1512.03385">paper</a>)</p></li>
 <li><p><strong>Why</strong>: To mitigate vanishing/exploding gradients.</p>
 <ul>
 <li><p><strong>Vanishing gradients</strong>: The gradients become smaller and smaller during backprop that they have almost no effect to front layers, slowing and even stopping the learning process for front layers.</p></li>
@@ -651,8 +648,7 @@ document.write(`
 <li><p><strong>When</strong>: There is clear evidence of convergence failures or extreme gradient values.</p></li>
 <li><p><strong>Where</strong>: Inside deep NNs.</p></li>
 <li><p><strong>Pros</strong>: Higher performance on complex tasks.</p></li>
-<li><p><strong>Cons</strong>: Slightly higher computational cost.</p></li>
-<li><p><strong>FYI</strong>: <a class="reference external" href="https://arxiv.org/pdf/1512.03385">paper</a></p></li>
+<li><p><strong>Cons</strong>: Slightly low computational efficiency.</p></li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -730,7 +726,7 @@ document.write(`
 <section id="batch-normalization">
 <h3>Batch Normalization<a class="headerlink" href="#batch-normalization" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>What</strong>: Normalize each feature across the input samples to zero mean and unit variance.</p></li>
+<li><p><strong>What</strong>: Normalize each feature across the input samples to zero mean and unit variance. (<a class="reference external" href="https://arxiv.org/pdf/1502.03167">paper</a>)</p></li>
 <li><p><strong>Why</strong>: To mitigate internal covariate shift.</p>
 <ul>
 <li><p>During training, the distribution of input to each layer can change due to updates in the params of all preceding layers. Each layer has to continuously adapt to the new distribution. This shift makes convergence difficult and slows down training.</p></li>
@@ -758,7 +754,6 @@ document.write(`
 <li><p>Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.</p></li>
 </ul>
 </li>
-<li><p><strong>FYI</strong>: <a class="reference external" href="https://arxiv.org/pdf/1502.03167">paper</a></p></li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -908,7 +903,7 @@ document.write(`
 <section id="layer-normalization">
 <h3>Layer Normalization<a class="headerlink" href="#layer-normalization" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>What</strong>: Normalize each sample across the input features to zero mean and unit variance.</p></li>
+<li><p><strong>What</strong>: Normalize each sample across the input features to zero mean and unit variance. (<a class="reference external" href="https://arxiv.org/pdf/1607.06450">paper</a>)</p></li>
 <li><p><strong>Why</strong>: Batch normalization depends on the batch size.</p>
 <ul>
 <li><p>When it’s too big, high computational cost.</p></li>
@@ -938,7 +933,6 @@ document.write(`
 <li><p>Inapplicable in CNNs due to varied statistics of spatial features.</p></li>
 </ul>
 </li>
-<li><p><strong>FYI</strong>: <a class="reference external" href="https://arxiv.org/pdf/1607.06450">paper</a></p></li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -1069,7 +1063,7 @@ document.write(`
 <section class="tex2jax_ignore mathjax_ignore" id="convolutional">
 <h1>Convolutional<a class="headerlink" href="#convolutional" title="Link to this heading">#</a></h1>
 <ul class="simple">
-<li><p><strong>What</strong>: Apply a set of filters to input data to extract local features.</p></li>
+<li><p><strong>What</strong>: Apply a set of filters to input data to extract local features. (<a class="reference external" href="https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf">paper</a>)</p></li>
 <li><p><strong>Why</strong>: To learn spatial hierarchies of features.</p></li>
 <li><p><strong>How</strong>: Slide multiple filters/kernel (i.e., small matrices) over the input data.</p>
 <ul>
@@ -1214,7 +1208,7 @@ document.write(`
 <section id="depthwise-separable-convolution">
 <h2>Depthwise Separable Convolution<a class="headerlink" href="#depthwise-separable-convolution" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Depthwise convolution + Pointwise convolution.</p></li>
+<li><p><strong>What</strong>: Depthwise convolution + Pointwise convolution. (<a class="reference external" href="https://arxiv.org/pdf/1610.02357">paper</a>)</p></li>
 <li><p><strong>Why</strong>: To significantly reduce computational cost and #params.</p></li>
 <li><p><strong>How</strong>:</p>
 <ul>
@@ -1396,7 +1390,7 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 <section id="atrous-dilated-convolution">
 <h2>Atrous/Dilated Convolution<a class="headerlink" href="#atrous-dilated-convolution" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Add holes between filter elements (i.e., dilation).</p></li>
+<li><p><strong>What</strong>: Add holes between filter elements (i.e., dilation). (<a class="reference external" href="https://arxiv.org/pdf/1511.07122">paper</a>)</p></li>
 <li><p><strong>Why</strong>: The filters can capture larger contextual info without increasing #params.</p></li>
 <li><p><strong>How</strong>: Introduce a dilation rate <span class="math notranslate nohighlight">\(r\)</span> to determine the space between the filter elements. Then compute convolution accordingly.</p></li>
 <li><p><strong>When</strong>: When understanding the broader context is important.</p></li>
@@ -1544,7 +1538,7 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 <section id="pooling">
 <h2>Pooling<a class="headerlink" href="#pooling" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Convolution but</p>
+<li><p><strong>What</strong>: Convolution but (<a class="reference external" href="https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf">paper</a>)</p>
 <ul>
 <li><p>computes a heuristic per scanned patch.</p></li>
 <li><p>uses the same #channels.</p></li>
@@ -2506,8 +2500,8 @@ By Renyi Qu
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>
