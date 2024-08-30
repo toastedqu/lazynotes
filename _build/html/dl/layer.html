@@ -34,6 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=dc1d5867" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -47,6 +48,7 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
@@ -468,8 +470,8 @@ document.write(`
 <section id="linear">
 <h2>Linear<a class="headerlink" href="#linear" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Linear transformation. (<a class="reference external" href="https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf">paper</a>)</p></li>
-<li><p><strong>Why</strong>: Linear algebra. This is the simplest way to transform data, learn patterns, and make predictions.</p></li>
+<li><p><strong>What</strong>: Linear transformation.</p></li>
+<li><p><strong>Why</strong>: Linear algebra. The simplest way to transform data, learn patterns, and make predictions.</p></li>
 <li><p><strong>How</strong>: Multiply the input features with weights and add a bias on top.</p></li>
 <li><p><strong>When</strong>: There is a linear relationship between input &amp; output.</p></li>
 <li><p><strong>Where</strong>: Anywhere. Typically used for feature dimension conversion.</p></li>
@@ -477,7 +479,7 @@ document.write(`
 <ul>
 <li><p>Simple.</p></li>
 <li><p>High interpretability.</p></li>
-<li><p>High computational efficiency.</p></li>
+<li><p>Low computational cost.</p></li>
 <li><p>Widely used.</p></li>
 </ul>
 </li>
@@ -485,9 +487,10 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">One sample</label><div class="tab-content docutils">
+<p><strong>Notations</strong>:</p>
 <ul class="simple">
-<li><p>Notations</p>
-<ul>
 <li><p>IO:</p>
 <ul>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
@@ -507,53 +510,85 @@ document.write(`
 </ul>
 </li>
 </ul>
-</li>
-<li><p>Forward</p></li>
-</ul>
+<p><strong>Forward</strong>:</p>
 <div class="math notranslate nohighlight">
 \[
-\textbf{y}=W\textbf{x}+\textbf{b}
+\textbf{y}=\textbf{x}W^T+\textbf{b}
 \]</div>
-<ul class="simple">
-<li><p>Backward</p></li>
-</ul>
+<p><strong>Backward</strong>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-&amp;\frac{\partial\mathcal{L}}{\partial W}=g\textbf{x}^T \\
-&amp;\frac{\partial\mathcal{L}}{\partial\textbf{b}}=g\\
-&amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}}=W^Tg
+&amp;\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}\times\textbf{x} \\
+&amp;\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\textbf{g}\\
+&amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
 \end{align*}\end{split}\]</div>
+</div>
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">Multi samples</label><div class="tab-content docutils">
+<p><strong>Notations</strong>:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{*\times H_{in}}\)</span>: Input tensor.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{*\times H_{out}}\)</span>: Output tensor.</p></li>
+</ul>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(W\in\mathbb{R}^{H_{out}\times H_{in}}\)</span>: Weight matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\textbf{b}\in\mathbb{R}^{H_{out}}\)</span>: Bias vector.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(H_{in}\)</span>: Input feature dimension.</p></li>
+<li><p><span class="math notranslate nohighlight">\(H_{out}\)</span>: Output feature dimension.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Forward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\textbf{Y}=\textbf{X}W^T+\textbf{b}
+\]</div>
+<p><strong>Backward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}^T\textbf{X} \\
+&amp;\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\sum_*\textbf{g}_*\\
+&amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
+\end{align*}\end{split}\]</div>
+</div>
+</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Code</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Linear</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">):</span>
         <span class="c1"># hyperparams</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">input_dim</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Y_dim</span> <span class="o">=</span> <span class="n">output_dim</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">in_features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">out_features</span>
 
         <span class="c1"># params</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.01</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">out_features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">out_features</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span>
 
     <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dY</span><span class="p">):</span>
         <span class="c1"># compute gradients</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dW</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">dY</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dW</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dY</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dY</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-
-        <span class="c1"># update params</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dW</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
 
         <span class="c1"># pass input gradient</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dX</span>
+
+    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dW</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span>
 </pre></div>
 </div>
 </div>
@@ -576,9 +611,10 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--1">One sample</label><div class="tab-content docutils">
+<p><strong>Notations</strong>:</p>
 <ul class="simple">
-<li><p>Notations</p>
-<ul>
 <li><p>IO:</p>
 <ul>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
@@ -591,29 +627,53 @@ document.write(`
 </ul>
 </li>
 </ul>
-</li>
-<li><p>Forward</p></li>
-</ul>
+<p><strong>Forward</strong>:</p>
 <div class="math notranslate nohighlight">
 \[
 \textbf{y}=\frac{1}{1-p}\textbf{x}_\text{active}
 \]</div>
-<ul class="simple">
-<li><p>Backward</p></li>
-</ul>
+<p><strong>Backward</strong>:</p>
 <div class="math notranslate nohighlight">
 \[
 \frac{\partial\mathcal{L}}{\partial\textbf{x}_\text{active}}= \frac{1}{1-p}\mathbf{g}
 \]</div>
 </div>
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--2">Multi samples</label><div class="tab-content docutils">
+<p><strong>Notations</strong>:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{*\times H_{in}}\)</span>: Input tensor.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{*\times H_{in}}\)</span>: Output tensor.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(p\)</span>: Dropout probability.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Forward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\textbf{Y}=\frac{1}{1-p}\textbf{X}_\text{active}
+\]</div>
+<p><strong>Backward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial\mathcal{L}}{\partial\textbf{X}_\text{active}}= \frac{1}{1-p}\mathbf{g}
+\]</div>
+</div>
+</div>
+</div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Code</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Dropout</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
         <span class="c1"># hyperparams</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">dropout_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
 
-        <span class="c1"># temp</span>
+        <span class="c1"># cache</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -663,20 +723,18 @@ document.write(`
 </li>
 <li><p>Hyperparams:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(F(\cdot)\in\mathbb{R}^{H_{out}}\)</span>: The aggregate function of all layers within the residual block.</p></li>
+<li><p><span class="math notranslate nohighlight">\(F(\cdot)\in\mathbb{R}^{H_{out}}\)</span>: The aggregate function of all layers within the residual block.
+<strong>Forward</strong>:</p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>Forward</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[
 \textbf{y}=F(\textbf{x})+\textbf{x}
 \]</div>
-<ul class="simple">
-<li><p>Backward</p></li>
-</ul>
+<p><strong>Backward</strong>:</p>
 <div class="math notranslate nohighlight">
 \[
 \frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial F(\textbf{x})}{\partial\textbf{x}})
@@ -769,12 +827,11 @@ document.write(`
 <li><p>Params:</p>
 <ul>
 <li><p><span class="math notranslate nohighlight">\(\gamma\in\mathbb{R}\)</span>: Scale param.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\beta\in\mathbb{R}\)</span>: Shift param.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\in\mathbb{R}\)</span>: Shift param.
+<strong>Forward</strong>:</p></li>
 </ul>
 </li>
 </ul>
-</li>
-<li><p>Forward</p>
 <ol class="arabic">
 <li><p>Calculate the mean and variance for each batch.</p>
 <div class="math notranslate nohighlight">
@@ -798,27 +855,23 @@ document.write(`
 </li>
 </ol>
 </li>
-<li><p>Backward</p>
-<ol class="arabic">
-<li><p>Gradient w.r.t. params:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-        &amp;\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{z}_i\\
-        &amp;\frac{\partial\mathcal{L}}{\partial\beta}=\sum_{i=1}^{m}\textbf{g}_i
-        \end{align*}\end{split}\]</div>
-</li>
-<li><p>Gradient w.r.t. input:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-        &amp;\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}=\gamma\textbf{g}_i\\
-        &amp;\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}(\textbf{x}_i-\boldsymbol{\mu}_B)\left(-\frac{1}{2}(\boldsymbol{\sigma}_B^2+\epsilon)^{-\frac{3}{2}}\right)\\
-        &amp;\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
-        &amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
-        \end{align*}\end{split}\]</div>
-</li>
-</ol>
-</li>
 </ul>
+<p><strong>Backward</strong>:
+1. Gradient w.r.t. params:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    $$\begin{align*}
+    &amp;\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{z}_i\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\beta}=\sum_{i=1}^{m}\textbf{g}_i
+    \end{align*}$$
+2. Gradient w.r.t. input:
+
+    $$\begin{align*}
+    &amp;\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}=\gamma\textbf{g}_i\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}(\textbf{x}_i-\boldsymbol{\mu}_B)\left(-\frac{1}{2}(\boldsymbol{\sigma}_B^2+\epsilon)^{-\frac{3}{2}}\right)\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
+    \end{align*}$$
+</pre></div>
+</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Code</p>
@@ -949,12 +1002,11 @@ document.write(`
 <li><p>Params:</p>
 <ul>
 <li><p><span class="math notranslate nohighlight">\(\boldsymbol{\gamma}\in\mathbb{R}^n\)</span>: Scale param.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\beta}\in\mathbb{R}^n\)</span>: Shift param.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\beta}\in\mathbb{R}^n\)</span>: Shift param.
+<strong>Forward</strong>:</p></li>
 </ul>
 </li>
 </ul>
-</li>
-<li><p>Forward</p>
 <ol class="arabic">
 <li><p>Calculate the mean and variance for each feature.</p>
 <div class="math notranslate nohighlight">
@@ -978,27 +1030,23 @@ document.write(`
 </li>
 </ol>
 </li>
-<li><p>Backward</p>
-<ol class="arabic">
-<li><p>Gradient w.r.t. params:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-        &amp;\frac{\partial\mathcal{L}}{\partial\gamma_j}=\sum_{i=1}^{m}g_{ij}z_{ij}\\
-        &amp;\frac{\partial\mathcal{L}}{\partial\beta_j}=\sum_{i=1}^{m}g_{ij}
-        \end{align*}\end{split}\]</div>
-</li>
-<li><p>Gradient w.r.t. input:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-        &amp;\frac{\partial\mathcal{L}}{\partial z_{ij}}=\gamma_jg_{ij}\\
-        &amp;\frac{\partial\mathcal{L}}{\partial\sigma_i^2}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}(x_{ij}-\mu_i)\left(-\frac{1}{2}(\sigma_i^2+\epsilon)^{-\frac{3}{2}}\right)\\
-        &amp;\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
-        &amp;\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
-        \end{align*}\end{split}\]</div>
-</li>
-</ol>
-</li>
 </ul>
+<p><strong>Backward</strong>:
+1. Gradient w.r.t. params:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    $$\begin{align*}
+    &amp;\frac{\partial\mathcal{L}}{\partial\gamma_j}=\sum_{i=1}^{m}g_{ij}z_{ij}\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\beta_j}=\sum_{i=1}^{m}g_{ij}
+    \end{align*}$$
+2. Gradient w.r.t. input:
+
+    $$\begin{align*}
+    &amp;\frac{\partial\mathcal{L}}{\partial z_{ij}}=\gamma_jg_{ij}\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\sigma_i^2}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}(x_{ij}-\mu_i)\left(-\frac{1}{2}(\sigma_i^2+\epsilon)^{-\frac{3}{2}}\right)\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
+    &amp;\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
+    \end{align*}$$
+</pre></div>
+</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Code</p>
@@ -1088,55 +1136,43 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<ul>
-<li><p>Notations</p>
-<ul class="simple">
-<li><p>IO:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.</p></li>
-</ul>
-</li>
-<li><p>Params:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}\)</span>: Filters.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\in\mathbb{R}^{C_{out}}\)</span>: Biases.</p></li>
-</ul>
-</li>
-<li><p>Hyperparams:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{out}\)</span>: #Filters (i.e., #Output channels).</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
-<li><p><span class="math notranslate nohighlight">\(p\)</span>: Padding size.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>Forward</p>
-<div class="math notranslate nohighlight">
-\[
-    Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
-    \]</div>
-<p>where</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-    H_{out}&amp;=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
-    W_{out}&amp;=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
-    \end{align*}\end{split}\]</div>
-</li>
-<li><p>Backward</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-    &amp;\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
-    &amp;\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
-    &amp;\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-sh+p,j-sw+p,c_{out},c_{in}}
-    \end{align*}\end{split}\]</div>
-<p>Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.</p>
-</li>
-</ul>
+<p><strong>Notations</strong>:
+- IO:
+- <span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.
+- <span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.
+- Params:
+- <span class="math notranslate nohighlight">\(\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}\)</span>: Filters.
+- <span class="math notranslate nohighlight">\(\mathbf{b}\in\mathbb{R}^{C_{out}}\)</span>: Biases.
+- Hyperparams:
+- <span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.
+- <span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.
+- <span class="math notranslate nohighlight">\(C_{out}\)</span>: #Filters (i.e., #Output channels).
+- <span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.
+- <span class="math notranslate nohighlight">\(s\)</span>: Stride size.
+- <span class="math notranslate nohighlight">\(p\)</span>: Padding size.
+<strong>Forward</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$$
+Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
+$$
+
+where
+
+$$\begin{align*}
+H_{out}&amp;=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
+W_{out}&amp;=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
+\end{align*}$$
+</pre></div>
+</div>
+<p><strong>Backward</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$$\begin{align*}
+&amp;\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
+&amp;\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
+&amp;\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-sh+p,j-sw+p,c_{out},c_{in}}
+\end{align*}$$
+
+Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
+</pre></div>
+</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Code</p>
@@ -1223,77 +1259,56 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<ul>
-<li><p>Notations</p>
-<ul class="simple">
-<li><p>IO:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}\)</span>: Input volume.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Y} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}\)</span>: Output volume.</p></li>
-</ul>
-</li>
-<li><p>Params:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{W^d} \in \mathbb{R}^{f_h \times f_w \times C_{in}}\)</span>: Depthwise filters.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{b^d} \in \mathbb{R}^{C_{in}}\)</span>: Depthwise biases.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{W^p} \in \mathbb{R}^{1 \times 1 \times C_{in} \times C_{out}}\)</span>: Pointwise filters.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{b^p} \in \mathbb{R}^{C_{out}}\)</span>: Pointwise biases.</p></li>
-</ul>
-</li>
-<li><p>Hyperparams:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{out}\)</span>: #Output channels.</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
-<li><p><span class="math notranslate nohighlight">\(p\)</span>: Padding size.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>Forward</p>
-<ol class="arabic">
-<li><p>Depthwise convolution: Calculate <span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{in}}\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[
-        Z_{h,w,c_{in}} = \sum_{i=1}^{f_h} \sum_{j=1}^{f_w} W^d_{i,j,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}} + b^d_{c_{in}}
-        \]</div>
-</li>
-<li><p>Pointwise convolution:</p>
-<div class="math notranslate nohighlight">
-\[
-        Y_{h,w,c_{out}} = \sum_{c_{in}=1}^{C_{in}} W^p_{1,1,c_{in},c_{out}} \cdot Z_{h,w,c_{in}} + b^p_{c_{out}}
-        \]</div>
-<p>where
-$<span class="math notranslate nohighlight">\(\begin{align*}
- H_{out} &amp;= \left\lfloor \frac{H_{in} + 2p - f_h}{s} \right\rfloor + 1 \\
- W_{out} &amp;= \left\lfloor \frac{W_{in} + 2p - f_w}{s} \right\rfloor + 1
- \end{align*}\)</span>$</p>
-</li>
-</ol>
-</li>
-<li><p>Backward</p>
-<ol class="arabic">
-<li><p>Pointwise convolution: Let <span class="math notranslate nohighlight">\(g^{p}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span> be <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial\mathbf{Y}}\)</span>.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-        &amp;\frac{\partial \mathcal{L}}{\partial W^p_{1,1,c_{in},c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}} \cdot Z_{h,w,c_{in}}\\
-        &amp;\frac{\partial \mathcal{L}}{\partial b^p_{c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}}\\
-        &amp;\frac{\partial \mathcal{L}}{\partial Z_{h,w,c_{in}}} = \sum_{c_{out}=1}^{C_{out}} g^{p}_{h,w,c_{out}} \cdot W^p_{1,1,c_{in},c_{out}}
-        \end{align*}\end{split}\]</div>
-</li>
-<li><p>Depthwise convolution: Let <span class="math notranslate nohighlight">\(g^{d}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}\)</span> be <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial\mathbf{Z}}\)</span>.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-        &amp;\frac{\partial \mathcal{L}}{\partial W^d_{i,j,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}}\\
-        &amp;\frac{\partial \mathcal{L}}{\partial b_{d,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}}\\
-        &amp;\frac{\partial \mathcal{L}}{\partial X_{i,j,c_{in}}} = \sum_{h=1}^{f_h} \sum_{w=1}^{f_w} g^d_{h,w,c_{in}} \cdot W^d_{i-sh+p,j-sw+p,c_{in}}
-        \end{align*}\end{split}\]</div>
-</li>
-</ol>
-</li>
-</ul>
+<p><strong>Notations</strong>:
+- IO:
+- <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}\)</span>: Input volume.
+- <span class="math notranslate nohighlight">\(\mathbf{Y} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}\)</span>: Output volume.
+- Params:
+- <span class="math notranslate nohighlight">\(\mathbf{W^d} \in \mathbb{R}^{f_h \times f_w \times C_{in}}\)</span>: Depthwise filters.
+- <span class="math notranslate nohighlight">\(\mathbf{b^d} \in \mathbb{R}^{C_{in}}\)</span>: Depthwise biases.
+- <span class="math notranslate nohighlight">\(\mathbf{W^p} \in \mathbb{R}^{1 \times 1 \times C_{in} \times C_{out}}\)</span>: Pointwise filters.
+- <span class="math notranslate nohighlight">\(\mathbf{b^p} \in \mathbb{R}^{C_{out}}\)</span>: Pointwise biases.
+- Hyperparams:
+- <span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.
+- <span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.
+- <span class="math notranslate nohighlight">\(C_{out}\)</span>: #Output channels.
+- <span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.
+- <span class="math notranslate nohighlight">\(s\)</span>: Stride size.
+- <span class="math notranslate nohighlight">\(p\)</span>: Padding size.
+<strong>Forward</strong>:
+1. Depthwise convolution: Calculate <span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{in}}\)</span>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    $$
+    Z_{h,w,c_{in}} = \sum_{i=1}^{f_h} \sum_{j=1}^{f_w} W^d_{i,j,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}} + b^d_{c_{in}}
+    $$
+
+2. Pointwise convolution:
+
+    $$
+    Y_{h,w,c_{out}} = \sum_{c_{in}=1}^{C_{in}} W^p_{1,1,c_{in},c_{out}} \cdot Z_{h,w,c_{in}} + b^p_{c_{out}}
+    $$
+    where
+    $$\begin{align*}
+    H_{out} &amp;= \left\lfloor \frac{H_{in} + 2p - f_h}{s} \right\rfloor + 1 \\
+    W_{out} &amp;= \left\lfloor \frac{W_{in} + 2p - f_w}{s} \right\rfloor + 1
+    \end{align*}$$
+</pre></div>
+</div>
+<p><strong>Backward</strong>:
+1. Pointwise convolution: Let <span class="math notranslate nohighlight">\(g^{p}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span> be <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial\mathbf{Y}}\)</span>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    $$\begin{align*}
+    &amp;\frac{\partial \mathcal{L}}{\partial W^p_{1,1,c_{in},c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}} \cdot Z_{h,w,c_{in}}\\
+    &amp;\frac{\partial \mathcal{L}}{\partial b^p_{c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}}\\
+    &amp;\frac{\partial \mathcal{L}}{\partial Z_{h,w,c_{in}}} = \sum_{c_{out}=1}^{C_{out}} g^{p}_{h,w,c_{out}} \cdot W^p_{1,1,c_{in},c_{out}}
+    \end{align*}$$
+2. Depthwise convolution: Let $g^{d}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Z}}$.
+
+    $$\begin{align*}
+    &amp;\frac{\partial \mathcal{L}}{\partial W^d_{i,j,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}}\\
+    &amp;\frac{\partial \mathcal{L}}{\partial b_{d,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}}\\
+    &amp;\frac{\partial \mathcal{L}}{\partial X_{i,j,c_{in}}} = \sum_{h=1}^{f_h} \sum_{w=1}^{f_w} g^d_{h,w,c_{in}} \cdot W^d_{i-sh+p,j-sw+p,c_{in}}
+    \end{align*}$$
+</pre></div>
+</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Code</p>
@@ -1409,60 +1424,44 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<ul>
-<li><p>Notations</p>
-<ul class="simple">
-<li><p>IO:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.</p></li>
-</ul>
-</li>
-<li><p>Params:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}\)</span>: Filters.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\in\mathbb{R}^{C_{out}}\)</span>: Biases.</p></li>
-</ul>
-</li>
-<li><p>Hyperparams:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{out}\)</span>: #Filters (i.e., #Output channels).</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
-<li><p><span class="math notranslate nohighlight">\(p\)</span>: Padding size.</p></li>
-<li><p><span class="math notranslate nohighlight">\(r\)</span>: Dilation rate.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>Forward</p>
-<ol class="arabic">
-<li><p>(optional) Pad input tensor: <span class="math notranslate nohighlight">\(\mathbf{X}^\text{pad}\in\mathbb{R}^{(H_{in}+2p)\times (W_{in}+2p)\times C_{in}}\)</span></p></li>
-<li><p>Perform element-wise multiplication (i.e., convolution):</p>
-<div class="math notranslate nohighlight">
-\[
-        Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+r(i-1)-p,sw+r(j-1)-p,c_{in}}+b_{c_{out}}
-        \]</div>
-<p>where</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-        H_{out}&amp;=\left\lfloor\frac{H_{in}+2p-r(f_h-1)-1}{s}\right\rfloor+1\\
-        W_{out}&amp;=\left\lfloor\frac{W_{in}+2p-r(f_w-1)-1}{s}\right\rfloor+1
-        \end{align*}\end{split}\]</div>
-</li>
-</ol>
-</li>
-<li><p>Backward</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-    &amp;\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+r(i-1)-p, sw+r(j-1)-p, c_{in}}\\
-    &amp;\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
-    &amp;\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{r(i-1)-sh+p,r(j-1)-sw+p,c_{out},c_{in}}
-    \end{align*}\end{split}\]</div>
-</li>
-</ul>
+<p><strong>Notations</strong>:
+- IO:
+- <span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.
+- <span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.
+- Params:
+- <span class="math notranslate nohighlight">\(\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}\)</span>: Filters.
+- <span class="math notranslate nohighlight">\(\mathbf{b}\in\mathbb{R}^{C_{out}}\)</span>: Biases.
+- Hyperparams:
+- <span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.
+- <span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.
+- <span class="math notranslate nohighlight">\(C_{out}\)</span>: #Filters (i.e., #Output channels).
+- <span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.
+- <span class="math notranslate nohighlight">\(s\)</span>: Stride size.
+- <span class="math notranslate nohighlight">\(p\)</span>: Padding size.
+- <span class="math notranslate nohighlight">\(r\)</span>: Dilation rate.
+<strong>Forward</strong>:
+1. (optional) Pad input tensor: <span class="math notranslate nohighlight">\(\mathbf{X}^\text{pad}\in\mathbb{R}^{(H_{in}+2p)\times (W_{in}+2p)\times C_{in}}\)</span>
+2. Perform element-wise multiplication (i.e., convolution):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    $$
+    Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+r(i-1)-p,sw+r(j-1)-p,c_{in}}+b_{c_{out}}
+    $$
+
+    where
+
+    $$\begin{align*}
+    H_{out}&amp;=\left\lfloor\frac{H_{in}+2p-r(f_h-1)-1}{s}\right\rfloor+1\\
+    W_{out}&amp;=\left\lfloor\frac{W_{in}+2p-r(f_w-1)-1}{s}\right\rfloor+1
+    \end{align*}$$
+</pre></div>
+</div>
+<p><strong>Backward</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$$\begin{align*}
+&amp;\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+r(i-1)-p, sw+r(j-1)-p, c_{in}}\\
+&amp;\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
+&amp;\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{r(i-1)-sh+p,r(j-1)-sw+p,c_{out},c_{in}}
+\end{align*}$$
+</pre></div>
+</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Code</p>
@@ -1581,50 +1580,39 @@ $<span class="math notranslate nohighlight">\(\begin{align*}
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<ul>
-<li><p>Notations</p>
-<ul class="simple">
-<li><p>IO:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}\)</span>: Output volume.</p></li>
-</ul>
-</li>
-<li><p>Hyperparams:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
-<li><p><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>Forward</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{array}{ll}
-    \text{Max:} &amp; Y_{h,w,c}=\max_{i=1,\cdots,f_h\ |\ j=1,\cdots,f_w}X_{sh+i,sw+j,c}\\
-    \text{Avg:} &amp; Y_{h,w,c}=\frac{1}{f_hf_w}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}X_{sh+i,sw+j,c}
-    \end{array}\end{split}\]</div>
-<p>where</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-    H_{out}&amp;=\left\lfloor\frac{H_{in}-f_h}{s}\right\rfloor+1\\
-    W_{out}&amp;=\left\lfloor\frac{W_{in}-f_h}{s}\right\rfloor+1
-    \end{align*}\end{split}\]</div>
-</li>
-<li><p>Backward</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{array}{ll}
-    \text{Max:} &amp; \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=g_{h,w,c}\text{ if }X_{sh+i,sw+j,c}=Y_{h,w,c}\\
-    \text{Avg:} &amp; \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=\frac{g_{h,w,c}}{f_hf_w}
-    \end{array}\end{split}\]</div>
-<ul class="simple">
-<li><p>Max: Gradients only propagate to the max element of each window.</p></li>
-<li><p>Avg: Gradients are equally distributed among all elements in each window.</p></li>
-</ul>
-</li>
-</ul>
+<p><strong>Notations</strong>:
+- IO:
+- <span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.
+- <span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}\)</span>: Output volume.
+- Hyperparams:
+- <span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.
+- <span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.
+- <span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.
+- <span class="math notranslate nohighlight">\(s\)</span>: Stride size.
+<strong>Forward</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$$\begin{array}{ll}
+\text{Max:} &amp; Y_{h,w,c}=\max_{i=1,\cdots,f_h\ |\ j=1,\cdots,f_w}X_{sh+i,sw+j,c}\\
+\text{Avg:} &amp; Y_{h,w,c}=\frac{1}{f_hf_w}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}X_{sh+i,sw+j,c}
+\end{array}$$
+
+where
+
+$$\begin{align*}
+H_{out}&amp;=\left\lfloor\frac{H_{in}-f_h}{s}\right\rfloor+1\\
+W_{out}&amp;=\left\lfloor\frac{W_{in}-f_h}{s}\right\rfloor+1
+\end{align*}$$
+</pre></div>
+</div>
+<p><strong>Backward</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$$\begin{array}{ll}
+\text{Max:} &amp; \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=g_{h,w,c}\text{ if }X_{sh+i,sw+j,c}=Y_{h,w,c}\\
+\text{Avg:} &amp; \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=\frac{g_{h,w,c}}{f_hf_w}
+\end{array}$$
+
+- Max: Gradients only propagate to the max element of each window.
+- Avg: Gradients are equally distributed among all elements in each window.
+</pre></div>
+</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Code</p>

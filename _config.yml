@@ -32,6 +32,10 @@ html:
   use_repository_button: true
   home_page_in_navbar: false
 
+sphinx:
+  extra_extensions:
+  - sphinx_inline_tabs
+
 # parse:
 #   myst_enable_extensions:
 #     # don't forget to list any other extensions you want enabled,

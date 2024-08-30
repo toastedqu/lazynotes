@@ -18,75 +18,104 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 
 # Basic
 ## Linear
-- **What**: Linear transformation. ([paper](https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf))
-- **Why**: Linear algebra. This is the simplest way to transform data, learn patterns, and make predictions.
+- **What**: Linear transformation.
+- **Why**: Linear algebra. The simplest way to transform data, learn patterns, and make predictions.
 - **How**: Multiply the input features with weights and add a bias on top.
 - **When**: There is a linear relationship between input & output.
 - **Where**: Anywhere. Typically used for feature dimension conversion.
 - **Pros**:
     - Simple.
     - High interpretability.
-    - High computational efficiency.
+    - Low computational cost.
     - Widely used.
 - **Cons**:  Cannot capture non-linear/complex patterns.
 
-```{admonition} Math
+````{admonition} Math
 :class: note, dropdown
-- Notations
-    - IO:
-        - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
-        - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
-    - Params:
-        - $W\in\mathbb{R}^{H_{out}\times H_{in}}$: Weight matrix.
-        - $\textbf{b}\in\mathbb{R}^{H_{out}}$: Bias vector.
-    - Hyperparams:
-        - $H_{in}$: Input feature dimension.
-        - $H_{out}$: Output feature dimension.
-- Forward
+```{tab} One sample
+**Notations**:
+- IO:
+    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
+    - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
+- Params:
+    - $W\in\mathbb{R}^{H_{out}\times H_{in}}$: Weight matrix.
+    - $\textbf{b}\in\mathbb{R}^{H_{out}}$: Bias vector.
+- Hyperparams:
+    - $H_{in}$: Input feature dimension.
+    - $H_{out}$: Output feature dimension.
+
+**Forward**:
 
 $$
-\textbf{y}=W\textbf{x}+\textbf{b}
+\textbf{y}=\textbf{x}W^T+\textbf{b}
 $$
-- Backward
+
+**Backward**:
 
 $$\begin{align*}
-&\frac{\partial\mathcal{L}}{\partial W}=g\textbf{x}^T \\
-&\frac{\partial\mathcal{L}}{\partial\textbf{b}}=g\\
-&\frac{\partial\mathcal{L}}{\partial\textbf{x}}=W^Tg
+&\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}\times\textbf{x} \\
+&\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\textbf{g}\\
+&\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
 \end{align*}$$
 ```
+```{tab} Multi samples
+**Notations**:
+- IO:
+    - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
+    - $\mathbf{Y}\in\mathbb{R}^{*\times H_{out}}$: Output tensor.
+- Params:
+    - $W\in\mathbb{R}^{H_{out}\times H_{in}}$: Weight matrix.
+    - $\textbf{b}\in\mathbb{R}^{H_{out}}$: Bias vector.
+- Hyperparams:
+    - $H_{in}$: Input feature dimension.
+    - $H_{out}$: Output feature dimension.
+
+**Forward**:
+
+$$
+\textbf{Y}=\textbf{X}W^T+\textbf{b}
+$$
+
+**Backward**:
+
+$$\begin{align*}
+&\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}^T\textbf{X} \\
+&\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\sum_*\textbf{g}_*\\
+&\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
+\end{align*}$$
+```
+````
 
 ```{admonition} Code
 :class: tip, dropdown
 ```python
 class Linear:
-    def __init__(self, input_dim, output_dim, learning_rate=0.01):
+    def __init__(self, in_features, out_features):
         # hyperparams
-        self.input_dim = input_dim
-        self.Y_dim = output_dim
-        self.lr = learning_rate
+        self.in_features = in_features
+        self.out_features = out_features
 
         # params
-        self.W = np.random.randn(input_dim, output_dim) * 0.01
-        self.b = np.zeros((1, output_dim))
+        self.W = np.random.randn(out_features, in_features)
+        self.b = np.zeros(out_features)
 
     def forward(self, X):
         self.X = X
-        self.Y = np.dot(X, self.W) + self.b
+        self.Y = np.dot(X, self.W.T) + self.b
         return self.Y
 
     def backward(self, dY):
         # compute gradients
-        self.dW = np.dot(self.X.T, dY)
+        self.dW = np.dot(dY.T, self.X)
         self.db = np.sum(dY, axis=0, keepdims=True)
-        self.dX = np.dot(dY, self.W.T)
-
-        # update params
-        self.W -= self.lr * self.dW
-        self.b -= self.lr * self.db
+        self.dX = np.dot(dY, self.W)
 
         # pass input gradient
         return self.dX
+
+    def update_params(self, lr):
+        self.W -= lr * self.dW
+        self.b -= lr * self.db
 ```
 
 ## Dropout
@@ -100,35 +129,59 @@ class Linear:
 - **Pros**: Simple, efficient regularization.
 - **Cons**: Requires hyperparam tuning; Can slow down convergence.
 
-```{admonition} Math
+````{admonition} Math
 :class: note, dropdown
-- Notations
-    - IO:
-        - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
-        - $\mathbf{y}\in\mathbb{R}^{H_{in}}$: Output vector.
-    - Hyperparams:
-        - $p$: Dropout probability.
-- Forward
+```{tab} One sample
+**Notations**:
+- IO:
+    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
+    - $\mathbf{y}\in\mathbb{R}^{H_{in}}$: Output vector.
+- Hyperparams:
+    - $p$: Dropout probability.
+
+**Forward**:
 
 $$
 \textbf{y}=\frac{1}{1-p}\textbf{x}_\text{active}
 $$
-- Backward
+
+**Backward**:
 
 $$
 \frac{\partial\mathcal{L}}{\partial\textbf{x}_\text{active}}= \frac{1}{1-p}\mathbf{g}
 $$
 ```
+```{tab} Multi samples
+**Notations**:
+- IO:
+    - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
+    - $\mathbf{Y}\in\mathbb{R}^{*\times H_{in}}$: Output tensor.
+- Hyperparams:
+    - $p$: Dropout probability.
+
+**Forward**:
+
+$$
+\textbf{Y}=\frac{1}{1-p}\textbf{X}_\text{active}
+$$
+
+**Backward**:
+
+$$
+\frac{\partial\mathcal{L}}{\partial\textbf{X}_\text{active}}= \frac{1}{1-p}\mathbf{g}
+$$
+```
+````
 
 ```{admonition} Code
 :class: tip, dropdown
 ```python
 class Dropout:
-    def __init__(self, dropout_rate=0.5):
+    def __init__(self, p=0.5):
         # hyperparams
-        self.p = dropout_rate
+        self.p = p
 
-        # temp
+        # cache
         self.mask = None
 
     def forward(self, X, training=True):
@@ -163,12 +216,12 @@ class Dropout:
         - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
     - Hyperparams:
         - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
-- Forward
+**Forward**:
 
 $$
 \textbf{y}=F(\textbf{x})+\textbf{x}
 $$
-- Backward
+**Backward**:
 
 $$
 \frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial F(\textbf{x})}{\partial\textbf{x}})
@@ -241,7 +294,7 @@ class ResidualBlock:
     - Params:
         - $\gamma\in\mathbb{R}$: Scale param.
         - $\beta\in\mathbb{R}$: Shift param.
-- Forward
+**Forward**:
     1. Calculate the mean and variance for each batch.
 
         $$\begin{align*}
@@ -262,7 +315,7 @@ class ResidualBlock:
         $$
         \textbf{y}_i=\gamma\textbf{z}_i+\beta
         $$
-- Backward
+**Backward**:
     1. Gradient w.r.t. params:
 
         $$\begin{align*}
@@ -389,7 +442,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
     - Params:
         - $\boldsymbol{\gamma}\in\mathbb{R}^n$: Scale param.
         - $\boldsymbol{\beta}\in\mathbb{R}^n$: Shift param.
-- Forward
+**Forward**:
     1. Calculate the mean and variance for each feature.
 
         $$\begin{align*}
@@ -410,7 +463,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
         $$
         y_{ij}=\gamma_jz_{ij}+\beta_j
         $$
-- Backward
+**Backward**:
     1. Gradient w.r.t. params:
 
         $$\begin{align*}
@@ -502,7 +555,7 @@ class LayerNorm:
 
 ```{admonition} Math
 :class: note, dropdown
-- Notations
+**Notations**:
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
         - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
@@ -516,7 +569,7 @@ class LayerNorm:
         - $f_h, f_w$: Filter height & width.
         - $s$: Stride size.
         - $p$: Padding size.
-- Forward
+**Forward**:
 
     $$
     Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
@@ -529,7 +582,7 @@ class LayerNorm:
     W_{out}&=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
     \end{align*}$$
 
-- Backward
+**Backward**:
 
     $$\begin{align*}
     &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
@@ -620,7 +673,7 @@ class Conv2d:
 
 ```{admonition} Math
 :class: note, dropdown
-- Notations
+**Notations**:
     - IO:
         - $\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}$: Input volume.
         - $\mathbf{Y} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}$: Output volume.
@@ -636,7 +689,7 @@ class Conv2d:
         - $f_h, f_w$: Filter height & width.
         - $s$: Stride size.
         - $p$: Padding size.
-- Forward
+**Forward**:
     1. Depthwise convolution: Calculate $\mathbf{Z} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{in}}$:
 
         $$
@@ -654,7 +707,7 @@ class Conv2d:
         W_{out} &= \left\lfloor \frac{W_{in} + 2p - f_w}{s} \right\rfloor + 1
         \end{align*}$$
 
-- Backward
+**Backward**:
     1. Pointwise convolution: Let $g^{p}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Y}}$.
 
         $$\begin{align*}
@@ -775,7 +828,7 @@ class DepthwiseSeparableConv2d:
 
 ```{admonition} Math
 :class: note, dropdown
-- Notations
+**Notations**:
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
         - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
@@ -790,7 +843,7 @@ class DepthwiseSeparableConv2d:
         - $s$: Stride size.
         - $p$: Padding size.
         - $r$: Dilation rate.
-- Forward
+**Forward**:
     1. (optional) Pad input tensor: $\mathbf{X}^\text{pad}\in\mathbb{R}^{(H_{in}+2p)\times (W_{in}+2p)\times C_{in}}$
     2. Perform element-wise multiplication (i.e., convolution):
 
@@ -805,7 +858,7 @@ class DepthwiseSeparableConv2d:
         W_{out}&=\left\lfloor\frac{W_{in}+2p-r(f_w-1)-1}{s}\right\rfloor+1
         \end{align*}$$
 
-- Backward
+**Backward**:
 
     $$\begin{align*}
     &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+r(i-1)-p, sw+r(j-1)-p, c_{in}}\\
@@ -910,7 +963,7 @@ class AtrousConv2d:
 
 ```{admonition} Math
 :class: note, dropdown
-- Notations
+**Notations**:
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
         - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$: Output volume.
@@ -919,7 +972,7 @@ class AtrousConv2d:
         - $C_{in}$: #Input channels.
         - $f_h, f_w$: Filter height & width.
         - $s$: Stride size.
-- Forward
+**Forward**:
 
     $$\begin{array}{ll}
     \text{Max:} & Y_{h,w,c}=\max_{i=1,\cdots,f_h\ |\ j=1,\cdots,f_w}X_{sh+i,sw+j,c}\\
@@ -933,7 +986,7 @@ class AtrousConv2d:
     W_{out}&=\left\lfloor\frac{W_{in}-f_h}{s}\right\rfloor+1
     \end{align*}$$
 
-- Backward
+**Backward**:
 
     $$\begin{array}{ll}
     \text{Max:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=g_{h,w,c}\text{ if }X_{sh+i,sw+j,c}=Y_{h,w,c}\\
