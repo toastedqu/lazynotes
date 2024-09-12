@@ -182,7 +182,7 @@ class Dropout:
         self.p = p
 
     def forward(self, X, training=True):
-        if training:
+        if training:    # only drop out during training
             self.mask = np.random.binomial(1, 1-self.p, size=X.shape) / (1-self.p)
             return X * self.mask
         else:
@@ -194,36 +194,58 @@ class Dropout:
 
 ## Residual Connection
 - **What**: Model the residual ($Y-X$) instead of the output ($Y$). ([paper](https://arxiv.org/pdf/1512.03385))
-- **Why**: To mitigate vanishing/exploding gradients.
-    - **Vanishing gradients**: The gradients become smaller and smaller during backprop that they have almost no effect to front layers, slowing and even stopping the learning process for front layers.
-    - **Exploding gradients**: The gradients become larger and larger during backprop that they change the front layer weights too much, causing instability and difficulty in convergence.
+- **Why**: To mitigate [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
 - **How**:
     1. Add the input $X$ to the block output $F(X)$.
-    2. If the feature dimension of $X$ and $F(X)$ doesn't match, use a linear layer on $X$ to change its feature dimension.
+    2. If the feature dimension of $X$ and $F(X)$ doesn't match, use a shortcut linear layer on $X$ to change its feature dimension.
 - **When**: There is clear evidence of convergence failures or extreme gradient values.
 - **Where**: Inside deep NNs.
 - **Pros**: Higher performance on complex tasks.
-- **Cons**: Slightly low computational efficiency.
+- **Cons**: Slightly high computational cost.
 
-```{admonition} Math
+````{admonition} Math
 :class: note, dropdown
-- Notation
-    - IO:
-        - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
-        - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
-    - Hyperparams:
-        - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
+```{tab} One sample
+**Notation**:
+- IO:
+    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
+    - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
+- Hyperparams:
+    - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
+
 **Forward**:
 
 $$
 \textbf{y}=F(\textbf{x})+\textbf{x}
 $$
+
 **Backward**:
 
 $$
 \frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial F(\textbf{x})}{\partial\textbf{x}})
 $$
 ```
+```{tab} Multi samples
+**Notation**:
+- IO:
+    - $\mathbf{x}\in\mathbb{R}^{*\times H_{in}}$: Input vector.
+    - $\mathbf{y}\in\mathbb{R}^{*\times H_{out}}$: Output vector.
+- Hyperparams:
+    - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
+
+**Forward**:
+
+$$
+\textbf{Y}=F(\textbf{X})+\textbf{X}
+$$
+
+**Backward**:
+
+$$
+\frac{\partial\mathcal{L}}{\partial\textbf{X}}=\mathbf{g}(1+\frac{\partial F(\textbf{X})}{\partial\textbf{X}})
+$$
+```
+````
 
 ```{admonition} Code
 :class: tip, dropdown
@@ -277,7 +299,7 @@ class ResidualBlock:
 - **Pros**:
     - Accelerates training with higher learning rates.
     - Reduces sensitivity to weight initialization.
-    - Mitigates [vanishing/exploding gradients](#residual-connection).
+    - Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
 - **Cons**:
     - Adds computation overhead and complexity.
     - Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
