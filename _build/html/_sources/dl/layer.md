@@ -30,7 +30,7 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
     - Widely used.
 - **Cons**:  Cannot capture non-linear/complex patterns.
 
-````{admonition} Math
+<!-- ````{admonition} Math
 :class: note, dropdown
 ```{tab} One sample
 **Notations**:
@@ -84,39 +84,7 @@ $$\begin{align*}
 &\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
 \end{align*}$$
 ```
-````
-
-```{admonition} Code
-:class: tip, dropdown
-```python
-class Linear:
-    def __init__(self, in_features, out_features):
-        # hyperparams
-        self.in_features = in_features
-        self.out_features = out_features
-
-        # params
-        self.W = np.random.randn(out_features, in_features)
-        self.b = np.zeros(out_features)
-
-    def forward(self, X):
-        self.X = X
-        self.Y = np.dot(X, self.W.T) + self.b
-        return self.Y
-
-    def backward(self, dY):
-        # compute gradients
-        self.dW = np.dot(dY.T, self.X)
-        self.db = np.sum(dY, axis=0, keepdims=True)
-        self.dX = np.dot(dY, self.W)
-
-        # pass input gradient
-        return self.dX
-
-    def update_params(self, lr):
-        self.W -= lr * self.dW
-        self.b -= lr * self.db
-```
+```` -->
 
 ## Dropout
 - **What**: Randomly ignore some neurons during training. ([paper](https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf))
@@ -129,7 +97,7 @@ class Linear:
 - **Pros**: Simple, efficient regularization.
 - **Cons**: Requires hyperparam tuning; Can slow down convergence.
 
-````{admonition} Math
+<!-- ````{admonition} Math
 :class: note, dropdown
 ```{tab} One sample
 **Notations**:
@@ -171,39 +139,20 @@ $$
 \frac{\partial\mathcal{L}}{\partial\textbf{X}_\text{active}}= \frac{1}{1-p}\mathbf{g}
 $$
 ```
-````
-
-```{admonition} Code
-:class: tip, dropdown
-```python
-class Dropout:
-    def __init__(self, p=0.5):
-        # hyperparams
-        self.p = p
-
-    def forward(self, X, training=True):
-        if training:    # only drop out during training
-            self.mask = np.random.binomial(1, 1-self.p, size=X.shape) / (1-self.p)
-            return X * self.mask
-        else:
-            return X
-
-    def backward(self, dY):
-        return dY * self.mask
-```
+```` -->
 
 ## Residual Connection
 - **What**: Model the residual ($Y-X$) instead of the output ($Y$). ([paper](https://arxiv.org/pdf/1512.03385))
 - **Why**: To mitigate [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
 - **How**:
     1. Add the input $X$ to the block output $F(X)$.
-    2. If the feature dimension of $X$ and $F(X)$ doesn't match, use a linear layer on $X$ to change its feature dimension.
+    2. If the feature dimension of $X$ and $F(X)$ doesn't match, use a shortcut linear layer on $X$ to change its feature dimension.
 - **When**: There is clear evidence of convergence failures or extreme gradient values.
 - **Where**: Inside deep NNs.
 - **Pros**: Higher performance on complex tasks.
 - **Cons**: Slightly high computational cost.
 
-````{admonition} Math
+<!-- ````{admonition} Math
 :class: note, dropdown
 ```{tab} One sample
 **Notation**:
@@ -245,51 +194,12 @@ $$
 \frac{\partial\mathcal{L}}{\partial\textbf{X}}=\mathbf{g}(1+\frac{\partial F(\textbf{X})}{\partial\textbf{X}})
 $$
 ```
-````
-
-```{admonition} Code
-:class: tip, dropdown
-```python
-class ResidualBlock:
-    def __init__(self, F, input_dim, output_dim, learning_rate=0.01):
-        self.F = F
-
-        # If input and output dimensions are different,
-        # add a linear layer to unify the dimension.
-        if input_dim != output_dim:
-            self.lr = learning_rate
-            self.shortcut = Linear(input_dim, output_dim, learning_rate)
-        else:
-            self.shortcut = None
-
-    def forward(self, X):
-        self.X = X
-
-        if self.shortcut:
-            output_shortcut = self.shortcut.forward(X)
-        else:
-            output_shortcut = X
-
-        output_F = self.F.forward(X)
-        self.Y = output_F + output_shortcut
-        return self.Y
-
-    def backward(self, dY):
-        if self.shortcut:
-            d_shortcut = self.shortcut.backward(dY)
-        else:
-            d_shortcut = dY
-
-        d_F = self.F.backward(dY)
-        d_input = d_F + d_shortcut
-        return d_input
-```
+```` -->
 
 ## Normalization
 ### Batch Normalization
 - **What**: Normalize each feature across the input samples to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1502.03167))
 - **Why**: To mitigate internal covariate shift.
-    - During training, the distribution of input to each layer can change due to updates in the params of all preceding layers. Each layer has to continuously adapt to the new distribution. This shift makes convergence difficult and slows down training.
 - **How**:
     1. Calculate the mean and variance for each batch.
     2. Normalize the batch.
@@ -304,131 +214,54 @@ class ResidualBlock:
     - Adds computation overhead and complexity.
     - Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
 
-```{admonition} Math
-:class: note, dropdown
-- Notation
-    - IO:
-        - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
-        - $\mathbf{Y}\in\mathbb{R}^{m\times n}$: Output matrix.
-    - Params:
-        - $\gamma\in\mathbb{R}$: Scale param.
-        - $\beta\in\mathbb{R}$: Shift param.
+<!-- ```{admonition} Math
+:class: note, dropdown -->
+<!-- **Notation**:
+- IO:
+    - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
+    - $\mathbf{Y}\in\mathbb{R}^{m\times n}$: Output matrix.
+- Params:
+    - $\gamma\in\mathbb{R}$: Scale param.
+    - $\beta\in\mathbb{R}$: Shift param.
+
 **Forward**:
-    1. Calculate the mean and variance for each batch.
+1. Calculate the mean and variance for each batch.
 
-        $$\begin{align*}
-        \boldsymbol{\mu}_B&=\frac{1}{m}\sum_{i=1}^{m}\textbf{x}_i\\
-        \boldsymbol{\sigma}_B^2&=\frac{1}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)^2
-        \end{align*}$$
+    $$\begin{align*}
+    \boldsymbol{\mu}_B&=\frac{1}{m}\sum_{i=1}^{m}\textbf{x}_i\\
+    \boldsymbol{\sigma}_B^2&=\frac{1}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)^2
+    \end{align*}$$
 
-    2. Normalize each batch.
+2. Normalize each batch.
 
-        $$
-        \textbf{z}_i=\frac{\textbf{x}_i-\boldsymbol{\mu}_B}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}
-        $$
+    $$
+    \textbf{z}_i=\frac{\textbf{x}_i-\boldsymbol{\mu}_B}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}
+    $$
 
-        where $\epsilon$ is a small constant to avoid dividing by 0.
+    where $\epsilon$ is a small constant to avoid dividing by 0.
 
-    3. Scale and shift the normalized output.
+3. Scale and shift the normalized output.
 
-        $$
-        \textbf{y}_i=\gamma\textbf{z}_i+\beta
-        $$
+    $$
+    \textbf{y}_i=\gamma\textbf{z}_i+\beta
+    $$
+
 **Backward**:
-    1. Gradient w.r.t. params:
+1. Gradient w.r.t. params:
 
-        $$\begin{align*}
-        &\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{z}_i\\
-        &\frac{\partial\mathcal{L}}{\partial\beta}=\sum_{i=1}^{m}\textbf{g}_i
-        \end{align*}$$
-    2. Gradient w.r.t. input:
+    $$\begin{align*}
+    &\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{z}_i\\
+    &\frac{\partial\mathcal{L}}{\partial\beta}=\sum_{i=1}^{m}\textbf{g}_i
+    \end{align*}$$
+2. Gradient w.r.t. input:
 
-        $$\begin{align*}
-        &\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}=\gamma\textbf{g}_i\\
-        &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}(\textbf{x}_i-\boldsymbol{\mu}_B)\left(-\frac{1}{2}(\boldsymbol{\sigma}_B^2+\epsilon)^{-\frac{3}{2}}\right)\\
-        &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
-        &\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
-        \end{align*}$$
-```
-
-```{admonition} Code
-:class: tip, dropdown
-```python
-class BatchNorm:
-    def __init__(self, epsilon=1e-5, momentum=0.9, learning_rate=0.01):
-        # hyperparam
-        self.epsilon = epsilon
-        self.momentum = momentum    # weight of running stat per update
-        self.lr = learning_rate
-
-        # params
-        self.gamma = None
-        self.beta = None
-
-        # During inference, the test sample or batch is not representative of the overall data distribution.
-        # Hence, we need to store running averages of mean and variance and use them for inference.
-        self.running_mean = None
-        self.running_var = None
-
-    def forward(self, X, training=True):
-        self.X = X
-        if self.gamma is None:
-            self.gamma = np.ones(X.shape[1])
-            self.beta = np.zeros(X.shape[1])
-            self.running_mean = np.zeros(X.shape[1])
-            self.running_var = np.ones(X.shape[1])
-
-        if training:
-            # calculate batch mean and variance
-            mu_B = np.mean(X, axis=0)
-            var_B = np.var(X, axis=0)
-
-            # normalize the batch
-            Z = (X-mu_B) / np.sqrt(var_B+self.epsilon)
-
-            # scale & shift
-            Y = self.gamma*Z + self.beta
-
-            # update running mean and variance for inference
-            self.running_mean = self.momentum * self.running_mean + (1-self.momentum) * mu_B
-            self.running_var = self.momentum * self.running_var + (1-self.momentum) * var_B
-        else:
-            # normalize the batch
-            Z = (X-self.running_mean) / np.sqrt(self.running_var+self.epsilon)
-
-            # scale & shift
-            Y = self.gamma*Z + self.beta
-
-        return Y
-
-    def backward(self, dY):
-        m = dY.shape[0]
-
-        # gradient w.r.t. params
-        dbeta = np.sum(dY, axis=0)
-        dgamma = np.sum(self.Z*dY, axis=0)
-
-        # gradient w.r.t. input
-        ## w.r.t. normalized input
-        dZ = dY * self.gamma
-
-        ## w.r.t. variance
-        dvar = np.sum(-0.5*dZ*(self.X-self.mu_B) * (self.var_B+self.epsilon)**(-1.5), axis=0)
-
-        ## w.r.t. mean
-        dmu = np.sum(-1*dZ / np.sqrt(self.var_B+self.epsilon), axis=0)
-        dmu += dvar * np.sum(-2*(self.X-self.mu_B), axis=0) / m
-
-        ## w.r.t. input
-        dX = dZ + 2/m*dvar*(self.X-self.mu_B) + dmu/m
-        dX /= np.sqrt(self.var_B+self.epsilon)
-
-        # update params
-        self.gamma -= self.lr * dgamma
-        self.beta -= self.lr * dbeta
-
-        return dX
-```
+    $$\begin{align*}
+    &\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}=\gamma\textbf{g}_i\\
+    &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}(\textbf{x}_i-\boldsymbol{\mu}_B)\left(-\frac{1}{2}(\boldsymbol{\sigma}_B^2+\epsilon)^{-\frac{3}{2}}\right)\\
+    &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
+    &\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\ma                                                                         thcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
+    \end{align*}$$
+``` -->
 
 ### Layer Normalization
 - **What**: Normalize each sample across the input features to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1607.06450))
@@ -450,7 +283,7 @@ class BatchNorm:
     - Adds computation overhead and complexity.
     - Inapplicable in CNNs due to varied statistics of spatial features.
 
-```{admonition} Math
+<!-- ```{admonition} Math
 :class: note, dropdown
 It's easy to explain with the vector form for batch normalization, but it's more intuitive to explain with the scalar form for layer normalization.
 
@@ -497,661 +330,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
         &\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
         &\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
         \end{align*}$$
-```
-
-```{admonition} Code
-:class: tip, dropdown
-```python
-class LayerNorm:
-    def __init__(self, n_features, epsilon=1e-5, learning_rate=1e-3):
-        # hyperparams
-        self.epsilon = epsilon
-        self.lr = learning_rate
-
-        # params
-        self.gamma = np.ones(n_features)
-        self.beta = np.zeros(n_features)
-
-    def forward(self, X):
-        self.X = X
-
-        # calculate mean and variance for each feature
-        self.mu = np.mean(X, axis=1, keepdims=True)
-        self.var = np.var(X, axis=1, keepdims=True)
-
-        # normalize
-        self.Z = (X-self.mu) / np.sqrt(self.var+self.epsilon)
-
-        # scale & shift
-        Y = self.gamma*self.Z + self.beta
-        return Y
-
-    def backward(self, dY):
-        n = dY.shape[1]
-
-        # gradient w.r.t. params
-        dbeta = np.sum(dY, axis=0)
-        dgamma = np.sum(dY*self.Z, axis=0)
-
-        # gradient w.r.t. input
-        ## w.r.t. normalized input
-        dZ = dY*self.gamma
-
-        ## w.r.t. variance
-        dvar = np.sum(-0.5*dZ*(self.X-self.mu) * (self.var+self.epsilon)**(-1.5), axis=1, keepdims=True)
-
-        ## w.r.t. mean
-        dmu = np.sum(-1*dZ / np.sqrt(self.var+self.epsilon), axis=1, keepdims=True)
-        dmu += dvar * np.mean(-2*(self.X-self.mu), axis=1, keepdims=True)
-
-        ## w.r.t. input
-        dX = dZ + 2/n*dvar*(self.X-self.mu) + dmu/n
-        dX /= np.sqrt(self.var+self.epsilon)
-
-        # Update parameters
-        self.gamma -= self.lr * dgamma
-        self.beta -= self.lr * dbeta
-
-        return dX
-```
-
-<br/>
-
-# Convolutional
-- **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
-- **Why**: To learn spatial hierarchies of features.
-- **How**: Slide multiple filters/kernel (i.e., small matrices) over the input data.
-    - At each step, perform element-wise multiplication and summation between each filter and the scanned area, producing a feature map.
-- **When**: Used with grid-like data such as images and video frames.
-- **Where**: Computer Vision.
-- **Pros**:
-    - Translation invariance.
-    - Efficiently captures spatial hierarchies.
-- **Cons**:
-    - High computational cost for big data
-    - Requires big data to be performant.
-    - Requires extensive hyperparam tuning.
-
-```{admonition} Math
-:class: note, dropdown
-**Notations**:
-    - IO:
-        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
-        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
-    - Params:
-        - $\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}$: Filters.
-        - $\mathbf{b}\in\mathbb{R}^{C_{out}}$: Biases.
-    - Hyperparams:
-        - $H_{in}, W_{in}$: Input height & width.
-        - $C_{in}$: #Input channels.
-        - $C_{out}$: #Filters (i.e., #Output channels).
-        - $f_h, f_w$: Filter height & width.
-        - $s$: Stride size.
-        - $p$: Padding size.
-**Forward**:
-
-    $$
-    Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
-    $$
-
-    where
-
-    $$\begin{align*}
-    H_{out}&=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
-    W_{out}&=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
-    \end{align*}$$
-
-**Backward**:
-
-    $$\begin{align*}
-    &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
-    &\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
-    &\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-sh+p,j-sw+p,c_{out},c_{in}}
-    \end{align*}$$
-
-    Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
-```
-
-```{admonition} Code
-:class: tip, dropdown
-```python
-class Conv2d:
-    def __init__(self, filter_size, n_filters, stride=1, padding=0, learning_rate=0.01):
-        self.f = filter_size    # assume equal height & weight
-        self.n_filters = n_filters
-        self.s = stride
-        self.p = padding
-        self.lr = learning_rate
-        self.W = np.random.randn(n_filters, filter_size, filter_size) / filter_size**2    # randomly init filter weights
-        self.b = np.zeros((n_filters, 1))    # zero init biases
-
-    def pad_input(self, X):
-        if self.p > 0:
-            return np.pad(X, ((0, 0), (self.p, self.p), (self.p, self.p), (0, 0)), mode='constant')
-        return X
-
-    def forward(self, X):
-        # pad input
-        self.X = X
-        self.X_pad = self.pad_input(X)
-
-        # calculate output dims
-        batch_size, in_height, in_width, in_channels = X.shape
-        self.out_height = (in_height + 2*self.p - self.f) // self.s + 1
-        self.out_width = (in_width + 2*self.p - self.f) // self.s + 1
-
-        # init output tensor
-        self.Y = np.zeros((batch_size, self.out_height, self.out_width, self.n_filters))
-
-        # compute output per scanned area
-        for h in range(self.out_height):
-            for w in range(self.out_width):
-                X_scanned = self.X_pad[:, self.s*h:self.s*h+self.f, self.s*w:self.s*w+self.f, :]
-                for c in range(self.n_filters):
-                    self.Y[:, h, w, c] = np.sum(X_scanned * self.W[c, :, :, :], axis=(1, 2, 3)) + self.b[c]
-
-        return self.Y
-
-    def backward(self, dY):
-        # init gradients
-        _, in_height, in_width, _ = self.X.shape
-        dX = np.zeros_like(self.X_pad)
-        dW = np.zeros_like(self.W)
-        db = np.zeros_like(self.b)
-
-        # compute gradients
-        for h in range(self.out_height):
-            for w in range(self.out_width):
-                region = self.X_pad[:, self.s*h:self.s*h+self.f, self.s*w:self.s*w+self.f, :]
-                for c in range(self.n_filters):
-                    dW[c] += np.sum(region * (dY[:, h, w, c])[:, None, None, None], axis=0)
-                    db[c] += np.sum(dY[:, h, w, c])
-                    dX[:, self.s*h:self.s*h+self.f, self.s*w:self.s*w+self.f, :] += self.W[c] * (dY[:, h, w, c])[:, None, None, None]
-
-        # remove padding
-        if self.p > 0:
-            dX = dX[:, self.p:-self.p, self.p:-self.p, :]
-
-        # update params
-        self.W -= self.lr * dW
-        self.b -= self.lr * db
-
-        return dX
-```
-
-## Depthwise Separable Convolution
-- **What**: Depthwise convolution + Pointwise convolution. ([paper](https://arxiv.org/pdf/1610.02357))
-- **Why**: To significantly reduce computational cost and #params.
-- **How**:
-    - **Depthwise**: Use a single filter independently per channel.
-    - **Pointwise**: Use Conv1d to combine the outputs of depthwise convolution.
-- **When**: When computational efficiency and model size are crucial.
-- **Where**: [MobileNets](https://arxiv.org/pdf/1704.04861), [Xception](https://openaccess.thecvf.com/content_cvpr_2017/papers/Chollet_Xception_Deep_Learning_CVPR_2017_paper.pdf), etc.
-- **Pros**: Significantly higher computational efficiency (time & space).
-- **Cons**: Lower accuracy.
-
-```{admonition} Math
-:class: note, dropdown
-**Notations**:
-    - IO:
-        - $\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}$: Input volume.
-        - $\mathbf{Y} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}$: Output volume.
-    - Params:
-        - $\mathbf{W^d} \in \mathbb{R}^{f_h \times f_w \times C_{in}}$: Depthwise filters.
-        - $\mathbf{b^d} \in \mathbb{R}^{C_{in}}$: Depthwise biases.
-        - $\mathbf{W^p} \in \mathbb{R}^{1 \times 1 \times C_{in} \times C_{out}}$: Pointwise filters.
-        - $\mathbf{b^p} \in \mathbb{R}^{C_{out}}$: Pointwise biases.
-    - Hyperparams:
-        - $H_{in}, W_{in}$: Input height & width.
-        - $C_{in}$: #Input channels.
-        - $C_{out}$: #Output channels.
-        - $f_h, f_w$: Filter height & width.
-        - $s$: Stride size.
-        - $p$: Padding size.
-**Forward**:
-    1. Depthwise convolution: Calculate $\mathbf{Z} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{in}}$:
-
-        $$
-        Z_{h,w,c_{in}} = \sum_{i=1}^{f_h} \sum_{j=1}^{f_w} W^d_{i,j,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}} + b^d_{c_{in}}
-        $$
-
-    2. Pointwise convolution:
-
-        $$
-        Y_{h,w,c_{out}} = \sum_{c_{in}=1}^{C_{in}} W^p_{1,1,c_{in},c_{out}} \cdot Z_{h,w,c_{in}} + b^p_{c_{out}}
-        $$
-        where
-        $$\begin{align*}
-        H_{out} &= \left\lfloor \frac{H_{in} + 2p - f_h}{s} \right\rfloor + 1 \\
-        W_{out} &= \left\lfloor \frac{W_{in} + 2p - f_w}{s} \right\rfloor + 1
-        \end{align*}$$
-
-**Backward**:
-    1. Pointwise convolution: Let $g^{p}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Y}}$.
-
-        $$\begin{align*}
-        &\frac{\partial \mathcal{L}}{\partial W^p_{1,1,c_{in},c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}} \cdot Z_{h,w,c_{in}}\\
-        &\frac{\partial \mathcal{L}}{\partial b^p_{c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}}\\
-        &\frac{\partial \mathcal{L}}{\partial Z_{h,w,c_{in}}} = \sum_{c_{out}=1}^{C_{out}} g^{p}_{h,w,c_{out}} \cdot W^p_{1,1,c_{in},c_{out}}
-        \end{align*}$$
-    2. Depthwise convolution: Let $g^{d}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Z}}$.
-
-        $$\begin{align*}
-        &\frac{\partial \mathcal{L}}{\partial W^d_{i,j,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}}\\
-        &\frac{\partial \mathcal{L}}{\partial b_{d,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}}\\
-        &\frac{\partial \mathcal{L}}{\partial X_{i,j,c_{in}}} = \sum_{h=1}^{f_h} \sum_{w=1}^{f_w} g^d_{h,w,c_{in}} \cdot W^d_{i-sh+p,j-sw+p,c_{in}}
-        \end{align*}$$
-```
-
-```{admonition} Code
-:class: tip, dropdown
-```python
-class DepthwiseSeparableConv2d:
-    def __init__(self, filter_size, n_filters, stride=1, padding=0, learning_rate=0.01):
-        self.f = filter_size  # assume equal height & width
-        self.n_filters = n_filters
-        self.s = stride
-        self.p = padding
-        self.lr = learning_rate
-        self.W_d = np.random.randn(filter_size, filter_size, n_filters) / filter_size**2
-        self.b_d = np.zeros((n_filters, 1))
-        self.W_p = np.random.randn(1, 1, n_filters, n_filters) / n_filters
-        self.b_p = np.zeros((n_filters, 1))
-
-    def pad_input(self, X):
-        if self.p > 0:
-            return np.pad(X, ((0, 0), (self.p, self.p), (self.p, self.p), (0, 0)), mode='constant')
-        return X
-
-    def forward(self, X):
-        # pad input
-        self.X = X
-        self.X_pad = self.pad_input(X)
-
-        # calculate output dims
-        batch_size, in_height, in_width, in_channels = X.shape
-        self.out_height = (in_height + 2*self.p - self.f) // self.s + 1
-        self.out_width = (in_width + 2*self.p - self.f) // self.s + 1
-
-        # init depthwise output tensor
-        self.Z = np.zeros((batch_size, self.out_height, self.out_width, in_channels))
-
-        # depthwise convolution
-        for h in range(self.out_height):
-            for w in range(self.out_width):
-                X_scanned = self.X_pad[:, self.s*h:self.s*h+self.f, self.s*w:self.s*w+self.f, :]
-                for c in range(in_channels):
-                    self.Z[:, h, w, c] = np.sum(X_scanned[:, :, :, c] * self.W_d[:, :, c], axis=(1, 2)) + self.b_d[c]
-
-        # init pointwise output tensor
-        self.Y = np.zeros((batch_size, self.out_height, self.out_width, self.n_filters))
-
-        # pointwise convolution
-        for h in range(self.out_height):
-            for w in range(self.out_width):
-                for c in range(self.n_filters):
-                    self.Y[:, h, w, c] = np.sum(self.Z[:, h, w, :] * self.W_p[:, :, :, c], axis=1) + self.b_p[c]
-
-        return self.Y
-
-    def backward(self, dY):
-        batch_size, in_height, in_width, in_channels = self.X.shape
-
-        # init gradients
-        dX = np.zeros_like(self.X_pad)
-        dW_d = np.zeros_like(self.W_d)
-        db_d = np.zeros_like(self.b_d)
-        dW_p = np.zeros_like(self.W_p)
-        db_p = np.zeros_like(self.b_p)
-
-        # gradients for pointwise convolution
-        for h in range(self.out_height):
-            for w in range(self.out_width):
-                for c in range(self.n_filters):
-                    db_p[c] += np.sum(dY[:, h, w, c])
-                    dW_p[:, :, :, c] += np.sum(self.Z[:, h, w, :, None] * dY[:, h, w, c][:, None, None, None], axis=0)
-                    self.Z[:, h, w, :] += dY[:, h, w, c][:, None] * self.W_p[:, :, :, c]
-
-        # gradients for depthwise convolution
-        for h in range(self.out_height):
-            for w in range(self.out_width):
-                X_scanned = self.X_pad[:, self.s*h:self.s*h+self.f, self.s*w:self.s*w+self.f, :]
-                for c in range(in_channels):
-                    db_d[c] += np.sum(self.Z[:, h, w, c])
-                    dW_d[:, :, c] += np.sum(X_scanned[:, :, :, c] * self.Z[:, h, w, c][:, None, None], axis=0)
-                    dX[:, self.s*h:self.s*h+self.f, self.s*w:self.s*w+self.f, c] += self.W_d[:, :, c] * self.Z[:, h, w, c][:, None, None]
-
-        # remove padding
-        if self.p > 0:
-            dX = dX[:, self.p:-self.p, self.p:-self.p, :]
-
-        # update params
-        self.W_d -= self.lr * dW_d
-        self.b_d -= self.lr * db_d
-        self.W_p -= self.lr * dW_p
-        self.b_p -= self.lr * db_p
-
-        return dX
-```
-## Atrous/Dilated Convolution
-- **What**: Add holes between filter elements (i.e., dilation). ([paper](https://arxiv.org/pdf/1511.07122))
-- **Why**: The filters can capture larger contextual info without increasing #params.
-- **How**: Introduce a dilation rate $r$ to determine the space between the filter elements. Then compute convolution accordingly.
-- **When**: When understanding the broader context is important.
-- **Where**: Semantic image segmentation, object detection, depth estimation, optical flow estimation, etc.
-- **Pros**:
-    - Larger receptive fields without increasing #params.
-    - Captures multi-scale info without upsampling layers.
-- **Cons**:
-    - Requires very careful hyperparam tuning, or info loss.
-
-```{admonition} Math
-:class: note, dropdown
-**Notations**:
-    - IO:
-        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
-        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
-    - Params:
-        - $\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}$: Filters.
-        - $\mathbf{b}\in\mathbb{R}^{C_{out}}$: Biases.
-    - Hyperparams:
-        - $H_{in}, W_{in}$: Input height & width.
-        - $C_{in}$: #Input channels.
-        - $C_{out}$: #Filters (i.e., #Output channels).
-        - $f_h, f_w$: Filter height & width.
-        - $s$: Stride size.
-        - $p$: Padding size.
-        - $r$: Dilation rate.
-**Forward**:
-    1. (optional) Pad input tensor: $\mathbf{X}^\text{pad}\in\mathbb{R}^{(H_{in}+2p)\times (W_{in}+2p)\times C_{in}}$
-    2. Perform element-wise multiplication (i.e., convolution):
-
-        $$
-        Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+r(i-1)-p,sw+r(j-1)-p,c_{in}}+b_{c_{out}}
-        $$
-
-        where
-
-        $$\begin{align*}
-        H_{out}&=\left\lfloor\frac{H_{in}+2p-r(f_h-1)-1}{s}\right\rfloor+1\\
-        W_{out}&=\left\lfloor\frac{W_{in}+2p-r(f_w-1)-1}{s}\right\rfloor+1
-        \end{align*}$$
-
-**Backward**:
-
-    $$\begin{align*}
-    &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+r(i-1)-p, sw+r(j-1)-p, c_{in}}\\
-    &\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
-    &\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{r(i-1)-sh+p,r(j-1)-sw+p,c_{out},c_{in}}
-    \end{align*}$$
-```
-
-```{admonition} Code
-:class: tip, dropdown
-```python
-class AtrousConv2d:
-    def __init__(self, filter_size, n_filters, dilation_rate=1, stride=1, padding=0, learning_rate=0.01):
-        self.f = filter_size  # assume equal height & width
-        self.n_filters = n_filters
-        self.r = dilation_rate
-        self.s = stride
-        self.p = padding
-        self.lr = learning_rate
-        self.W = np.random.randn(filter_size, filter_size, n_filters) / filter_size**2
-        self.b = np.zeros((n_filters, 1))
-
-    def pad_input(self, X):
-        if self.p > 0:
-            return np.pad(X, ((0, 0), (self.p, self.p), (self.p, self.p), (0, 0)), mode='constant')
-        return X
-
-    def forward(self, X):
-        # pad input
-        self.X = X
-        self.X_pad = self.pad_input(X)
-
-        # calculate output dims
-        batch_size, in_height, in_width, in_channels = X.shape
-        self.out_height = (in_height + 2*self.p - self.r*(self.f-1) - 1) // self.s + 1
-        self.out_width = (in_width + 2*self.p - self.r*(self.f-1) - 1) // self.s + 1
-
-        # init output tensor
-        self.Y = np.zeros((batch_size, self.out_height, self.out_width, self.n_filters))
-
-        # compute output per scanned area
-        for h in range(self.out_height):
-            for w in range(self.out_width):
-                X_scanned = self.X_pad[:, self.s*h:self.s*h+self.r*(self.f-1)+1:self.r, self.s*w:self.s*w + self.r*(self.f-1)+1:self.r, :]
-                for c in range(self.n_filters):
-                    self.Y[:, h, w, c] = np.sum(X_scanned * self.W[:, :, :, c], axis=(1, 2, 3)) + self.b[c]
-
-        return self.Y
-
-    def backward(self, dY):
-        batch_size, in_height, in_width, in_channels = self.X.shape
-
-        # init gradients
-        dX = np.zeros_like(self.X_pad)
-        dW = np.zeros_like(self.W)
-        db = np.zeros_like(self.b)
-
-        # compute gradients
-        for h in range(self.out_height):
-            for w in range(self.out_width):
-                X_scanned = self.X_pad[:, self.s*h:self.s*h + self.r*(self.f-1)+1:self.r,
-                                       self.s*w:self.s*w + self.r*(self.f-1)+1:self.r, :]
-                for c in range(self.n_filters):
-                    db[c] += np.sum(dY[:, h, w, c])
-                    dW[:, :, :, c] += np.sum(X_scanned * (dY[:, h, w, c])[:, None, None, None], axis=0)
-                    dX[:, self.s*h:self.s*h + self.r*(self.f-1)+1:self.r, self.s*w:self.s*w + self.r*(self.f-1)+1:self.r, :] += self.W[:, :, :, c] * (dY[:, h, w, c])[:, None, None, None]
-
-        # remove padding
-        if self.p > 0:
-            dX = dX[:, self.p:-self.p, self.p:-self.p, :]
-
-        # update params
-        self.W -= self.lr * dW
-        self.b -= self.lr * db
-
-        return dX
-```
-
-## Pooling
-- **What**: Convolution but ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
-    - computes a heuristic per scanned patch.
-    - uses the same #channels.
-- **Why**: Dimensionality reduction while preserving dominant features.
-- **How**: Slide the pooling window over the input & apply the heuristic within the scanned patch.
-    - **Max**: Output the maximum value from each patch.
-    - **Average**: Output the average value of each patch.
-- **When**: When downsampling is necessary.
-- **Where**: After convolutional layer.
-- **Pros**:
-    - Significantly higher computational efficiency (time & space).
-    - No params to train.
-    - Reduces overfitting.
-    - Preserves translation invariance without losing too much info.
-    - High robustness.
-- **Cons**:
-    - Slight spatial info loss.
-    - Requires hyperparam tuning.
-        - Large filter or stride results in coarse features.
-- **Max vs Average**:
-    - **Max**: Captures most dominant features; higher robustness.
-    - **Avg**: Preserves more info; provides smoother features; dilutes the importance of dominant features.
-
-```{admonition} Math
-:class: note, dropdown
-**Notations**:
-    - IO:
-        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
-        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$: Output volume.
-    - Hyperparams:
-        - $H_{in}, W_{in}$: Input height & width.
-        - $C_{in}$: #Input channels.
-        - $f_h, f_w$: Filter height & width.
-        - $s$: Stride size.
-**Forward**:
-
-    $$\begin{array}{ll}
-    \text{Max:} & Y_{h,w,c}=\max_{i=1,\cdots,f_h\ |\ j=1,\cdots,f_w}X_{sh+i,sw+j,c}\\
-    \text{Avg:} & Y_{h,w,c}=\frac{1}{f_hf_w}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}X_{sh+i,sw+j,c}
-    \end{array}$$
-
-    where
-
-    $$\begin{align*}
-    H_{out}&=\left\lfloor\frac{H_{in}-f_h}{s}\right\rfloor+1\\
-    W_{out}&=\left\lfloor\frac{W_{in}-f_h}{s}\right\rfloor+1
-    \end{align*}$$
-
-**Backward**:
-
-    $$\begin{array}{ll}
-    \text{Max:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=g_{h,w,c}\text{ if }X_{sh+i,sw+j,c}=Y_{h,w,c}\\
-    \text{Avg:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=\frac{g_{h,w,c}}{f_hf_w}
-    \end{array}$$
-
-    - Max: Gradients only propagate to the max element of each window.
-    - Avg: Gradients are equally distributed among all elements in each window.
-```
-
-```{admonition} Code
-:class: tip, dropdown
-```python
-class Pooling2D:
-    def __init__(self, filter_size, stride=1, padding=0, mode: Literal['max', 'avg']='max'):
-        self.f = filter_size
-        self.s = stride
-        self.mode = mode
-
-    def forward(self, X):
-        # calculate output dims
-        batch_size, in_height, in_width, in_channels = X.shape
-        self.out_height = (in_height-self.f) // self.s + 1
-        self.out_width = (in_width-self.f) // self.s + 1
-
-        # init output tensor
-        self.Y = np.zeros((batch_size, self.out_height, self.out_width, in_channels))
-
-        # perform pooling
-        for h in range(self.out_height):
-            for w in range(self.out_width):
-                X_scanned = X[:, self.s*h:self.s*h+self.f, self.s*w:self.s*w+self.f, :]
-                if self.mode == 'max':
-                    self.Y[:, h, w, :] = np.max(X_scanned, axis=(1, 2))
-                elif self.mode == 'avg':
-                    self.Y[:, h, w, :] = np.mean(X_scanned, axis=(1, 2))
-
-        return self.Y
-
-    def backward(self, dY):
-        batch_size, in_height, in_width, in_channels = dY.shape
-
-        # initialize gradient tensor
-        dX = np.zeros_like(self.X)
-
-        # propagate gradients
-        for h in range(self.out_height):
-            for w in range(self.out_width):
-                X_scanned = self.X[:, self.s*h:self.s*h+self.f, self.s*w:self.s*w+self.f, :]
-                for c in range(in_channels):
-                    if self.mode == 'max':
-                        mask = (X_scanned[:, :, :, c] == self.Y[:, h, w, c][:, None, None])
-                        dX[:, self.s*h:self.s*h+self.f, self.s*w:self.s*w+self.f, c] += mask * dY[:, h, w, c][:, None, None]
-                    elif self.mode == 'avg':
-                        dX[:, self.s*h:self.s*h+self.f, self.s*w:self.s*w+self.f, c] += dY[:, h, w, c][:, None, None] / (self.f*self.f)
-
-        return dX
-```
-
-<br/>
-
-# Recurrent
-```{image} ../images/RNN.png
-:width: 400
-:align: center
-```
-
-$$
-h_t=\tanh(x_tW_{xh}^T+h_{t-1}W_{hh}^T)
-$$
-
-Idea: **recurrence** - maintain a hidden state that captures information about previous inputs in the sequence
-
-Notations:
-- $ x_t$: input at time $t$ of shape $(m,H_{in}) $
-- $ h_t$: hidden state at time $t$ of shape $(D,m,H_{out}) $
-- $ W_{xh}$: weight matrix of shape $(H_{out},H_{in})$ if initial layer, else $(H_{out},DH_{out}) $
-- $ W_{hh}$: weight matrix of shape $(H_{out},H_{out}) $
-- $ H_{in}$: input size, #features in $x_t $
-- $ H_{out}$: hidden size, #features in $h_t $
-- $ m $: batch size
-- $ D$: $=2$ if bi-directional else $1 $
-
-Cons:
-- Short-term memory: hard to carry info from earlier steps to later ones if long seq
-- Vanishing gradient: gradients in earlier parts become extremely small if long seq
-
-## GRU
-
-```{image} ../images/GRU.png
-:width: 400
-:align: center
-```
-
-$$\begin{align*}
-&r_t=\sigma(x_tW_{xr}^T+h_{t-1}W_{hr}^T) \\\\
-&z_t=\sigma(x_tW_{xz}^T+h_{t-1}W_{hz}^T) \\\\
-&\tilde{h}\_t=\tanh(x_tW_{xn}^T+r_t\odot(h_{t-1}W_{hn}^T)) \\\\
-&h_t=(1-z_t)\odot\tilde{h}\_t+z_t\odot h_{t-1}
-\end{align*}$$
-
-Idea: Gated Recurrent Unit - use 2 gates to address long-term info propagation issue in RNN:
-1. **Reset gate**: determine how much of $ h_{t-1}$ should be ignored when computing $\tilde{h}\_t $.
-2. **Update gate**: determine how much of $ h_{t-1}$ should be retained for $h_t $.
-3. **Candidate**: calculate candidate $ \tilde{h}\_t$ with reset $h_{t-1} $.
-4. **Final**: calculate weighted average between candidate $ \tilde{h}\_t$ and prev state $h_{t-1} $ with the retain ratio.
-
-Notations:
-- $ r_t$: reset gate at time $t$ of shape $(m,H_{out}) $
-- $ z_t$: update gate at time $t$ of shape $(m,H_{out}) $
-- $ \tilde{h}\_t$: candidate hidden state at time $t$ of shape $(m,H_{out}) $
-- $ \odot $: element-wise product
-
-## LSTM
-
-```{image} ../images/LSTM.png
-:width: 400
-:align: center
-```
-
-$$\begin{align*}
-&i_t=\sigma(x_tW_{xi}^T+h_{t-1}W_{hi}^T) \\\\
-&f_t=\sigma(x_tW_{xf}^T+h_{t-1}W_{hf}^T) \\\\
-&\tilde{c}\_t=\tanh(x_tW_{xc}^T+h_{t-1}W_{hc}^T) \\\\
-&c_t=f_t\odot c_{t-1}+i_t\odot \tilde{c}\_t \\\\
-&o_t=\sigma(x_tW_{xo}^T+h_{t-1}W_{ho}^T) \\\\
-&h_t=o_t\odot\tanh(c_t)
-\end{align*}$$
-
-Idea: Long Short-Term Memory - use 3 gates:
-1. **Input gate**: determine what new info from $ x_t$ should be added to cell state $c_t $.
-2. **Forget gate**: determine what info from prev cell $ c_{t-1} $ should be forgotten.
-3. **Candidate cell**: create a new candidate cell from $ x_t$ and $h_{t-1} $.
-4. **Update cell**: use $ i_t$ and $f_t $ to combine prev and new candidate cells.
-5. **Output gate**: determine what info from curr cell $ c_t$ should be added to output $h_t $.
-6. **Final**: simply apply $ o_t$ to activated cell $c_t $.
-
-Notations:
-- $ i_t$: input gate at time $t$ of shape $(m,H_{out}) $
-- $ f_t$: forget gate at time $t$ of shape $(m,H_{out}) $
-- $ c_t$: cell state at time $t$ of shape $(m,H_{cell}) $
-- $ o_t$: output gate at time $t$ of shape $(m,H_{out}) $
-- $ H_{cell}$: cell hidden size (in most cases same as $H_{out} $)
-
-## Bidirectional
-## Stacked
+``` -->
 
 <br/>
 
@@ -1336,6 +515,328 @@ $$
 ## Attention
 ### Self-Attention
 ### Multi-Head Attention -->
+
+# Convolutional
+- **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
+- **Why**: To learn spatial hierarchies of features.
+- **How**: Slide multiple filters/kernel (i.e., small matrices) over the input data.
+    - At each step, perform element-wise multiplication and summation between each filter and the scanned area, producing a feature map.
+- **When**: Used with grid-like data such as images and video frames.
+- **Where**: Computer Vision.
+- **Pros**:
+    - Translation invariance.
+    - Efficiently captures spatial hierarchies.
+- **Cons**:
+    - High computational cost for big data
+    - Requires big data to be performant.
+    - Requires extensive hyperparam tuning.
+
+<!-- ```{admonition} Math
+:class: note, dropdown
+**Notations**:
+    - IO:
+        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
+        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
+    - Params:
+        - $\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}$: Filters.
+        - $\mathbf{b}\in\mathbb{R}^{C_{out}}$: Biases.
+    - Hyperparams:
+        - $H_{in}, W_{in}$: Input height & width.
+        - $C_{in}$: #Input channels.
+        - $C_{out}$: #Filters (i.e., #Output channels).
+        - $f_h, f_w$: Filter height & width.
+        - $s$: Stride size.
+        - $p$: Padding size.
+**Forward**:
+
+    $$
+    Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
+    $$
+
+    where
+
+    $$\begin{align*}
+    H_{out}&=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
+    W_{out}&=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
+    \end{align*}$$
+
+**Backward**:
+
+    $$\begin{align*}
+    &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
+    &\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
+    &\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-sh+p,j-sw+p,c_{out},c_{in}}
+    \end{align*}$$
+
+    Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
+``` -->
+
+## Depthwise Separable Convolution
+- **What**: Depthwise convolution + Pointwise convolution. ([paper](https://arxiv.org/pdf/1610.02357))
+- **Why**: To significantly reduce computational cost and #params.
+- **How**:
+    - **Depthwise**: Use a single filter independently per channel.
+    - **Pointwise**: Use Conv1d to combine the outputs of depthwise convolution.
+- **When**: When computational efficiency and model size are crucial.
+- **Where**: [MobileNets](https://arxiv.org/pdf/1704.04861), [Xception](https://openaccess.thecvf.com/content_cvpr_2017/papers/Chollet_Xception_Deep_Learning_CVPR_2017_paper.pdf), etc.
+- **Pros**: Significantly higher computational efficiency (time & space).
+- **Cons**: Lower accuracy.
+
+<!-- ```{admonition} Math
+:class: note, dropdown
+**Notations**:
+    - IO:
+        - $\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}$: Input volume.
+        - $\mathbf{Y} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}$: Output volume.
+    - Params:
+        - $\mathbf{W^d} \in \mathbb{R}^{f_h \times f_w \times C_{in}}$: Depthwise filters.
+        - $\mathbf{b^d} \in \mathbb{R}^{C_{in}}$: Depthwise biases.
+        - $\mathbf{W^p} \in \mathbb{R}^{1 \times 1 \times C_{in} \times C_{out}}$: Pointwise filters.
+        - $\mathbf{b^p} \in \mathbb{R}^{C_{out}}$: Pointwise biases.
+    - Hyperparams:
+        - $H_{in}, W_{in}$: Input height & width.
+        - $C_{in}$: #Input channels.
+        - $C_{out}$: #Output channels.
+        - $f_h, f_w$: Filter height & width.
+        - $s$: Stride size.
+        - $p$: Padding size.
+**Forward**:
+    1. Depthwise convolution: Calculate $\mathbf{Z} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{in}}$:
+
+        $$
+        Z_{h,w,c_{in}} = \sum_{i=1}^{f_h} \sum_{j=1}^{f_w} W^d_{i,j,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}} + b^d_{c_{in}}
+        $$
+
+    2. Pointwise convolution:
+
+        $$
+        Y_{h,w,c_{out}} = \sum_{c_{in}=1}^{C_{in}} W^p_{1,1,c_{in},c_{out}} \cdot Z_{h,w,c_{in}} + b^p_{c_{out}}
+        $$
+        where
+        $$\begin{align*}
+        H_{out} &= \left\lfloor \frac{H_{in} + 2p - f_h}{s} \right\rfloor + 1 \\
+        W_{out} &= \left\lfloor \frac{W_{in} + 2p - f_w}{s} \right\rfloor + 1
+        \end{align*}$$
+
+**Backward**:
+    1. Pointwise convolution: Let $g^{p}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Y}}$.
+
+        $$\begin{align*}
+        &\frac{\partial \mathcal{L}}{\partial W^p_{1,1,c_{in},c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}} \cdot Z_{h,w,c_{in}}\\
+        &\frac{\partial \mathcal{L}}{\partial b^p_{c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}}\\
+        &\frac{\partial \mathcal{L}}{\partial Z_{h,w,c_{in}}} = \sum_{c_{out}=1}^{C_{out}} g^{p}_{h,w,c_{out}} \cdot W^p_{1,1,c_{in},c_{out}}
+        \end{align*}$$
+    2. Depthwise convolution: Let $g^{d}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Z}}$.
+
+        $$\begin{align*}
+        &\frac{\partial \mathcal{L}}{\partial W^d_{i,j,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}}\\
+        &\frac{\partial \mathcal{L}}{\partial b_{d,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}}\\
+        &\frac{\partial \mathcal{L}}{\partial X_{i,j,c_{in}}} = \sum_{h=1}^{f_h} \sum_{w=1}^{f_w} g^d_{h,w,c_{in}} \cdot W^d_{i-sh+p,j-sw+p,c_{in}}
+        \end{align*}$$
+``` -->
+
+## Atrous/Dilated Convolution
+- **What**: Add holes between filter elements (i.e., dilation). ([paper](https://arxiv.org/pdf/1511.07122))
+- **Why**: The filters can capture larger contextual info without increasing #params.
+- **How**: Introduce a dilation rate $r$ to determine the space between the filter elements. Then compute convolution accordingly.
+- **When**: When understanding the broader context is important.
+- **Where**: Semantic image segmentation, object detection, depth estimation, optical flow estimation, etc.
+- **Pros**:
+    - Larger receptive fields without increasing #params.
+    - Captures multi-scale info without upsampling layers.
+- **Cons**:
+    - Requires very careful hyperparam tuning, or info loss.
+
+<!-- ```{admonition} Math
+:class: note, dropdown
+**Notations**:
+    - IO:
+        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
+        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
+    - Params:
+        - $\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}$: Filters.
+        - $\mathbf{b}\in\mathbb{R}^{C_{out}}$: Biases.
+    - Hyperparams:
+        - $H_{in}, W_{in}$: Input height & width.
+        - $C_{in}$: #Input channels.
+        - $C_{out}$: #Filters (i.e., #Output channels).
+        - $f_h, f_w$: Filter height & width.
+        - $s$: Stride size.
+        - $p$: Padding size.
+        - $r$: Dilation rate.
+**Forward**:
+    1. (optional) Pad input tensor: $\mathbf{X}^\text{pad}\in\mathbb{R}^{(H_{in}+2p)\times (W_{in}+2p)\times C_{in}}$
+    2. Perform element-wise multiplication (i.e., convolution):
+
+        $$
+        Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+r(i-1)-p,sw+r(j-1)-p,c_{in}}+b_{c_{out}}
+        $$
+
+        where
+
+        $$\begin{align*}
+        H_{out}&=\left\lfloor\frac{H_{in}+2p-r(f_h-1)-1}{s}\right\rfloor+1\\
+        W_{out}&=\left\lfloor\frac{W_{in}+2p-r(f_w-1)-1}{s}\right\rfloor+1
+        \end{align*}$$
+
+**Backward**:
+
+    $$\begin{align*}
+    &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+r(i-1)-p, sw+r(j-1)-p, c_{in}}\\
+    &\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
+    &\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{r(i-1)-sh+p,r(j-1)-sw+p,c_{out},c_{in}}
+    \end{align*}$$
+``` -->
+
+## Pooling
+- **What**: Convolution but ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
+    - computes a heuristic per scanned patch.
+    - uses the same #channels.
+- **Why**: Dimensionality reduction while preserving dominant features.
+- **How**: Slide the pooling window over the input & apply the heuristic within the scanned patch.
+    - **Max**: Output the maximum value from each patch.
+    - **Average**: Output the average value of each patch.
+- **When**: When downsampling is necessary.
+- **Where**: After convolutional layer.
+- **Pros**:
+    - Significantly higher computational efficiency (time & space).
+    - No params to train.
+    - Reduces overfitting.
+    - Preserves translation invariance without losing too much info.
+    - High robustness.
+- **Cons**:
+    - Slight spatial info loss.
+    - Requires hyperparam tuning.
+        - Large filter or stride results in coarse features.
+- **Max vs Average**:
+    - **Max**: Captures most dominant features; higher robustness.
+    - **Avg**: Preserves more info; provides smoother features; dilutes the importance of dominant features.
+
+<!-- ```{admonition} Math
+:class: note, dropdown
+**Notations**:
+    - IO:
+        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
+        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$: Output volume.
+    - Hyperparams:
+        - $H_{in}, W_{in}$: Input height & width.
+        - $C_{in}$: #Input channels.
+        - $f_h, f_w$: Filter height & width.
+        - $s$: Stride size.
+**Forward**:
+
+    $$\begin{array}{ll}
+    \text{Max:} & Y_{h,w,c}=\max_{i=1,\cdots,f_h\ |\ j=1,\cdots,f_w}X_{sh+i,sw+j,c}\\
+    \text{Avg:} & Y_{h,w,c}=\frac{1}{f_hf_w}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}X_{sh+i,sw+j,c}
+    \end{array}$$
+
+    where
+
+    $$\begin{align*}
+    H_{out}&=\left\lfloor\frac{H_{in}-f_h}{s}\right\rfloor+1\\
+    W_{out}&=\left\lfloor\frac{W_{in}-f_h}{s}\right\rfloor+1
+    \end{align*}$$
+
+**Backward**:
+
+    $$\begin{array}{ll}
+    \text{Max:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=g_{h,w,c}\text{ if }X_{sh+i,sw+j,c}=Y_{h,w,c}\\
+    \text{Avg:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=\frac{g_{h,w,c}}{f_hf_w}
+    \end{array}$$
+
+    - Max: Gradients only propagate to the max element of each window.
+    - Avg: Gradients are equally distributed among all elements in each window.
+``` -->
+
+<br/>
+
+# Recurrent
+```{image} ../images/RNN.png
+:width: 400
+:align: center
+```
+
+$$
+h_t=\tanh(x_tW_{xh}^T+h_{t-1}W_{hh}^T)
+$$
+
+Idea: **recurrence** - maintain a hidden state that captures information about previous inputs in the sequence
+
+Notations:
+- $ x_t$: input at time $t$ of shape $(m,H_{in}) $
+- $ h_t$: hidden state at time $t$ of shape $(D,m,H_{out}) $
+- $ W_{xh}$: weight matrix of shape $(H_{out},H_{in})$ if initial layer, else $(H_{out},DH_{out}) $
+- $ W_{hh}$: weight matrix of shape $(H_{out},H_{out}) $
+- $ H_{in}$: input size, #features in $x_t $
+- $ H_{out}$: hidden size, #features in $h_t $
+- $ m $: batch size
+- $ D$: $=2$ if bi-directional else $1 $
+
+Cons:
+- Short-term memory: hard to carry info from earlier steps to later ones if long seq
+- Vanishing gradient: gradients in earlier parts become extremely small if long seq
+
+## GRU
+
+```{image} ../images/GRU.png
+:width: 400
+:align: center
+```
+
+$$\begin{align*}
+&r_t=\sigma(x_tW_{xr}^T+h_{t-1}W_{hr}^T) \\\\
+&z_t=\sigma(x_tW_{xz}^T+h_{t-1}W_{hz}^T) \\\\
+&\tilde{h}\_t=\tanh(x_tW_{xn}^T+r_t\odot(h_{t-1}W_{hn}^T)) \\\\
+&h_t=(1-z_t)\odot\tilde{h}\_t+z_t\odot h_{t-1}
+\end{align*}$$
+
+Idea: Gated Recurrent Unit - use 2 gates to address long-term info propagation issue in RNN:
+1. **Reset gate**: determine how much of $ h_{t-1}$ should be ignored when computing $\tilde{h}\_t $.
+2. **Update gate**: determine how much of $ h_{t-1}$ should be retained for $h_t $.
+3. **Candidate**: calculate candidate $ \tilde{h}\_t$ with reset $h_{t-1} $.
+4. **Final**: calculate weighted average between candidate $ \tilde{h}\_t$ and prev state $h_{t-1} $ with the retain ratio.
+
+Notations:
+- $ r_t$: reset gate at time $t$ of shape $(m,H_{out}) $
+- $ z_t$: update gate at time $t$ of shape $(m,H_{out}) $
+- $ \tilde{h}\_t$: candidate hidden state at time $t$ of shape $(m,H_{out}) $
+- $ \odot $: element-wise product
+
+## LSTM
+
+```{image} ../images/LSTM.png
+:width: 400
+:align: center
+```
+
+$$\begin{align*}
+&i_t=\sigma(x_tW_{xi}^T+h_{t-1}W_{hi}^T) \\\\
+&f_t=\sigma(x_tW_{xf}^T+h_{t-1}W_{hf}^T) \\\\
+&\tilde{c}\_t=\tanh(x_tW_{xc}^T+h_{t-1}W_{hc}^T) \\\\
+&c_t=f_t\odot c_{t-1}+i_t\odot \tilde{c}\_t \\\\
+&o_t=\sigma(x_tW_{xo}^T+h_{t-1}W_{ho}^T) \\\\
+&h_t=o_t\odot\tanh(c_t)
+\end{align*}$$
+
+Idea: Long Short-Term Memory - use 3 gates:
+1. **Input gate**: determine what new info from $ x_t$ should be added to cell state $c_t $.
+2. **Forget gate**: determine what info from prev cell $ c_{t-1} $ should be forgotten.
+3. **Candidate cell**: create a new candidate cell from $ x_t$ and $h_{t-1} $.
+4. **Update cell**: use $ i_t$ and $f_t $ to combine prev and new candidate cells.
+5. **Output gate**: determine what info from curr cell $ c_t$ should be added to output $h_t $.
+6. **Final**: simply apply $ o_t$ to activated cell $c_t $.
+
+Notations:
+- $ i_t$: input gate at time $t$ of shape $(m,H_{out}) $
+- $ f_t$: forget gate at time $t$ of shape $(m,H_{out}) $
+- $ c_t$: cell state at time $t$ of shape $(m,H_{cell}) $
+- $ o_t$: output gate at time $t$ of shape $(m,H_{out}) $
+- $ H_{cell}$: cell hidden size (in most cases same as $H_{out} $)
+
+## Bidirectional
+## Stacked
+
+<br/>
 
 # Activation
 An activation function adds nonlinearity to the output of a layer to enhance complexity. [ReLU](#relu) and [Softmax](#softmax) are SOTA.
