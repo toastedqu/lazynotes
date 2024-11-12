@@ -1,14 +1,14 @@
 # Hi👋
 
-Welcome to my minimalist handbook on developing ASI/AC.
+Welcome to my minimalist handbook on AI.
 
 Each concept is structured as follows:
-- **What**: intuition, mechanism, components.
-- **Why**: problem/motivation, necessity.
-- **How**: usage instructions.
-- **When**: applicable conditions/assumptions.
-- **Where**: application areas.
-- **Pros & Cons**: advantages & disadvantages.
+- **What**: Intuition.
+- **Why**: Problem/Motivation.
+- **How**: Functionality.
+- **When**: Assumptions/Conditions.
+- **Where**: Applications.
+- **Pros & Cons**: Advantages & Disadvantages.
 
 Common notations include (section-specific notations take priority):
 - $ a $: scalar / variable
@@ -22,6 +22,7 @@ Common notations include (section-specific notations take priority):
 - $ \{\} $: set brackets
 - $ || $: norm  (for continuous vectors) / count (for discrete vectors)
 - $ \# $: count
+- $ * $: arbitrary values
 - $ \hat{\ \ } $: estimator
 - $ a_\text{sub} $: index (subscript)
 - $ a^\text{sup} $: name (superscript)

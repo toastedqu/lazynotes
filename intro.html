@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Hi👋 &#8212; AI Handbook</title>
+    <title>Hi👋 &#8212; Q.notes</title>
   
   
   
@@ -34,7 +34,8 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=dc1d5867" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -47,6 +48,7 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="_static/tabs.js?v=3ee01567"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
@@ -156,8 +158,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="AI Handbook - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="AI Handbook - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Q.notes - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Q.notes - Home"/>`);</script>
   
   
 </a></div>
@@ -185,9 +187,8 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">IRL</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="irl/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="irl/dsa.html">Coding</a></li>
 
-<li class="toctree-l1"><a class="reference internal" href="irl/data.html">Data</a></li>
 </ul>
 
     </div>
@@ -387,15 +388,15 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="hi">
 <h1>Hi👋<a class="headerlink" href="#hi" title="Link to this heading">#</a></h1>
-<p>Welcome to my minimalist handbook on developing ASI/AC.</p>
+<p>Welcome to my minimalist handbook on AI.</p>
 <p>Each concept is structured as follows:</p>
 <ul class="simple">
-<li><p><strong>What</strong>: intuition, mechanism, components.</p></li>
-<li><p><strong>Why</strong>: problem/motivation, necessity.</p></li>
-<li><p><strong>How</strong>: usage instructions.</p></li>
-<li><p><strong>When</strong>: applicable conditions/assumptions.</p></li>
-<li><p><strong>Where</strong>: application areas.</p></li>
-<li><p><strong>Pros &amp; Cons</strong>: advantages &amp; disadvantages.</p></li>
+<li><p><strong>What</strong>: Intuition.</p></li>
+<li><p><strong>Why</strong>: Problem/Motivation.</p></li>
+<li><p><strong>How</strong>: Functionality.</p></li>
+<li><p><strong>When</strong>: Assumptions/Conditions.</p></li>
+<li><p><strong>Where</strong>: Applications.</p></li>
+<li><p><strong>Pros &amp; Cons</strong>: Advantages &amp; Disadvantages.</p></li>
 </ul>
 <p>Common notations include (section-specific notations take priority):</p>
 <ul class="simple">
@@ -412,6 +413,7 @@ document.write(`
 <li><p><span class="math notranslate nohighlight">\( \{\} \)</span>: set brackets</p></li>
 <li><p><span class="math notranslate nohighlight">\( || \)</span>: norm  (for continuous vectors) / count (for discrete vectors)</p></li>
 <li><p><span class="math notranslate nohighlight">\( \# \)</span>: count</p></li>
+<li><p><span class="math notranslate nohighlight">\( * \)</span>: arbitrary values</p></li>
 <li><p><span class="math notranslate nohighlight">\( \hat{\ \ } \)</span>: estimator</p></li>
 <li><p><span class="math notranslate nohighlight">\( a_\text{sub} \)</span>: index (subscript)</p></li>
 <li><p><span class="math notranslate nohighlight">\( a^\text{sup} \)</span>: name (superscript)</p></li>
