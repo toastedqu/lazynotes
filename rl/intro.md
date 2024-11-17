@@ -9,25 +9,17 @@ kernelspec:
   language: python
   name: python3
 ---
-# Overview
-## Agent, Environment, Policy, Reward Signal
+# Reinforcement Learning
+Reinforcement Learning learns through **experience** to make good decisions under uncertainty.
+- RL directly interacts with the environment and uses training info that **evaluates** the actions taken.
+	- Evaluative feedback depends only on the action taken.
+- Supervised Learning uses training info that **instructs** by giving correct actions instead.
+	- Instructive feedback is independent of the action taken.
 
-# Concepts
-## On-Policy vs. Off-Policy Learning
-   - Differences between On-Policy and Off-Policy Learning
-   - Behavior vs. Target Policies
-   - Importance Sampling
-   - Off-Policy Evaluation
-
-
-## Exploration vs. Exploitation Trade-off
-### ε-Greedy Methods
-### Softmax Action Selection
-### Upper Confidence Bound (UCB)
-### Intrinsic Motivation and Curiosity-Driven Exploration
-
-## Transfer Learning in RL
-### Multi-task Learning in RL
-### Zero-Shot Transfer in RL
-### Meta-Reinforcement Learning
-### Domain Adaptation and Generalization
+The core of RL is **STATE** - the perceived signals from the environment at each time step. Based on the concept of state, RL consists of 4 elements:
+- **Policy**: perceived states -> actions.
+- **Reward**: short-term goal, at each step (primary).
+- **Value**: long-term goal, from the expected future (secondary).
+- **Model**: simulation of environment behavior (optional).
+	- **Model-based**: planning
+	- **Model-free**: trial-and-error
