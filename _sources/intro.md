@@ -1,6 +1,6 @@
-# Hi👋
+# LazyNotes
 
-Welcome to my minimalist handbook on AI.
+A handbook of AI topics, covering intuition and theory.
 
 Each concept is structured as follows:
 - **What**: Intuition.

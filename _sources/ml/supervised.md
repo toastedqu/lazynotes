@@ -9,36 +9,11 @@ kernelspec:
   language: python
   name: python3
 ---
-# Linear Models
-## Linear Regression
-## Logistic Regression
-## Generalized Linear Models
+# Supervised Learning
+Supervised learning trains models on labeled data to predict outputs from inputs.
 
-# Naive Bayes
+Most methods are addressed from a frequentist perspective, except Bayesian methods.
 
-# Nearest Neighbors
-
-# Support Vector Machine
-
-# Gaussian Process
-
-# Decision Tree
-
-# Ensemble Methods
-## Random Forests
-## Gradient Boosting
-## XGBoost
-## LightGBM
-
-# Semi-Supervised
-## Self-Training
-## Co-Training and Multi-View Learning
-
-# Self-Supervised
-## Contrastive Learning
-## Predictive Coding
-
-# Online Learning
-## Perceptron
-## Passive-Aggressive
-## MIRA
+ToC:
+```{tableofcontents}
+```
