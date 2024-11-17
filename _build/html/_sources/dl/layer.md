@@ -339,34 +339,30 @@ It's easy to explain with the vector form for batch normalization, but it's more
 :width: 500
 :align: center
 ```
-
-**What**: Transformer exploits self-attention mechanisms for sequential data.
-
-**Why**:
-- **long-range dependencies**: directly model relationships between any two positions in the sequence regardless of their distance, whereas RNNs struggle with tokens that are far apart.
-- **parallel processing**: process all tokens in parallel, whereas RNNs process them in sequence.
-- **flexibility**: can be easily modified and transferred to various structures and tasks.
-
-**Where**: NLP, CV, Speech, Time Series, Generative tasks, etc.
-
-**When**:
-- sequential data independence: a sequence can be processed in parallel to a certain extent.
-- importance of contextual relationships
-- importance of high-dimensional representations
-- sufficient data & sufficient computational resources
-
-**How**:
-- All layers used in transformer:
+- **What**: **Self-attention** for sequential data.
+- **Why**: RNNs had severe limitations:
+    - **Lack of long-range dependencies**: RNNs struggled to capture long-range dependencies in sequences due to vanishing gradients.
+    - **Sequential computation**: The training for RNN was extremely slow, especially for long sequences, due to its sequential nature.
+- **How**:
     - [Positional Encoding](#positional-encoding)
-    - [Residual Connection](#residual-block-resnet)
+    - [Residual Connection](#residual-connection)
+    - [Multi-Head Attention](#multi-head-attention)
     - [Layer Normalization](#layer-normalization)
     - [Position-wise Feed-Forward Networks](#postion-wise-feed-forward-networks)
-    - [Multi-Head Attention](#multi-head-attention)
-- Each sublayer follows this structure: $ \text{LayerNorm}(x+\text{Sublayer}(x)) $
-- **Input**: input/output token embeddings $ \xrightarrow{\text{PE}} $ input for Encoder/Decoder
-- **Encoder**: input $ \xrightarrow{\text{MHA}}$$\xrightarrow{\text{FFN}}$ $K$&$V $ for Decoder
-- **Decoder**: output $ \xrightarrow{\text{Masked MHA}}$ $Q$ + Encoder's $K$&$V$ $\xrightarrow{\text{MHA}}$$\xrightarrow{\text{FFN}} $ Decoder embeddings
-- **Output**: Decoder embeddings $ \xrightarrow{\text{Linear}}$ embeddings shaped for token prediction $\xrightarrow{\text{Softmax}} $ token probabilities
+- **When**:
+    - There are sufficient data.
+    - There are sufficient computational resources.
+    - The data can be converted into a sequential format and processed in parallel without affecting the underlying data distribution.
+- **Where**: Widely applicable.
+- **Pros**:
+    - Long-range dependencies.
+    - Parallel processing $\rightarrow$ Lower training time compared to RNN.
+    - High scalability.
+    - Allows transfer learning.
+    - Wide range of applications.
+- **Cons**:
+    - High computational cost $\rightarrow$ $O(n^2)$, where $n$ is sequence length.
+    -
 
 **Training**:
 - **Parameters**:

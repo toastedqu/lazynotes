@@ -4,17 +4,22 @@
 format: jb-book
 root: intro
 parts:
-  # - caption: Machine Learning
-  #   chapters:
-  #   - file: ml/overview
-  #   - file: irl/data
-  #   - file: irl/coding
-  - caption: Deep Learning
+  - caption: Machine Learning
     chapters:
-    - file: dl/layer
-  # - caption: Neuroscience
-  #   chapters:
-  #   - file: neuro/compneuro
+    - file: ml/intro
+    - file: ml/supervised
+      sections:
+      - file: ml/super/linear
+      - file: ml/super/bayesian
+      - file: ml/super/nn
+      - file: ml/super/svm
+      - file: ml/super/ensemble
+      - file: ml/super/semi-supervised
+      - file: ml/super/self-supervised
+      - file: ml/super/online
+#   - caption: Deep Learning
+#     chapters:
+#     - file: dl/layer
   - caption: IRL
     chapters:
     - file: irl/dsa
