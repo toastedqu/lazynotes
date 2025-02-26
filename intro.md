@@ -1,6 +1,6 @@
 # LazyNotes
 
-A handbook of AI topics, covering intuition and theory.
+A handbook of AI topics, focusing on intuition and theory.
 
 Each concept is structured as follows:
 - **What**: Intuition.
