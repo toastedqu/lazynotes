@@ -30,6 +30,7 @@ parts:
     - file: dl/transfer-tag
       sections:
       - file: dl/transfer/peft
-  - caption: IRL
+  - caption: LLM
     chapters:
-    - file: irl/dsa
+    - file: llm/rl
+    - file: llm/peft

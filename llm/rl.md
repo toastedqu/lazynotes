@@ -9,40 +9,97 @@ kernelspec:
   language: python
   name: python3
 ---
-# RL
-Reinforcement Learning is used to **align** LLMs with **human preferences**.
+# RL for LLMs
+## Overview
+### RL
+- **What**: Optimize an agent's **policy** to maximize its cumulative **reward** through trials and errors in an environment.
+- **Why**: For decision-making where actions have delayed consequence in dynamic, sequential tasks.
+    - In contrast, Supervised Learning teaches "correct answers" for static tasks.
+- **How**: An agent interacts with an environment by repeating:
+    1. Select an action $a_t$ based on its current state $s_t$.
+    2. Transition to a new state $s_{t+1}$.
+    3. Receive a reward $r_t$.
+    4. Update its decision-making strategy $\pi$.
 
-## RL Overview
-### RL Recap
-In RL, an agent interacts with an environment by repeating the following process:
-1. Select an action $a_t$ based on its current state $s_t$.
-2. Transition to a new state $s_{t+1}$.
-3. Receive a **reward** $r_t$.
+### LLM Alignment
+- **What**: Guide an LLM to match human values.
+- **Why**: To reduce the odds of generating undesired, sometimes harmful, responses despite pretraining & SFT.
+- **How**:
+    1. Collect high-quality human feedback.
+    2. Train the pretrained LLM on the feedback.
+    3. Test.
 
-The agent aims to maximize its cumulative reward. In order to achieve the goal, the agent needs a **policy**, which is a decision-making strategy at each time step.
+### RL for LLM Alignment
+- **What**: Frame LLM Alignment as an RL problem.
+- **Why**: Human values are dynamic, subjective, and constantly evolving. There isn't always one "correct answer" for IRL scenarios, so SFT falls short.
+- **How**:
+    - **Components**:
+        - **Agent**: LLM
+        - **Current state**: input token sequence
+        - **Action**: next-token prediction
+        - **New state**: input token sequence + predicted next token
+        - **Reward**: determined by an external reward model, after a full token sequence is generated.
+        - **Policy**: LLM weights, which dictate how the LLM predicts next token given input token sequence.
+            - The initial policy is obtained from Pretraining (and SFT).
+    - **Objective**:
+        - Maximize cumulative reward.
+        - Minimize deviation of aligned policy from initial policy.
+            - *Why?* We want to keep what works while steering toward our goal via minimal adjustments. Drastic changes could make it forget the basics.
+    - **Process**:
+        1. Train a reward model based on feedback data.
+        2. Optimize the policy against the reward model.
+    - **Key factors**:
+        - Feedback Data
+        - Reward Model
+        - Policy Optimization
 
-### RL for LLM alignment
-The components in LLM alignment are as follows:
-- **Agent**: LLM
-- **Current state**: input token sequence
-- **Action**: next-token prediction
-- **New state**: input token sequence + predicted next token
-- **Reward**: a reward decided by an external reward model, after a full token sequence is generated.
-- **Policy**: the weights of the LLM, which dictate how the LLM predicts the next token given the input token sequence. The initial policy is typically obtained from SFT.
+```{admonition} Math
+:class: note, dropdown
+**Objective** [2]:
 
-The process of RL for LLM alignment consists of 2 steps:
-1. Train a reward model based on preference data.
-2. Train a policy against the reward model.
+$$\begin{align*}
+\pi_\theta^*(y|x)&=\max_{\pi_\theta}\mathbb{E}_{x\sim D}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r(x,y)-\beta D_{KL}(\pi_\theta(y|x)||\pi_\text{ref}(y|x))] \\
+&=\max_{\pi_\theta}\mathbb{E}_{x\sim D, y\sim\pi_\theta(y|x)}\left[r(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]
+\end{align*}$$
 
-For this specific task, we have an additional objective to reward maximization: minimizing the deviation of the aligned policy from the initial policy.
+**Notations**:
+- IO:
+    - $\mathbf{x}\sim D$: Input token sequence.
+    - $\mathbf{y}\sim\pi_\theta(y|x)$: Output vector.
+- Params:
+    - $W\in\mathbb{R}^{H_{out}\times H_{in}}$: Weight matrix.
+    - $\textbf{b}\in\mathbb{R}^{H_{out}}$: Bias vector.
+- Hyperparams:
+    - $H_{in}$: Input feature dimension.
+    - $H_{out}$: Output feature dimension.
+```
 
-3 components are essential for the success of LLM alignment:
-- Preference data
-- Reward model
-- Policy Optimization
-
-## Preference Data
-
+## Feedback Data
+- **What**: Human-labeled desirable & undesirable responses.
+- **Why**: See [LLM Alignment](#llm-alignment).
+- **How**:
+    - **Branches**:
+        - **Label**:
+            - **Preference**: $y_w>y_l$, rating on scale.
+                - Pros: Captures nuance.
+                - Cons: Hard to collect.
+            - **Binary**: $y^+ \& y^-$, thumbs up & down.
+                - Pros: Easy to collect.
+                - Cons: Less informative (no middle ground).
+        - **Style**:
+            - **Pairwise**: compare 2 responses.
+                - Pros: Easy to interpret.
+                - Cons: Slow for large datasets (have to create pairs for all responses).
+            - **Listwise**: rank multiple responses at once.
+                - Pros: More informative, Fast.
+                - Cons: Hard to interpret.
+        - **Source**:
+            - **Human**
+                - Pros: Represents actual human values.
+                - Cons: Expensive, slow, inconsistent due to subjectivity.
+            - **AI**
+                - Pros: Cheap, fast, scalable.
+                - Cons: Does not necessarily represent human values (risk of unsafe responses).
 
 ## Reward Model
 
