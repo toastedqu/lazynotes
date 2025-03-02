@@ -155,8 +155,8 @@ Notations:
             - PPO data: Prompts for RLHF.
     - **Evaluation**: Human metrics: Helpful, Honest, Harms.
 
-<!-- ```{admonition} Math
-:class: note, dropdown -->
+```{admonition} Math
+:class: note, dropdown
 RM:
 
 $$
@@ -164,12 +164,13 @@ L_\text{RM}(r_\phi)=-\frac{1}{C_K^2}\mathbb{E}_{(x,y_w,y_l)~\mathcal{D}}\left[\l
 $$
 
 PPO:
+
 $$
 \pi_\theta^*(y|x)=\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}\left[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta D_\text{KL}\left(\pi_\theta(y|x)||\pi_\text{ref}(y|x)\right)\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
 $$
 
 
-**Notations**:
+Notations:
 - IO:
     - $x\sim\mathcal{D}$: Input token sequence, drawn from dataset $\mathcal{D}$.
     - $y\sim\pi_\theta(y|x)$: Output token sequence, drawn from current policy.
@@ -180,7 +181,7 @@ $$
     - $\pi_\text{ref}(y|x)$: Reference policy, the initial policy of the pretrained model.
     - $r(x,y)$: Reward function for input-output pair $(x,y)$.
     - $\beta$: Regularization coefficient for the KL divergence penalty.
-<!-- ``` -->
+```
 
 
 
