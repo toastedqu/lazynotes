@@ -53,26 +53,27 @@ kernelspec:
         - Reward Model
         - Policy Optimization
 
-```{admonition} Math
-:class: note, dropdown
+<!-- ```{admonition} Math
+:class: note, dropdown -->
 **Objective** [2]:
 
 $$\begin{align*}
-\pi_\theta^*(y|x)&=\max_{\pi_\theta}\mathbb{E}_{x\sim D}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r(x,y)-\beta D_{KL}(\pi_\theta(y|x)||\pi_\text{ref}(y|x))] \\
-&=\max_{\pi_\theta}\mathbb{E}_{x\sim D, y\sim\pi_\theta(y|x)}\left[r(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]
+\pi_\theta^*(y|x)&=\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r(x,y)-\beta D_{KL}(\pi_\theta(y|x)||\pi_\text{ref}(y|x))] \\
+&=\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[r(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]
 \end{align*}$$
 
 **Notations**:
 - IO:
-    - $\mathbf{x}\sim D$: Input token sequence.
-    - $\mathbf{y}\sim\pi_\theta(y|x)$: Output vector.
+    - $x\sim\mathcal{D}$: Input token sequence, drawn from dataset $\mathcal{D}$.
+    - $y\sim\pi_\theta(y|x)$: Output token sequence, drawn from current policy.
 - Params:
-    - $W\in\mathbb{R}^{H_{out}\times H_{in}}$: Weight matrix.
-    - $\textbf{b}\in\mathbb{R}^{H_{out}}$: Bias vector.
+    - $\pi_\theta(y|x)$: Current policy, which gives the probability of generating $y$ given $x$.
+    - $\pi_\theta^*(y|x)$: Optimal policy, which balances reward maximization and deviation minimization.
 - Hyperparams:
-    - $H_{in}$: Input feature dimension.
-    - $H_{out}$: Output feature dimension.
-```
+    - $\pi_\text{ref}(y|x)$: Reference policy, the initial policy of the pretrained model.
+    - $r(x,y)$: Reward function for input-output pair $(x,y)$.
+    - $\beta$: Regularization coefficient for the KL divergence penalty.
+<!-- ``` -->
 
 ## Feedback Data
 - **What**: Human-labeled desirable & undesirable responses.
@@ -102,6 +103,7 @@ $$\begin{align*}
                 - Cons: Does not necessarily represent human values (risk of unsafe responses).
 
 ## Reward Model
+
 
 ## Policy Optimization
 
