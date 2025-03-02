@@ -49,58 +49,60 @@ kernelspec:
         1. Train a reward model based on feedback data.
         2. Optimize the policy against the reward model.
     - **Key factors**:
-        - **Feedback Data**
-            - **Label**:
-                - **Preference**: $y_w>y_l$, rating on scale.
-                    - Pros: Captures nuance.
-                    - Cons: Hard to collect.
-                - **Binary**: $y^+ \& y^-$, thumbs up & down.
-                    - Pros: Easy to collect.
-                    - Cons: Less informative (no middle ground).
-            - **Style**:
-                - **Pairwise**: compare 2 responses.
-                    - Pros: Easy to interpret.
-                    - Cons: Slow for large datasets (have to create pairs for all responses).
-                - **Listwise**: rank multiple responses at once.
-                    - Pros: More informative, Fast.
-                    - Cons: Hard to interpret.
-            - **Source**:
-                - **Human**
-                    - Pros: Represents actual human values.
-                    - Cons: Expensive, slow, inconsistent due to subjectivity.
-                - **AI**
-                    - Pros: Cheap, fast, scalable.
-                    - Cons: Does not necessarily represent human values (risk of unsafe responses).
-        - **Reward Model** (RM)
-            - **Model Existence**:
-                - **Explicit**: An external model, typically from SFT of a pretrained LLM.
-                    - Pros: Interpretable & Scalable.
-                    - Cons: High computational cost.
-                - **Implicit**: No external model (e.g., DPO).
-                    - Pros: Low computational cost. No reward overfitting.
-                    - Cons: Less control.
-            - **Style**:
-                - **Pointwise**: Outputs a reward score $r(x,y)$ given an input-output pair.
-                    - Pros: Simple & Interpretable.
-                    - Cons: Ignores relative preferences.
-                - **Preferencewise**: Outputs a probability of the desired response being preferred over the undesired response: $P(y_w>y_l|x)=\sigma(r(x,y_w)-r(x,y_l))$.
-                    - Pros: Provides comparisons.
-                    - Cons: No pairwise preferences, Sensitive to human label inconsistencies.
-            - **Level**:
-                - **Token-level**: Reward is given per token/action.
-                    - Pros: Fine-grained feedback.
-                    - Cons: High computational cost, Noisy rewards.
-                - **Response-level**: Reward is given per response (most commonly used).
-                    - Pros: Simple.
-                    - Cons: Coarse feedback.
-            - **Source**:
-                - **Positive**: Humans label both desired and undesired responses.
-                    - Pros: More control.
-                    - Cons: Expensive & Time-consuming.
-                - **Negative**: Humans label undesired responses. LLMs generate desired responses.
-                    - Pros: Cheap & Scalable.
-                    - Cons: Less control.
-        - **(Proximal) Policy Optimization** (PPO)
+        - Feedback Data
+        - Reward Model (RM)
+        - (Proximal) Policy Optimization (PPO)
+    - **Feedback Data**:
+        - **Label**:
+            - **Preference**: $y_w>y_l$, rating on scale.
+                - Pros: Captures nuance.
+                - Cons: Hard to collect.
+            - **Binary**: $y^+ \& y^-$, thumbs up & down.
+                - Pros: Easy to collect.
+                - Cons: Less informative (no middle ground).
+        - **Style**:
+            - **Pairwise**: compare 2 responses.
+                - Pros: Easy to interpret.
+                - Cons: Slow for large datasets (have to create pairs for all responses).
+            - **Listwise**: rank multiple responses at once.
+                - Pros: More informative, Fast.
+                - Cons: Hard to interpret.
+        - **Source**:
+            - **Human**
+                - Pros: Represents actual human values.
+                - Cons: Expensive, slow, inconsistent due to subjectivity.
+            - **AI**
+                - Pros: Cheap, fast, scalable.
+                - Cons: Does not necessarily represent human values (risk of unsafe responses).
+    - **RM**:
+        - **Form**:
+            - **Explicit**: An external model, typically from SFT of a pretrained LLM.
+                - Pros: Interpretable & Scalable.
+                - Cons: High computational cost.
+            - **Implicit**: No external model (e.g., DPO).
+                - Pros: Low computational cost. No reward overfitting.
+                - Cons: Less control.
+        - **Style**:
+            - **Pointwise**: Outputs a reward score $r(x,y)$ given an input-output pair.
+                - Pros: Simple & Interpretable.
+                - Cons: Ignores relative preferences.
+            - **Preferencewise**: Outputs a probability of the desired response being preferred over the undesired response: $P(y_w>y_l|x)=\sigma(r(x,y_w)-r(x,y_l))$.
+                - Pros: Provides comparisons.
+                - Cons: No pairwise preferences, Sensitive to human label inconsistencies.
+        - **Level**:
+            - **Token-level**: Reward is given per token/action.
+                - Pros: Fine-grained feedback.
+                - Cons: High computational cost, Noisy rewards.
+            - **Response-level**: Reward is given per response (most commonly used).
+                - Pros: Simple.
+                - Cons: Coarse feedback.
+        - **Source**:
+            - **Positive**: Humans label both desired and undesired responses.
+                - Pros: More control.
+                - Cons: Expensive & Time-consuming.
+            - **Negative**: Humans label undesired responses. LLMs generate desired responses.
+                - Pros: Cheap & Scalable.
+                - Cons: Less control.
 
 ```{admonition} Math
 :class: note, dropdown
