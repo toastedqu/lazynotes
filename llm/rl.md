@@ -12,46 +12,40 @@ kernelspec:
 # RL for LLMs
 ## Overview
 ### RL
-- **What**: Optimize an agent's **policy** to maximize its cumulative **reward** through trials and errors in an environment.
+- **What**: [Agent $\xleftrightarrow{\text{interact}}$ Environment] $\xrightarrow{\text{optimize}}$ Policy $\xrightarrow{\text{maximize}}$ Cumulative Reward
 - **Why**: For decision-making where actions have delayed consequence in dynamic, sequential tasks.
     - In contrast, Supervised Learning teaches "correct answers" for static tasks.
 - **How**: An agent interacts with an environment by repeating:
-    1. Select an action $a_t$ based on its current state $s_t$.
-    2. Transition to a new state $s_{t+1}$.
-    3. Receive a reward $r_t$.
-    4. Update its decision-making strategy $\pi$.
+    - $s_t$ $\xrightarrow{a_t}$ $s_{t+1}$ $\xrightarrow{\text{get}}$ $r_t$ $\xrightarrow{\text{update}}$ $\pi$
 
 ### LLM Alignment
-- **What**: Guide an LLM to match human values.
+- **What**: LLM $\xleftarrow{\text{match}}$ human values
 - **Why**: To reduce the odds of generating undesired, sometimes harmful, responses despite pretraining & SFT.
-- **How**:
-    1. Collect high-quality human feedback.
-    2. Train the pretrained LLM on the feedback.
-    3. Test.
+- **How**: Humans $\xrightarrow{\text{collect}}$ Feedback $\xrightarrow{\text{train}}$ Pretrained LLM
 
 ### RL for LLM Alignment
-- **What**: Frame LLM Alignment as an RL problem.
+- **What**: Frame LLM Alignment as an RL problem:
+    - **Agent**: LLM.
+    - **State**: Input token sequence.
+    - **Action**: Next-token prediction.
+    - **Next State**: Input token sequence + Predicted next token.
+    - **Reward**: Reward.
+        - Determined by an external reward model OR preference labels.
+        - Typically computed after a full token sequence is generated.
+    - **Policy**: LLM weights.
+        - Dictates how the LLM predicts next token given input token sequence.
+        - The initial policy is obtained from Pretraining (and SFT).
 - **Why**: Human values are dynamic, subjective, and constantly evolving. There isn't always one "correct answer" for IRL scenarios, so SFT falls short.
 - **How**:
-    - **Components**:
-        - **Agent**: LLM.
-        - **Current state**: Input token sequence.
-        - **Action**: Next-token prediction.
-        - **New state**: Input token sequence + Predicted next token.
-        - **Reward**: Determined by an external reward model, after a full token sequence is generated.
-        - **Policy**: LLM weights, which dictate how the LLM predicts next token given input token sequence.
-            - The initial policy is obtained from Pretraining (and SFT).
     - **Objective**:
         - Maximize cumulative reward.
         - Minimize deviation of aligned policy from initial policy.
             - *Why?* We want to keep what works while steering toward our goal via minimal adjustments. Drastic changes could make it forget the basics.
-    - **Process**:
-        1. Train a reward model based on feedback data.
-        2. Optimize the policy against the reward model.
     - **Key factors**:
         - Feedback Data
-        - Reward Model (RM)
-        - (Proximal) Policy Optimization (PPO)
+        - Reward Model
+        - Policy Optimization
+    - **Process**: Feedback $\xrightarrow{\text{train}}$ RM $\xrightarrow{\text{train}}$ Policy
     - **Feedback Data**:
         - **Label**:
             - **Preference**: $y_w>y_l$, rating on scale.
@@ -104,8 +98,8 @@ kernelspec:
                 - Pros: Cheap & Scalable.
                 - Cons: Less control.
 
-```{admonition} Math
-:class: note, dropdown
+<!-- ```{admonition} Math
+:class: note, dropdown -->
 Sample Objective [2]: Reward Max + Deviation Min.
 
 $$\begin{align*}
@@ -125,7 +119,7 @@ Notations:
     - $\pi_\text{ref}(y|x)$: Reference policy, the initial policy of the pretrained model.
     - $r(x,y)$: Reward function for input-output pair $(x,y)$.
     - $\beta$: Regularization coefficient for the KL divergence penalty.
-```
+<!-- ``` -->
 
 ## Variations
 ### InstructGPT (The OG RLHF)
@@ -147,8 +141,8 @@ Notations:
             - PPO data: Prompts for RLHF.
     - **Evaluation**: Human metrics: Helpful, Honest, Harms.
 
-```{admonition} Math
-:class: note, dropdown
+<!-- ```{admonition} Math
+:class: note, dropdown -->
 RM:
 
 $$
@@ -173,7 +167,7 @@ Notations:
     - $\pi_\text{ref}(y|x)$: Reference policy, the initial policy of the pretrained model.
     - $r(x,y)$: Reward function for input-output pair $(x,y)$.
     - $\beta$: Regularization coefficient for the KL divergence penalty.
-```
+<!-- ``` -->
 
 
 
