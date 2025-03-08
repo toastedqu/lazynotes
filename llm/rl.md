@@ -12,7 +12,9 @@ kernelspec:
 # RL for LLMs
 ## Overview
 ### RL
-- **What**: [Agent $\xleftrightarrow{\text{interact}}$ Environment] $\xrightarrow{\text{optimize}}$ Policy $\xrightarrow{\text{maximize}}$ Cumulative Reward
+- **What**:
+    - **Process**: Agent $\overset{\text{policy}}{\underset{\text{reward}}{\rightleftarrows}}$ Environment
+    - **Objective**: Cumulative Reward $\xleftarrow{\text{maximize}}$ Optimal Policy
 - **Why**: For decision-making where actions have delayed consequence in dynamic, sequential tasks.
     - In contrast, Supervised Learning teaches "correct answers" for static tasks.
 - **How**: An agent interacts with an environment by repeating:
