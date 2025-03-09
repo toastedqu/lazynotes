@@ -39,11 +39,6 @@ kernelspec:
         - Initial policy $\leftarrow$ Pretraining (& SFT).
 - **Why**: Human values are dynamic, subjective, and constantly evolving. There isn't always one "correct answer" for IRL scenarios, so SFT falls short.
 - **How**:
-    - **Objective**:
-        - Maximize cumulative reward.
-        - Minimize deviation of aligned policy from initial policy.
-            - *Why?* We want to keep what works while steering toward our goal via minimal adjustments. Drastic changes could make it forget the basics.
-        - (and more...)
     - **Process**: Feedback $\xrightarrow{\text{train}}$ RM $\xrightarrow{\text{train}}$ Policy
     - **Key factors**:
         - Feedback Data
@@ -76,7 +71,7 @@ kernelspec:
 
 ```{admonition} Math
 :class: note, dropdown
-Sample Objective [2]: Reward Max + Deviation Min.
+Example: PPO [2]: Reward Max + Deviation Min.
 
 $$\begin{align*}
 \pi_\theta^*(y|x)&=\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r(x,y)-\beta D_\text{KL}(\pi_\theta(y|x)||\pi_\text{ref}(y|x))] \\
@@ -98,37 +93,31 @@ Notations:
 ```
 
 ## Variations
-### InstructGPT (The OG RLHF)
-- **What**: The backbone of all ChatGPT variations in OpenAI.
-- **Why**: OpenAI researchers realized traditional NLG evaluation metrics do NOT align with human preferences, so they came up with a way to directly teach LLMs human preferences.
+### RLHF/PPO
+- **What**: RLHF + PPO/PPO-ptx.
+- **Why**: Traditional NLG evaluation metrics do NOT align with human preferences, so OpenAI researchers came up with a way to directly teach LLMs human preferences and evaluate on human metrics instead: Helpful, Honest, Harm.
 - **How**:
-    - **Training**:
-        - Process:
-            1. Data Collection: Pairwise, human feedback.
-            2. RM: Explicit, pointwise RM.
-            3. PPO
-        - **Objective**:
-            - Reward maximization.
-            - Deviation minimization.
-            - Alignment tax minimization: Minimize degradation of downstream task performance due to alignment.
-        - **Datasets**:
-            - SFT data: OG labeler samples.
-            - RM data: Labeler rankings of model outputs.
-            - PPO data: Prompts for RLHF.
-    - **Evaluation**: Human metrics: Helpful, Honest, Harms.
+    - **Data**: Pairwise + Human.
+    - **RM**: Explicit + Pointwise.
+    - **PO**:
+        1. **PPO** (Proximal Policy Optimization): Max Reward + **Min Deviation**
+            - Deviation Minimization: Minimize deviation of aligned policy from initial policy $\rightarrow$ Trust Region Constraint
+                - *Why?* We want to keep what works while steering toward our goal via minimal adjustments. Drastic changes could make it forget the basics.
+        2. **PPO-ptx**: Max Reward + Min Deviation + **Min Alignment Tax**
+            - Alignment Tax Minimization: Minimize degradation of downstream task performance due to alignment.
 
 <!-- ```{admonition} Math
 :class: note, dropdown -->
 RM:
 
 $$
-L_\text{RM}(r_\phi)=-\frac{1}{C_K^2}\mathbb{E}_{(x,y_w,y_l)~\mathcal{D}}\left[\log\sigma(r_\phi(x,y_w)-r_\phi(x,y_l))\right]
+L_\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma(r_\phi(x,y_w)-r_\phi(x,y_l))\right]
 $$
 
-PPO:
+PPO-ptx:
 
 $$
-\pi_\theta^*(y|x)=\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}\left[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta D_\text{KL}\left(\pi_\theta(y|x)||\pi_\text{ref}(y|x)\right)\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
+\pi_\theta^*(y|x)=\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D},y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
 $$
 
 
