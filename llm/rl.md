@@ -76,7 +76,7 @@ kernelspec:
     - **Data**: Pairwise + Human.
     - **RM**: Explicit + Pointwise.
     - **PO**: (tbf, ❌PPO ✅TRPO)
-        1. **PPO** (Proximal Policy Optimization): Max Reward + **Min Deviation**
+        1. **PPO**: Max Reward + **Min Deviation**
             - Deviation Minimization: Aligned policy $\Leftrightarrow$ Initial policy $\leftarrow$ Trust Region Constraint
                 - *Why?* To keep what works while aiming at what we want, via minimal changes. Drastic changes could make it forget what worked.
         2. **PPO-ptx**: Max Reward + Min Deviation + **Min Alignment Tax**
@@ -96,6 +96,8 @@ $$
 - $y_l$: Undesired (L) output token sequence.
 - $\mathcal{D}$: RL Dataset.
 - $\sigma(\cdot)$: Sigmoid function for BCE.
+
+---
 
 PO:
 - PPO:
@@ -133,7 +135,7 @@ PO:
 
 ```{admonition} Math
 :class: note, dropdown
-**TRPO** (quick recap):
+TRPO (quick recap):
 - **Probability Ratio**: How much more/less likely to take the given action under new policy vs old policy.
 
     $$
@@ -170,38 +172,39 @@ PO:
     L^\text{TRPO}=\hat{\mathbb{E}}_t\left[\rho_t(\theta)\hat{A}_t-\beta\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
     $$
 
-**Clipped Surrogate Objective**:
-- Clip Function:
-
-    $$
-    \text{clip}(x, a, b)=\begin{cases}
-    a & \text{if } x\leq a \\
-    x & \text{if } x\in(a,b) \\
-    b & \text{if } x\geq b
-    \end{cases}
-    $$
-- Objective:
-
-    $$
-    L^\text{CLIP}(\theta)=\hat{\mathbb{E}}_t\left[\min\left(\rho_t(\theta)\hat{A}_t, \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\right)\right]
-    $$
-    - $\epsilon$: Tiny value to control ratio change.
-
-**Adaptive KL Penalty Coefficient**:
-- For each policy update:
-    1. Optimize TRPO objective.
-    2. Compute **divergence**:
+---
+PPO:
+- **Clipped Surrogate Objective**:
+    - Clip Function:
 
         $$
-        d=\hat{\mathbb{E}_t}\left[\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
+        \text{clip}(x, a, b)=\begin{cases}
+        a & \text{if } x\leq a \\
+        x & \text{if } x\in(a,b) \\
+        b & \text{if } x\geq b
+        \end{cases}
         $$
-    3. Update $\beta$ via case switch:
+    - Objective:
 
-        $$\begin{align*}
-        &d<d_\text{tar} /1.5 &\Longrightarrow\ &\beta\leftarrow\beta/2 \\
-        &d>d_\text{tar}\cdot 1.5 &\Longrightarrow\ &\beta\leftarrow\beta\cdot 2
-        \end{align*}$$
-        - $d_\text{tar}$: Target divergence.
+        $$
+        L^\text{CLIP}(\theta)=\hat{\mathbb{E}}_t\left[\min\left(\rho_t(\theta)\hat{A}_t, \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\right)\right]
+        $$
+        - $\epsilon$: Tiny value to control ratio change.
+- **Adaptive KL Penalty Coefficient**:
+    - For each policy update:
+        1. Optimize TRPO objective.
+        2. Compute **divergence**:
+
+            $$
+            d=\hat{\mathbb{E}_t}\left[\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
+            $$
+        3. Update $\beta$ via case switch:
+
+            $$\begin{align*}
+            &d<d_\text{tar} /1.5 &\Longrightarrow\ &\beta\leftarrow\beta/2 \\
+            &d>d_\text{tar}\cdot 1.5 &\Longrightarrow\ &\beta\leftarrow\beta\cdot 2
+            \end{align*}$$
+            - $d_\text{tar}$: Target divergence.
 ```
 
 References:
