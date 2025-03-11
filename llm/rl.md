@@ -13,7 +13,6 @@ kernelspec:
 ## Overview
 ### RL
 - **What**: Agent $\overset{\text{action}}{\underset{\text{reward}}{\rightleftarrows}}$ Environment
-    
 - **Why**: For decision-making where actions have delayed consequence in dynamic, sequential tasks.
     - In contrast, Supervised Learning teaches "correct answers" for static tasks.
 - **How**:
@@ -79,13 +78,14 @@ kernelspec:
     - **PO**: (tbf, ❌PPO ✅TRPO)
         1. **PPO** (Proximal Policy Optimization): Max Reward + **Min Deviation**
             - Deviation Minimization: Aligned policy $\Leftrightarrow$ Initial policy $\leftarrow$ Trust Region Constraint
-                - *Why?* We want to keep what works while steering toward our goal via minimal adjustments. Drastic changes could make it forget the basics.
+                - *Why?* To keep what works while aiming at what we want, via minimal changes. Drastic changes could make it forget what worked.
         2. **PPO-ptx**: Max Reward + Min Deviation + **Min Alignment Tax**
             - Alignment Tax Minimization: ❌Degradation of Pre/SFT task performance.
 
 ```{admonition} Math
 :class: note, dropdown
 RM:
+
 $$
 L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\right]
 $$
@@ -99,6 +99,7 @@ $$
 
 PO:
 - PPO:
+
     $$\begin{align*}
     L^\text{PPO}(\pi_\theta)&=\mathbb{E}_{x\sim\mathcal{D}}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\text{KL}\left[\pi_\theta(y|x)||\pi_\text{ref}(y|x)\right]] \\
     &=\mathbb{E}_{x\sim\mathcal{D}}\left[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\mathbb{E}_{y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]\right] \\
@@ -109,6 +110,7 @@ PO:
     - $\beta$: KL divergence penalty coefficient.
     - $\text{KL}[\pi_\theta||\pi_\text{ref}]$: Per-token KL divergence.
 - PPO-ptx:
+
     $$
     L^\text{PPO-ptx}(\pi_\theta)=\mathbb{E}_{x\sim\mathcal{D},y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
     $$
@@ -133,6 +135,7 @@ PO:
 :class: note, dropdown
 **TRPO** (quick recap):
 - **Probability Ratio**: How much more/less likely to take the given action under new policy vs old policy.
+
     $$
     \rho_t(\theta)=\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_\text{old}}(a_t|s_t)}
     $$
@@ -143,6 +146,7 @@ PO:
     - $\pi_\theta$: New policy.
     - $\pi_{\theta_\text{old}}$: Old policy.
 - **Advantage Estimate**: (roughly) How much better/worse of the given action compared to baseline.
+
     $$
     \hat{A}_t=\sum_{l=0}^{T-t-1}(\gamma\lambda)^l\left[r_{t+l}+\gamma V(s_{t+l+1})-V(s_{t+l})\right]
     $$
@@ -155,17 +159,20 @@ PO:
     - $r_t$: Curr reward.
     - $V(s)$: Value function at state $s$.
 - **KL Divergence**:
+
     $$
     \text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]=\mathbb{E}_{a_t\in\mathcal{A}_t}\left[\log\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_\text{old}}(a_t|s_t)}\right]
     $$
     - $\mathcal{A}_t$: Curr action space.
 - Objective:
+
     $$
     L^\text{TRPO}=\hat{\mathbb{E}}_t\left[\rho_t(\theta)\hat{A}_t-\beta\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
     $$
 
 **Clipped Surrogate Objective**:
 - Clip Function:
+
     $$
     \text{clip}(x, a, b)=\begin{cases}
     a & \text{if } x\leq a \\
@@ -174,6 +181,7 @@ PO:
     \end{cases}
     $$
 - Objective:
+
     $$
     L^\text{CLIP}(\theta)=\hat{\mathbb{E}}_t\left[\min\left(\rho_t(\theta)\hat{A}_t, \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\right)\right]
     $$
@@ -183,10 +191,12 @@ PO:
 - For each policy update:
     1. Optimize TRPO objective.
     2. Compute **divergence**:
+
         $$
         d=\hat{\mathbb{E}_t}\left[\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
         $$
     3. Update $\beta$ via case switch:
+
         $$\begin{align*}
         &d<d_\text{tar} /1.5 &\Longrightarrow\ &\beta\leftarrow\beta/2 \\
         &d>d_\text{tar}\cdot 1.5 &\Longrightarrow\ &\beta\leftarrow\beta\cdot 2
