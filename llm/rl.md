@@ -69,29 +69,6 @@ kernelspec:
 |  | **Negative** | Humans label undesired responses, LLMs generate desired responses | Cheap & Scalable | Less control |
 ```
 
-```{admonition} Math
-:class: note, dropdown
-Example: PPO [2]: Reward Max + Deviation Min.
-
-$$\begin{align*}
-\pi_\theta^*(y|x)&=\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r(x,y)-\beta D_\text{KL}(\pi_\theta(y|x)||\pi_\text{ref}(y|x))] \\
-&=\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}\left[\mathbb{E}_{y\sim\pi_\theta(y|x)}r(x,y)-\beta\mathbb{E}_{y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]\right] \\
-&=\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[r(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]
-\end{align*}$$
-
-Notations:
-- IO:
-    - $x\sim\mathcal{D}$: Input token sequence, drawn from dataset $\mathcal{D}$.
-    - $y\sim\pi_\theta(y|x)$: Output token sequence, drawn from current policy.
-- Params:
-    - $\pi_\theta(y|x)$: Current policy, which gives the probability of generating $y$ given $x$.
-    - $\pi_\theta^*(y|x)$: Optimal policy, which balances reward maximization and deviation minimization.
-- Hyperparams:
-    - $\pi_\text{ref}(y|x)$: Reference policy, the initial policy of the pretrained model.
-    - $r(x,y)$: Reward function for input-output pair $(x,y)$.
-    - $\beta$: Regularization coefficient for the KL divergence penalty.
-```
-
 ## Variations
 ### RLHF/PPO
 - **What**: RLHF + PPO/PPO-ptx.
@@ -99,42 +76,123 @@ Notations:
 - **How**:
     - **Data**: Pairwise + Human.
     - **RM**: Explicit + Pointwise.
-    - **PO**:
+    - **PO**: (tbf, ❌PPO ✅TRPO)
         1. **PPO** (Proximal Policy Optimization): Max Reward + **Min Deviation**
-            - Deviation Minimization: Minimize deviation of aligned policy from initial policy $\rightarrow$ Trust Region Constraint
+            - Deviation Minimization: Aligned policy $\Leftrightarrow$ Initial policy $\leftarrow$ Trust Region Constraint
                 - *Why?* We want to keep what works while steering toward our goal via minimal adjustments. Drastic changes could make it forget the basics.
         2. **PPO-ptx**: Max Reward + Min Deviation + **Min Alignment Tax**
-            - Alignment Tax Minimization: Minimize degradation of downstream task performance due to alignment.
+            - Alignment Tax Minimization: ❌Degradation of Pre/SFT task performance.
 
-<!-- ```{admonition} Math
-:class: note, dropdown -->
+```{admonition} Math
+:class: note, dropdown
 RM:
-
 $$
-L_\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma(r_\phi(x,y_w)-r_\phi(x,y_l))\right]
+L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\right]
 $$
+- $r_\phi(x,y)$: Reward function for input $x$ and output $y$, parameterized by $\phi$.
+- $\binom{K}{2}=\frac{K(K-1)}{2}$: #Comparisons for each prompt shown to each labeler.
+- $x$: Input token sequence.
+- $y_w$: Desired (W) output token sequence.
+- $y_l$: Undesired (L) output token sequence.
+- $\mathcal{D}$: RL Dataset.
+- $\sigma(\cdot)$: Sigmoid function for BCE.
 
-PPO-ptx:
+PO:
+- PPO:
+    $$\begin{align*}
+    L^\text{PPO}(\pi_\theta)&=\mathbb{E}_{x\sim\mathcal{D}}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\text{KL}\left[\pi_\theta(y|x)||\pi_\text{ref}(y|x)\right]] \\
+    &=\mathbb{E}_{x\sim\mathcal{D}}\left[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\mathbb{E}_{y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]\right] \\
+    &=\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]
+    \end{align*}$$
+    - $\pi_\theta(y|x)$: Curr policy, which gives the probability of generating $y$ given $x$.
+    - $\pi_\text{ref}(y|x)$: Reference policy (initial policy of pretrained LLM).
+    - $\beta$: KL divergence penalty coefficient.
+    - $\text{KL}[\pi_\theta||\pi_\text{ref}]$: Per-token KL divergence.
+- PPO-ptx:
+    $$
+    L^\text{PPO-ptx}(\pi_\theta)=\mathbb{E}_{x\sim\mathcal{D},y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
+    $$
+    - $\gamma$: Pretrain loss coefficient.
+    - $\mathcal{D}_\text{pretrain}$: Pretraining dataset.
+```
 
-$$
-\pi_\theta^*(y|x)=\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D},y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
-$$
+#### PPO
+- **What**: Policy gradient, but **proximal** (close) to current policy.
+- **Why**:
+    1. Stable gradients.
+    2. No optimal KL penalty coefficient for **TRPO** to work well.
+- **How**: TRPO + **Better Penalty**
+    1. **Clipped Surrogate Objective**: Trap the probability ratio in a range.
+        - $\rightarrow$ Penalize moving the ratio away from 1.
+        - $\rightarrow$ Penalize the incentive to deviate from current policy.
+    2. **Adaptive KL coefficient**: Adapt the coefficient to match a target KL divergence value per update.
+        - $\rightarrow$ Minimize impact of hyperparam tuning.
+    - (Empirically, 1>2)
 
+```{admonition} Math
+:class: note, dropdown
+**TRPO** (quick recap):
+- **Probability Ratio**: How much more/less likely to take the given action under new policy vs old policy.
+    $$
+    \rho_t(\theta)=\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_\text{old}}(a_t|s_t)}
+    $$
+    - $\theta$: Policy parameter(s).
+    - $t$: Curr time step.
+    - $a_t$: Curr action.
+    - $s_t$: Curr state.
+    - $\pi_\theta$: New policy.
+    - $\pi_{\theta_\text{old}}$: Old policy.
+- **Advantage Estimate**: (roughly) How much better/worse of the given action compared to baseline.
+    $$
+    \hat{A}_t=\sum_{l=0}^{T-t-1}(\gamma\lambda)^l\left[r_{t+l}+\gamma V(s_{t+l+1})-V(s_{t+l})\right]
+    $$
+    - $T$: Total time steps.
+    - $l$: Time step increment.
+    - $\gamma$: Discount factor for future rewards.
+    - $\lambda\in[0,1]$: Bias-variance tradeoff coefficient.
+        - $\lambda=0$: One-step TD $\rightarrow$ Bias⬆️ Variance⬇️
+        - $\lambda=1$: Full Monte Carlo return $\rightarrow$ Bias⬇️ Variance⬆️
+    - $r_t$: Curr reward.
+    - $V(s)$: Value function at state $s$.
+- **KL Divergence**:
+    $$
+    \text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]=\mathbb{E}_{a_t\in\mathcal{A}_t}\left[\log\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_\text{old}}(a_t|s_t)}\right]
+    $$
+    - $\mathcal{A}_t$: Curr action space.
+- Objective:
+    $$
+    L^\text{TRPO}=\hat{\mathbb{E}}_t\left[\rho_t(\theta)\hat{A}_t-\beta\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
+    $$
 
-Notations:
-- IO:
-    - $x\sim\mathcal{D}$: Input token sequence, drawn from dataset $\mathcal{D}$.
-    - $y\sim\pi_\theta(y|x)$: Output token sequence, drawn from current policy.
-- Params:
-    - $\pi_\theta(y|x)$: Current policy, which gives the probability of generating $y$ given $x$.
-    - $\pi_\theta^*(y|x)$: Optimal policy, which balances reward maximization and deviation minimization.
-- Hyperparams:
-    - $\pi_\text{ref}(y|x)$: Reference policy, the initial policy of the pretrained model.
-    - $r(x,y)$: Reward function for input-output pair $(x,y)$.
-    - $\beta$: Regularization coefficient for the KL divergence penalty.
-<!-- ``` -->
+**Clipped Surrogate Objective**:
+- Clip Function:
+    $$
+    \text{clip}(x, a, b)=\begin{cases}
+    a & \text{if } x\leq a \\
+    x & \text{if } x\in(a,b) \\
+    b & \text{if } x\geq b
+    \end{cases}
+    $$
+- Objective:
+    $$
+    L^\text{CLIP}(\theta)=\hat{\mathbb{E}}_t\left[\min\left(\rho_t(\theta)\hat{A}_t, \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\right)\right]
+    $$
+    - $\epsilon$: Tiny value to control ratio change.
 
-
+**Adaptive KL Penalty Coefficient**:
+- For each policy update:
+    1. Optimize TRPO objective.
+    2. Compute **divergence**:
+        $$
+        d=\hat{\mathbb{E}_t}\left[\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
+        $$
+    3. Update $\beta$ via case switch:
+        $$\begin{align*}
+        &d<d_\text{tar} /1.5 &\Longrightarrow\ &\beta\leftarrow\beta/2 \\
+        &d>d_\text{tar}\cdot 1.5 &\Longrightarrow\ &\beta\leftarrow\beta\cdot 2
+        \end{align*}$$
+        - $d_\text{tar}$: Target divergence.
+```
 
 References:
 1. Wang, S., Zhang, S., Zhang, J., Hu, R., Li, X., Zhang, T., ... & Hovy, E. (2024). Reinforcement Learning Enhanced LLMs: A Survey. arXiv preprint arXiv:2412.10400.
