@@ -1,14 +1,11 @@
 # LazyNotes
 
-A handbook of AI topics, covering intuition and theory.
+A minimalist handbook of AI topics, focusing on intuition and theory.
 
 Each concept is structured as follows:
 - **What**: Intuition.
 - **Why**: Problem/Motivation.
 - **How**: Functionality.
-- **When**: Assumptions/Conditions.
-- **Where**: Applications.
-- **Pros & Cons**: Advantages & Disadvantages.
 
 Common notations include (section-specific notations take priority):
 - $ a $: scalar / variable
