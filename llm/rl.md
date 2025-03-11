@@ -70,7 +70,7 @@ kernelspec:
 ```
 
 ## Variations
-### RLHF/PPO
+### InstructGPT (RLHF/PPO)
 - **What**: RLHF + PPO/PPO-ptx.
 - **Why**: Traditional NLG evaluation metrics do NOT align with human preferences, so OpenAI researchers came up with a way to directly teach LLMs human preferences and evaluate on human metrics instead: Helpful, Honest, Harm.
 - **How**:
