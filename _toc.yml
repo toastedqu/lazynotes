@@ -4,32 +4,32 @@
 format: jb-book
 root: intro
 parts:
-  - caption: Machine Learning
-    chapters:
-    - file: ml/intro
-    - file: ml/supervised-tag
-      sections:
-      - file: ml/supervised/linear
-      - file: ml/supervised/bayesian
-      - file: ml/supervised/nn
-      - file: ml/supervised/svm
-      - file: ml/supervised/ensemble
-      - file: ml/supervised/semi-supervised
-      - file: ml/supervised/self-supervised
-      - file: ml/supervised/online
-    - file: ml/hyperparams-tag
-  - caption: Deep Learning
-    chapters:
-    - file: dl/modules-tag
-      sections:
-      - file: dl/modules/basics
-      - file: dl/modules/activations
-      - file: dl/modules/cnn
-      - file: dl/modules/rnn
-      - file: dl/modules/transformer
-    - file: dl/transfer-tag
-      sections:
-      - file: dl/transfer/peft
+  # - caption: Machine Learning
+  #   chapters:
+  #   - file: ml/intro
+  #   - file: ml/supervised-tag
+  #     sections:
+  #     - file: ml/supervised/linear
+  #     - file: ml/supervised/bayesian
+  #     - file: ml/supervised/nn
+  #     - file: ml/supervised/svm
+  #     - file: ml/supervised/ensemble
+  #     - file: ml/supervised/semi-supervised
+  #     - file: ml/supervised/self-supervised
+  #     - file: ml/supervised/online
+  #   - file: ml/hyperparams-tag
+  # - caption: Deep Learning
+  #   chapters:
+  #   - file: dl/modules-tag
+  #     sections:
+  #     - file: dl/modules/basics
+  #     - file: dl/modules/activations
+  #     - file: dl/modules/cnn
+  #     - file: dl/modules/rnn
+  #     - file: dl/modules/transformer
+  #   - file: dl/transfer-tag
+  #     sections:
+  #     - file: dl/transfer/peft
   - caption: LLM
     chapters:
     - file: llm/rl
