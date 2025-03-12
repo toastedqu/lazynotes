@@ -191,6 +191,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">RL for LLMs</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="peft.html">PEFT</a></li>
 </ul>
 
@@ -387,20 +388,20 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rl">RL</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#llm-alignment">LLM Alignment</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rl-for-llm-alignment">RL for LLM Alignment</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">RL for LLMs</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rl">RL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#llm-alignment">LLM Alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rl-for-llm-alignment">RL for LLM Alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rlhf-instructgpt">RLHF (InstructGPT)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variations">Variations</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#instructgpt-rlhf-ppo">InstructGPT (RLHF/PPO)</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo">PPO</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-optimization">Policy Optimization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo">PPO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpo">DPO</a></li>
 </ul>
 </li>
 </ul>
-</li>
-</ul>
+
             </nav>
         </div>
     </div>
@@ -413,10 +414,8 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="rl-for-llms">
 <h1>RL for LLMs<a class="headerlink" href="#rl-for-llms" title="Link to this heading">#</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
 <section id="rl">
-<h3>RL<a class="headerlink" href="#rl" title="Link to this heading">#</a></h3>
+<h2>RL<a class="headerlink" href="#rl" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Agent <span class="math notranslate nohighlight">\(\overset{\text{action}}{\underset{\text{reward}}{\rightleftarrows}}\)</span> Environment</p></li>
 <li><p><strong>Why</strong>: For decision-making where actions have delayed consequence in dynamic, sequential tasks.</p>
@@ -433,17 +432,17 @@ document.write(`
 </ul>
 </section>
 <section id="llm-alignment">
-<h3>LLM Alignment<a class="headerlink" href="#llm-alignment" title="Link to this heading">#</a></h3>
+<h2>LLM Alignment<a class="headerlink" href="#llm-alignment" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: LLM <span class="math notranslate nohighlight">\(\xleftarrow{\text{match}}\)</span> human values</p></li>
-<li><p><strong>Why</strong>: To reduce the odds of generating undesired, sometimes harmful responses despite pretraining &amp; SFT.</p></li>
+<li><p><strong>What</strong>: LLM <span class="math notranslate nohighlight">\(\xrightarrow{\text{match}}\)</span> human preferences</p></li>
+<li><p><strong>Why</strong>: ⬇️Undesired, sometimes harmful responses <span id="id1">[<a class="reference internal" href="#id8" title="Zhichao Wang, Bin Bi, Shiva Kumar Pentyala, Kiran Ramnath, Sougata Chaudhuri, Shubham Mehrotra, Xiang-Bo Mao, Sitaram Asur, and others. A comprehensive survey of llm alignment techniques: rlhf, rlaif, ppo, dpo and more. arXiv preprint arXiv:2407.16216, 2024.">6</a>]</span>.</p></li>
 <li><p><strong>How</strong>: Humans <span class="math notranslate nohighlight">\(\xrightarrow{\text{collect}}\)</span> Feedback <span class="math notranslate nohighlight">\(\xrightarrow{\text{train}}\)</span> Pretrained LLM</p></li>
 </ul>
 </section>
 <section id="rl-for-llm-alignment">
-<h3>RL for LLM Alignment<a class="headerlink" href="#rl-for-llm-alignment" title="Link to this heading">#</a></h3>
+<h2>RL for LLM Alignment<a class="headerlink" href="#rl-for-llm-alignment" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Frame LLM Alignment as an RL problem:</p>
+<li><p><strong>What</strong>: Frame LLM Alignment as an RL problem <span id="id2">[<a class="reference internal" href="#id11" title="Shuhe Wang, Shengyu Zhang, Jie Zhang, Runyi Hu, Xiaoya Li, Tianwei Zhang, Jiwei Li, Fei Wu, Guoyin Wang, and Eduard Hovy. Reinforcement learning enhanced llms: a survey. arXiv preprint arXiv:2412.10400, 2024.">5</a>]</span>:</p>
 <ul>
 <li><p><strong>Agent</strong>: LLM.</p></li>
 <li><p><strong>State</strong>: Input token sequence.</p></li>
@@ -469,9 +468,9 @@ document.write(`
 <li><p><strong>Process</strong>: Feedback <span class="math notranslate nohighlight">\(\xrightarrow{\text{train}}\)</span> RM <span class="math notranslate nohighlight">\(\xrightarrow{\text{train}}\)</span> Policy</p></li>
 <li><p><strong>Key factors</strong>:</p>
 <ul>
-<li><p>Feedback Data</p></li>
-<li><p>Reward Model</p></li>
-<li><p>Policy Optimization</p></li>
+<li><p>Feedback Data.</p></li>
+<li><p>Reward Model.</p></li>
+<li><p>Policy Optimization.</p></li>
 </ul>
 </li>
 </ul>
@@ -596,19 +595,16 @@ document.write(`
 </div>
 </div>
 </details></section>
-</section>
-<section id="variations">
-<h2>Variations<a class="headerlink" href="#variations" title="Link to this heading">#</a></h2>
-<section id="instructgpt-rlhf-ppo">
-<h3>InstructGPT (RLHF/PPO)<a class="headerlink" href="#instructgpt-rlhf-ppo" title="Link to this heading">#</a></h3>
+<section id="rlhf-instructgpt">
+<h2>RLHF (InstructGPT)<a class="headerlink" href="#rlhf-instructgpt" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: RLHF + PPO/PPO-ptx.</p></li>
-<li><p><strong>Why</strong>: Traditional NLG evaluation metrics do NOT align with human preferences, so OpenAI researchers came up with a way to directly teach LLMs human preferences and evaluate on human metrics instead: Helpful, Honest, Harm.</p></li>
+<li><p><strong>What</strong>: RLHF + PPO/PPO-ptx <span id="id3">[<a class="reference internal" href="#id9" title="Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, and others. Training language models to follow instructions with human feedback. Advances in neural information processing systems, 35:27730–27744, 2022.">2</a>]</span>.</p></li>
+<li><p><strong>Why</strong>: LLM <span class="math notranslate nohighlight">\(\xrightarrow{\text{match}}\)</span> human preferences</p></li>
 <li><p><strong>How</strong>:</p>
 <ul>
 <li><p><strong>Data</strong>: Pairwise + Human.</p></li>
 <li><p><strong>RM</strong>: Explicit + Pointwise.</p></li>
-<li><p><strong>PO</strong>: (tbf, ❌PPO ✅TRPO)</p>
+<li><p><strong>PO</strong>: (tbf, ❌PPO, ✅TRPO)</p>
 <ol class="arabic simple">
 <li><p><strong>PPO</strong>: Max Reward + <strong>Min Deviation</strong></p>
 <ul>
@@ -632,18 +628,32 @@ document.write(`
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
 <p>RM:</p>
+<ul>
+<li><p>Reward Estimation (<strong>Bradley-Terry Model</strong>):</p>
 <div class="math notranslate nohighlight">
 \[
-L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\right]
-\]</div>
+    p^*(y_w\succ y_l|x)=\frac{\exp{r^*(x,y_w)}}{\exp{r^*(x,y_w)}+\exp{r^*(x,y_l)}}
+    \]</div>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(r_\phi(x,y)\)</span>: Reward function for input <span class="math notranslate nohighlight">\(x\)</span> and output <span class="math notranslate nohighlight">\(y\)</span>, parameterized by <span class="math notranslate nohighlight">\(\phi\)</span>.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\binom{K}{2}=\frac{K(K-1)}{2}\)</span>: #Comparisons for each prompt shown to each labeler.</p></li>
 <li><p><span class="math notranslate nohighlight">\(x\)</span>: Input token sequence.</p></li>
 <li><p><span class="math notranslate nohighlight">\(y_w\)</span>: Desired (W) output token sequence.</p></li>
 <li><p><span class="math notranslate nohighlight">\(y_l\)</span>: Undesired (L) output token sequence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(r^*(x,y)\)</span>: Latent reward function for input <span class="math notranslate nohighlight">\(x\)</span> and output <span class="math notranslate nohighlight">\(y\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p^*(y_w\succ y_l|x)\)</span>: Probability that humans prefer <span class="math notranslate nohighlight">\(y_w\)</span> over <span class="math notranslate nohighlight">\(y_l\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Objective:</p>
+<div class="math notranslate nohighlight">
+\[
+    L_\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\right]
+    \]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(r_\phi(x,y)\)</span>: Reward model for input <span class="math notranslate nohighlight">\(x\)</span> and output <span class="math notranslate nohighlight">\(y\)</span>, parameterized by <span class="math notranslate nohighlight">\(\phi\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\binom{K}{2}=\frac{K(K-1)}{2}\)</span>: #Comparisons for each prompt shown to each labeler.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathcal{D}\)</span>: RL Dataset.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\sigma(\cdot)\)</span>: Sigmoid function for BCE.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\)</span>: Sigmoid function <span class="math notranslate nohighlight">\(\rightarrow\)</span> Bradley-Terry model.</p></li>
+</ul>
+</li>
 </ul>
 <hr class="docutils" />
 <p>PO:</p>
@@ -651,7 +661,7 @@ L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D
 <li><p>PPO:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-    L^\text{PPO}(\pi_\theta)&amp;=\mathbb{E}_{x\sim\mathcal{D}}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\text{KL}\left[\pi_\theta(y|x)||\pi_\text{ref}(y|x)\right]] \\
+    L_\text{PPO}(\pi_\theta)&amp;=\mathbb{E}_{x\sim\mathcal{D}}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\text{KL}\left[\pi_\theta(y|x)||\pi_\text{ref}(y|x)\right]] \\
     &amp;=\mathbb{E}_{x\sim\mathcal{D}}\left[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\mathbb{E}_{y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]\right] \\
     &amp;=\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]
     \end{align*}\end{split}\]</div>
@@ -665,7 +675,7 @@ L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D
 <li><p>PPO-ptx:</p>
 <div class="math notranslate nohighlight">
 \[
-    L^\text{PPO-ptx}(\pi_\theta)=\mathbb{E}_{x\sim\mathcal{D},y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
+    L_\text{PPO-ptx}(\pi_\theta)=\mathbb{E}_{x\sim\mathcal{D},y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
     \]</div>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Pretrain loss coefficient.</p></li>
@@ -674,10 +684,15 @@ L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D
 </li>
 </ul>
 </div>
+<p><br><br></p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="policy-optimization">
+<h1>Policy Optimization<a class="headerlink" href="#policy-optimization" title="Link to this heading">#</a></h1>
 <section id="ppo">
-<h4>PPO<a class="headerlink" href="#ppo" title="Link to this heading">#</a></h4>
+<h2>PPO<a class="headerlink" href="#ppo" title="Link to this heading">#</a></h2>
 <ul>
-<li><p><strong>What</strong>: Policy gradient, but <strong>proximal</strong> (close) to current policy.</p></li>
+<li><p><strong>What</strong>: Policy gradient, but <strong>proximal</strong> (close) to current policy <span id="id4">[<a class="reference internal" href="#id12" title="John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. Proximal policy optimization algorithms. 2017. URL: https://arxiv.org/abs/1707.06347, arXiv:1707.06347.">4</a>]</span>.</p></li>
 <li><p><strong>Why</strong>:</p>
 <ol class="arabic simple">
 <li><p>Stable gradients.</p></li>
@@ -688,18 +703,18 @@ L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D
 <ol class="arabic simple">
 <li><p><strong>Clipped Surrogate Objective</strong>: Trap the probability ratio in a range.</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Penalize moving the ratio away from 1.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Penalize the incentive to deviate from current policy.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{penalize}}\)</span> deviation from current policy</p></li>
 </ul>
 </li>
 <li><p><strong>Adaptive KL coefficient</strong>: Adapt the coefficient to match a target KL divergence value per update.</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Minimize impact of hyperparam tuning.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{minimize}}\)</span> hyperparam tuning impact</p></li>
 </ul>
 </li>
 </ol>
 <ul class="simple">
 <li><p>(Empirically, 1&gt;2)</p></li>
+<li><p>(Empirically by Anthropic, ❌1&amp;2, ✅<span class="math notranslate nohighlight">\(\beta=0.001\)</span>) <span id="id5">[<a class="reference internal" href="#id10" title="Yuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma, Dawn Drain, Stanislav Fort, Deep Ganguli, Tom Henighan, Nicholas Joseph, Saurav Kadavath, Jackson Kernion, Tom Conerly, Sheer El-Showk, Nelson Elhage, Zac Hatfield-Dodds, Danny Hernandez, Tristan Hume, Scott Johnston, Shauna Kravec, Liane Lovitt, Neel Nanda, Catherine Olsson, Dario Amodei, Tom Brown, Jack Clark, Sam McCandlish, Chris Olah, Ben Mann, and Jared Kaplan. Training a helpful and harmless assistant with reinforcement learning from human feedback. 2022. URL: https://arxiv.org/abs/2204.05862, arXiv:2204.05862.">1</a>]</span></p></li>
 </ul>
 </li>
 </ul>
@@ -752,7 +767,7 @@ L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D
 <li><p>Objective:</p>
 <div class="math notranslate nohighlight">
 \[
-    L^\text{TRPO}=\hat{\mathbb{E}}_t\left[\rho_t(\theta)\hat{A}_t-\beta\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
+    L_\text{TRPO}=\hat{\mathbb{E}}_t\left[\rho_t(\theta)\hat{A}_t-\beta\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
     \]</div>
 </li>
 </ul>
@@ -774,7 +789,7 @@ L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D
 <li><p>Objective:</p>
 <div class="math notranslate nohighlight">
 \[
-        L^\text{CLIP}(\theta)=\hat{\mathbb{E}}_t\left[\min\left(\rho_t(\theta)\hat{A}_t, \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\right)\right]
+        L_\text{CLIP}(\theta)=\hat{\mathbb{E}}_t\left[\min\left(\rho_t(\theta)\hat{A}_t, \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\right)\right]
         \]</div>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\epsilon\)</span>: Tiny value to control ratio change.</p></li>
@@ -809,14 +824,131 @@ L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D
 </li>
 </ul>
 </div>
-<p>References:</p>
+</section>
+<section id="dpo">
+<h2>DPO<a class="headerlink" href="#dpo" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: ❌RM, ✅Classification <span class="math notranslate nohighlight">\(\leftarrow\)</span> LM=RM</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p><em>Why do we need it?</em></p>
+<ul>
+<li><p>RLHF is unstable <span class="math notranslate nohighlight">\(\leftarrow\)</span> RM underfitting/overfitting</p></li>
+<li><p>PPO is expensive <span class="math notranslate nohighlight">\(\leftarrow\)</span> Extra RM, Hyperparameter tuning, On-policy sampling, etc.</p></li>
+</ul>
+</li>
+<li><p><em>Why does it even work?</em></p>
 <ol class="arabic simple">
-<li><p>Wang, S., Zhang, S., Zhang, J., Hu, R., Li, X., Zhang, T., … &amp; Hovy, E. (2024). Reinforcement Learning Enhanced LLMs: A Survey. arXiv preprint arXiv:2412.10400.</p></li>
-<li><p>Wang, Z., Bi, B., Pentyala, S. K., Ramnath, K., Chaudhuri, S., Mehrotra, S., … &amp; Asur, S. (2024). A comprehensive survey of LLM alignment techniques: RLHF, RLAIF, PPO, DPO and more. arXiv preprint arXiv:2407.16216.</p></li>
-<li><p>Ouyang, L., Wu, J., Jiang, X., Almeida, D., Wainwright, C., Mishkin, P., … &amp; Lowe, R. (2022). Training language models to follow instructions with human feedback. Advances in neural information processing systems, 35, 27730-27744.</p></li>
+<li><p>PPO’s KL-constrained reward maximization objective actually has a <strong>closed-form solution</strong>.</p></li>
+<li><p>The solution actually satisfies <strong>Bradley-Terry model</strong> (or other pairwise preference models).</p></li>
+<li><p>The model provides the <strong>probability of human preference data in terms of the optimal policy</strong> (❌RM).</p></li>
+<li><p>Yo, probability of data? <span class="math notranslate nohighlight">\(\rightarrow\)</span> MLE <span class="math notranslate nohighlight">\(\rightarrow\)</span> BCE</p></li>
 </ol>
-</section>
-</section>
+</li>
+</ul>
+</li>
+<li><p><strong>How</strong> <span id="id6">[<a class="reference internal" href="#id14" title="Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea Finn. Direct preference optimization: your language model is secretly a reward model. Advances in Neural Information Processing Systems, 36:53728–53741, 2023.">3</a>]</span>: Get data <span class="math notranslate nohighlight">\(\rightarrow\)</span> Train LM to minimize BCE</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Optimal Policy:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\pi^*(y|x)=&amp;\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)\text{, where} \\
+&amp;r(x,y)=r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)} \\
+&amp;Z(x)=\sum_y\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right) \\
+\end{align*}\end{split}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(r(x,y)\)</span>: The reward function that gets maximized in PPO.</p></li>
+<li><p><span class="math notranslate nohighlight">\(Z(x)\)</span>: Partition function, used for</p>
+<ul>
+<li><p>normalization of optimal policy to a valid probability distribution.</p></li>
+<li><p>dirty tricks in Derivation.</p></li>
+</ul>
+</li>
+</ul>
+<p>Reward Function reparameterized:</p>
+<div class="math notranslate nohighlight">
+\[
+r^*(x,y)=\beta\log\frac{\pi^*(y|x)}{\pi_\text{ref}(y|x)}+\beta\log Z(x)
+\]</div>
+<p>Bradley-Terry Model reparameterized:</p>
+<div class="math notranslate nohighlight">
+\[
+p^*(y_w\succ y_l|x)=\frac{1}{1+\exp\left(\beta\log\frac{\pi^*(y_l|x)}{\pi_\text{ref}(y_l|x)}-\beta\log\frac{\pi^*(y_w|x)}{\pi_\text{ref}(y_w|x)}\right)}
+\]</div>
+<p>Objective (BCE):</p>
+<div class="math notranslate nohighlight">
+\[
+L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(\beta\log\frac{\pi^*(y_l|x)}{\pi_\text{ref}(y_l|x)}-\beta\log\frac{\pi^*(y_w|x)}{\pi_\text{ref}(y_w|x)}\right)\right]
+\]</div>
+<p>Gradient:</p>
+<div class="math notranslate nohighlight">
+\[
+\nabla_\theta L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\beta\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left\{\sigma\left(\hat{r}_\theta(x,y_l)-\hat{r}_\theta(x,y_w)\right)\left[\nabla_\theta\log\pi_\theta(y_w|x)-\nabla_\theta\log\pi_\theta(y_l|x)\right]\right\}
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\hat{r}_\theta(x,y)=\beta\log\frac{\pi^*(y|x)}{\pi_\text{ref}(y|x)}\)</span>: Implicit reward model via LM.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{r}_\theta(x,y_l)-\hat{r}_\theta(x,y_w)\)</span>: Higher update when reward estimate is wrong (<span class="math notranslate nohighlight">\(y_l\succ y_w\)</span>).</p></li>
+<li><p><span class="math notranslate nohighlight">\(\log\pi_\theta(y|x)\)</span>: Log likelihood of <span class="math notranslate nohighlight">\(y|x\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬆️<span class="math notranslate nohighlight">\(y_w\)</span>, ⬇️<span class="math notranslate nohighlight">\(y_l\)</span>.</p></li>
+</ul>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Derivation: PPO -&gt; BCE</p>
+<ol class="arabic">
+<li><p>Solve PPO for arbitrary reward function <span class="math notranslate nohighlight">\(r(x,y)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    &amp;\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[r(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right] \\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}-\frac{1}{\beta}r(x,y)\right]\\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}+\log Z(x)-\frac{1}{\beta}r(x,y)-\log Z(x)\right] \\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_\text{ref}(y|x)}-\log\exp\left(\frac{1}{\beta}r(x,y)\right)-\log Z(x)\right]\\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)}-\log Z(x)\right]\\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}\left\{\left[\sum_y\pi_\theta(y|x)\log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)}\right]-\log Z(x)\right\}\\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}\left\{\text{KL}\left[\pi_\theta(y|x)||\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)\right]\right\}\\
+    \end{align*}\end{split}\]</div>
+<p>The minimal value of KL divergence is 0, where left = right. Thus,</p>
+<div class="math notranslate nohighlight">
+\[
+    \pi^*(y|x)=\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)
+    \]</div>
+<p>This is a valid probability distribution because <span class="math notranslate nohighlight">\(\forall y: \pi^*(y|x)\geq0\)</span> and <span class="math notranslate nohighlight">\(\sum_y\pi^*(y|x)=1\)</span>.</p>
+</li>
+<li><p>Derive <span class="math notranslate nohighlight">\(r(x,y)\)</span> from the equation above.</p></li>
+<li><p>Reformat Bradley-Terry Model to sigmoid function.</p></li>
+<li><p>Formulate MLE, switch to BCE, calculate gradient via sigmoid derivative tricks.</p></li>
+</ol>
+</div>
+<hr class="docutils" />
+<p>References:</p>
+<div class="docutils container" id="id7">
+<div role="list" class="citation-list">
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">1</a><span class="fn-bracket">]</span></span>
+<p>Yuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma, Dawn Drain, Stanislav Fort, Deep Ganguli, Tom Henighan, Nicholas Joseph, Saurav Kadavath, Jackson Kernion, Tom Conerly, Sheer El-Showk, Nelson Elhage, Zac Hatfield-Dodds, Danny Hernandez, Tristan Hume, Scott Johnston, Shauna Kravec, Liane Lovitt, Neel Nanda, Catherine Olsson, Dario Amodei, Tom Brown, Jack Clark, Sam McCandlish, Chris Olah, Ben Mann, and Jared Kaplan. Training a helpful and harmless assistant with reinforcement learning from human feedback. 2022. URL: <a class="reference external" href="https://arxiv.org/abs/2204.05862">https://arxiv.org/abs/2204.05862</a>, <a class="reference external" href="https://arxiv.org/abs/2204.05862">arXiv:2204.05862</a>.</p>
+</div>
+<div class="citation" id="id9" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, and others. Training language models to follow instructions with human feedback. <em>Advances in neural information processing systems</em>, 35:27730–27744, 2022.</p>
+</div>
+<div class="citation" id="id14" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">3</a><span class="fn-bracket">]</span></span>
+<p>Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea Finn. Direct preference optimization: your language model is secretly a reward model. <em>Advances in Neural Information Processing Systems</em>, 36:53728–53741, 2023.</p>
+</div>
+<div class="citation" id="id12" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<p>John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. Proximal policy optimization algorithms. 2017. URL: <a class="reference external" href="https://arxiv.org/abs/1707.06347">https://arxiv.org/abs/1707.06347</a>, <a class="reference external" href="https://arxiv.org/abs/1707.06347">arXiv:1707.06347</a>.</p>
+</div>
+<div class="citation" id="id11" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">5</a><span class="fn-bracket">]</span></span>
+<p>Shuhe Wang, Shengyu Zhang, Jie Zhang, Runyi Hu, Xiaoya Li, Tianwei Zhang, Jiwei Li, Fei Wu, Guoyin Wang, and Eduard Hovy. Reinforcement learning enhanced llms: a survey. <em>arXiv preprint arXiv:2412.10400</em>, 2024.</p>
+</div>
+<div class="citation" id="id8" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">6</a><span class="fn-bracket">]</span></span>
+<p>Zhichao Wang, Bin Bi, Shiva Kumar Pentyala, Kiran Ramnath, Sougata Chaudhuri, Shubham Mehrotra, Xiang-Bo Mao, Sitaram Asur, and others. A comprehensive survey of llm alignment techniques: rlhf, rlaif, ppo, dpo and more. <em>arXiv preprint arXiv:2407.16216</em>, 2024.</p>
+</div>
+</div>
+</div>
 </section>
 </section>
 
@@ -884,20 +1016,20 @@ L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rl">RL</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#llm-alignment">LLM Alignment</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rl-for-llm-alignment">RL for LLM Alignment</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">RL for LLMs</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rl">RL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#llm-alignment">LLM Alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rl-for-llm-alignment">RL for LLM Alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rlhf-instructgpt">RLHF (InstructGPT)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variations">Variations</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#instructgpt-rlhf-ppo">InstructGPT (RLHF/PPO)</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo">PPO</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-optimization">Policy Optimization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo">PPO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpo">DPO</a></li>
 </ul>
 </li>
 </ul>
-</li>
-</ul>
+
   </nav></div>
 
 </div></div>

@@ -10,8 +10,7 @@ kernelspec:
   name: python3
 ---
 # RL for LLMs
-## Overview
-### RL
+## RL
 - **What**: Agent $\overset{\text{action}}{\underset{\text{reward}}{\rightleftarrows}}$ Environment
 - **Why**: For decision-making where actions have delayed consequence in dynamic, sequential tasks.
     - In contrast, Supervised Learning teaches "correct answers" for static tasks.
@@ -19,13 +18,13 @@ kernelspec:
     - **Objective**: Cumulative Reward $\xleftarrow{\text{maximize}}$ Optimal Policy
     - **Process**: Repeat: $s_t$ $\xrightarrow{a_t}$ $s_{t+1}$ $\xrightarrow{\text{get}}$ $r_t$ $\xrightarrow{\text{update}}$ $\pi$
 
-### LLM Alignment
-- **What**: LLM $\xleftarrow{\text{match}}$ human values
-- **Why**: To reduce the odds of generating undesired, sometimes harmful responses despite pretraining & SFT.
+## LLM Alignment
+- **What**: LLM $\xrightarrow{\text{match}}$ human preferences
+- **Why**: ⬇️Undesired, sometimes harmful responses {cite:p}`wang2024comprehensive`.
 - **How**: Humans $\xrightarrow{\text{collect}}$ Feedback $\xrightarrow{\text{train}}$ Pretrained LLM
 
-### RL for LLM Alignment
-- **What**: Frame LLM Alignment as an RL problem:
+## RL for LLM Alignment
+- **What**: Frame LLM Alignment as an RL problem {cite:p}`wang2024reinforcement`:
     - **Agent**: LLM.
     - **State**: Input token sequence.
     - **Action**: Next-token prediction.
@@ -40,9 +39,9 @@ kernelspec:
 - **How**:
     - **Process**: Feedback $\xrightarrow{\text{train}}$ RM $\xrightarrow{\text{train}}$ Policy
     - **Key factors**:
-        - Feedback Data
-        - Reward Model
-        - Policy Optimization
+        - Feedback Data.
+        - Reward Model.
+        - Policy Optimization.
 
 ```{dropdown} Table 1: Feedback Data
 | Subcategory | Type | Description | Pros | Cons |
@@ -68,14 +67,13 @@ kernelspec:
 |  | **Negative** | Humans label undesired responses, LLMs generate desired responses | Cheap & Scalable | Less control |
 ```
 
-## Variations
-### InstructGPT (RLHF/PPO)
-- **What**: RLHF + PPO/PPO-ptx.
-- **Why**: Traditional NLG evaluation metrics do NOT align with human preferences, so OpenAI researchers came up with a way to directly teach LLMs human preferences and evaluate on human metrics instead: Helpful, Honest, Harm.
+## RLHF (InstructGPT)
+- **What**: RLHF + PPO/PPO-ptx {cite:p}`ouyang2022training`.
+- **Why**: LLM $\xrightarrow{\text{match}}$ human preferences
 - **How**:
     - **Data**: Pairwise + Human.
     - **RM**: Explicit + Pointwise.
-    - **PO**: (tbf, ❌PPO ✅TRPO)
+    - **PO**: (tbf, ❌PPO, ✅TRPO)
         1. **PPO**: Max Reward + **Min Deviation**
             - Deviation Minimization: Aligned policy $\Leftrightarrow$ Initial policy $\leftarrow$ Trust Region Constraint
                 - *Why?* To keep what works while aiming at what we want, via minimal changes. Drastic changes could make it forget what worked.
@@ -85,25 +83,32 @@ kernelspec:
 ```{admonition} Math
 :class: note, dropdown
 RM:
+- Reward Estimation (**Bradley-Terry Model**):
 
-$$
-L^\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\right]
-$$
-- $r_\phi(x,y)$: Reward function for input $x$ and output $y$, parameterized by $\phi$.
-- $\binom{K}{2}=\frac{K(K-1)}{2}$: #Comparisons for each prompt shown to each labeler.
-- $x$: Input token sequence.
-- $y_w$: Desired (W) output token sequence.
-- $y_l$: Undesired (L) output token sequence.
-- $\mathcal{D}$: RL Dataset.
-- $\sigma(\cdot)$: Sigmoid function for BCE.
+    $$
+    p^*(y_w\succ y_l|x)=\frac{\exp{r^*(x,y_w)}}{\exp{r^*(x,y_w)}+\exp{r^*(x,y_l)}}
+    $$
+    - $x$: Input token sequence.
+    - $y_w$: Desired (W) output token sequence.
+    - $y_l$: Undesired (L) output token sequence.
+    - $r^*(x,y)$: Latent reward function for input $x$ and output $y$.
+    - $p^*(y_w\succ y_l|x)$: Probability that humans prefer $y_w$ over $y_l$.
+- Objective:
 
+    $$
+    L_\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\right]
+    $$
+    - $r_\phi(x,y)$: Reward model for input $x$ and output $y$, parameterized by $\phi$.
+    - $\binom{K}{2}=\frac{K(K-1)}{2}$: #Comparisons for each prompt shown to each labeler.
+    - $\mathcal{D}$: RL Dataset.
+    - $\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)$: Sigmoid function $\rightarrow$ Bradley-Terry model.
 ---
 
 PO:
 - PPO:
 
     $$\begin{align*}
-    L^\text{PPO}(\pi_\theta)&=\mathbb{E}_{x\sim\mathcal{D}}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\text{KL}\left[\pi_\theta(y|x)||\pi_\text{ref}(y|x)\right]] \\
+    L_\text{PPO}(\pi_\theta)&=\mathbb{E}_{x\sim\mathcal{D}}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\text{KL}\left[\pi_\theta(y|x)||\pi_\text{ref}(y|x)\right]] \\
     &=\mathbb{E}_{x\sim\mathcal{D}}\left[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\mathbb{E}_{y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]\right] \\
     &=\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]
     \end{align*}$$
@@ -114,24 +119,27 @@ PO:
 - PPO-ptx:
 
     $$
-    L^\text{PPO-ptx}(\pi_\theta)=\mathbb{E}_{x\sim\mathcal{D},y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
+    L_\text{PPO-ptx}(\pi_\theta)=\mathbb{E}_{x\sim\mathcal{D},y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
     $$
     - $\gamma$: Pretrain loss coefficient.
     - $\mathcal{D}_\text{pretrain}$: Pretraining dataset.
 ```
 
-#### PPO
-- **What**: Policy gradient, but **proximal** (close) to current policy.
+<br><br>
+
+# Policy Optimization
+## PPO
+- **What**: Policy gradient, but **proximal** (close) to current policy {cite:p}`schulman2017proximalpolicyoptimizationalgorithms`.
 - **Why**:
     1. Stable gradients.
     2. No optimal KL penalty coefficient for **TRPO** to work well.
 - **How**: TRPO + **Better Penalty**
     1. **Clipped Surrogate Objective**: Trap the probability ratio in a range.
-        - $\rightarrow$ Penalize moving the ratio away from 1.
-        - $\rightarrow$ Penalize the incentive to deviate from current policy.
+        - $\xrightarrow{\text{penalize}}$ deviation from current policy
     2. **Adaptive KL coefficient**: Adapt the coefficient to match a target KL divergence value per update.
-        - $\rightarrow$ Minimize impact of hyperparam tuning.
+        - $\xrightarrow{\text{minimize}}$ hyperparam tuning impact
     - (Empirically, 1>2)
+    - (Empirically by Anthropic, ❌1&2, ✅$\beta=0.001$) {cite:p}`bai2022traininghelpfulharmlessassistant`
 
 ```{admonition} Math
 :class: note, dropdown
@@ -169,7 +177,7 @@ TRPO (quick recap):
 - Objective:
 
     $$
-    L^\text{TRPO}=\hat{\mathbb{E}}_t\left[\rho_t(\theta)\hat{A}_t-\beta\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
+    L_\text{TRPO}=\hat{\mathbb{E}}_t\left[\rho_t(\theta)\hat{A}_t-\beta\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
     $$
 
 ---
@@ -187,7 +195,7 @@ PPO:
     - Objective:
 
         $$
-        L^\text{CLIP}(\theta)=\hat{\mathbb{E}}_t\left[\min\left(\rho_t(\theta)\hat{A}_t, \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\right)\right]
+        L_\text{CLIP}(\theta)=\hat{\mathbb{E}}_t\left[\min\left(\rho_t(\theta)\hat{A}_t, \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\right)\right]
         $$
         - $\epsilon$: Tiny value to control ratio change.
 - **Adaptive KL Penalty Coefficient**:
@@ -207,7 +215,94 @@ PPO:
             - $d_\text{tar}$: Target divergence.
 ```
 
+## DPO
+- **What**: ❌RM, ✅Classification $\leftarrow$ LM=RM
+- **Why**:
+    - *Why do we need it?*
+        - RLHF is unstable $\leftarrow$ RM underfitting/overfitting
+        - PPO is expensive $\leftarrow$ Extra RM, Hyperparameter tuning, On-policy sampling, etc.
+    - *Why does it even work?*
+        1. PPO's KL-constrained reward maximization objective actually has a **closed-form solution**.
+        2. The solution actually satisfies **Bradley-Terry model** (or other pairwise preference models).
+        3. The model provides the **probability of human preference data in terms of the optimal policy** (❌RM).
+        3. Yo, probability of data? $\rightarrow$ MLE $\rightarrow$ BCE
+- **How** {cite:p}`rafailov2023direct`: Get data $\rightarrow$ Train LM to minimize BCE
+
+```{admonition} Math
+:class: note, dropdown
+Optimal Policy:
+
+$$\begin{align*}
+\pi^*(y|x)=&\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)\text{, where} \\
+&r(x,y)=r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)} \\
+&Z(x)=\sum_y\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right) \\
+\end{align*}$$
+- $r(x,y)$: The reward function that gets maximized in PPO.
+- $Z(x)$: Partition function, used for
+    - normalization of optimal policy to a valid probability distribution.
+    - dirty tricks in Derivation.
+
+Reward Function reparameterized:
+
+$$
+r^*(x,y)=\beta\log\frac{\pi^*(y|x)}{\pi_\text{ref}(y|x)}+\beta\log Z(x)
+$$
+
+Bradley-Terry Model reparameterized:
+
+$$
+p^*(y_w\succ y_l|x)=\frac{1}{1+\exp\left(\beta\log\frac{\pi^*(y_l|x)}{\pi_\text{ref}(y_l|x)}-\beta\log\frac{\pi^*(y_w|x)}{\pi_\text{ref}(y_w|x)}\right)}
+$$
+
+Objective (BCE):
+
+$$
+L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(\beta\log\frac{\pi^*(y_l|x)}{\pi_\text{ref}(y_l|x)}-\beta\log\frac{\pi^*(y_w|x)}{\pi_\text{ref}(y_w|x)}\right)\right]
+$$
+
+Gradient:
+
+$$
+\nabla_\theta L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\beta\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left\{\sigma\left(\hat{r}_\theta(x,y_l)-\hat{r}_\theta(x,y_w)\right)\left[\nabla_\theta\log\pi_\theta(y_w|x)-\nabla_\theta\log\pi_\theta(y_l|x)\right]\right\}
+$$
+- $\hat{r}_\theta(x,y)=\beta\log\frac{\pi^*(y|x)}{\pi_\text{ref}(y|x)}$: Implicit reward model via LM.
+- $\hat{r}_\theta(x,y_l)-\hat{r}_\theta(x,y_w)$: Higher update when reward estimate is wrong ($y_l\succ y_w$).
+- $\log\pi_\theta(y|x)$: Log likelihood of $y|x$ $\rightarrow$ ⬆️$y_w$, ⬇️$y_l$.
+```
+
+```{admonition} Derivation: PPO -> BCE 
+:class: tip, dropdown
+1. Solve PPO for arbitrary reward function $r(x,y)$:
+
+    $$\begin{align*}
+    &\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[r(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right] \\
+    &=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}-\frac{1}{\beta}r(x,y)\right]\\
+    &=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}+\log Z(x)-\frac{1}{\beta}r(x,y)-\log Z(x)\right] \\
+    &=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_\text{ref}(y|x)}-\log\exp\left(\frac{1}{\beta}r(x,y)\right)-\log Z(x)\right]\\
+    &=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)}-\log Z(x)\right]\\
+    &=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}\left\{\left[\sum_y\pi_\theta(y|x)\log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)}\right]-\log Z(x)\right\}\\
+    &=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}\left\{\text{KL}\left[\pi_\theta(y|x)||\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)\right]\right\}\\
+    \end{align*}$$
+
+    The minimal value of KL divergence is 0, where left = right. Thus,
+
+    $$
+    \pi^*(y|x)=\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)
+    $$
+
+    This is a valid probability distribution because $\forall y: \pi^*(y|x)\geq0$ and $\sum_y\pi^*(y|x)=1$.
+
+2. Derive $r(x,y)$ from the equation above.
+
+3. Reformat Bradley-Terry Model to sigmoid function.
+
+4. Formulate MLE, switch to BCE, calculate gradient via sigmoid derivative tricks.
+```
+
+
+___
+
 References:
-1. Wang, S., Zhang, S., Zhang, J., Hu, R., Li, X., Zhang, T., ... & Hovy, E. (2024). Reinforcement Learning Enhanced LLMs: A Survey. arXiv preprint arXiv:2412.10400.
-2. Wang, Z., Bi, B., Pentyala, S. K., Ramnath, K., Chaudhuri, S., Mehrotra, S., ... & Asur, S. (2024). A comprehensive survey of LLM alignment techniques: RLHF, RLAIF, PPO, DPO and more. arXiv preprint arXiv:2407.16216.
-3. Ouyang, L., Wu, J., Jiang, X., Almeida, D., Wainwright, C., Mishkin, P., ... & Lowe, R. (2022). Training language models to follow instructions with human feedback. Advances in neural information processing systems, 35, 27730-27744.
+```{bibliography}
+:style: plain
+```
