@@ -19,8 +19,8 @@ kernelspec:
     - **Process**: Repeat: $s_t$ $\xrightarrow{a_t}$ $s_{t+1}$ $\xrightarrow{\text{get}}$ $r_t$ $\xrightarrow{\text{update}}$ $\pi$
 
 ## LLM Alignment
-- **What**: LLM $\xrightarrow{\text{match}}$ human preferences
-- **Why**: ⬇️Undesired, sometimes harmful responses {cite:p}`wang2024comprehensive`.
+- **What**: LLM $\xrightarrow{\text{match}}$ human preferences {cite:p}`wang2024comprehensive`
+- **Why**: ⬇️Undesired, sometimes harmful responses.
 - **How**: Humans $\xrightarrow{\text{collect}}$ Feedback $\xrightarrow{\text{train}}$ Pretrained LLM
 
 ## RL for LLM Alignment
@@ -68,8 +68,8 @@ kernelspec:
 ```
 
 ## RLHF (InstructGPT)
-- **Name**: Reinforcement Learning from Human Feedback
-- **What**: RLHF + PPO/PPO-ptx {cite:p}`ouyang2022training`.
+- **Name**: Reinforcement Learning from Human Feedback {cite:p}`ouyang2022training`
+- **What**: RLHF + PPO/PPO-ptx.
 - **Why**: LLM $\xrightarrow{\text{match}}$ human preferences
 - **How**:
     - **Data**: Pairwise + Human.
@@ -130,8 +130,8 @@ PO:
 
 # Policy Optimization
 ## PPO
-- **Name**: Proximal Policy Optimization
-- **What**: Policy gradient, but **proximal** (close) to current policy {cite:p}`schulman2017proximalpolicyoptimizationalgorithms`.
+- **Name**: Proximal Policy Optimization {cite:p}`schulman2017proximalpolicyoptimizationalgorithms`
+- **What**: Policy gradient, but **proximal** (close) to current policy.
 - **Why**:
     1. Stable gradients.
     2. No optimal KL penalty coefficient for **TRPO** to work well.
@@ -218,7 +218,7 @@ PPO:
 ```
 
 ## DPO
-- **Name**: Direct Preference Optimization
+- **Name**: Direct Preference Optimization {cite:p}`rafailov2023direct`
 - **What**: ❌RM, ✅Classification $\leftarrow$ LM=RM
 - **Why**:
     - *Why do we need it?*
@@ -229,7 +229,7 @@ PPO:
         2. The solution actually satisfies **Bradley-Terry model** (or other pairwise preference models).
         3. The model provides the **probability of human preference data in terms of the optimal policy** (❌RM).
         3. Yo, probability of data? $\rightarrow$ MLE $\rightarrow$ BCE
-- **How** {cite:p}`rafailov2023direct`: Get data $\rightarrow$ Train LM to minimize BCE
+- **How**: Get data $\rightarrow$ Train LM to minimize BCE
 
 ```{admonition} Math
 :class: note, dropdown
@@ -303,7 +303,7 @@ $$
 ```
 
 ## GRPO
-- **Name**: Group Relative Policy Optimization
+- **Name**: Group Relative Policy Optimization {cite:p}`shao2024deepseekmath`
 - **What**: ❌Value Function, ✅Average of multisampling from reference policy as baseline for Advantage Estimation.
 - **Why**: PPO objective $\xleftarrow{\text{compute}}$ Advantage $\xleftarrow{\text{compute}}$ Extra value model (i.e., critic)
     - $\rightarrow$ **Computational cost**
