@@ -65,7 +65,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="PEFT" href="peft.html" />
-    <link rel="prev" title="PEFT" href="../dl/transfer/peft.html" />
+    <link rel="prev" title="LazyNotes" href="../intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -175,20 +175,7 @@
  </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../dl/modules-tag.html">Modules</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../dl/modules/basics.html">Linear</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../dl/modules/activations.html">Activations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../dl/modules/transformer.html">Transformer</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../dl/transfer-tag.html">Transfer Learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../dl/transfer/peft.html">PEFT</a></li>
-</ul>
-</details></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">RL for LLMs</a></li>
 
@@ -398,6 +385,7 @@ document.write(`
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-optimization">Policy Optimization</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo">PPO</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpo">DPO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grpo">GRPO</a></li>
 </ul>
 </li>
 </ul>
@@ -435,14 +423,14 @@ document.write(`
 <h2>LLM Alignment<a class="headerlink" href="#llm-alignment" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: LLM <span class="math notranslate nohighlight">\(\xrightarrow{\text{match}}\)</span> human preferences</p></li>
-<li><p><strong>Why</strong>: ⬇️Undesired, sometimes harmful responses <span id="id1">[<a class="reference internal" href="#id8" title="Zhichao Wang, Bin Bi, Shiva Kumar Pentyala, Kiran Ramnath, Sougata Chaudhuri, Shubham Mehrotra, Xiang-Bo Mao, Sitaram Asur, and others. A comprehensive survey of llm alignment techniques: rlhf, rlaif, ppo, dpo and more. arXiv preprint arXiv:2407.16216, 2024.">6</a>]</span>.</p></li>
+<li><p><strong>Why</strong>: ⬇️Undesired, sometimes harmful responses <span id="id1">[<a class="reference internal" href="#id9" title="Zhichao Wang, Bin Bi, Shiva Kumar Pentyala, Kiran Ramnath, Sougata Chaudhuri, Shubham Mehrotra, Xiang-Bo Mao, Sitaram Asur, and others. A comprehensive survey of llm alignment techniques: rlhf, rlaif, ppo, dpo and more. arXiv preprint arXiv:2407.16216, 2024.">6</a>]</span>.</p></li>
 <li><p><strong>How</strong>: Humans <span class="math notranslate nohighlight">\(\xrightarrow{\text{collect}}\)</span> Feedback <span class="math notranslate nohighlight">\(\xrightarrow{\text{train}}\)</span> Pretrained LLM</p></li>
 </ul>
 </section>
 <section id="rl-for-llm-alignment">
 <h2>RL for LLM Alignment<a class="headerlink" href="#rl-for-llm-alignment" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Frame LLM Alignment as an RL problem <span id="id2">[<a class="reference internal" href="#id11" title="Shuhe Wang, Shengyu Zhang, Jie Zhang, Runyi Hu, Xiaoya Li, Tianwei Zhang, Jiwei Li, Fei Wu, Guoyin Wang, and Eduard Hovy. Reinforcement learning enhanced llms: a survey. arXiv preprint arXiv:2412.10400, 2024.">5</a>]</span>:</p>
+<li><p><strong>What</strong>: Frame LLM Alignment as an RL problem <span id="id2">[<a class="reference internal" href="#id12" title="Shuhe Wang, Shengyu Zhang, Jie Zhang, Runyi Hu, Xiaoya Li, Tianwei Zhang, Jiwei Li, Fei Wu, Guoyin Wang, and Eduard Hovy. Reinforcement learning enhanced llms: a survey. arXiv preprint arXiv:2412.10400, 2024.">5</a>]</span>:</p>
 <ul>
 <li><p><strong>Agent</strong>: LLM.</p></li>
 <li><p><strong>State</strong>: Input token sequence.</p></li>
@@ -598,13 +586,14 @@ document.write(`
 <section id="rlhf-instructgpt">
 <h2>RLHF (InstructGPT)<a class="headerlink" href="#rlhf-instructgpt" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: RLHF + PPO/PPO-ptx <span id="id3">[<a class="reference internal" href="#id9" title="Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, and others. Training language models to follow instructions with human feedback. Advances in neural information processing systems, 35:27730–27744, 2022.">2</a>]</span>.</p></li>
+<li><p><strong>Name</strong>: Reinforcement Learning from Human Feedback</p></li>
+<li><p><strong>What</strong>: RLHF + PPO/PPO-ptx <span id="id3">[<a class="reference internal" href="#id10" title="Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, and others. Training language models to follow instructions with human feedback. Advances in neural information processing systems, 35:27730–27744, 2022.">2</a>]</span>.</p></li>
 <li><p><strong>Why</strong>: LLM <span class="math notranslate nohighlight">\(\xrightarrow{\text{match}}\)</span> human preferences</p></li>
 <li><p><strong>How</strong>:</p>
 <ul>
 <li><p><strong>Data</strong>: Pairwise + Human.</p></li>
 <li><p><strong>RM</strong>: Explicit + Pointwise.</p></li>
-<li><p><strong>PO</strong>: (tbf, ❌PPO, ✅TRPO)</p>
+<li><p><strong>PO</strong>:</p>
 <ol class="arabic simple">
 <li><p><strong>PPO</strong>: Max Reward + <strong>Min Deviation</strong></p>
 <ul>
@@ -692,7 +681,8 @@ document.write(`
 <section id="ppo">
 <h2>PPO<a class="headerlink" href="#ppo" title="Link to this heading">#</a></h2>
 <ul>
-<li><p><strong>What</strong>: Policy gradient, but <strong>proximal</strong> (close) to current policy <span id="id4">[<a class="reference internal" href="#id12" title="John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. Proximal policy optimization algorithms. 2017. URL: https://arxiv.org/abs/1707.06347, arXiv:1707.06347.">4</a>]</span>.</p></li>
+<li><p><strong>Name</strong>: Proximal Policy Optimization</p></li>
+<li><p><strong>What</strong>: Policy gradient, but <strong>proximal</strong> (close) to current policy <span id="id4">[<a class="reference internal" href="#id13" title="John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. Proximal policy optimization algorithms. 2017. URL: https://arxiv.org/abs/1707.06347, arXiv:1707.06347.">4</a>]</span>.</p></li>
 <li><p><strong>Why</strong>:</p>
 <ol class="arabic simple">
 <li><p>Stable gradients.</p></li>
@@ -714,7 +704,7 @@ document.write(`
 </ol>
 <ul class="simple">
 <li><p>(Empirically, 1&gt;2)</p></li>
-<li><p>(Empirically by Anthropic, ❌1&amp;2, ✅<span class="math notranslate nohighlight">\(\beta=0.001\)</span>) <span id="id5">[<a class="reference internal" href="#id10" title="Yuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma, Dawn Drain, Stanislav Fort, Deep Ganguli, Tom Henighan, Nicholas Joseph, Saurav Kadavath, Jackson Kernion, Tom Conerly, Sheer El-Showk, Nelson Elhage, Zac Hatfield-Dodds, Danny Hernandez, Tristan Hume, Scott Johnston, Shauna Kravec, Liane Lovitt, Neel Nanda, Catherine Olsson, Dario Amodei, Tom Brown, Jack Clark, Sam McCandlish, Chris Olah, Ben Mann, and Jared Kaplan. Training a helpful and harmless assistant with reinforcement learning from human feedback. 2022. URL: https://arxiv.org/abs/2204.05862, arXiv:2204.05862.">1</a>]</span></p></li>
+<li><p>(Empirically by Anthropic, ❌1&amp;2, ✅<span class="math notranslate nohighlight">\(\beta=0.001\)</span>) <span id="id5">[<a class="reference internal" href="#id11" title="Yuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma, Dawn Drain, Stanislav Fort, Deep Ganguli, Tom Henighan, Nicholas Joseph, Saurav Kadavath, Jackson Kernion, Tom Conerly, Sheer El-Showk, Nelson Elhage, Zac Hatfield-Dodds, Danny Hernandez, Tristan Hume, Scott Johnston, Shauna Kravec, Liane Lovitt, Neel Nanda, Catherine Olsson, Dario Amodei, Tom Brown, Jack Clark, Sam McCandlish, Chris Olah, Ben Mann, and Jared Kaplan. Training a helpful and harmless assistant with reinforcement learning from human feedback. 2022. URL: https://arxiv.org/abs/2204.05862, arXiv:2204.05862.">1</a>]</span></p></li>
 </ul>
 </li>
 </ul>
@@ -828,6 +818,7 @@ document.write(`
 <section id="dpo">
 <h2>DPO<a class="headerlink" href="#dpo" title="Link to this heading">#</a></h2>
 <ul class="simple">
+<li><p><strong>Name</strong>: Direct Preference Optimization</p></li>
 <li><p><strong>What</strong>: ❌RM, ✅Classification <span class="math notranslate nohighlight">\(\leftarrow\)</span> LM=RM</p></li>
 <li><p><strong>Why</strong>:</p>
 <ul>
@@ -847,7 +838,7 @@ document.write(`
 </li>
 </ul>
 </li>
-<li><p><strong>How</strong> <span id="id6">[<a class="reference internal" href="#id14" title="Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea Finn. Direct preference optimization: your language model is secretly a reward model. Advances in Neural Information Processing Systems, 36:53728–53741, 2023.">3</a>]</span>: Get data <span class="math notranslate nohighlight">\(\rightarrow\)</span> Train LM to minimize BCE</p></li>
+<li><p><strong>How</strong> <span id="id6">[<a class="reference internal" href="#id15" title="Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea Finn. Direct preference optimization: your language model is secretly a reward model. Advances in Neural Information Processing Systems, 36:53728–53741, 2023.">3</a>]</span>: Get data <span class="math notranslate nohighlight">\(\rightarrow\)</span> Train LM to minimize BCE</p></li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -919,31 +910,80 @@ L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}
 <li><p>Formulate MLE, switch to BCE, calculate gradient via sigmoid derivative tricks.</p></li>
 </ol>
 </div>
+</section>
+<section id="grpo">
+<h2>GRPO<a class="headerlink" href="#grpo" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Name</strong>: Group Relative Policy Optimization</p></li>
+<li><p><strong>What</strong>: ❌Value Function, ✅Average of multisampling from reference policy as baseline for Advantage Estimation.</p></li>
+<li><p><strong>Why</strong>: PPO objective <span class="math notranslate nohighlight">\(\xleftarrow{\text{compute}}\)</span> Advantage <span class="math notranslate nohighlight">\(\xleftarrow{\text{compute}}\)</span> Extra value model (i.e., critic)</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> <strong>Computational cost</strong></p>
+<ul>
+<li><p>Value models can be as large as reward models.</p></li>
+<li><p>e.g., OG RLHF/PPO initialized a 6B value function from a 6B RM <span id="id7">[<a class="reference internal" href="#id10" title="Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, and others. Training language models to follow instructions with human feedback. Advances in neural information processing systems, 35:27730–27744, 2022.">2</a>]</span>.</p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> <strong>Lack of value model accuracy</strong></p>
+<ul>
+<li><p>Value model is supposed to be accurate at each token.</p></li>
+<li><p>BUT reward score is only computed at the last token.</p></li>
+<li><p>SO there’s no reward signal for intermediate tokens.</p></li>
+<li><p>SO value model has to guess the final reward based on incomplete information.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> High variance + Training instability.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ul>
+<li><p><strong>Outcome Supervision</strong>: For each input,</p>
+<ol class="arabic simple">
+<li><p>Sample a group of outputs from reference policy.</p></li>
+<li><p>Get rewards for these outputs via RM.</p></li>
+<li><p>Normalize the rewards.</p></li>
+<li><p>For each output, set the advantages of all tokens as the normalized reward.</p></li>
+<li><p>Optimize.</p></li>
+</ol>
+</li>
+<li><p><strong>Process Supervision</strong>: For each input,</p>
+<ol class="arabic simple">
+<li><p>Sample a group of outputs from reference policy.</p></li>
+<li><p>Get rewards for <strong>each step</strong> of the outputs via RM.</p></li>
+<li><p>Normalize the rewards (across all dimensions).</p></li>
+<li><p>For each token in each output, set the advantage as the sum of all normalized rewards after it.</p></li>
+<li><p>Optimize.</p></li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
 <hr class="docutils" />
 <p>References:</p>
-<div class="docutils container" id="id7">
+<div class="docutils container" id="id8">
 <div role="list" class="citation-list">
-<div class="citation" id="id10" role="doc-biblioentry">
+<div class="citation" id="id11" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">1</a><span class="fn-bracket">]</span></span>
 <p>Yuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma, Dawn Drain, Stanislav Fort, Deep Ganguli, Tom Henighan, Nicholas Joseph, Saurav Kadavath, Jackson Kernion, Tom Conerly, Sheer El-Showk, Nelson Elhage, Zac Hatfield-Dodds, Danny Hernandez, Tristan Hume, Scott Johnston, Shauna Kravec, Liane Lovitt, Neel Nanda, Catherine Olsson, Dario Amodei, Tom Brown, Jack Clark, Sam McCandlish, Chris Olah, Ben Mann, and Jared Kaplan. Training a helpful and harmless assistant with reinforcement learning from human feedback. 2022. URL: <a class="reference external" href="https://arxiv.org/abs/2204.05862">https://arxiv.org/abs/2204.05862</a>, <a class="reference external" href="https://arxiv.org/abs/2204.05862">arXiv:2204.05862</a>.</p>
 </div>
-<div class="citation" id="id9" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id7">2</a>)</span>
 <p>Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, and others. Training language models to follow instructions with human feedback. <em>Advances in neural information processing systems</em>, 35:27730–27744, 2022.</p>
 </div>
-<div class="citation" id="id14" role="doc-biblioentry">
+<div class="citation" id="id15" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">3</a><span class="fn-bracket">]</span></span>
 <p>Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea Finn. Direct preference optimization: your language model is secretly a reward model. <em>Advances in Neural Information Processing Systems</em>, 36:53728–53741, 2023.</p>
 </div>
-<div class="citation" id="id12" role="doc-biblioentry">
+<div class="citation" id="id13" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
 <p>John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. Proximal policy optimization algorithms. 2017. URL: <a class="reference external" href="https://arxiv.org/abs/1707.06347">https://arxiv.org/abs/1707.06347</a>, <a class="reference external" href="https://arxiv.org/abs/1707.06347">arXiv:1707.06347</a>.</p>
 </div>
-<div class="citation" id="id11" role="doc-biblioentry">
+<div class="citation" id="id12" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">5</a><span class="fn-bracket">]</span></span>
 <p>Shuhe Wang, Shengyu Zhang, Jie Zhang, Runyi Hu, Xiaoya Li, Tianwei Zhang, Jiwei Li, Fei Wu, Guoyin Wang, and Eduard Hovy. Reinforcement learning enhanced llms: a survey. <em>arXiv preprint arXiv:2412.10400</em>, 2024.</p>
 </div>
-<div class="citation" id="id8" role="doc-biblioentry">
+<div class="citation" id="id9" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">6</a><span class="fn-bracket">]</span></span>
 <p>Zhichao Wang, Bin Bi, Shiva Kumar Pentyala, Kiran Ramnath, Sougata Chaudhuri, Shubham Mehrotra, Xiang-Bo Mao, Sitaram Asur, and others. A comprehensive survey of llm alignment techniques: rlhf, rlaif, ppo, dpo and more. <em>arXiv preprint arXiv:2407.16216</em>, 2024.</p>
 </div>
@@ -983,12 +1023,12 @@ L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../dl/transfer/peft.html"
+       href="../intro.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">PEFT</p>
+        <p class="prev-next-title">LazyNotes</p>
       </div>
     </a>
     <a class="right-next"
@@ -1026,6 +1066,7 @@ L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-optimization">Policy Optimization</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo">PPO</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpo">DPO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grpo">GRPO</a></li>
 </ul>
 </li>
 </ul>
