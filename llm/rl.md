@@ -68,12 +68,13 @@ kernelspec:
 ```
 
 ## RLHF (InstructGPT)
+- **Name**: Reinforcement Learning from Human Feedback
 - **What**: RLHF + PPO/PPO-ptx {cite:p}`ouyang2022training`.
 - **Why**: LLM $\xrightarrow{\text{match}}$ human preferences
 - **How**:
     - **Data**: Pairwise + Human.
     - **RM**: Explicit + Pointwise.
-    - **PO**: (tbf, ❌PPO, ✅TRPO)
+    - **PO**:
         1. **PPO**: Max Reward + **Min Deviation**
             - Deviation Minimization: Aligned policy $\Leftrightarrow$ Initial policy $\leftarrow$ Trust Region Constraint
                 - *Why?* To keep what works while aiming at what we want, via minimal changes. Drastic changes could make it forget what worked.
@@ -129,6 +130,7 @@ PO:
 
 # Policy Optimization
 ## PPO
+- **Name**: Proximal Policy Optimization
 - **What**: Policy gradient, but **proximal** (close) to current policy {cite:p}`schulman2017proximalpolicyoptimizationalgorithms`.
 - **Why**:
     1. Stable gradients.
@@ -216,6 +218,7 @@ PPO:
 ```
 
 ## DPO
+- **Name**: Direct Preference Optimization
 - **What**: ❌RM, ✅Classification $\leftarrow$ LM=RM
 - **Why**:
     - *Why do we need it?*
@@ -298,6 +301,35 @@ $$
 
 4. Formulate MLE, switch to BCE, calculate gradient via sigmoid derivative tricks.
 ```
+
+## GRPO
+- **Name**: Group Relative Policy Optimization
+- **What**: ❌Value Function, ✅Average of multisampling from reference policy as baseline for Advantage Estimation.
+- **Why**: PPO objective $\xleftarrow{\text{compute}}$ Advantage $\xleftarrow{\text{compute}}$ Extra value model (i.e., critic)
+    - $\rightarrow$ **Computational cost**
+        - Value models can be as large as reward models.
+        - e.g., OG RLHF/PPO initialized a 6B value function from a 6B RM {cite:p}`ouyang2022training`.
+    - $\rightarrow$ **Lack of value model accuracy**
+        - Value model is supposed to be accurate at each token.
+        - BUT reward score is only computed at the last token.
+        - SO there's no reward signal for intermediate tokens.
+        - SO value model has to guess the final reward based on incomplete information.
+        - $\rightarrow$ High variance + Training instability.
+
+- **How**:
+    - **Outcome Supervision**: For each input,
+        1. Sample a group of outputs from reference policy.
+        2. Get rewards for these outputs via RM.
+        3. Normalize the rewards.
+        4. For each output, set the advantages of all tokens as the normalized reward.
+        5. Optimize.
+    - **Process Supervision**: For each input,
+        1. Sample a group of outputs from reference policy.
+        2. Get rewards for **each step** of the outputs via RM.
+        3. Normalize the rewards (across all dimensions).
+        4. For each token in each output, set the advantage as the sum of all normalized rewards after it.
+        5. Optimize.
+
 
 
 ___
