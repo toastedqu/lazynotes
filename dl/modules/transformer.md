@@ -15,37 +15,34 @@ kernelspec:
 :width: 500px
 ```
 - **What**: **Self-attention** for sequential data.
-- **Why**: **Long-range dependencies** + **Parallel processing**.
+- **Why**: **Long-range dependencies** + **Parallel processing**
 - **How**:
-	- **Input**:
-		- [Token Embedding](#token-embedding): Converts each word/token into a high-dimensional vector for **semantic information**.
-		- [Positional Encoding](#positional-encoding): Adds **positional information** on top of embeddings to preserve token order.
-	- **Middle**:
-		- [Encoder](#encoder): Encodes the input into a **contextual representation**.
-		- [Decoder](#decoder): Decodes the contextual representation **one token at a time** to form output.
-	- **Output**:
-		- [Linear](#linear): Transforms representation for next-token prediction.
-		- [Softmax](#softmax): Outputs probability for each token as the next token.
-- **Conditions**:
-	- Discrete inputs (in the form of tokens/patches).
-	- Sequential input + Global dependencies.
-- **Applications**: Sequential data.
-- **Pros**:
-	- Outperforms RNNs.
-	- Higher computational efficiency than RNNs.
-	- Reduces Vanishing Gradients.
-	- Scalable.
-	- Flexible for extensive applications -> Enables transfer learning.
-- **Cons**:
-	- **Quadratic complexity** w.r.t. sequence length.
-	- Slower for autoregressive tasks (i.e., generation).
-	- High data requirement.
-	- High computation requirement.
-	- Low interpretability.
-	- RIP environment.
+	1. **Tokenization**: Sequence $\xrightarrow{\text{split}}$ Tokens
+	2. **Token Embedding**: Tokens $\rightarrow$ Semantic vectors
+	3. **Positional Encoding**: Semantic vectors $\xrightarrow{+\text{positional info}}$ Position-aware vectors
+	4. **Encoder**: Position-aware vectors $\rightarrow$ Context-aware vectors
+	5. **Decoder**: Context-aware vectors $\xrightarrow{\text{decode}}$ Masked representation
+	6. **Output Layer**: Masked representation $\xrightarrow{\text{predict}}$ Next token
 
-## Input
-### Token Embedding
+```{dropdown} Analogy
+
+```
+
+
+# Input
+## Tokenization
+- **What**: Sequence $\xrightarrow{\text{split}}$ Tokens
+- **Why**: 
+- **How**:
+	1. **Tokenization**: Sequence $\xrightarrow{\text{split}}$ Tokens
+	2. **Token Embedding**: Tokens $\rightarrow$ Semantic vectors
+	3. **Positional Encoding**: Semantic vectors $\xrightarrow{+\text{positional info}}$ Position-aware vectors
+	4. **Encoder**: Position-aware vectors $\rightarrow$ Context-aware vectors
+	5. **Decoder**: Context-aware vectors $\xrightarrow{\text{decode}}$ Masked representation
+	6. **Output Layer**: Masked representation $\xrightarrow{\text{predict}}$ Next token
+
+
+## Token Embedding
 - **What**: Discrete tokens -> Continuous **semantic representations**.
 - **Why**:
 	- Enables transformer to process discrete tokens.
