@@ -35,3 +35,6 @@ parts:
     - file: llm/transformer
     - file: llm/rl
     - file: llm/peft
+  - caption: Misc
+    chapters:
+    - file: references
