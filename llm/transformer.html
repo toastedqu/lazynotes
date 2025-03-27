@@ -1,0 +1,809 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Transformer &#8212; LazyNotes</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'llm/transformer';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RL for LLMs" href="rl.html" />
+    <link rel="prev" title="LazyNotes" href="../intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="LazyNotes - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="LazyNotes - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Transformer</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="rl.html">RL for LLMs</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="peft.html">PEFT</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fllm/transformer.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/llm/transformer.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Transformer</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Transformer</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="transformer">
+<h1>Transformer<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h1>
+<a class="reference internal image-reference" href="../images/transformer.png"><img alt="../images/transformer.png" class="align-center" src="../images/transformer.png" style="width: 500px;" />
+</a>
+<ul class="simple">
+<li><p><strong>What</strong>: <strong>Self-attention</strong> for sequential data.</p></li>
+<li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong></p></li>
+<li><p><strong>How</strong>:</p>
+<ul>
+<li><p>Input:</p>
+<ol class="arabic simple">
+<li><p><strong>Tokenization</strong>: Sequence <span class="math notranslate nohighlight">\(\xrightarrow{\text{split}}\)</span> Tokens</p></li>
+<li><p><strong>Token Embedding</strong>: Tokens <span class="math notranslate nohighlight">\(\rightarrow\)</span> Semantic vectors</p></li>
+<li><p><strong>Positional Encoding</strong>: Semantic vectors <span class="math notranslate nohighlight">\(\xrightarrow{+\text{positional info}}\)</span> Position-aware vectors</p></li>
+</ol>
+</li>
+<li><p>Attention:</p>
+<ol class="arabic simple">
+<li><p><strong>Encoder</strong>: Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Context-aware vectors</p></li>
+<li><p><strong>Decoder</strong>: Context-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Masked representation</p></li>
+</ol>
+</li>
+<li><p>Output:</p>
+<ol class="arabic simple">
+<li><p><strong>Output Layer</strong>: Masked representation <span class="math notranslate nohighlight">\(\xrightarrow{\text{predict}}\)</span> Next token</p></li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="input">
+<h1>Input<a class="headerlink" href="#input" title="Link to this heading">#</a></h1>
+<section id="tokenization">
+<h2>Tokenization<a class="headerlink" href="#tokenization" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Sequence <span class="math notranslate nohighlight">\(\xrightarrow{\text{split}}\)</span> Tokens</p></li>
+<li><p><strong>Why</strong>: Machines can only read numbers.</p></li>
+<li><p><strong>How</strong>: (tbd)</p></li>
+</ul>
+</section>
+<section id="token-embedding">
+<h2>Token Embedding<a class="headerlink" href="#token-embedding" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Tokens <span class="math notranslate nohighlight">\(\rightarrow\)</span> Semantic vectors.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Discrete <span class="math notranslate nohighlight">\(\rightarrow\)</span> Continuous</p></li>
+<li><p>Vocab index <span class="math notranslate nohighlight">\(\rightarrow\)</span> Semantic meaning</p></li>
+<li><p>Vocab size <span class="math notranslate nohighlight">\(\xrightarrow{\text{reduced to}}\)</span> hidden size</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>: Look-up table or <a class="reference internal" href="#../basics.md#linear"><span class="xref myst">Linear</span></a>.</p></li>
+</ul>
+</section>
+<section id="positional-encoding">
+<h2>Positional Encoding<a class="headerlink" href="#positional-encoding" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Semantic vectors <span class="math notranslate nohighlight">\(\xrightarrow{+\text{positional info}}\)</span> Position-aware vectors</p></li>
+<li><p><strong>Why</strong>: Transformers lack inherent position awareness AND positions matter.</p>
+<ul>
+<li><p>Without positional encoding, self-attention scores remain unchanged regardless of token orders <span id="id1">[<a class="reference internal" href="../references.html#id11" title="Kuiyi Wang. Why transformer models need positional encoding. https://wangkuiyi.github.io/positional_encoding.html. [Online; accessed &lt;today&gt;].">7</a>]</span>.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>: (tbd)</p></li>
+</ul>
+<section id="sinusoidal-pe">
+<h3>Sinusoidal PE<a class="headerlink" href="#sinusoidal-pe" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Positional info <span class="math notranslate nohighlight">\(\rightarrow\)</span> Sine waves</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Continuous &amp; multi-scale <span class="math notranslate nohighlight">\(\rightarrow\)</span> Generalize to sequences of arbitrary lengths</p></li>
+<li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> Low computational cost</p></li>
+<li><p>Empirically performed as well as learned PE</p></li>
+</ul>
+</li>
+<li><p><strong>Conditions</strong>:</p>
+<ul>
+<li><p>Positional information is expressed by multi-frequency sine/cosine waves.</p></li>
+<li><p>Uniform token importance across the sequence. <span id="id2">[<a class="reference internal" href="../references.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 2017.">6</a>]</span></p></li>
+</ul>
+</li>
+<li><p><strong>Cons</strong>:</p>
+<ul>
+<li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> No learning of task-specific position patterns.</p></li>
+<li><p>Cannot capture complex, relative, or local positional relationships.</p></li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(pos\in\mathbb{R}\)</span>: Token position.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(i\)</span>: Embedding dimension index.</p></li>
+<li><p><span class="math notranslate nohighlight">\(d_{\text{model}}\)</span>: Embedding dimension.</p></li>
+</ul>
+</li>
+</ul>
+<p>Forward:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
+&amp;PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
+\end{align*}\end{split}\]</div>
+</div>
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="attention">
+<h1>Attention<a class="headerlink" href="#attention" title="Link to this heading">#</a></h1>
+<section id="self-attention">
+<h2>Self-Attention<a class="headerlink" href="#self-attention" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Each element in the sequence pays attention to each other.</p></li>
+<li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong></p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>All elements <span class="math notranslate nohighlight">\(\rightarrow\)</span> QKV</p>
+<ul>
+<li><p>Q: What are you looking for?</p></li>
+<li><p>K: What are your keywords for search?</p></li>
+<li><p>V: What info do you have?</p></li>
+</ul>
+</li>
+<li><p>For each element:</p>
+<ol class="arabic simple">
+<li><p>Compute relevance between its Query &amp; all elements’ Keys.</p></li>
+<li><p>Relevance scores <span class="math notranslate nohighlight">\(\rightarrow\)</span> Importance weights</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Weighted sum of its Value <span class="math notranslate nohighlight">\(\rightarrow\)</span> Contextual representation</p></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p><strong>Name</strong>: Scaled Dot-Product Attention</p></li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">ELI5</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">You are in a top AI conference.</p>
+<p class="sd-card-text">Each guy is an element.</p>
+<p class="sd-card-text">You have some dumb question in mind. (Q)</p>
+<p class="sd-card-text">Each guy has their badges and posters with titles and metadata. (K)</p>
+<p class="sd-card-text">Each guy knows the details of their projects. (V)</p>
+<p class="sd-card-text">You walk around &amp; check out the whole venue.</p>
+<p class="sd-card-text">You see topics that you don’t really care. You skim &amp; skip.</p>
+<p class="sd-card-text">You see topics that are related to your question. You talk to the guys to learn more.</p>
+<p class="sd-card-text">You see topics that you are obsessed with. You ask the guys a billion follow-up questions and memorize every single technical detail of their Github implementation.</p>
+<p class="sd-card-text">The conference ends.</p>
+<p class="sd-card-text">You have learnt something about everything, but not everything weighs the same in your heart.</p>
+</div>
+</details><div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Scaled Dot-Product Attention:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Attention}(Q,K,V)=\text{softmax}\left(\frac{QK^T}{\sqrt{d_K}}\right)V
+\]</div>
+<ul class="simple">
+<li><p>Input:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(X\in\mathbb{R}^{m\times n}\)</span>: Input sequence</p></li>
+</ul>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(W_Q\in\mathbb{R}^{n\times d_K}\)</span>: Weight matrix for Q.</p></li>
+<li><p><span class="math notranslate nohighlight">\(W_K\in\mathbb{R}^{n\times d_K}\)</span>: Weight matrix for K.</p></li>
+<li><p><span class="math notranslate nohighlight">\(W_V\in\mathbb{R}^{n\times d_V}\)</span>: Weight matrix for V.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(d_K\)</span>: Hidden size of Q &amp; K.</p>
+<ul>
+<li><p>Q &amp; K share the same hidden size for matrix multiplication.</p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(d_V\)</span>: Hidden size of V.</p></li>
+</ul>
+</li>
+<li><p>Intermediate values:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(Q=XW_Q\in\mathbb{R}^{m\times d_K}\)</span>: Q vectors for all elems.</p></li>
+<li><p><span class="math notranslate nohighlight">\(K=XW_K\in\mathbb{R}^{m\times d_K}\)</span>: K vectors for all elems.</p></li>
+<li><p><span class="math notranslate nohighlight">\(V=XW_V\in\mathbb{R}^{m\times d_V}\)</span>: V vectors for all elems.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<ul class="simple">
+<li><p><strong>Q&amp;A</strong>:</p>
+<ul>
+<li><p><em>Why scale?</em></p>
+<ol class="arabic simple">
+<li><p>Dot product scales with dimension size.</p></li>
+<li><p>Assume elements follow <span class="math notranslate nohighlight">\(\mathcal{N}(0,1)\)</span>, then dot product follows <span class="math notranslate nohighlight">\(\mathcal{N}(0,d_K)\)</span>.</p></li>
+<li><p>Scaling normalizes this variance.</p></li>
+</ol>
+</li>
+<li><p><em>Why softmax?</em></p>
+<ul>
+<li><p>Scores <span class="math notranslate nohighlight">\(\rightarrow\)</span> Probability distribution</p>
+<ul>
+<li><p>All weights &gt; 0.</p></li>
+<li><p>All weights sum to 1.</p></li>
+</ul>
+</li>
+<li><p>Score margins are amplified <span class="math notranslate nohighlight">\(\rightarrow\)</span> More attention to relevant elements</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ## Encoder
+- **What**: Sequence -> **Contextual representation**.
+- **Why**: To produce more meaningful representations (context + semantics + position).
+- **How**:
+	1. [Multi-Head Attention](#multi-head-attention): Applies attention across all tokens.
+	2. [Residual Connection](#residual-connection): Adds contextual info to the original input, to **prevent info loss** and **make gradients smooth**.
+	3. [Layer Normalization](#layer-normalization): Enhances training stability & speed.
+	4. [Feed-Forward Network](#feed-forward-network): Refines the representation & Captures additional complex patterns.
+- **Where**: Inference models (e.g., BERT family).
+
+### Multi-Head Attention
+
+#### Scale Dot-Product Attention
+```{image} ../../images/scaled_dot_product_attention.png
+:align: center
+:width: 250px
+```
+
+### Residual Connection
+
+### Layer Normalization
+
+### Feed-Forward Network
+
+## Decoder
+- **What**: Encoded representation -> **Sequence**.
+- **Why**: To produce context-aware outputs via encoder's info & previously generated tokens.
+- **How**:
+	1. [Masked Multi-Head Attention](#masked-multi-head-attention): Attends ONLY to past tokens in the target sequence, ensuring autoregressive output.
+	2. [Encoder-Decoder Cross-Attention](#encoder-decoder-cross-attention): Integrates input sequence context into output generation.
+	3. [Residual Connection](#residual-connection): Adds contextual info to the original input, to **prevent info loss** and **make gradients smooth**.
+	4. [Layer Normalization](#layer-normalization): Enhances training stability & speed.
+	5. [Feed-Forward Network](#feed-forward-network): Refines the representation & Captures additional complex patterns.
+- **Where**: Generative models (e.g., GPT family)
+
+### Masked Multi-Head Attention
+
+### Encoder-Decoder Cross-Attention
+
+## Output
+
+### Linear
+See [Linear](../modules/basics.md#linear)
+
+### Softmax
+See [Softmax](../modules/activations.md#softmax) --></section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./llm"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">LazyNotes</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="rl.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">RL for LLMs</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Transformer</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Renyi Qu
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
