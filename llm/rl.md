@@ -329,12 +329,3 @@ $$
         3. Normalize the rewards (across all dimensions).
         4. For each token in each output, set the advantage as the sum of all normalized rewards after it.
         5. Optimize.
-
-
-
-___
-
-References:
-```{bibliography}
-:style: plain
-```

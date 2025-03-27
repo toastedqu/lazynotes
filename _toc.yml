@@ -32,5 +32,6 @@ parts:
   #     - file: dl/transfer/peft
   - caption: LLM
     chapters:
+    - file: llm/transformer
     - file: llm/rl
     - file: llm/peft
