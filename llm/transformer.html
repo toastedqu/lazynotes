@@ -394,6 +394,7 @@ document.write(`
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
 </li>
 </ul>
@@ -410,8 +411,10 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="transformer">
 <h1>Transformer<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h1>
-<a class="reference internal image-reference" href="../images/transformer.png"><img alt="../images/transformer.png" class="align-center" src="../images/transformer.png" style="width: 500px;" />
-</a>
+<!-- ```{image} ../../images/transformer.png
+:align: center
+:width: 500px
+``` -->
 <ul class="simple">
 <li><p><strong>What</strong>: <strong>Self-attention</strong> for sequential data.</p></li>
 <li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong></p></li>
@@ -438,6 +441,7 @@ document.write(`
 </ul>
 </li>
 </ul>
+<p><br><br></p>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="input">
 <h1>Input<a class="headerlink" href="#input" title="Link to this heading">#</a></h1>
@@ -467,9 +471,14 @@ document.write(`
 <h2>Positional Encoding<a class="headerlink" href="#positional-encoding" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Semantic vectors <span class="math notranslate nohighlight">\(\xrightarrow{+\text{positional info}}\)</span> Position-aware vectors</p></li>
-<li><p><strong>Why</strong>: Transformers lack inherent position awareness AND positions matter.</p>
+<li><p><strong>Why</strong>:</p>
 <ul>
-<li><p>Without positional encoding, self-attention scores remain unchanged regardless of token orders <span id="id1">[<a class="reference internal" href="../references.html#id11" title="Kuiyi Wang. Why transformer models need positional encoding. https://wangkuiyi.github.io/positional_encoding.html. [Online; accessed &lt;today&gt;].">7</a>]</span>.</p></li>
+<li><p>Transformers don’t know positions.</p></li>
+<li><p>BUT positions matter!</p>
+<ul>
+<li><p>No PE <span class="math notranslate nohighlight">\(\rightarrow\)</span> self-attention scores remain unchanged regardless of token orders <span id="id1">[<a class="reference internal" href="../references.html#id11" title="Kuiyi Wang. Why transformer models need positional encoding. https://wangkuiyi.github.io/positional_encoding.html. [Online; accessed &lt;today&gt;].">7</a>]</span>.</p></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><p><strong>How</strong>: (tbd)</p></li>
@@ -500,9 +509,14 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<p>Notations:</p>
+<p>Sinusoidal PE:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
+&amp;PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
+\end{align*}\end{split}\]</div>
 <ul class="simple">
-<li><p>IO:</p>
+<li><p>Input:</p>
 <ul>
 <li><p><span class="math notranslate nohighlight">\(pos\in\mathbb{R}\)</span>: Token position.</p></li>
 </ul>
@@ -514,13 +528,8 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p>Forward:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-&amp;PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
-&amp;PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
-\end{align*}\end{split}\]</div>
 </div>
+<p><br><br></p>
 </section>
 </section>
 </section>
@@ -540,16 +549,15 @@ document.write(`
 <li><p>V: What info do you have?</p></li>
 </ul>
 </li>
-<li><p>For each element:</p>
+<li><p>For each token T:</p>
 <ol class="arabic simple">
-<li><p>Compute relevance between its Query &amp; all elements’ Keys.</p></li>
-<li><p>Relevance scores <span class="math notranslate nohighlight">\(\rightarrow\)</span> Importance weights</p></li>
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Weighted sum of its Value <span class="math notranslate nohighlight">\(\rightarrow\)</span> Contextual representation</p></li>
+<li><p>T’s Query &amp; All Keys <span class="math notranslate nohighlight">\(\rightarrow\)</span> Relevance scores</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Attention weights</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Weighted sum of T’s Value (i.e., T’s contextual representation)</p></li>
 </ol>
 </li>
 </ol>
 </li>
-<li><p><strong>Name</strong>: Scaled Dot-Product Attention</p></li>
 </ul>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -588,6 +596,8 @@ document.write(`
 </li>
 <li><p>Hyperparams:</p>
 <ul>
+<li><p><span class="math notranslate nohighlight">\(m\)</span>: #Tokens.</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span>: #Features/Hidden size.</p></li>
 <li><p><span class="math notranslate nohighlight">\(d_K\)</span>: Hidden size of Q &amp; K.</p>
 <ul>
 <li><p>Q &amp; K share the same hidden size for matrix multiplication.</p></li>
@@ -605,18 +615,76 @@ document.write(`
 </li>
 </ul>
 </div>
+<div class="important dropdown admonition">
+<p class="admonition-title">Derivation (Backprop)</p>
+<p>Notations:</p>
 <ul class="simple">
-<li><p><strong>Q&amp;A</strong>:</p>
+<li><p><span class="math notranslate nohighlight">\(S=\frac{QK^T}{\sqrt{d_K}}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(A=\text{softmax}(S)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(Y=AV\)</span></p></li>
+</ul>
+<p>STEP 1 - V:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial L}{\partial V}=A^T\frac{\partial L}{\partial Y}
+\]</div>
+<p>STEP 2 - A:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial L}{\partial A}=\frac{\partial L}{\partial Y}V^T
+\]</div>
+<p>STEP 3 - S:</p>
 <ul>
-<li><p><em>Why scale?</em></p>
+<li><p>Recall that for <span class="math notranslate nohighlight">\(\mathbf{a}=\text{softmax}(\mathbf{s})\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+	\frac{\partial a_i}{\partial s_j}=a_i(\delta_{ij}-a_j)
+	\]</div>
+<p>where <span class="math notranslate nohighlight">\(\delta_{ij}=1\text{ if }i=j\text{ else }0\)</span>.</p>
+</li>
+<li><p>For each row <span class="math notranslate nohighlight">\(i\)</span> of <span class="math notranslate nohighlight">\(S\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+	\frac{\partial L}{\partial S_{ij}}&amp;=\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}\frac{\partial A_{ik}}{\partial S_{ij}} \\
+	&amp;=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k\neq j}\frac{\partial L}{\partial A_{ik}}A_{ik} \\
+	&amp;=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}A_{ik}
+	\end{align*}\end{split}\]</div>
+</li>
+</ul>
+<p>STEP 4 - Q&amp;K:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\frac{\partial L}{\partial Q}=\frac{\partial L}{\partial S}\frac{K}{\sqrt{d_K}} \\
+&amp;\frac{\partial L}{\partial K}=\frac{\partial L}{\partial S}^T\frac{Q}{\sqrt{d_K}}
+\end{align*}\end{split}\]</div>
+<p>STEP 5 - Ws:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\frac{\partial L}{\partial W_Q}=X^T\frac{\partial L}{\partial Q}\\
+&amp;\frac{\partial L}{\partial W_K}=X^T\frac{\partial L}{\partial K}\\
+&amp;\frac{\partial L}{\partial W_V}=X^T\frac{\partial L}{\partial V}
+\end{align*}\end{split}\]</div>
+<p>STEP 6 - X:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Q}W_Q^T+\frac{\partial L}{\partial K}W_K^T+\frac{\partial L}{\partial V}W_V^T
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>⬆️ Computational cost <span class="math notranslate nohighlight">\(\leftarrow\)</span> <span class="math notranslate nohighlight">\(O(n^2)\)</span> (?)</p></li>
+<li><p>Fixed sequence length.</p></li>
+</ul>
+<p><em>Why scale?</em></p>
 <ol class="arabic simple">
 <li><p>Dot product scales with dimension size.</p></li>
 <li><p>Assume elements follow <span class="math notranslate nohighlight">\(\mathcal{N}(0,1)\)</span>, then dot product follows <span class="math notranslate nohighlight">\(\mathcal{N}(0,d_K)\)</span>.</p></li>
 <li><p>Scaling normalizes this variance.</p></li>
 </ol>
-</li>
-<li><p><em>Why softmax?</em></p>
-<ul>
+<p><em>Why softmax?</em></p>
+<ul class="simple">
 <li><p>Scores <span class="math notranslate nohighlight">\(\rightarrow\)</span> Probability distribution</p>
 <ul>
 <li><p>All weights &gt; 0.</p></li>
@@ -625,10 +693,55 @@ document.write(`
 </li>
 <li><p>Score margins are amplified <span class="math notranslate nohighlight">\(\rightarrow\)</span> More attention to relevant elements</p></li>
 </ul>
+</div>
+</section>
+<section id="multi-head-attention">
+<h2>Multi-Head Attention<a class="headerlink" href="#multi-head-attention" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Multiple self-attention modules running in parallel.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(1\)</span> attention module <span class="math notranslate nohighlight">\(\xrightarrow{\text{monitor}}\)</span> <span class="math notranslate nohighlight">\(1\)</span> representation subspace</p></li>
+<li><p>Language is complex: morphology, syntax, semantics, context, …</p></li>
+<li><p><span class="math notranslate nohighlight">\(h\)</span> attention modules <span class="math notranslate nohighlight">\(\xrightarrow{\text{monitor}}\)</span> <span class="math notranslate nohighlight">\(h\)</span> representation subspaces</p></li>
+</ul>
 </li>
+<li><p><strong>How</strong>: Each head <span class="math notranslate nohighlight">\(\xrightarrow{\text{self-attention}}\)</span> Each output <span class="math notranslate nohighlight">\(\xrightarrow{\text{concatenate}}\)</span> All outputs <span class="math notranslate nohighlight">\(\xrightarrow{\text{linear transform}}\)</span> Final output</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>MHA:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{MultiHead}(Q,K,V)=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W_O
+\]</div>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(W_O\)</span>: Weight matrix to transform concatenated head outputs.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(h\)</span>: #Heads.</p></li>
+</ul>
+</li>
+<li><p>Intermediate values:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\text{head}_i\in\mathbb{R}^{m\times d_V}\)</span>: Weighted representation of input sequence from the <span class="math notranslate nohighlight">\(i\)</span>th head.</p></li>
 </ul>
 </li>
 </ul>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>⬆️ Computational cost</p></li>
+<li><p>⬇️ Interpretability</p></li>
+<li><p>Redundancy <span class="math notranslate nohighlight">\(\leftarrow\)</span> some heads may learn similar patterns</p></li>
+</ul>
+</div>
 <!-- ## Encoder
 - **What**: Sequence -> **Contextual representation**.
 - **Why**: To produce more meaningful representations (context + semantics + position).
@@ -753,6 +866,7 @@ See [Softmax](../modules/activations.md#softmax) --></section>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
 </li>
 </ul>

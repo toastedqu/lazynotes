@@ -10,10 +10,10 @@ kernelspec:
   name: python3
 ---
 # Transformer
-```{image} ../../images/transformer.png
+<!-- ```{image} ../../images/transformer.png
 :align: center
 :width: 500px
-```
+``` -->
 - **What**: **Self-attention** for sequential data.
 - **Why**: **Long-range dependencies** + **Parallel processing**
 - **How**:
@@ -26,6 +26,8 @@ kernelspec:
 		2. **Decoder**: Context-aware vectors $\rightarrow$ Masked representation
 	- Output:
 		1. **Output Layer**: Masked representation $\xrightarrow{\text{predict}}$ Next token
+
+<br><br>
 
 # Input
 ## Tokenization
@@ -43,8 +45,10 @@ kernelspec:
 
 ## Positional Encoding
 - **What**: Semantic vectors $\xrightarrow{+\text{positional info}}$ Position-aware vectors
-- **Why**: Transformers lack inherent position awareness AND positions matter.
-	- Without positional encoding, self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
+- **Why**:
+	- Transformers don't know positions.
+	- BUT positions matter!
+		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
 - **How**: (tbd)
 
 ### Sinusoidal PE
@@ -62,20 +66,20 @@ kernelspec:
 
 ```{admonition} Math
 :class: note, dropdown
-Notations:
-- IO:
-	- $pos\in\mathbb{R}$: Token position.
-- Hyperparams:
-	- $i$: Embedding dimension index.
-	- $d_{\text{model}}$: Embedding dimension.
-
-Forward:
+Sinusoidal PE:
 
 $$\begin{align*}
 &PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
 &PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
 \end{align*}$$
+- Input:
+	- $pos\in\mathbb{R}$: Token position.
+- Hyperparams:
+	- $i$: Embedding dimension index.
+	- $d_{\text{model}}$: Embedding dimension.
 ```
+
+<br><br>
 
 # Attention
 ## Self-Attention
@@ -86,11 +90,10 @@ $$\begin{align*}
 		- Q: What are you looking for?
 		- K: What are your keywords for search?
 		- V: What info do you have?
-	2. For each element:
-		1. Compute relevance between its Query & all elements' Keys.
-		2. Relevance scores $\rightarrow$ Importance weights
-		3. $\rightarrow$ Weighted sum of its Value $\rightarrow$ Contextual representation
-- **Name**: Scaled Dot-Product Attention
+	2. For each token T:
+		1. T's Query & All Keys $\rightarrow$ Relevance scores
+		2. $\rightarrow$ Attention weights
+		3. $\rightarrow$ Weighted sum of T's Value (i.e., T's contextual representation)
 
 ```{dropdown} ELI5
 You are in a top AI conference.
@@ -130,6 +133,8 @@ $$
 	- $W_K\in\mathbb{R}^{n\times d_K}$: Weight matrix for K.
 	- $W_V\in\mathbb{R}^{n\times d_V}$: Weight matrix for V.
 - Hyperparams:
+	- $m$: #Tokens.
+	- $n$: #Features/Hidden size.
 	- $d_K$: Hidden size of Q & K.
 		- Q & K share the same hidden size for matrix multiplication.
 	- $d_V$: Hidden size of V.
@@ -139,16 +144,113 @@ $$
 	- $V=XW_V\in\mathbb{R}^{m\times d_V}$: V vectors for all elems.
 ```
 
-- **Q&A**:
-	- *Why scale?*
-		1. Dot product scales with dimension size.
-		2. Assume elements follow $\mathcal{N}(0,1)$, then dot product follows $\mathcal{N}(0,d_K)$.
-		3. Scaling normalizes this variance.
-	- *Why softmax?*
-		- Scores $\rightarrow$ Probability distribution
-			- All weights > 0.
-			- All weights sum to 1.
-		- Score margins are amplified $\rightarrow$ More attention to relevant elements
+```{admonition} Derivation (Backprop)
+:class: important, dropdown
+Notations:
+- $S=\frac{QK^T}{\sqrt{d_K}}$
+- $A=\text{softmax}(S)$
+- $Y=AV$
+
+STEP 1 - V:
+
+$$
+\frac{\partial L}{\partial V}=A^T\frac{\partial L}{\partial Y}
+$$
+
+STEP 2 - A:
+
+$$
+\frac{\partial L}{\partial A}=\frac{\partial L}{\partial Y}V^T
+$$
+
+STEP 3 - S:
+
+- Recall that for $\mathbf{a}=\text{softmax}(\mathbf{s})$:
+
+	$$
+	\frac{\partial a_i}{\partial s_j}=a_i(\delta_{ij}-a_j)
+	$$
+
+	where $\delta_{ij}=1\text{ if }i=j\text{ else }0$.
+
+- For each row $i$ of $S$:
+
+	$$\begin{align*}
+	\frac{\partial L}{\partial S_{ij}}&=\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}\frac{\partial A_{ik}}{\partial S_{ij}} \\
+	&=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k\neq j}\frac{\partial L}{\partial A_{ik}}A_{ik} \\
+	&=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}A_{ik}
+	\end{align*}$$
+
+STEP 4 - Q&K:
+
+$$\begin{align*}
+&\frac{\partial L}{\partial Q}=\frac{\partial L}{\partial S}\frac{K}{\sqrt{d_K}} \\
+&\frac{\partial L}{\partial K}=\frac{\partial L}{\partial S}^T\frac{Q}{\sqrt{d_K}}
+\end{align*}$$
+
+STEP 5 - Ws:
+
+$$\begin{align*}
+&\frac{\partial L}{\partial W_Q}=X^T\frac{\partial L}{\partial Q}\\
+&\frac{\partial L}{\partial W_K}=X^T\frac{\partial L}{\partial K}\\
+&\frac{\partial L}{\partial W_V}=X^T\frac{\partial L}{\partial V}
+\end{align*}$$
+
+STEP 6 - X:
+
+$$
+\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Q}W_Q^T+\frac{\partial L}{\partial K}W_K^T+\frac{\partial L}{\partial V}W_V^T
+$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Cons?*
+- ⬆️ Computational cost $\leftarrow$ $O(n^2)$ (?)
+- Fixed sequence length.
+
+*Why scale?*
+1. Dot product scales with dimension size.
+2. Assume elements follow $\mathcal{N}(0,1)$, then dot product follows $\mathcal{N}(0,d_K)$.
+3. Scaling normalizes this variance.
+	
+*Why softmax?*
+- Scores $\rightarrow$ Probability distribution
+	- All weights > 0.
+	- All weights sum to 1.
+- Score margins are amplified $\rightarrow$ More attention to relevant elements
+```
+
+## Multi-Head Attention
+- **What**: Multiple self-attention modules running in parallel.
+- **Why**:
+	- $1$ attention module $\xrightarrow{\text{monitor}}$ $1$ representation subspace
+	- Language is complex: morphology, syntax, semantics, context, ...
+	- $h$ attention modules $\xrightarrow{\text{monitor}}$ $h$ representation subspaces
+- **How**: Each head $\xrightarrow{\text{self-attention}}$ Each output $\xrightarrow{\text{concatenate}}$ All outputs $\xrightarrow{\text{linear transform}}$ Final output
+
+```{admonition} Math
+:class: note, dropdown
+MHA:
+
+$$
+\text{MultiHead}(Q,K,V)=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W_O
+$$
+- Params:
+	- $W_O$: Weight matrix to transform concatenated head outputs.
+- Hyperparams:
+	- $h$: #Heads.
+- Intermediate values:
+	- $\text{head}_i\in\mathbb{R}^{m\times d_V}$: Weighted representation of input sequence from the $i$th head.
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Cons?*
+- ⬆️ Computational cost
+- ⬇️ Interpretability
+- Redundancy $\leftarrow$ some heads may learn similar patterns
+```
 
 <!-- ## Encoder
 - **What**: Sequence -> **Contextual representation**.

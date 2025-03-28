@@ -166,8 +166,8 @@ TRPO (quick recap):
     - $l$: Time step increment.
     - $\gamma$: Discount factor for future rewards.
     - $\lambda\in[0,1]$: Bias-variance tradeoff coefficient.
-        - $\lambda=0$: One-step TD $\rightarrow$ Bias⬆️ Variance⬇️
-        - $\lambda=1$: Full Monte Carlo return $\rightarrow$ Bias⬇️ Variance⬆️
+        - $\lambda=0$: One-step TD $\rightarrow$ ⬆️Bias, ⬇️Variance
+        - $\lambda=1$: Full Monte Carlo return $\rightarrow$ ⬇️Bias, ⬆️Variance
     - $r_t$: Curr reward.
     - $V(s)$: Value function at state $s$.
 - **KL Divergence**:
@@ -219,7 +219,7 @@ PPO:
 
 ## DPO
 - **Name**: Direct Preference Optimization {cite:p}`rafailov2023direct`
-- **What**: ❌RM, ✅Classification $\leftarrow$ LM=RM
+- **What**: ❌RM $\rightarrow$ LM=RM $\rightarrow$ ✅Classification
 - **Why**:
     - *Why do we need it?*
         - RLHF is unstable $\leftarrow$ RM underfitting/overfitting
@@ -274,7 +274,7 @@ $$
 ```
 
 ```{admonition} Derivation: PPO -> BCE 
-:class: tip, dropdown
+:class: important, dropdown
 1. Solve PPO for arbitrary reward function $r(x,y)$:
 
     $$\begin{align*}
@@ -304,12 +304,12 @@ $$
 
 ## GRPO
 - **Name**: Group Relative Policy Optimization {cite:p}`shao2024deepseekmath`
-- **What**: ❌Value Function, ✅Average of multisampling from reference policy as baseline for Advantage Estimation.
+- **What**: ❌Value Function $\rightarrow$ ✅Average of multisampling from reference policy = baseline for Advantage Estimation.
 - **Why**: PPO objective $\xleftarrow{\text{compute}}$ Advantage $\xleftarrow{\text{compute}}$ Extra value model (i.e., critic)
-    - $\rightarrow$ **Computational cost**
+    - $\rightarrow$ ⬆️**Computational cost**
         - Value models can be as large as reward models.
         - e.g., OG RLHF/PPO initialized a 6B value function from a 6B RM {cite:p}`ouyang2022training`.
-    - $\rightarrow$ **Lack of value model accuracy**
+    - $\rightarrow$ ⬇️**Value model accuracy**
         - Value model is supposed to be accurate at each token.
         - BUT reward score is only computed at the last token.
         - SO there's no reward signal for intermediate tokens.
@@ -318,14 +318,14 @@ $$
 
 - **How**:
     - **Outcome Supervision**: For each input,
-        1. Sample a group of outputs from reference policy.
-        2. Get rewards for these outputs via RM.
-        3. Normalize the rewards.
-        4. For each output, set the advantages of all tokens as the normalized reward.
-        5. Optimize.
+        1. Group of outputs $\xleftarrow{\text{sample}}$ reference policy
+        2. $\xrightarrow{\text{RM on }\textbf{full sequence}}$ Rewards
+        3. $\xrightarrow{\text{normalize}}$ Normalized rewards
+        4. For **all tokens**, Advantages = Normalized rewards
+        4. Optimize.
     - **Process Supervision**: For each input,
-        1. Sample a group of outputs from reference policy.
-        2. Get rewards for **each step** of the outputs via RM.
-        3. Normalize the rewards (across all dimensions).
-        4. For each token in each output, set the advantage as the sum of all normalized rewards after it.
+        1. Group of outputs $\xleftarrow{\text{sample}}$ reference policy
+        2. $\xrightarrow{\text{RM on }\textbf{each step}}$ Rewards
+        3. $\xrightarrow{\text{normalize}\textbf{ across all dims}}$ Normalized rewards
+        4. For **each token**, Advantage = $\sum$ Normalized rewards after it.
         5. Optimize.

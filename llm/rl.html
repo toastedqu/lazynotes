@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -183,6 +183,10 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">RL for LLMs</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="peft.html">PEFT</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
 </ul>
 
     </div>
@@ -740,8 +744,8 @@ document.write(`
 <li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Discount factor for future rewards.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\lambda\in[0,1]\)</span>: Bias-variance tradeoff coefficient.</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\lambda=0\)</span>: One-step TD <span class="math notranslate nohighlight">\(\rightarrow\)</span> Bias⬆️ Variance⬇️</p></li>
-<li><p><span class="math notranslate nohighlight">\(\lambda=1\)</span>: Full Monte Carlo return <span class="math notranslate nohighlight">\(\rightarrow\)</span> Bias⬇️ Variance⬆️</p></li>
+<li><p><span class="math notranslate nohighlight">\(\lambda=0\)</span>: One-step TD <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬆️Bias, ⬇️Variance</p></li>
+<li><p><span class="math notranslate nohighlight">\(\lambda=1\)</span>: Full Monte Carlo return <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬇️Bias, ⬆️Variance</p></li>
 </ul>
 </li>
 <li><p><span class="math notranslate nohighlight">\(r_t\)</span>: Curr reward.</p></li>
@@ -822,7 +826,7 @@ document.write(`
 <h2>DPO<a class="headerlink" href="#dpo" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>Name</strong>: Direct Preference Optimization <span id="id6">[<a class="reference internal" href="../references.html#id8" title="Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea Finn. Direct preference optimization: your language model is secretly a reward model. Advances in Neural Information Processing Systems, 36:53728–53741, 2023.">3</a>]</span></p></li>
-<li><p><strong>What</strong>: ❌RM, ✅Classification <span class="math notranslate nohighlight">\(\leftarrow\)</span> LM=RM</p></li>
+<li><p><strong>What</strong>: ❌RM <span class="math notranslate nohighlight">\(\rightarrow\)</span> LM=RM <span class="math notranslate nohighlight">\(\rightarrow\)</span> ✅Classification</p></li>
 <li><p><strong>Why</strong>:</p>
 <ul>
 <li><p><em>Why do we need it?</em></p>
@@ -887,7 +891,7 @@ L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}
 <li><p><span class="math notranslate nohighlight">\(\log\pi_\theta(y|x)\)</span>: Log likelihood of <span class="math notranslate nohighlight">\(y|x\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬆️<span class="math notranslate nohighlight">\(y_w\)</span>, ⬇️<span class="math notranslate nohighlight">\(y_l\)</span>.</p></li>
 </ul>
 </div>
-<div class="tip dropdown admonition">
+<div class="important dropdown admonition">
 <p class="admonition-title">Derivation: PPO -&gt; BCE</p>
 <ol class="arabic">
 <li><p>Solve PPO for arbitrary reward function <span class="math notranslate nohighlight">\(r(x,y)\)</span>:</p>
@@ -918,16 +922,16 @@ L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}
 <h2>GRPO<a class="headerlink" href="#grpo" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>Name</strong>: Group Relative Policy Optimization <span id="id7">[<a class="reference internal" href="../references.html#id9" title="Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, YK Li, Y Wu, and others. Deepseekmath: pushing the limits of mathematical reasoning in open language models. arXiv preprint arXiv:2402.03300, 2024.">5</a>]</span></p></li>
-<li><p><strong>What</strong>: ❌Value Function, ✅Average of multisampling from reference policy as baseline for Advantage Estimation.</p></li>
+<li><p><strong>What</strong>: ❌Value Function <span class="math notranslate nohighlight">\(\rightarrow\)</span> ✅Average of multisampling from reference policy = baseline for Advantage Estimation.</p></li>
 <li><p><strong>Why</strong>: PPO objective <span class="math notranslate nohighlight">\(\xleftarrow{\text{compute}}\)</span> Advantage <span class="math notranslate nohighlight">\(\xleftarrow{\text{compute}}\)</span> Extra value model (i.e., critic)</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> <strong>Computational cost</strong></p>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬆️<strong>Computational cost</strong></p>
 <ul>
 <li><p>Value models can be as large as reward models.</p></li>
 <li><p>e.g., OG RLHF/PPO initialized a 6B value function from a 6B RM <span id="id8">[<a class="reference internal" href="../references.html#id3" title="Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, and others. Training language models to follow instructions with human feedback. Advances in neural information processing systems, 35:27730–27744, 2022.">2</a>]</span>.</p></li>
 </ul>
 </li>
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> <strong>Lack of value model accuracy</strong></p>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬇️<strong>Value model accuracy</strong></p>
 <ul>
 <li><p>Value model is supposed to be accurate at each token.</p></li>
 <li><p>BUT reward score is only computed at the last token.</p></li>
@@ -942,19 +946,19 @@ L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}
 <ul>
 <li><p><strong>Outcome Supervision</strong>: For each input,</p>
 <ol class="arabic simple">
-<li><p>Sample a group of outputs from reference policy.</p></li>
-<li><p>Get rewards for these outputs via RM.</p></li>
-<li><p>Normalize the rewards.</p></li>
-<li><p>For each output, set the advantages of all tokens as the normalized reward.</p></li>
+<li><p>Group of outputs <span class="math notranslate nohighlight">\(\xleftarrow{\text{sample}}\)</span> reference policy</p></li>
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{RM on }\textbf{full sequence}}\)</span> Rewards</p></li>
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{normalize}}\)</span> Normalized rewards</p></li>
+<li><p>For <strong>all tokens</strong>, Advantages = Normalized rewards</p></li>
 <li><p>Optimize.</p></li>
 </ol>
 </li>
 <li><p><strong>Process Supervision</strong>: For each input,</p>
 <ol class="arabic simple">
-<li><p>Sample a group of outputs from reference policy.</p></li>
-<li><p>Get rewards for <strong>each step</strong> of the outputs via RM.</p></li>
-<li><p>Normalize the rewards (across all dimensions).</p></li>
-<li><p>For each token in each output, set the advantage as the sum of all normalized rewards after it.</p></li>
+<li><p>Group of outputs <span class="math notranslate nohighlight">\(\xleftarrow{\text{sample}}\)</span> reference policy</p></li>
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{RM on }\textbf{each step}}\)</span> Rewards</p></li>
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{normalize}\textbf{ across all dims}}\)</span> Normalized rewards</p></li>
+<li><p>For <strong>each token</strong>, Advantage = <span class="math notranslate nohighlight">\(\sum\)</span> Normalized rewards after it.</p></li>
 <li><p>Optimize.</p></li>
 </ol>
 </li>
