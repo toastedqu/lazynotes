@@ -464,7 +464,7 @@ document.write(`
 <li><p>Vocab size <span class="math notranslate nohighlight">\(\xrightarrow{\text{reduced to}}\)</span> hidden size</p></li>
 </ul>
 </li>
-<li><p><strong>How</strong>: Look-up table or <a class="reference internal" href="#../basics.md#linear"><span class="xref myst">Linear</span></a>.</p></li>
+<li><p><strong>How</strong>: Look-up table / <a class="reference internal" href="#../basics.md#linear"><span class="xref myst">Linear</span></a>.</p></li>
 </ul>
 </section>
 <section id="positional-encoding">
@@ -481,7 +481,6 @@ document.write(`
 </li>
 </ul>
 </li>
-<li><p><strong>How</strong>: (tbd)</p></li>
 </ul>
 <section id="sinusoidal-pe">
 <h3>Sinusoidal PE<a class="headerlink" href="#sinusoidal-pe" title="Link to this heading">#</a></h3>
@@ -492,18 +491,6 @@ document.write(`
 <li><p>Continuous &amp; multi-scale <span class="math notranslate nohighlight">\(\rightarrow\)</span> Generalize to sequences of arbitrary lengths</p></li>
 <li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> Low computational cost</p></li>
 <li><p>Empirically performed as well as learned PE</p></li>
-</ul>
-</li>
-<li><p><strong>Conditions</strong>:</p>
-<ul>
-<li><p>Positional information is expressed by multi-frequency sine/cosine waves.</p></li>
-<li><p>Uniform token importance across the sequence. <span id="id2">[<a class="reference internal" href="../references.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 2017.">6</a>]</span></p></li>
-</ul>
-</li>
-<li><p><strong>Cons</strong>:</p>
-<ul>
-<li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> No learning of task-specific position patterns.</p></li>
-<li><p>Cannot capture complex, relative, or local positional relationships.</p></li>
 </ul>
 </li>
 </ul>
@@ -527,6 +514,15 @@ document.write(`
 <li><p><span class="math notranslate nohighlight">\(d_{\text{model}}\)</span>: Embedding dimension.</p></li>
 </ul>
 </li>
+</ul>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> No learning of task-specific position patterns.</p></li>
+<li><p>Requires uniform token importance across the sequence. <span id="id2">[<a class="reference internal" href="../references.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 2017.">6</a>]</span></p></li>
+<li><p>Cannot capture complex, relative, or local positional relationships.</p></li>
 </ul>
 </div>
 <p><br><br></p>

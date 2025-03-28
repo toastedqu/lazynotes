@@ -41,7 +41,7 @@ kernelspec:
 	- Discrete $\rightarrow$ Continuous
 	- Vocab index $\rightarrow$ Semantic meaning
 	- Vocab size $\xrightarrow{\text{reduced to}}$ hidden size
-- **How**: Look-up table or [Linear](../basics.md#linear).
+- **How**: Look-up table / [Linear](../basics.md#linear).
 
 ## Positional Encoding
 - **What**: Semantic vectors $\xrightarrow{+\text{positional info}}$ Position-aware vectors
@@ -49,20 +49,13 @@ kernelspec:
 	- Transformers don't know positions.
 	- BUT positions matter!
 		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
-- **How**: (tbd)
 
 ### Sinusoidal PE
 - **What**: Positional info $\rightarrow$ Sine waves
 - **Why**:
 	- Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
 	- No params $\rightarrow$ Low computational cost
-	- Empirically performed as well as learned PE 
-- **Conditions**:
-	- Positional information is expressed by multi-frequency sine/cosine waves.
-	- Uniform token importance across the sequence. {cite:p}`vaswani2017attention`
-- **Cons**:
-	- No params $\rightarrow$ No learning of task-specific position patterns.
-	- Cannot capture complex, relative, or local positional relationships.
+	- Empirically performed as well as learned PE
 
 ```{admonition} Math
 :class: note, dropdown
@@ -77,6 +70,14 @@ $$\begin{align*}
 - Hyperparams:
 	- $i$: Embedding dimension index.
 	- $d_{\text{model}}$: Embedding dimension.
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Cons?*
+- No params $\rightarrow$ No learning of task-specific position patterns.
+- Requires uniform token importance across the sequence. {cite:p}`vaswani2017attention`
+- Cannot capture complex, relative, or local positional relationships.
 ```
 
 <br><br>
