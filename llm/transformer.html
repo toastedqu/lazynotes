@@ -394,6 +394,8 @@ document.write(`
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
 </li>
@@ -429,13 +431,18 @@ document.write(`
 </li>
 <li><p>Attention:</p>
 <ol class="arabic simple">
-<li><p><strong>Encoder</strong>: Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Context-aware vectors</p></li>
-<li><p><strong>Decoder</strong>: Context-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Masked representation</p></li>
+<li><p><strong>Encoder</strong>: (Input) Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> (Input) Context-aware vectors</p></li>
+<li><p><strong>Decoder</strong>:</p>
+<ul>
+<li><p><strong>Encoder-Decoder Decoder</strong>: (Input) Context-aware vectors + (Output) Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> (Output) Context-aware vectors</p></li>
+<li><p><strong>Decoder-Only Decoder</strong>: (Input) Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> (Input) Masked context-aware vectors</p></li>
+</ul>
+</li>
 </ol>
 </li>
 <li><p>Output:</p>
 <ol class="arabic simple">
-<li><p><strong>Output Layer</strong>: Masked representation <span class="math notranslate nohighlight">\(\xrightarrow{\text{predict}}\)</span> Next token</p></li>
+<li><p><strong>Output Layer</strong>: (Output) Context-aware vectors <span class="math notranslate nohighlight">\(\xrightarrow{\text{predict}}\)</span> Next token</p></li>
 </ol>
 </li>
 </ul>
@@ -691,6 +698,69 @@ document.write(`
 </ul>
 </div>
 </section>
+<section id="masked-causal-attention">
+<h2>Masked/Causal Attention<a class="headerlink" href="#masked-causal-attention" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Self-attention BUT each token can only see its previous tokens (and itself).</p></li>
+<li><p><strong>Why</strong>: Autoregressive generation.</p></li>
+<li><p><strong>How</strong>: For each token, mask attention scores of all future tokens to <span class="math notranslate nohighlight">\(-\infty\)</span> before softmax.</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\text{softmax}(-\infty)\)</span>=0</p></li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Causal Attention:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + M\right)V
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(M\in\mathbb{R}^{m\times m}\)</span>: Mask matrix</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(M_{ij}=0\text{ if }i\geq j\)</span> else <span class="math notranslate nohighlight">\(-\infty\)</span></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Conditions?</em></p>
+<ul class="simple">
+<li><p>Only applicable in decoder.</p>
+<ul>
+<li><p>Main goal of encoder: convert sequence into a meaningful representation.</p></li>
+<li><p>Main goal of decoder: predict next token.</p></li>
+</ul>
+</li>
+</ul>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>Unidirectional context.</p></li>
+<li><p>Limited context for early tokens.</p>
+<ul>
+<li><p>Token 1 only sees 1 token.</p></li>
+<li><p>Token 2 only sees 2 tokens.</p></li>
+<li><p>…</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="cross-attention">
+<h2>Cross Attention<a class="headerlink" href="#cross-attention" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Scaled Dot-Product Attention BUT</p>
+<ul>
+<li><p>K&amp;V <span class="math notranslate nohighlight">\(\leftarrow\)</span> Source (e.g., Encoder)</p></li>
+<li><p>Q <span class="math notranslate nohighlight">\(\leftarrow\)</span> Current sequence (i.e., Decoder)</p></li>
+</ul>
+</li>
+<li><p><strong>Why</strong>: Additional source info may be helpful for predicting next token for current sequence.</p></li>
+<li><p><strong>How</strong>: See <a class="reference internal" href="#self-attention"><span class="xref myst">Self-Attention</span></a>.</p></li>
+</ul>
+</section>
 <section id="multi-head-attention">
 <h2>Multi-Head Attention<a class="headerlink" href="#multi-head-attention" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -862,6 +932,8 @@ See [Softmax](../modules/activations.md#softmax) --></section>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
 </li>

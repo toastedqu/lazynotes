@@ -22,10 +22,12 @@ kernelspec:
 		2. **Token Embedding**: Tokens $\rightarrow$ Semantic vectors
 		3. **Positional Encoding**: Semantic vectors $\xrightarrow{+\text{positional info}}$ Position-aware vectors
 	- Attention:
-		1. **Encoder**: Position-aware vectors $\rightarrow$ Context-aware vectors
-		2. **Decoder**: Context-aware vectors $\rightarrow$ Masked representation
+		1. **Encoder**: (Input) Position-aware vectors $\rightarrow$ (Input) Context-aware vectors
+		2. **Decoder**:
+			- **Encoder-Decoder Decoder**: (Input) Context-aware vectors + (Output) Position-aware vectors $\rightarrow$ (Output) Context-aware vectors
+			- **Decoder-Only Decoder**: (Input) Position-aware vectors $\rightarrow$ (Input) Masked context-aware vectors
 	- Output:
-		1. **Output Layer**: Masked representation $\xrightarrow{\text{predict}}$ Next token
+		1. **Output Layer**: (Output) Context-aware vectors $\xrightarrow{\text{predict}}$ Next token
 
 <br><br>
 
@@ -221,6 +223,45 @@ $$
 	- All weights sum to 1.
 - Score margins are amplified $\rightarrow$ More attention to relevant elements
 ```
+
+## Masked/Causal Attention
+- **What**: Self-attention BUT each token can only see its previous tokens (and itself).
+- **Why**: Autoregressive generation.
+- **How**: For each token, mask attention scores of all future tokens to $-\infty$ before softmax.
+	- $\text{softmax}(-\infty)$=0
+
+```{admonition} Math
+:class: note, dropdown
+Causal Attention:
+
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + M\right)V
+$$
+- $M\in\mathbb{R}^{m\times m}$: Mask matrix
+	- $M_{ij}=0\text{ if }i\geq j$ else $-\infty$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Conditions?*
+- Only applicable in decoder.
+	- Main goal of encoder: convert sequence into a meaningful representation.
+	- Main goal of decoder: predict next token.
+
+*Cons?*
+- Unidirectional context.
+- Limited context for early tokens.
+	- Token 1 only sees 1 token.
+	- Token 2 only sees 2 tokens.
+	- ...
+```
+
+## Cross Attention
+- **What**: Scaled Dot-Product Attention BUT
+	- K&V $\leftarrow$ Source (e.g., Encoder)
+	- Q $\leftarrow$ Current sequence (i.e., Decoder)
+- **Why**: Additional source info may be helpful for predicting next token for current sequence.
+- **How**: See [Self-Attention](#self-attention).
 
 ## Multi-Head Attention
 - **What**: Multiple self-attention modules running in parallel.
