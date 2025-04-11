@@ -460,7 +460,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="layer">
 <h1>Layer<a class="headerlink" href="#layer" title="Link to this heading">#</a></h1>
-<p>A layer is a mapping from input tensor <span class="math notranslate nohighlight">\(X\)</span> to output tensor <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<p>A layer is a function that maps input tensor <span class="math notranslate nohighlight">\(X\)</span> to output tensor <span class="math notranslate nohighlight">\(Y\)</span>.</p>
 <p>Let <span class="math notranslate nohighlight">\(g\)</span> denote the gradient <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial y}\)</span> for readability.</p>
 <br/>
 </section>
@@ -470,135 +470,96 @@ document.write(`
 <h2>Linear<a class="headerlink" href="#linear" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Linear transformation.</p></li>
-<li><p><strong>Why</strong>: Linear algebra. The simplest way to transform data, learn patterns, and make predictions.</p></li>
-<li><p><strong>How</strong>: Multiply the input features with weights and add a bias on top.</p></li>
-<li><p><strong>When</strong>: There is a linear relationship between input &amp; output.</p></li>
-<li><p><strong>Where</strong>: Anywhere. Typically used for feature dimension conversion.</p></li>
-<li><p><strong>Pros</strong>:</p>
+<li><p><strong>Why</strong>: The simplest way to transform data &amp; learn patterns.</p></li>
+<li><p><strong>How</strong>: input features * weights (+ bias).</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p><strong>Forward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\textbf{Y}=\textbf{X}W^T+\textbf{b}
+\]</div>
+<ul class="simple">
+<li><p>IO:</p>
 <ul>
-<li><p>Simple.</p></li>
-<li><p>High interpretability.</p></li>
-<li><p>Low computational cost.</p></li>
-<li><p>Widely used.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{*\times H_{in}}\)</span>: Input tensor.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{*\times H_{out}}\)</span>: Output tensor.</p></li>
 </ul>
 </li>
-<li><p><strong>Cons</strong>:  Cannot capture non-linear/complex patterns.</p></li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(W\in\mathbb{R}^{H_{out}\times H_{in}}\)</span>: Weight matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\textbf{b}\in\mathbb{R}^{H_{out}}\)</span>: Bias vector.</p></li>
 </ul>
-<!-- ````{admonition} Math
-:class: note, dropdown
-```{tab} One sample
-**Notations**:
-- IO:
-    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
-    - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
-- Params:
-    - $W\in\mathbb{R}^{H_{out}\times H_{in}}$: Weight matrix.
-    - $\textbf{b}\in\mathbb{R}^{H_{out}}$: Bias vector.
-- Hyperparams:
-    - $H_{in}$: Input feature dimension.
-    - $H_{out}$: Output feature dimension.
-
-**Forward**:
-
-$$
-\textbf{y}=\textbf{x}W^T+\textbf{b}
-$$
-
-**Backward**:
-
-$$\begin{align*}
-&\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}\times\textbf{x} \\
-&\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\textbf{g}\\
-&\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
-\end{align*}$$
-```
-```{tab} Multi samples
-**Notations**:
-- IO:
-    - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
-    - $\mathbf{Y}\in\mathbb{R}^{*\times H_{out}}$: Output tensor.
-- Params:
-    - $W\in\mathbb{R}^{H_{out}\times H_{in}}$: Weight matrix.
-    - $\textbf{b}\in\mathbb{R}^{H_{out}}$: Bias vector.
-- Hyperparams:
-    - $H_{in}$: Input feature dimension.
-    - $H_{out}$: Output feature dimension.
-
-**Forward**:
-
-$$
-\textbf{Y}=\textbf{X}W^T+\textbf{b}
-$$
-
-**Backward**:
-
-$$\begin{align*}
-&\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}^T\textbf{X} \\
-&\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\sum_*\textbf{g}_*\\
-&\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
-\end{align*}$$
-```
-```` -->
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(H_{in}\)</span>: Input feature dimension.</p></li>
+<li><p><span class="math notranslate nohighlight">\(H_{out}\)</span>: Output feature dimension.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Backward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}^T\textbf{X} \\
+&amp;\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\sum_*\textbf{g}_*\\
+&amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
+\end{align*}\end{split}\]</div>
+</div>
 </section>
 <section id="dropout">
 <h2>Dropout<a class="headerlink" href="#dropout" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Randomly ignore some neurons during training. (<a class="reference external" href="https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf">paper</a>)</p></li>
+<li><p><strong>What</strong>: Randomly ignore some neurons during training.</p></li>
 <li><p><strong>Why</strong>: To reduce overfitting.</p></li>
-<li><p><strong>How</strong>:</p>
+<li><p><strong>How</strong>: During training:</p>
 <ol class="arabic simple">
-<li><p>Randomly set a fraction (<span class="math notranslate nohighlight">\(p\)</span>) of neurons to 0.</p></li>
-<li><p>Scale the outputs/gradients on active neurons by <span class="math notranslate nohighlight">\(\frac{1}{1-p}\)</span>.</p></li>
+<li><p>Randomly set a fraction of neurons to 0.</p></li>
+<li><p>Scale the outputs/gradients on active neurons by the keep probability.</p></li>
 </ol>
 </li>
-<li><p><strong>When</strong>: The current model is overfitting on the current training data.</p></li>
-<li><p><strong>Where</strong>: Typically after linear layers &amp; convolutional layers.</p></li>
-<li><p><strong>Pros</strong>: Simple, efficient regularization.</p></li>
-<li><p><strong>Cons</strong>: Requires hyperparam tuning; Can slow down convergence.</p></li>
 </ul>
-<!-- ````{admonition} Math
-:class: note, dropdown
-```{tab} One sample
-**Notations**:
-- IO:
-    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
-    - $\mathbf{y}\in\mathbb{R}^{H_{in}}$: Output vector.
-- Hyperparams:
-    - $p$: Dropout probability.
-
-**Forward**:
-
-$$
-\textbf{y}=\frac{1}{1-p}\textbf{x}_\text{active}
-$$
-
-**Backward**:
-
-$$
-\frac{\partial\mathcal{L}}{\partial\textbf{x}_\text{active}}= \frac{1}{1-p}\mathbf{g}
-$$
-```
-```{tab} Multi samples
-**Notations**:
-- IO:
-    - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
-    - $\mathbf{Y}\in\mathbb{R}^{*\times H_{in}}$: Output tensor.
-- Hyperparams:
-    - $p$: Dropout probability.
-
-**Forward**:
-
-$$
-\textbf{Y}=\frac{1}{1-p}\textbf{X}_\text{active}
-$$
-
-**Backward**:
-
-$$
-\frac{\partial\mathcal{L}}{\partial\textbf{X}_\text{active}}= \frac{1}{1-p}\mathbf{g}
-$$
-```
-```` -->
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p><strong>Forward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\textbf{Y}=\frac{\textbf{M}\odot\textbf{X}}{p}
+\]</div>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{*\times H_{in}}\)</span>: Input tensor.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{*\times H_{in}}\)</span>: Output tensor.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(p\)</span>: Keep probability.</p></li>
+</ul>
+</li>
+<li><p>Intermediate values:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\textbf{M}\in\mathbb{R}^{*\times H_{in}}\)</span>: binary mask, where each element <span class="math notranslate nohighlight">\(m\sim\text{Bernoulli}(p)\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Backward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial\mathcal{L}}{\partial\textbf{M}\odot\textbf{X}}= \frac{\mathbf{g}}{p}
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>⬆️ Training time <span class="math notranslate nohighlight">\(\leftarrow\)</span> Longer convergence</p></li>
+<li><p>Needs Hyperparameter Tuning</p></li>
+</ul>
+</div>
 </section>
 <section id="residual-connection">
 <h2>Residual Connection<a class="headerlink" href="#residual-connection" title="Link to this heading">#</a></h2>
