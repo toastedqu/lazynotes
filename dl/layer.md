@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 # Layer
-A layer is a mapping from input tensor $X$ to output tensor $Y$.
+A layer is a function that maps input tensor $X$ to output tensor $Y$.
 
 Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readability.
 
@@ -19,47 +19,17 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 # Basic
 ## Linear
 - **What**: Linear transformation.
-- **Why**: Linear algebra. The simplest way to transform data, learn patterns, and make predictions.
-- **How**: Multiply the input features with weights and add a bias on top.
-- **When**: There is a linear relationship between input & output.
-- **Where**: Anywhere. Typically used for feature dimension conversion.
-- **Pros**:
-    - Simple.
-    - High interpretability.
-    - Low computational cost.
-    - Widely used.
-- **Cons**:  Cannot capture non-linear/complex patterns.
+- **Why**: The simplest way to transform data & learn patterns.
+- **How**: input features * weights (+ bias).
 
-<!-- ````{admonition} Math
+```{admonition} Math
 :class: note, dropdown
-```{tab} One sample
-**Notations**:
-- IO:
-    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
-    - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
-- Params:
-    - $W\in\mathbb{R}^{H_{out}\times H_{in}}$: Weight matrix.
-    - $\textbf{b}\in\mathbb{R}^{H_{out}}$: Bias vector.
-- Hyperparams:
-    - $H_{in}$: Input feature dimension.
-    - $H_{out}$: Output feature dimension.
-
 **Forward**:
 
 $$
-\textbf{y}=\textbf{x}W^T+\textbf{b}
+\textbf{Y}=\textbf{X}W^T+\textbf{b}
 $$
 
-**Backward**:
-
-$$\begin{align*}
-&\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}\times\textbf{x} \\
-&\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\textbf{g}\\
-&\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
-\end{align*}$$
-```
-```{tab} Multi samples
-**Notations**:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
     - $\mathbf{Y}\in\mathbb{R}^{*\times H_{out}}$: Output tensor.
@@ -70,12 +40,6 @@ $$\begin{align*}
     - $H_{in}$: Input feature dimension.
     - $H_{out}$: Output feature dimension.
 
-**Forward**:
-
-$$
-\textbf{Y}=\textbf{X}W^T+\textbf{b}
-$$
-
 **Backward**:
 
 $$\begin{align*}
@@ -84,62 +48,43 @@ $$\begin{align*}
 &\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
 \end{align*}$$
 ```
-```` -->
+
 
 ## Dropout
-- **What**: Randomly ignore some neurons during training. ([paper](https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf))
+- **What**: Randomly ignore some neurons during training.
 - **Why**: To reduce overfitting.
-- **How**:
-    1. Randomly set a fraction ($p$) of neurons to 0.
-    2. Scale the outputs/gradients on active neurons by $\frac{1}{1-p}$.
-- **When**: The current model is overfitting on the current training data.
-- **Where**: Typically after linear layers & convolutional layers.
-- **Pros**: Simple, efficient regularization.
-- **Cons**: Requires hyperparam tuning; Can slow down convergence.
+- **How**: During training:
+    1. Randomly set a fraction of neurons to 0.
+    2. Scale the outputs/gradients on active neurons by the keep probability.
 
-<!-- ````{admonition} Math
+```{admonition} Math
 :class: note, dropdown
-```{tab} One sample
-**Notations**:
-- IO:
-    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
-    - $\mathbf{y}\in\mathbb{R}^{H_{in}}$: Output vector.
-- Hyperparams:
-    - $p$: Dropout probability.
-
 **Forward**:
 
 $$
-\textbf{y}=\frac{1}{1-p}\textbf{x}_\text{active}
+\textbf{Y}=\frac{\textbf{M}\odot\textbf{X}}{p}
 $$
-
-**Backward**:
-
-$$
-\frac{\partial\mathcal{L}}{\partial\textbf{x}_\text{active}}= \frac{1}{1-p}\mathbf{g}
-$$
-```
-```{tab} Multi samples
-**Notations**:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
     - $\mathbf{Y}\in\mathbb{R}^{*\times H_{in}}$: Output tensor.
 - Hyperparams:
-    - $p$: Dropout probability.
-
-**Forward**:
-
-$$
-\textbf{Y}=\frac{1}{1-p}\textbf{X}_\text{active}
-$$
+    - $p$: Keep probability.
+- Intermediate values:
+    - $\textbf{M}\in\mathbb{R}^{*\times H_{in}}$: binary mask, where each element $m\sim\text{Bernoulli}(p)$.
 
 **Backward**:
 
 $$
-\frac{\partial\mathcal{L}}{\partial\textbf{X}_\text{active}}= \frac{1}{1-p}\mathbf{g}
+\frac{\partial\mathcal{L}}{\partial\textbf{M}\odot\textbf{X}}= \frac{\mathbf{g}}{p}
 $$
 ```
-```` -->
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Cons?*
+- ⬆️ Training time $\leftarrow$ Longer convergence
+- Needs Hyperparameter Tuning
+```
 
 ## Residual Connection
 - **What**: Model the residual ($Y-X$) instead of the output ($Y$). ([paper](https://arxiv.org/pdf/1512.03385))
