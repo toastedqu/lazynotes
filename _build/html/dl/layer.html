@@ -475,11 +475,44 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Vector</label><div class="tab-content docutils">
+<p><strong>Notations</strong>:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{y}\in\mathbb{R}^{H_{out}}\)</span>: Output vector.</p></li>
+</ul>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(W\in\mathbb{R}^{H_{out}\times H_{in}}\)</span>: Weight matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\textbf{b}\in\mathbb{R}^{H_{out}}\)</span>: Bias vector.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(H_{in}\)</span>: Input feature dimension.</p></li>
+<li><p><span class="math notranslate nohighlight">\(H_{out}\)</span>: Output feature dimension.</p></li>
+</ul>
+</li>
+</ul>
 <p><strong>Forward</strong>:</p>
 <div class="math notranslate nohighlight">
 \[
-\textbf{Y}=\textbf{X}W^T+\textbf{b}
+\textbf{y}=W\textbf{x}+\textbf{b}
 \]</div>
+<p><strong>Backward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}\textbf{x}^T \\
+&amp;\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\textbf{g}\\
+&amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}}=W^T\textbf{g}
+\end{align*}\end{split}\]</div>
+</div>
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">Tensor</label><div class="tab-content docutils">
+<p><strong>Notations</strong>:</p>
 <ul class="simple">
 <li><p>IO:</p>
 <ul>
@@ -500,6 +533,11 @@ document.write(`
 </ul>
 </li>
 </ul>
+<p><strong>Forward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\textbf{Y}=\textbf{X}W^T+\textbf{b}
+\]</div>
 <p><strong>Backward</strong>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
@@ -507,6 +545,8 @@ document.write(`
 &amp;\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\sum_*\textbf{g}_*\\
 &amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
 \end{align*}\end{split}\]</div>
+</div>
+</div>
 </div>
 </section>
 <section id="dropout">
@@ -523,11 +563,40 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--1">Vector</label><div class="tab-content docutils">
+<p><strong>Notations</strong>:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{y}\in\mathbb{R}^{H_{in}}\)</span>: Output vector.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(p\)</span>: Keep probability.</p></li>
+</ul>
+</li>
+<li><p>Intermediate values:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\textbf{m}\in\mathbb{R}^{H_{in}}\)</span>: binary mask, where each element <span class="math notranslate nohighlight">\(m\sim\text{Bernoulli}(p)\)</span>.</p></li>
+</ul>
+</li>
+</ul>
 <p><strong>Forward</strong>:</p>
 <div class="math notranslate nohighlight">
 \[
-\textbf{Y}=\frac{\textbf{M}\odot\textbf{X}}{p}
+\textbf{y}=\frac{\textbf{m}\odot\textbf{x}}{p}
 \]</div>
+<p><strong>Backward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial\mathcal{L}}{\partial\textbf{x}} = \frac{\textbf{m}\odot\textbf{g}}{p}
+\]</div>
+</div>
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--2">Tensor</label><div class="tab-content docutils">
+<p><strong>Notations</strong>:</p>
 <ul class="simple">
 <li><p>IO:</p>
 <ul>
@@ -546,17 +615,24 @@ document.write(`
 </ul>
 </li>
 </ul>
+<p><strong>Forward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\textbf{Y}=\frac{\textbf{M}\odot\textbf{X}}{p}
+\]</div>
 <p><strong>Backward</strong>:</p>
 <div class="math notranslate nohighlight">
 \[
-\frac{\partial\mathcal{L}}{\partial\textbf{M}\odot\textbf{X}}= \frac{\mathbf{g}}{p}
+\frac{\partial\mathcal{L}}{\partial\textbf{X}} = \frac{\textbf{M}\odot\textbf{g}}{p}
 \]</div>
+</div>
+</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Q&amp;A</p>
 <p><em>Cons?</em></p>
 <ul class="simple">
-<li><p>⬆️ Training time <span class="math notranslate nohighlight">\(\leftarrow\)</span> Longer convergence</p></li>
+<li><p>⬆️Training time <span class="math notranslate nohighlight">\(\leftarrow\)</span> Longer convergence</p></li>
 <li><p>Needs Hyperparameter Tuning</p></li>
 </ul>
 </div>
@@ -564,62 +640,71 @@ document.write(`
 <section id="residual-connection">
 <h2>Residual Connection<a class="headerlink" href="#residual-connection" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Model the residual (<span class="math notranslate nohighlight">\(Y-X\)</span>) instead of the output (<span class="math notranslate nohighlight">\(Y\)</span>). (<a class="reference external" href="https://arxiv.org/pdf/1512.03385">paper</a>)</p></li>
+<li><p><strong>What</strong>: Model the residual (<span class="math notranslate nohighlight">\(Y-X\)</span>) instead of the output (<span class="math notranslate nohighlight">\(Y\)</span>).</p></li>
 <li><p><strong>Why</strong>: To mitigate <a class="reference internal" href="issues.html#vanishing/exploding-gradient"><span class="std std-ref">vanishing/exploding gradients</span></a>.</p></li>
-<li><p><strong>How</strong>:</p>
-<ol class="arabic simple">
-<li><p>Add the input <span class="math notranslate nohighlight">\(X\)</span> to the block output <span class="math notranslate nohighlight">\(F(X)\)</span>.</p></li>
+<li><p><strong>How</strong>: Add input <span class="math notranslate nohighlight">\(X\)</span> to block output <span class="math notranslate nohighlight">\(F(X)\)</span>.</p>
+<ul>
 <li><p>If the feature dimension of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(F(X)\)</span> doesn’t match, use a shortcut linear layer on <span class="math notranslate nohighlight">\(X\)</span> to change its feature dimension.</p></li>
-</ol>
-</li>
-<li><p><strong>When</strong>: There is clear evidence of convergence failures or extreme gradient values.</p></li>
-<li><p><strong>Where</strong>: Inside deep NNs.</p></li>
-<li><p><strong>Pros</strong>: Higher performance on complex tasks.</p></li>
-<li><p><strong>Cons</strong>: Slightly high computational cost.</p></li>
 </ul>
-<!-- ````{admonition} Math
-:class: note, dropdown
-```{tab} One sample
-**Notation**:
-- IO:
-    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
-    - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
-- Hyperparams:
-    - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
-
-**Forward**:
-
-$$
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">Vector</label><div class="tab-content docutils">
+<p><strong>Notation</strong>:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{y}\in\mathbb{R}^{H_{out}}\)</span>: Output vector.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(F(\cdot)\in\mathbb{R}^{H_{out}}\)</span>: The aggregate function of all layers within the residual block.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Forward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
 \textbf{y}=F(\textbf{x})+\textbf{x}
-$$
-
-**Backward**:
-
-$$
+\]</div>
+<p><strong>Backward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
 \frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial F(\textbf{x})}{\partial\textbf{x}})
-$$
-```
-```{tab} Multi samples
-**Notation**:
-- IO:
-    - $\mathbf{x}\in\mathbb{R}^{*\times H_{in}}$: Input vector.
-    - $\mathbf{y}\in\mathbb{R}^{*\times H_{out}}$: Output vector.
-- Hyperparams:
-    - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
-
-**Forward**:
-
-$$
+\]</div>
+</div>
+<input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--2">Tensor</label><div class="tab-content docutils">
+<p><strong>Notation</strong>:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{*\times H_{in}}\)</span>: Input tensor.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{y}\in\mathbb{R}^{*\times H_{out}}\)</span>: Output tensor.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(F(\cdot)\in\mathbb{R}^{H_{out}}\)</span>: The aggregate function of all layers within the residual block.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Forward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
 \textbf{Y}=F(\textbf{X})+\textbf{X}
-$$
-
-**Backward**:
-
-$$
+\]</div>
+<p><strong>Backward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
 \frac{\partial\mathcal{L}}{\partial\textbf{X}}=\mathbf{g}(1+\frac{\partial F(\textbf{X})}{\partial\textbf{X}})
-$$
-```
-```` -->
+\]</div>
+</div>
+</div>
+</div>
 </section>
 <section id="normalization">
 <h2>Normalization<a class="headerlink" href="#normalization" title="Link to this heading">#</a></h2>

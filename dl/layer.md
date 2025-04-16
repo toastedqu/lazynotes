@@ -22,14 +22,37 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 - **Why**: The simplest way to transform data & learn patterns.
 - **How**: input features * weights (+ bias).
 
-```{admonition} Math
+````{admonition} Math
 :class: note, dropdown
+:class: note, dropdown
+```{tab} Vector
+**Notations**:
+- IO:
+    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
+    - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
+- Params:
+    - $W\in\mathbb{R}^{H_{out}\times H_{in}}$: Weight matrix.
+    - $\textbf{b}\in\mathbb{R}^{H_{out}}$: Bias vector.
+- Hyperparams:
+    - $H_{in}$: Input feature dimension.
+    - $H_{out}$: Output feature dimension.
+
 **Forward**:
 
 $$
-\textbf{Y}=\textbf{X}W^T+\textbf{b}
+\textbf{y}=W\textbf{x}+\textbf{b}
 $$
 
+**Backward**:
+
+$$\begin{align*}
+&\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}\textbf{x}^T \\
+&\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\textbf{g}\\
+&\frac{\partial\mathcal{L}}{\partial\textbf{x}}=W^T\textbf{g}
+\end{align*}$$
+```
+```{tab} Tensor
+**Notations**:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
     - $\mathbf{Y}\in\mathbb{R}^{*\times H_{out}}$: Output tensor.
@@ -40,6 +63,12 @@ $$
     - $H_{in}$: Input feature dimension.
     - $H_{out}$: Output feature dimension.
 
+**Forward**:
+
+$$
+\textbf{Y}=\textbf{X}W^T+\textbf{b}
+$$
+
 **Backward**:
 
 $$\begin{align*}
@@ -47,7 +76,7 @@ $$\begin{align*}
 &\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\sum_*\textbf{g}_*\\
 &\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
 \end{align*}$$
-```
+````
 
 
 ## Dropout
@@ -57,13 +86,32 @@ $$\begin{align*}
     1. Randomly set a fraction of neurons to 0.
     2. Scale the outputs/gradients on active neurons by the keep probability.
 
-```{admonition} Math
+````{admonition} Math
 :class: note, dropdown
+```{tab} Vector
+**Notations**:
+- IO:
+    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
+    - $\mathbf{y}\in\mathbb{R}^{H_{in}}$: Output vector.
+- Hyperparams:
+    - $p$: Keep probability.
+- Intermediate values:
+    - $\textbf{m}\in\mathbb{R}^{H_{in}}$: binary mask, where each element $m\sim\text{Bernoulli}(p)$.
+
 **Forward**:
 
 $$
-\textbf{Y}=\frac{\textbf{M}\odot\textbf{X}}{p}
+\textbf{y}=\frac{\textbf{m}\odot\textbf{x}}{p}
 $$
+
+**Backward**:
+
+$$
+\frac{\partial\mathcal{L}}{\partial\textbf{x}} = \frac{\textbf{m}\odot\textbf{g}}{p}
+$$
+```
+```{tab} Tensor
+**Notations**:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
     - $\mathbf{Y}\in\mathbb{R}^{*\times H_{in}}$: Output tensor.
@@ -72,34 +120,36 @@ $$
 - Intermediate values:
     - $\textbf{M}\in\mathbb{R}^{*\times H_{in}}$: binary mask, where each element $m\sim\text{Bernoulli}(p)$.
 
+**Forward**:
+
+$$
+\textbf{Y}=\frac{\textbf{M}\odot\textbf{X}}{p}
+$$
+
 **Backward**:
 
 $$
-\frac{\partial\mathcal{L}}{\partial\textbf{M}\odot\textbf{X}}= \frac{\mathbf{g}}{p}
+\frac{\partial\mathcal{L}}{\partial\textbf{X}} = \frac{\textbf{M}\odot\textbf{g}}{p}
 $$
 ```
+````
 
 ```{admonition} Q&A
 :class: tip, dropdown
 *Cons?*
-- ⬆️ Training time $\leftarrow$ Longer convergence
+- ⬆️Training time $\leftarrow$ Longer convergence
 - Needs Hyperparameter Tuning
 ```
 
 ## Residual Connection
-- **What**: Model the residual ($Y-X$) instead of the output ($Y$). ([paper](https://arxiv.org/pdf/1512.03385))
+- **What**: Model the residual ($Y-X$) instead of the output ($Y$).
 - **Why**: To mitigate [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
-- **How**:
-    1. Add the input $X$ to the block output $F(X)$.
-    2. If the feature dimension of $X$ and $F(X)$ doesn't match, use a shortcut linear layer on $X$ to change its feature dimension.
-- **When**: There is clear evidence of convergence failures or extreme gradient values.
-- **Where**: Inside deep NNs.
-- **Pros**: Higher performance on complex tasks.
-- **Cons**: Slightly high computational cost.
+- **How**: Add input $X$ to block output $F(X)$.
+    - If the feature dimension of $X$ and $F(X)$ doesn't match, use a shortcut linear layer on $X$ to change its feature dimension.
 
-<!-- ````{admonition} Math
+````{admonition} Math
 :class: note, dropdown
-```{tab} One sample
+```{tab} Vector
 **Notation**:
 - IO:
     - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
@@ -119,11 +169,11 @@ $$
 \frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial F(\textbf{x})}{\partial\textbf{x}})
 $$
 ```
-```{tab} Multi samples
+```{tab} Tensor
 **Notation**:
 - IO:
-    - $\mathbf{x}\in\mathbb{R}^{*\times H_{in}}$: Input vector.
-    - $\mathbf{y}\in\mathbb{R}^{*\times H_{out}}$: Output vector.
+    - $\mathbf{x}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
+    - $\mathbf{y}\in\mathbb{R}^{*\times H_{out}}$: Output tensor.
 - Hyperparams:
     - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
 
@@ -139,29 +189,22 @@ $$
 \frac{\partial\mathcal{L}}{\partial\textbf{X}}=\mathbf{g}(1+\frac{\partial F(\textbf{X})}{\partial\textbf{X}})
 $$
 ```
-```` -->
+````
+
 
 ## Normalization
 ### Batch Normalization
-- **What**: Normalize each feature across the input samples to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1502.03167))
-- **Why**: To mitigate internal covariate shift.
+- **What**: Normalize each feature across input samples to zero mean & unit variance.
+- **Why**: To mitigate [internal covariate shift](../dl/issues.md/#vanishing/internal-covariate-shift).
 - **How**:
     1. Calculate the mean and variance for each batch.
     2. Normalize the batch.
     3. Scale and shift the normalized output using learnable params.
-- **When**: Each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.
-- **Where**: Typically applied before activation functions, after linear layers & convolutional layers.
-- **Pros**:
-    - Accelerates training with higher learning rates.
-    - Reduces sensitivity to weight initialization.
-    - Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
-- **Cons**:
-    - Adds computation overhead and complexity.
-    - Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
 
-<!-- ```{admonition} Math
-:class: note, dropdown -->
-<!-- **Notation**:
+
+```{admonition} Math
+:class: note, dropdown
+**Notation**:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
     - $\mathbf{Y}\in\mathbb{R}^{m\times n}$: Output matrix.
@@ -206,7 +249,20 @@ $$
     &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
     &\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\ma                                                                         thcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
     \end{align*}$$
-``` -->
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros?*
+- Accelerates training with higher learning rates.
+- Reduces sensitivity to weight initialization.
+- Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
+
+*Cons?*
+- Adds computation overhead and complexity.
+- Works best when each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.
+- Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
+```
 
 ### Layer Normalization
 - **What**: Normalize each sample across the input features to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1607.06450))
