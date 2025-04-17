@@ -274,56 +274,56 @@ $$
     1. Calculate the mean and variance for each feature.
     2. Normalize the feature.
     3. Scale and shift the normalized output using learnable params.
-- **When**: Layer-wise statistics are more representative than batch-wise statistics.
-- **Where**: Typically applied to NLP tasks that are sensitive to batch size.
 
 ```{admonition} Math
 :class: note, dropdown
 It's easy to explain with the vector form for batch normalization, but it's more intuitive to explain with the scalar form for layer normalization.
 
-- Notation
-    - IO:
-        - $x_{ij}\in\mathbb{R}$: $j$th feature value for $i$th input sample.
-        - $y_{ij}\in\mathbb{R}$: $j$th feature value for $i$th output sample.
-    - Params:
-        - $\boldsymbol{\gamma}\in\mathbb{R}^n$: Scale param.
-        - $\boldsymbol{\beta}\in\mathbb{R}^n$: Shift param.
+**Notations**:
+- IO:
+    - $x_{ij}\in\mathbb{R}$: $j$th feature value for $i$th input sample.
+    - $y_{ij}\in\mathbb{R}$: $j$th feature value for $i$th output sample.
+- Params:
+    - $\boldsymbol{\gamma}\in\mathbb{R}^n$: Scale param.
+    - $\boldsymbol{\beta}\in\mathbb{R}^n$: Shift param.
+
 **Forward**:
-    1. Calculate the mean and variance for each feature.
+1. Calculate the mean and variance for each feature.
 
-        $$\begin{align*}
-        \mu_i&=\frac{1}{n}\sum_{j=1}^{n}x_{ij}\\
-        \sigma_i^2&=\frac{1}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)^2
-        \end{align*}$$
+    $$\begin{align*}
+    \mu_i&=\frac{1}{n}\sum_{j=1}^{n}x_{ij}\\
+    \sigma_i^2&=\frac{1}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)^2
+    \end{align*}$$
 
-    2. Normalize each feature.
+2. Normalize each feature.
 
-        $$
-        z_{ij}=\frac{x_{ij}-\mu_i}{\sqrt{\sigma_i^2+\epsilon}}
-        $$
+    $$
+    z_{ij}=\frac{x_{ij}-\mu_i}{\sqrt{\sigma_i^2+\epsilon}}
+    $$
 
-        where $\epsilon$ is a small constant to avoid dividing by 0.
+    where $\epsilon$ is a small constant to avoid dividing by 0.
 
-    3. Scale and shift the normalized output.
+3. Scale and shift the normalized output.
 
-        $$
-        y_{ij}=\gamma_jz_{ij}+\beta_j
-        $$
+    $$
+    y_{ij}=\gamma_jz_{ij}+\beta_j
+    $$
+
 **Backward**:
-    1. Gradient w.r.t. params:
+1. Gradient w.r.t. params:
 
-        $$\begin{align*}
-        &\frac{\partial\mathcal{L}}{\partial\gamma_j}=\sum_{i=1}^{m}g_{ij}z_{ij}\\
-        &\frac{\partial\mathcal{L}}{\partial\beta_j}=\sum_{i=1}^{m}g_{ij}
-        \end{align*}$$
-    2. Gradient w.r.t. input:
+    $$\begin{align*}
+    &\frac{\partial\mathcal{L}}{\partial\gamma_j}=\sum_{i=1}^{m}g_{ij}z_{ij}\\
+    &\frac{\partial\mathcal{L}}{\partial\beta_j}=\sum_{i=1}^{m}g_{ij}
+    \end{align*}$$
+2. Gradient w.r.t. input:
 
-        $$\begin{align*}
-        &\frac{\partial\mathcal{L}}{\partial z_{ij}}=\gamma_jg_{ij}\\
-        &\frac{\partial\mathcal{L}}{\partial\sigma_i^2}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}(x_{ij}-\mu_i)\left(-\frac{1}{2}(\sigma_i^2+\epsilon)^{-\frac{3}{2}}\right)\\
-        &\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
-        &\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
-        \end{align*}$$
+    $$\begin{align*}
+    &\frac{\partial\mathcal{L}}{\partial z_{ij}}=\gamma_jg_{ij}\\
+    &\frac{\partial\mathcal{L}}{\partial\sigma_i^2}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}(x_{ij}-\mu_i)\left(-\frac{1}{2}(\sigma_i^2+\epsilon)^{-\frac{3}{2}}\right)\\
+    &\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
+    &\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
+    \end{align*}$$
 ```
 
 ```{admonition} Q&A

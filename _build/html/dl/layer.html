@@ -800,7 +800,7 @@ document.write(`
 <section id="layer-normalization">
 <h3>Layer Normalization<a class="headerlink" href="#layer-normalization" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>What</strong>: Normalize each sample across the input features to zero mean and unit variance. (<a class="reference external" href="https://arxiv.org/pdf/1607.06450">paper</a>)</p></li>
+<li><p><strong>What</strong>: Normalize each sample across the input features to zero mean and unit variance.</p></li>
 <li><p><strong>Why</strong>: Batch normalization depends on the batch size.</p>
 <ul>
 <li><p>When it’s too big, high computational cost.</p></li>
@@ -815,70 +815,82 @@ document.write(`
 <li><p>Scale and shift the normalized output using learnable params.</p></li>
 </ol>
 </li>
-<li><p><strong>When</strong>: Layer-wise statistics are more representative than batch-wise statistics.</p></li>
-<li><p><strong>Where</strong>: Typically applied to NLP tasks that are sensitive to batch size.</p></li>
-<li><p><strong>Pros</strong>:</p>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>It’s easy to explain with the vector form for batch normalization, but it’s more intuitive to explain with the scalar form for layer normalization.</p>
+<p><strong>Notations</strong>:</p>
+<ul class="simple">
+<li><p>IO:</p>
 <ul>
-<li><p>Reduces hyperparam tuning effort.</p></li>
-<li><p>High consistency during training and inference.</p></li>
-<li><p>Mitigates <a class="reference internal" href="#residual-connection"><span class="xref myst">vanishing/exploding gradients</span></a>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_{ij}\in\mathbb{R}\)</span>: <span class="math notranslate nohighlight">\(j\)</span>th feature value for <span class="math notranslate nohighlight">\(i\)</span>th input sample.</p></li>
+<li><p><span class="math notranslate nohighlight">\(y_{ij}\in\mathbb{R}\)</span>: <span class="math notranslate nohighlight">\(j\)</span>th feature value for <span class="math notranslate nohighlight">\(i\)</span>th output sample.</p></li>
 </ul>
 </li>
-<li><p><strong>Cons</strong>:</p>
+<li><p>Params:</p>
 <ul>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\gamma}\in\mathbb{R}^n\)</span>: Scale param.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\beta}\in\mathbb{R}^n\)</span>: Shift param.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Forward</strong>:</p>
+<ol class="arabic">
+<li><p>Calculate the mean and variance for each feature.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    \mu_i&amp;=\frac{1}{n}\sum_{j=1}^{n}x_{ij}\\
+    \sigma_i^2&amp;=\frac{1}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)^2
+    \end{align*}\end{split}\]</div>
+</li>
+<li><p>Normalize each feature.</p>
+<div class="math notranslate nohighlight">
+\[
+    z_{ij}=\frac{x_{ij}-\mu_i}{\sqrt{\sigma_i^2+\epsilon}}
+    \]</div>
+<p>where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a small constant to avoid dividing by 0.</p>
+</li>
+<li><p>Scale and shift the normalized output.</p>
+<div class="math notranslate nohighlight">
+\[
+    y_{ij}=\gamma_jz_{ij}+\beta_j
+    \]</div>
+</li>
+</ol>
+<p><strong>Backward</strong>:</p>
+<ol class="arabic">
+<li><p>Gradient w.r.t. params:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    &amp;\frac{\partial\mathcal{L}}{\partial\gamma_j}=\sum_{i=1}^{m}g_{ij}z_{ij}\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\beta_j}=\sum_{i=1}^{m}g_{ij}
+    \end{align*}\end{split}\]</div>
+</li>
+<li><p>Gradient w.r.t. input:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    &amp;\frac{\partial\mathcal{L}}{\partial z_{ij}}=\gamma_jg_{ij}\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\sigma_i^2}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}(x_{ij}-\mu_i)\left(-\frac{1}{2}(\sigma_i^2+\epsilon)^{-\frac{3}{2}}\right)\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
+    &amp;\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
+    \end{align*}\end{split}\]</div>
+</li>
+</ol>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Pros</em>:</p>
+<ul class="simple">
+<li><p>Reduces hyperparam tuning effort.</p></li>
+<li><p>High consistency during training and inference.</p></li>
+<li><p>Mitigates <a class="reference internal" href="issues.html#vanishing/exploding-gradient"><span class="std std-ref">vanishing/exploding gradients</span></a>..</p></li>
+</ul>
+<p><em>Cons</em>:</p>
+<ul class="simple">
 <li><p>Adds computation overhead and complexity.</p></li>
 <li><p>Inapplicable in CNNs due to varied statistics of spatial features.</p></li>
 </ul>
-</li>
-</ul>
-<!-- ```{admonition} Math
-:class: note, dropdown
-It's easy to explain with the vector form for batch normalization, but it's more intuitive to explain with the scalar form for layer normalization.
-
-- Notation
-    - IO:
-        - $x_{ij}\in\mathbb{R}$: $j$th feature value for $i$th input sample.
-        - $y_{ij}\in\mathbb{R}$: $j$th feature value for $i$th output sample.
-    - Params:
-        - $\boldsymbol{\gamma}\in\mathbb{R}^n$: Scale param.
-        - $\boldsymbol{\beta}\in\mathbb{R}^n$: Shift param.
-**Forward**:
-    1. Calculate the mean and variance for each feature.
-
-        $$\begin{align*}
-        \mu_i&=\frac{1}{n}\sum_{j=1}^{n}x_{ij}\\
-        \sigma_i^2&=\frac{1}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)^2
-        \end{align*}$$
-
-    2. Normalize each feature.
-
-        $$
-        z_{ij}=\frac{x_{ij}-\mu_i}{\sqrt{\sigma_i^2+\epsilon}}
-        $$
-
-        where $\epsilon$ is a small constant to avoid dividing by 0.
-
-    3. Scale and shift the normalized output.
-
-        $$
-        y_{ij}=\gamma_jz_{ij}+\beta_j
-        $$
-**Backward**:
-    1. Gradient w.r.t. params:
-
-        $$\begin{align*}
-        &\frac{\partial\mathcal{L}}{\partial\gamma_j}=\sum_{i=1}^{m}g_{ij}z_{ij}\\
-        &\frac{\partial\mathcal{L}}{\partial\beta_j}=\sum_{i=1}^{m}g_{ij}
-        \end{align*}$$
-    2. Gradient w.r.t. input:
-
-        $$\begin{align*}
-        &\frac{\partial\mathcal{L}}{\partial z_{ij}}=\gamma_jg_{ij}\\
-        &\frac{\partial\mathcal{L}}{\partial\sigma_i^2}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}(x_{ij}-\mu_i)\left(-\frac{1}{2}(\sigma_i^2+\epsilon)^{-\frac{3}{2}}\right)\\
-        &\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
-        &\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
-        \end{align*}$$
-``` -->
+</div>
 <br/>
 </section>
 </section>
