@@ -711,8 +711,8 @@ document.write(`
 <section id="batch-normalization">
 <h3>Batch Normalization<a class="headerlink" href="#batch-normalization" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>What</strong>: Normalize each feature across the input samples to zero mean and unit variance. (<a class="reference external" href="https://arxiv.org/pdf/1502.03167">paper</a>)</p></li>
-<li><p><strong>Why</strong>: To mitigate internal covariate shift.</p></li>
+<li><p><strong>What</strong>: Normalize each feature across input samples to zero mean &amp; unit variance.</p></li>
+<li><p><strong>Why</strong>: To mitigate <a class="reference internal" href="issues.html#vanishing/internal-covariate-shift"><span class="std std-ref">internal covariate shift</span></a>.</p></li>
 <li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
 <li><p>Calculate the mean and variance for each batch.</p></li>
@@ -720,70 +720,82 @@ document.write(`
 <li><p>Scale and shift the normalized output using learnable params.</p></li>
 </ol>
 </li>
-<li><p><strong>When</strong>: Each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.</p></li>
-<li><p><strong>Where</strong>: Typically applied before activation functions, after linear layers &amp; convolutional layers.</p></li>
-<li><p><strong>Pros</strong>:</p>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p><strong>Notation</strong>:</p>
+<ul class="simple">
+<li><p>IO:</p>
 <ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{m\times n}\)</span>: Input matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{m\times n}\)</span>: Output matrix.</p></li>
+</ul>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\gamma\in\mathbb{R}\)</span>: Scale param.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\in\mathbb{R}\)</span>: Shift param.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Forward</strong>:</p>
+<ol class="arabic">
+<li><p>Calculate the mean and variance for each batch.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    \boldsymbol{\mu}_B&amp;=\frac{1}{m}\sum_{i=1}^{m}\textbf{x}_i\\
+    \boldsymbol{\sigma}_B^2&amp;=\frac{1}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)^2
+    \end{align*}\end{split}\]</div>
+</li>
+<li><p>Normalize each batch.</p>
+<div class="math notranslate nohighlight">
+\[
+    \textbf{z}_i=\frac{\textbf{x}_i-\boldsymbol{\mu}_B}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}
+    \]</div>
+<p>where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a small constant to avoid dividing by 0.</p>
+</li>
+<li><p>Scale and shift the normalized output.</p>
+<div class="math notranslate nohighlight">
+\[
+    \textbf{y}_i=\gamma\textbf{z}_i+\beta
+    \]</div>
+</li>
+</ol>
+<p><strong>Backward</strong>:</p>
+<ol class="arabic">
+<li><p>Gradient w.r.t. params:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    &amp;\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{z}_i\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\beta}=\sum_{i=1}^{m}\textbf{g}_i
+    \end{align*}\end{split}\]</div>
+</li>
+<li><p>Gradient w.r.t. input:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    &amp;\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}=\gamma\textbf{g}_i\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}(\textbf{x}_i-\boldsymbol{\mu}_B)\left(-\frac{1}{2}(\boldsymbol{\sigma}_B^2+\epsilon)^{-\frac{3}{2}}\right)\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
+    &amp;\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\ma                                                                         thcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
+    \end{align*}\end{split}\]</div>
+</li>
+</ol>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Pros?</em></p>
+<ul class="simple">
 <li><p>Accelerates training with higher learning rates.</p></li>
 <li><p>Reduces sensitivity to weight initialization.</p></li>
 <li><p>Mitigates <a class="reference internal" href="issues.html#vanishing/exploding-gradient"><span class="std std-ref">vanishing/exploding gradients</span></a>.</p></li>
 </ul>
-</li>
-<li><p><strong>Cons</strong>:</p>
-<ul>
+<p><em>Cons?</em></p>
+<ul class="simple">
 <li><p>Adds computation overhead and complexity.</p></li>
+<li><p>Works best when each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.</p></li>
 <li><p>Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.</p></li>
 </ul>
-</li>
-</ul>
-<!-- ```{admonition} Math
-:class: note, dropdown -->
-<!-- **Notation**:
-- IO:
-    - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
-    - $\mathbf{Y}\in\mathbb{R}^{m\times n}$: Output matrix.
-- Params:
-    - $\gamma\in\mathbb{R}$: Scale param.
-    - $\beta\in\mathbb{R}$: Shift param.
-
-**Forward**:
-1. Calculate the mean and variance for each batch.
-
-    $$\begin{align*}
-    \boldsymbol{\mu}_B&=\frac{1}{m}\sum_{i=1}^{m}\textbf{x}_i\\
-    \boldsymbol{\sigma}_B^2&=\frac{1}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)^2
-    \end{align*}$$
-
-2. Normalize each batch.
-
-    $$
-    \textbf{z}_i=\frac{\textbf{x}_i-\boldsymbol{\mu}_B}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}
-    $$
-
-    where $\epsilon$ is a small constant to avoid dividing by 0.
-
-3. Scale and shift the normalized output.
-
-    $$
-    \textbf{y}_i=\gamma\textbf{z}_i+\beta
-    $$
-
-**Backward**:
-1. Gradient w.r.t. params:
-
-    $$\begin{align*}
-    &\frac{\partial\mathcal{L}}{\partial\gamma}=\sum_{i=1}^{m}\textbf{g}_i\textbf{z}_i\\
-    &\frac{\partial\mathcal{L}}{\partial\beta}=\sum_{i=1}^{m}\textbf{g}_i
-    \end{align*}$$
-2. Gradient w.r.t. input:
-
-    $$\begin{align*}
-    &\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}=\gamma\textbf{g}_i\\
-    &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}(\textbf{x}_i-\boldsymbol{\mu}_B)\left(-\frac{1}{2}(\boldsymbol{\sigma}_B^2+\epsilon)^{-\frac{3}{2}}\right)\\
-    &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
-    &\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\ma                                                                         thcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
-    \end{align*}$$
-``` -->
+</div>
 </section>
 <section id="layer-normalization">
 <h3>Layer Normalization<a class="headerlink" href="#layer-normalization" title="Link to this heading">#</a></h3>

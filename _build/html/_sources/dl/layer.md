@@ -194,25 +194,17 @@ $$
 
 ## Normalization
 ### Batch Normalization
-- **What**: Normalize each feature across the input samples to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1502.03167))
-- **Why**: To mitigate internal covariate shift.
+- **What**: Normalize each feature across input samples to zero mean & unit variance.
+- **Why**: To mitigate [internal covariate shift](../dl/issues.md/#vanishing/internal-covariate-shift).
 - **How**:
     1. Calculate the mean and variance for each batch.
     2. Normalize the batch.
     3. Scale and shift the normalized output using learnable params.
-- **When**: Each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.
-- **Where**: Typically applied before activation functions, after linear layers & convolutional layers.
-- **Pros**:
-    - Accelerates training with higher learning rates.
-    - Reduces sensitivity to weight initialization.
-    - Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
-- **Cons**:
-    - Adds computation overhead and complexity.
-    - Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
 
-<!-- ```{admonition} Math
-:class: note, dropdown -->
-<!-- **Notation**:
+
+```{admonition} Math
+:class: note, dropdown
+**Notation**:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
     - $\mathbf{Y}\in\mathbb{R}^{m\times n}$: Output matrix.
@@ -257,7 +249,20 @@ $$
     &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
     &\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\ma                                                                         thcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
     \end{align*}$$
-``` -->
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros?*
+- Accelerates training with higher learning rates.
+- Reduces sensitivity to weight initialization.
+- Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
+
+*Cons?*
+- Adds computation overhead and complexity.
+- Works best when each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.
+- Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
+```
 
 ### Layer Normalization
 - **What**: Normalize each sample across the input features to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1607.06450))

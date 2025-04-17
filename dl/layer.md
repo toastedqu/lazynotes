@@ -265,7 +265,7 @@ $$
 ```
 
 ### Layer Normalization
-- **What**: Normalize each sample across the input features to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1607.06450))
+- **What**: Normalize each sample across the input features to zero mean and unit variance.
 - **Why**: Batch normalization depends on the batch size.
     - When it's too big, high computational cost.
     - When it's too small, the batch may not be representative of the underlying data distribution.
@@ -276,15 +276,8 @@ $$
     3. Scale and shift the normalized output using learnable params.
 - **When**: Layer-wise statistics are more representative than batch-wise statistics.
 - **Where**: Typically applied to NLP tasks that are sensitive to batch size.
-- **Pros**:
-    - Reduces hyperparam tuning effort.
-    - High consistency during training and inference.
-    - Mitigates [vanishing/exploding gradients](#residual-connection).
-- **Cons**:
-    - Adds computation overhead and complexity.
-    - Inapplicable in CNNs due to varied statistics of spatial features.
 
-<!-- ```{admonition} Math
+```{admonition} Math
 :class: note, dropdown
 It's easy to explain with the vector form for batch normalization, but it's more intuitive to explain with the scalar form for layer normalization.
 
@@ -331,7 +324,19 @@ It's easy to explain with the vector form for batch normalization, but it's more
         &\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
         &\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
         \end{align*}$$
-``` -->
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros*:
+- Reduces hyperparam tuning effort.
+- High consistency during training and inference.
+- Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient)..
+
+*Cons*:
+- Adds computation overhead and complexity.
+- Inapplicable in CNNs due to varied statistics of spatial features.
+```
 
 <br/>
 
