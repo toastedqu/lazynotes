@@ -18,21 +18,12 @@ parts:
   #     - file: ml/supervised/self-supervised
   #     - file: ml/supervised/online
   #   - file: ml/hyperparams-tag
-  # - caption: Deep Learning
-  #   chapters:
-  #   - file: dl/modules-tag
-  #     sections:
-  #     - file: dl/modules/basics
-  #     - file: dl/modules/activations
-  #     - file: dl/modules/cnn
-  #     - file: dl/modules/rnn
-  #     - file: dl/modules/transformer
-  #   - file: dl/transfer-tag
-  #     sections:
-  #     - file: dl/transfer/peft
+  - caption: Deep Learning
+    chapters:
+    - file: dl/layer
   - caption: LLM
     chapters:
-    - file: llm/transformer
+    # - file: llm/transformer
     - file: llm/rl
     - file: llm/peft
   - caption: Misc

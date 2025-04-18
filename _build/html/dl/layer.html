@@ -64,6 +64,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'dl/layer';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RL for LLMs" href="../llm/rl.html" />
+    <link rel="prev" title="LazyNotes" href="../intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -126,8 +128,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -175,11 +175,17 @@
  </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Layer</a></li>
+
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../llm/transformer.html">Transformer</a></li>
-
-
 <li class="toctree-l1"><a class="reference internal" href="../llm/rl.html">RL for LLMs</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="../llm/peft.html">PEFT</a></li>
@@ -395,10 +401,22 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">Transformer</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scaled-dot-product-attention">Scaled Dot-Product Attention</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#postion-wise-feed-forward-networks">Postion-wise Feed-Forward Networks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolutional">Convolutional</a><ul class="visible nav section-nav flex-column">
@@ -897,212 +915,401 @@ document.write(`
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="transformer">
 <h1>Transformer<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h1>
-<a class="reference internal image-reference" href="images/transformer.png"><img alt="images/transformer.png" class="align-center" src="images/transformer.png" style="width: 500px;" />
-</a>
+<!-- ```{image} ../../images/transformer.png
+:align: center
+:width: 500px
+``` -->
 <ul class="simple">
 <li><p><strong>What</strong>: <strong>Self-attention</strong> for sequential data.</p></li>
-<li><p><strong>Why</strong>: RNNs had severe limitations:</p>
-<ul>
-<li><p><strong>Lack of long-range dependencies</strong>: RNNs struggled to capture long-range dependencies in sequences due to vanishing gradients.</p></li>
-<li><p><strong>Sequential computation</strong>: The training for RNN was extremely slow, especially for long sequences, due to its sequential nature.</p></li>
-</ul>
-</li>
+<li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong></p></li>
 <li><p><strong>How</strong>:</p>
 <ul>
-<li><p><a class="reference internal" href="#positional-encoding"><span class="xref myst">Positional Encoding</span></a></p></li>
-<li><p><a class="reference internal" href="#residual-connection"><span class="xref myst">Residual Connection</span></a></p></li>
-<li><p><a class="reference internal" href="#multi-head-attention"><span class="xref myst">Multi-Head Attention</span></a></p></li>
-<li><p><a class="reference internal" href="#layer-normalization"><span class="xref myst">Layer Normalization</span></a></p></li>
-<li><p><a class="reference internal" href="#postion-wise-feed-forward-networks"><span class="xref myst">Position-wise Feed-Forward Networks</span></a></p></li>
-</ul>
-</li>
-<li><p><strong>When</strong>:</p>
-<ul>
-<li><p>There are sufficient data.</p></li>
-<li><p>There are sufficient computational resources.</p></li>
-<li><p>The data can be converted into a sequential format and processed in parallel without affecting the underlying data distribution.</p></li>
-</ul>
-</li>
-<li><p><strong>Where</strong>: Widely applicable.</p></li>
-<li><p><strong>Pros</strong>:</p>
-<ul>
-<li><p>Long-range dependencies.</p></li>
-<li><p>Parallel processing <span class="math notranslate nohighlight">\(\rightarrow\)</span> Lower training time compared to RNN.</p></li>
-<li><p>High scalability.</p></li>
-<li><p>Allows transfer learning.</p></li>
-<li><p>Wide range of applications.</p></li>
-</ul>
-</li>
-<li><p><strong>Cons</strong>:</p>
-<ul>
-<li><p>High computational cost <span class="math notranslate nohighlight">\(\rightarrow\)</span> <span class="math notranslate nohighlight">\(O(n^2)\)</span>, where <span class="math notranslate nohighlight">\(n\)</span> is sequence length.</p></li>
-<li></li>
-</ul>
-</li>
-</ul>
-<p><strong>Training</strong>:</p>
-<ul class="simple">
-<li><p><strong>Parameters</strong>:</p>
-<ul>
-<li><p>Encoder: <span class="math notranslate nohighlight">\( \text{\\#params}=h\cdot d\_{\text{model}}\cdot (2d\_k+d\_v)+2\cdot d\_{\text{model}}\cdot d\_{\text{ff}} \)</span></p></li>
-<li><p>Decoder: <span class="math notranslate nohighlight">\( \text{\\#params}=2\cdot h\cdot d\_{\text{model}}\cdot (2d\_k+d\_v)+2\cdot d\_{\text{model}}\cdot d\_{\text{ff}} \)</span></p></li>
-</ul>
-</li>
-<li><p><strong>Hyperparams</strong>:</p>
-<ul>
-<li><p>#layers</p></li>
-<li><p>hidden size</p></li>
-<li><p>#heads</p></li>
-<li><p>learning rate (&amp; warm-up steps)</p></li>
-</ul>
-</li>
-</ul>
-<p><strong>Inference</strong>:</p>
+<li><p>Input:</p>
 <ol class="arabic simple">
-<li><p>Process input tokens in parallel via encoder.</p></li>
-<li><p>Generate output tokens sequentially via decoder.</p></li>
+<li><p><strong>Tokenization</strong>: Sequence <span class="math notranslate nohighlight">\(\xrightarrow{\text{split}}\)</span> Tokens</p></li>
+<li><p><strong>Token Embedding</strong>: Tokens <span class="math notranslate nohighlight">\(\rightarrow\)</span> Semantic vectors</p></li>
+<li><p><strong>Positional Encoding</strong>: Semantic vectors <span class="math notranslate nohighlight">\(\xrightarrow{+\text{positional info}}\)</span> Position-aware vectors</p></li>
 </ol>
-<p><strong>Pros</strong>:</p>
-<ul class="simple">
-<li><p>high computation efficiency (training &amp; inference)</p></li>
-<li><p>high performance</p></li>
-<li><p>wide applicability</p></li>
+</li>
+<li><p>Attention:</p>
+<ol class="arabic simple">
+<li><p><strong>Encoder</strong>: (Input) Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> (Input) Context-aware vectors</p></li>
+<li><p><strong>Decoder</strong>:</p>
+<ul>
+<li><p><strong>Encoder-Decoder Decoder</strong>: (Input) Context-aware vectors + (Output) Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> (Output) Context-aware vectors</p></li>
+<li><p><strong>Decoder-Only Decoder</strong>: (Input) Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> (Input) Masked context-aware vectors</p></li>
 </ul>
-<p><strong>Cons</strong>:</p>
-<ul class="simple">
-<li><p>require sufficient computation resources</p></li>
-<li><p>require sufficient large-scale data</p></li>
+</li>
+</ol>
+</li>
+<li><p>Output:</p>
+<ol class="arabic simple">
+<li><p><strong>Output Layer</strong>: (Output) Context-aware vectors <span class="math notranslate nohighlight">\(\xrightarrow{\text{predict}}\)</span> Next token</p></li>
+</ol>
+</li>
 </ul>
+</li>
+</ul>
+<p><br><br></p>
+<section id="input">
+<h2>Input<a class="headerlink" href="#input" title="Link to this heading">#</a></h2>
+<section id="tokenization">
+<h3>Tokenization<a class="headerlink" href="#tokenization" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Sequence <span class="math notranslate nohighlight">\(\xrightarrow{\text{split}}\)</span> Tokens</p></li>
+<li><p><strong>Why</strong>: Machines can only read numbers.</p></li>
+<li><p><strong>How</strong>: (tbd)</p></li>
+</ul>
+</section>
+<section id="token-embedding">
+<h3>Token Embedding<a class="headerlink" href="#token-embedding" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Tokens <span class="math notranslate nohighlight">\(\rightarrow\)</span> Semantic vectors.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Discrete <span class="math notranslate nohighlight">\(\rightarrow\)</span> Continuous</p></li>
+<li><p>Vocab index <span class="math notranslate nohighlight">\(\rightarrow\)</span> Semantic meaning</p></li>
+<li><p>Vocab size <span class="math notranslate nohighlight">\(\xrightarrow{\text{reduced to}}\)</span> hidden size</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>: Look-up table / <a class="reference internal" href="#../basics.md#linear"><span class="xref myst">Linear</span></a>.</p></li>
+</ul>
+</section>
 <section id="positional-encoding">
-<h2>Positional Encoding<a class="headerlink" href="#positional-encoding" title="Link to this heading">#</a></h2>
-<p><strong>What</strong>: Positional Encoding encodes sequence order info of tokens into embeddings.</p>
-<p><strong>Why</strong>: So that the model can still make use of the sequence order info since no recurrence/convolution is available for it.</p>
-<p><strong>Where</strong>: After tokenization &amp; Before feeding into model.</p>
-<p><strong>When</strong>: The hypothesis that <strong>relative positions</strong> allow the model to learn to attend easier holds.</p>
-<p><strong>How</strong>: sinusoid with wavelengths from a geometric progression from <span class="math notranslate nohighlight">\( 2\pi\)</span> to <span class="math notranslate nohighlight">\(10000\cdot2\pi \)</span></p>
+<h3>Positional Encoding<a class="headerlink" href="#positional-encoding" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Semantic vectors <span class="math notranslate nohighlight">\(\xrightarrow{+\text{positional info}}\)</span> Position-aware vectors</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Transformers don’t know positions.</p></li>
+<li><p>BUT positions matter!</p>
+<ul>
+<li><p>No PE <span class="math notranslate nohighlight">\(\rightarrow\)</span> self-attention scores remain unchanged regardless of token orders <span id="id1">[<a class="reference internal" href="../references.html#id11" title="Kuiyi Wang. Why transformer models need positional encoding. https://wangkuiyi.github.io/positional_encoding.html. [Online; accessed &lt;today&gt;].">7</a>]</span>.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<section id="sinusoidal-pe">
+<h4>Sinusoidal PE<a class="headerlink" href="#sinusoidal-pe" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>What</strong>: Positional info <span class="math notranslate nohighlight">\(\rightarrow\)</span> Sine waves</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Continuous &amp; multi-scale <span class="math notranslate nohighlight">\(\rightarrow\)</span> Generalize to sequences of arbitrary lengths</p></li>
+<li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> Low computational cost</p></li>
+<li><p>Empirically performed as well as learned PE</p></li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Sinusoidal PE:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-\text{PE}\_{(pos,2i)}&amp;=\sin(\frac{pos}{10000^{\frac{2i}{d_\text{model}}}})\\\\
-\text{PE}\_{(pos,2i+1)}&amp;=\cos(\frac{pos}{10000^{\frac{2i}{d_\text{model}}}})
+&amp;PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
+&amp;PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
 \end{align*}\end{split}\]</div>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( pos \)</span>: absolute position of the token</p></li>
-<li><p><span class="math notranslate nohighlight">\( i \)</span>: dimension</p></li>
-<li><p>For any fixed offset <span class="math notranslate nohighlight">\( k\)</span>, <span class="math notranslate nohighlight">\(PE_{pos+k}\)</span> is a linear function of <span class="math notranslate nohighlight">\(PE_{pos} \)</span>.</p></li>
+<li><p>Input:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(pos\in\mathbb{R}\)</span>: Token position.</p></li>
 </ul>
-<p><strong>Pros</strong>:</p>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(i\)</span>: Embedding dimension index.</p></li>
+<li><p><span class="math notranslate nohighlight">\(d_{\text{model}}\)</span>: Embedding dimension.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
 <ul class="simple">
-<li><p>allow model to extrapolate to sequence lengths longer than the training sequences</p></li>
+<li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> No learning of task-specific position patterns.</p></li>
+<li><p>Requires uniform token importance across the sequence. <span id="id2">[<a class="reference internal" href="../references.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 2017.">6</a>]</span></p></li>
+<li><p>Cannot capture complex, relative, or local positional relationships.</p></li>
 </ul>
-<p><strong>Cons</strong>: ???</p>
+</div>
+<p><br><br></p>
 </section>
-<section id="scaled-dot-product-attention">
-<h2>Scaled Dot-Product Attention<a class="headerlink" href="#scaled-dot-product-attention" title="Link to this heading">#</a></h2>
-<a class="reference internal image-reference" href="images/scaled_dot_product_attention.png"><img alt="images/scaled_dot_product_attention.png" class="align-center" src="images/scaled_dot_product_attention.png" style="width: 200px;" />
-</a>
-<p><strong>What</strong>: An effective &amp; efficient variation of self-attention.</p>
-<p><strong>Why</strong>:</p>
+</section>
+</section>
+<section id="attention">
+<h2>Attention<a class="headerlink" href="#attention" title="Link to this heading">#</a></h2>
+<section id="self-attention">
+<h3>Self-Attention<a class="headerlink" href="#self-attention" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>The end goal is <strong>Attention</strong> - “Which parts of the sentence should we focus on?”</p></li>
-<li><p>We want to <strong>capture the most relevant info</strong> in the sentence.</p></li>
-<li><p>And we also want to <strong>keep track of all info</strong> in the sentence as well, just with different weights.</p></li>
-<li><p>We want to create <strong>contextualized representations</strong> of the sentence.</p></li>
-<li><p>Therefore, attention mechanism - we want to assign different attention scores to each token.</p></li>
-</ul>
-<p><strong>When</strong>:</p>
-<ul class="simple">
-<li><p><strong>linearity</strong>: Relationship between tokens can be captured via linear transformation.</p></li>
-<li><p><strong>Position independence</strong>: Relationship between tokens are independent of positions (fixed by Positional Encoding).</p></li>
-</ul>
-<p><strong>How</strong>:</p>
-<div class="math notranslate nohighlight">
-\[
-\text{Attention}(Q,K,V)=\text{softmax}(\frac{QK^T}{\sqrt{d_k}})V
-\]</div>
-<ul class="simple">
-<li><p>Preliminaries:</p>
-<ul>
-<li><p><strong>Query (Q)</strong>: a <strong>question</strong> about a token - “How important is this token in the context of the whole sentence?”</p></li>
-<li><p><strong>Key (K)</strong>: a piece of <strong>unique identifier</strong> about a token - “Here’s something unique about this token.”</p></li>
-<li><p><strong>Value (V)</strong>: the <strong>actual meaning</strong> of a token - “Here’s the content about this token.”</p></li>
-</ul>
-</li>
-<li><p>Procedure:</p>
+<li><p><strong>What</strong>: Each element in the sequence pays attention to each other.</p></li>
+<li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong></p></li>
+<li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
-<li><p><strong>Compare the similarity</strong> between the <strong>Q</strong> of one word and the <strong>K</strong> of every other word.</p>
+<li><p>All elements <span class="math notranslate nohighlight">\(\rightarrow\)</span> QKV</p>
 <ul>
-<li><p>The more similar, the more attention we should give to that word for the queried word.</p></li>
+<li><p>Q: What are you looking for?</p></li>
+<li><p>K: What are your keywords for search?</p></li>
+<li><p>V: What info do you have?</p></li>
 </ul>
 </li>
-<li><p><strong>Scale down</strong> by <span class="math notranslate nohighlight">\( \sqrt{d_k} \)</span> to avoid the similarity scores being too large.</p>
-<ul>
-<li><p>Dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients.</p></li>
-<li><p>They grow large because, if <span class="math notranslate nohighlight">\( q,k\sim N(0,1)\)</span>, then <span class="math notranslate nohighlight">\(qk=\sum_{i=1}^{d_k}q_ik_i\sim N(0,d_k) \)</span>.</p></li>
-</ul>
+<li><p>For each token T:</p>
+<ol class="arabic simple">
+<li><p>T’s Query &amp; All Keys <span class="math notranslate nohighlight">\(\rightarrow\)</span> Relevance scores</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Attention weights</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Weighted sum of T’s Value (i.e., T’s contextual representation)</p></li>
+</ol>
 </li>
-<li><p>Convert the attention scores into a <strong>probability distribution</strong>.</p>
-<ul>
-<li><p>Softmax sums up to 1 and emphasizes important attention weights (and reduces the impact of negligible ones).</p></li>
-</ul>
-</li>
-<li><p>Calculate the <strong>weighted combination</strong> of all words, for each queried word, as the final attention score.</p></li>
 </ol>
 </li>
 </ul>
-<p><strong>Pros</strong>:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">ELI5</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">You are in a top AI conference.</p>
+<p class="sd-card-text">Each guy is an element.</p>
+<p class="sd-card-text">You have some dumb question in mind. (Q)</p>
+<p class="sd-card-text">Each guy has their badges and posters with titles and metadata. (K)</p>
+<p class="sd-card-text">Each guy knows the details of their projects. (V)</p>
+<p class="sd-card-text">You walk around &amp; check out the whole venue.</p>
+<p class="sd-card-text">You see topics that you don’t really care. You skim &amp; skip.</p>
+<p class="sd-card-text">You see topics that are related to your question. You talk to the guys to learn more.</p>
+<p class="sd-card-text">You see topics that you are obsessed with. You ask the guys a billion follow-up questions and memorize every single technical detail of their Github implementation.</p>
+<p class="sd-card-text">The conference ends.</p>
+<p class="sd-card-text">You have learnt something about everything, but not everything weighs the same in your heart.</p>
+</div>
+</details><div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Scaled Dot-Product Attention:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Attention}(Q,K,V)=\text{softmax}\left(\frac{QK^T}{\sqrt{d_K}}\right)V
+\]</div>
 <ul class="simple">
-<li><p>significantly higher computational efficiency (time &amp; space) than additive attention</p></li>
+<li><p>Input:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(X\in\mathbb{R}^{m\times n}\)</span>: Input sequence</p></li>
 </ul>
-<p><strong>Cons</strong>:</p>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(W_Q\in\mathbb{R}^{n\times d_K}\)</span>: Weight matrix for Q.</p></li>
+<li><p><span class="math notranslate nohighlight">\(W_K\in\mathbb{R}^{n\times d_K}\)</span>: Weight matrix for K.</p></li>
+<li><p><span class="math notranslate nohighlight">\(W_V\in\mathbb{R}^{n\times d_V}\)</span>: Weight matrix for V.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(m\)</span>: #Tokens.</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span>: #Features/Hidden size.</p></li>
+<li><p><span class="math notranslate nohighlight">\(d_K\)</span>: Hidden size of Q &amp; K.</p>
+<ul>
+<li><p>Q &amp; K share the same hidden size for matrix multiplication.</p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(d_V\)</span>: Hidden size of V.</p></li>
+</ul>
+</li>
+<li><p>Intermediate values:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(Q=XW_Q\in\mathbb{R}^{m\times d_K}\)</span>: Q vectors for all elems.</p></li>
+<li><p><span class="math notranslate nohighlight">\(K=XW_K\in\mathbb{R}^{m\times d_K}\)</span>: K vectors for all elems.</p></li>
+<li><p><span class="math notranslate nohighlight">\(V=XW_V\in\mathbb{R}^{m\times d_V}\)</span>: V vectors for all elems.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="important dropdown admonition">
+<p class="admonition-title">Derivation (Backprop)</p>
+<p>Notations:</p>
 <ul class="simple">
-<li><p>outperformed by additive attention if without scaling for large values of <span class="math notranslate nohighlight">\( d_k \)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(S=\frac{QK^T}{\sqrt{d_K}}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(A=\text{softmax}(S)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(Y=AV\)</span></p></li>
+</ul>
+<p>STEP 1 - V:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial L}{\partial V}=A^T\frac{\partial L}{\partial Y}
+\]</div>
+<p>STEP 2 - A:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial L}{\partial A}=\frac{\partial L}{\partial Y}V^T
+\]</div>
+<p>STEP 3 - S:</p>
+<ul>
+<li><p>Recall that for <span class="math notranslate nohighlight">\(\mathbf{a}=\text{softmax}(\mathbf{s})\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+    \frac{\partial a_i}{\partial s_j}=a_i(\delta_{ij}-a_j)
+    \]</div>
+<p>where <span class="math notranslate nohighlight">\(\delta_{ij}=1\text{ if }i=j\text{ else }0\)</span>.</p>
+</li>
+<li><p>For each row <span class="math notranslate nohighlight">\(i\)</span> of <span class="math notranslate nohighlight">\(S\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    \frac{\partial L}{\partial S_{ij}}&amp;=\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}\frac{\partial A_{ik}}{\partial S_{ij}} \\
+    &amp;=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k\neq j}\frac{\partial L}{\partial A_{ik}}A_{ik} \\
+    &amp;=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}A_{ik}
+    \end{align*}\end{split}\]</div>
+</li>
+</ul>
+<p>STEP 4 - Q&amp;K:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\frac{\partial L}{\partial Q}=\frac{\partial L}{\partial S}\frac{K}{\sqrt{d_K}} \\
+&amp;\frac{\partial L}{\partial K}=\frac{\partial L}{\partial S}^T\frac{Q}{\sqrt{d_K}}
+\end{align*}\end{split}\]</div>
+<p>STEP 5 - Ws:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\frac{\partial L}{\partial W_Q}=X^T\frac{\partial L}{\partial Q}\\
+&amp;\frac{\partial L}{\partial W_K}=X^T\frac{\partial L}{\partial K}\\
+&amp;\frac{\partial L}{\partial W_V}=X^T\frac{\partial L}{\partial V}
+\end{align*}\end{split}\]</div>
+<p>STEP 6 - X:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Q}W_Q^T+\frac{\partial L}{\partial K}W_K^T+\frac{\partial L}{\partial V}W_V^T
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>⬆️ Computational cost <span class="math notranslate nohighlight">\(\leftarrow\)</span> <span class="math notranslate nohighlight">\(O(n^2)\)</span> (?)</p></li>
+<li><p>Fixed sequence length.</p></li>
+</ul>
+<p><em>Why scale?</em></p>
+<ol class="arabic simple">
+<li><p>Dot product scales with dimension size.</p></li>
+<li><p>Assume elements follow <span class="math notranslate nohighlight">\(\mathcal{N}(0,1)\)</span>, then dot product follows <span class="math notranslate nohighlight">\(\mathcal{N}(0,d_K)\)</span>.</p></li>
+<li><p>Scaling normalizes this variance.</p></li>
+</ol>
+<p><em>Why softmax?</em></p>
+<ul class="simple">
+<li><p>Scores <span class="math notranslate nohighlight">\(\rightarrow\)</span> Probability distribution</p>
+<ul>
+<li><p>All weights &gt; 0.</p></li>
+<li><p>All weights sum to 1.</p></li>
+</ul>
+</li>
+<li><p>Score margins are amplified <span class="math notranslate nohighlight">\(\rightarrow\)</span> More attention to relevant elements</p></li>
+</ul>
+</div>
+</section>
+<section id="masked-causal-attention">
+<h3>Masked/Causal Attention<a class="headerlink" href="#masked-causal-attention" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Self-attention BUT each token can only see its previous tokens (and itself).</p></li>
+<li><p><strong>Why</strong>: Autoregressive generation.</p></li>
+<li><p><strong>How</strong>: For each token, mask attention scores of all future tokens to <span class="math notranslate nohighlight">\(-\infty\)</span> before softmax.</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\text{softmax}(-\infty)\)</span>=0</p></li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Causal Attention:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + M\right)V
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(M\in\mathbb{R}^{m\times m}\)</span>: Mask matrix</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(M_{ij}=0\text{ if }i\geq j\)</span> else <span class="math notranslate nohighlight">\(-\infty\)</span></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Conditions?</em></p>
+<ul class="simple">
+<li><p>Only applicable in decoder.</p>
+<ul>
+<li><p>Main goal of encoder: convert sequence into a meaningful representation.</p></li>
+<li><p>Main goal of decoder: predict next token.</p></li>
+</ul>
+</li>
+</ul>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>Unidirectional context.</p></li>
+<li><p>Limited context for early tokens.</p>
+<ul>
+<li><p>Token 1 only sees 1 token.</p></li>
+<li><p>Token 2 only sees 2 tokens.</p></li>
+<li><p>…</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="cross-attention">
+<h3>Cross Attention<a class="headerlink" href="#cross-attention" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Scaled Dot-Product Attention BUT</p>
+<ul>
+<li><p>K&amp;V <span class="math notranslate nohighlight">\(\leftarrow\)</span> Source (e.g., Encoder)</p></li>
+<li><p>Q <span class="math notranslate nohighlight">\(\leftarrow\)</span> Current sequence (i.e., Decoder)</p></li>
+</ul>
+</li>
+<li><p><strong>Why</strong>: Additional source info may be helpful for predicting next token for current sequence.</p></li>
+<li><p><strong>How</strong>: See <a class="reference internal" href="#self-attention"><span class="xref myst">Self-Attention</span></a>.</p></li>
 </ul>
 </section>
 <section id="multi-head-attention">
-<h2>Multi-Head Attention<a class="headerlink" href="#multi-head-attention" title="Link to this heading">#</a></h2>
-<a class="reference internal image-reference" href="images/mha.png"><img alt="images/mha.png" class="align-center" src="images/mha.png" style="width: 300px;" />
-</a>
-<p><strong>What</strong>: A combination of multiple scaled dot-product attention heads in parallel.</p>
+<h3>Multi-Head Attention<a class="headerlink" href="#multi-head-attention" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Masked MHA: mask the succeeding tokens off because they can’t be seen during decoding.</p></li>
+<li><p><strong>What</strong>: Multiple self-attention modules running in parallel.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(1\)</span> attention module <span class="math notranslate nohighlight">\(\xrightarrow{\text{monitor}}\)</span> <span class="math notranslate nohighlight">\(1\)</span> representation subspace</p></li>
+<li><p>Language is complex: morphology, syntax, semantics, context, …</p></li>
+<li><p><span class="math notranslate nohighlight">\(h\)</span> attention modules <span class="math notranslate nohighlight">\(\xrightarrow{\text{monitor}}\)</span> <span class="math notranslate nohighlight">\(h\)</span> representation subspaces</p></li>
 </ul>
-<p><strong>Why</strong>: To allow the model to jointly attend to info from different representation subspaces at different positions.</p>
-<p><strong>When</strong>: The assumption of independence of attention heads holds.</p>
-<p><strong>How</strong>:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-\text{MultiHead}(Q,K,V)&amp;=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W^O \\\\
-\text{head}_i&amp;=\text{Attention}(QW_i^Q,KW_i^K,VW_i^V)
-\end{align*}\end{split}\]</div>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( W_i^Q\in\mathbb{R}^{d_\text{model}\times d_k},W_i^K\in\mathbb{R}^{d_\text{model}\times d_k},W_i^V\in\mathbb{R}^{d_\text{model}\times d_v} \)</span>: learnable linear projection params.</p></li>
-<li><p><span class="math notranslate nohighlight">\( W^O\in\mathbb{R}^{d_\text{model}\times hd_v} \)</span>: learnable linear combination weights.</p></li>
-<li><p><span class="math notranslate nohighlight">\( h=8, d_k=d_v=\frac{d_\text{model}}{h}=64 \)</span> in the original paper.</p></li>
+</li>
+<li><p><strong>How</strong>: Each head <span class="math notranslate nohighlight">\(\xrightarrow{\text{self-attention}}\)</span> Each output <span class="math notranslate nohighlight">\(\xrightarrow{\text{concatenate}}\)</span> All outputs <span class="math notranslate nohighlight">\(\xrightarrow{\text{linear transform}}\)</span> Final output</p></li>
 </ul>
-<p><strong>Pros</strong>:</p>
-<ul class="simple">
-<li><p>better performance than single head</p></li>
-</ul>
-<p><strong>Cons</strong>: ???</p>
-</section>
-<section id="postion-wise-feed-forward-networks">
-<h2>Postion-wise Feed-Forward Networks<a class="headerlink" href="#postion-wise-feed-forward-networks" title="Link to this heading">#</a></h2>
-<p><strong>What</strong>: 2 linear transformations with ReLU in between.</p>
-<p><strong>Why</strong>: Just like 2 convolutions with kernel size 1.</p>
-<p><strong>How</strong>:</p>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>MHA:</p>
 <div class="math notranslate nohighlight">
 \[
-\text{FFN}(x)=\max(0,xW_1+b_1)W_2+b_2
+\text{MultiHead}(Q,K,V)=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W_O
 \]</div>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( d_\text{model}=512 \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( d_\text{FF}=2048 \)</span></p></li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(W_O\)</span>: Weight matrix to transform concatenated head outputs.</p></li>
 </ul>
-<!-- # Transformer
-## Positional Encoding
-## Attention
-### Self-Attention
-### Multi-Head Attention -->
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(h\)</span>: #Heads.</p></li>
+</ul>
+</li>
+<li><p>Intermediate values:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\text{head}_i\in\mathbb{R}^{m\times d_V}\)</span>: Weighted representation of input sequence from the <span class="math notranslate nohighlight">\(i\)</span>th head.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>⬆️ Computational cost</p></li>
+<li><p>⬇️ Interpretability</p></li>
+<li><p>Redundancy <span class="math notranslate nohighlight">\(\leftarrow\)</span> some heads may learn similar patterns</p></li>
+</ul>
+</div>
+</section>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="convolutional">
@@ -1862,6 +2069,24 @@ z &amp; \mathrm{if}\ z\geq0\\
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">LazyNotes</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../llm/rl.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">RL for LLMs</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -1891,10 +2116,22 @@ z &amp; \mathrm{if}\ z\geq0\\
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">Transformer</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scaled-dot-product-attention">Scaled Dot-Product Attention</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#postion-wise-feed-forward-networks">Postion-wise Feed-Forward Networks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolutional">Convolutional</a><ul class="visible nav section-nav flex-column">

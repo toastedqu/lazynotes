@@ -341,182 +341,289 @@ It's easy to explain with the vector form for batch normalization, but it's more
 <br/>
 
 # Transformer
-```{image} ../images/transformer.png
-:width: 500
+<!-- ```{image} ../../images/transformer.png
 :align: center
-```
+:width: 500px
+``` -->
 - **What**: **Self-attention** for sequential data.
-- **Why**: RNNs had severe limitations:
-    - **Lack of long-range dependencies**: RNNs struggled to capture long-range dependencies in sequences due to vanishing gradients.
-    - **Sequential computation**: The training for RNN was extremely slow, especially for long sequences, due to its sequential nature.
+- **Why**: **Long-range dependencies** + **Parallel processing**
 - **How**:
-    - [Positional Encoding](#positional-encoding)
-    - [Residual Connection](#residual-connection)
-    - [Multi-Head Attention](#multi-head-attention)
-    - [Layer Normalization](#layer-normalization)
-    - [Position-wise Feed-Forward Networks](#postion-wise-feed-forward-networks)
-- **When**:
-    - There are sufficient data.
-    - There are sufficient computational resources.
-    - The data can be converted into a sequential format and processed in parallel without affecting the underlying data distribution.
-- **Where**: Widely applicable.
-- **Pros**:
-    - Long-range dependencies.
-    - Parallel processing $\rightarrow$ Lower training time compared to RNN.
-    - High scalability.
-    - Allows transfer learning.
-    - Wide range of applications.
-- **Cons**:
-    - High computational cost $\rightarrow$ $O(n^2)$, where $n$ is sequence length.
-    -
+    - Input:
+        1. **Tokenization**: Sequence $\xrightarrow{\text{split}}$ Tokens
+        2. **Token Embedding**: Tokens $\rightarrow$ Semantic vectors
+        3. **Positional Encoding**: Semantic vectors $\xrightarrow{+\text{positional info}}$ Position-aware vectors
+    - Attention:
+        1. **Encoder**: (Input) Position-aware vectors $\rightarrow$ (Input) Context-aware vectors
+        2. **Decoder**:
+            - **Encoder-Decoder Decoder**: (Input) Context-aware vectors + (Output) Position-aware vectors $\rightarrow$ (Output) Context-aware vectors
+            - **Decoder-Only Decoder**: (Input) Position-aware vectors $\rightarrow$ (Input) Masked context-aware vectors
+    - Output:
+        1. **Output Layer**: (Output) Context-aware vectors $\xrightarrow{\text{predict}}$ Next token
 
-**Training**:
-- **Parameters**:
-    - Encoder: $ \text{\\#params}=h\cdot d\_{\text{model}}\cdot (2d\_k+d\_v)+2\cdot d\_{\text{model}}\cdot d\_{\text{ff}} $
-    - Decoder: $ \text{\\#params}=2\cdot h\cdot d\_{\text{model}}\cdot (2d\_k+d\_v)+2\cdot d\_{\text{model}}\cdot d\_{\text{ff}} $
-- **Hyperparams**:
-    - #layers
-    - hidden size
-    - #heads
-    - learning rate (& warm-up steps)
+<br><br>
 
-**Inference**:
-1. Process input tokens in parallel via encoder.
-2. Generate output tokens sequentially via decoder.
+## Input
+### Tokenization
+- **What**: Sequence $\xrightarrow{\text{split}}$ Tokens
+- **Why**: Machines can only read numbers.
+- **How**: (tbd)
 
-**Pros**:
-- high computation efficiency (training & inference)
-- high performance
-- wide applicability
+### Token Embedding
+- **What**: Tokens $\rightarrow$ Semantic vectors.
+- **Why**:
+    - Discrete $\rightarrow$ Continuous
+    - Vocab index $\rightarrow$ Semantic meaning
+    - Vocab size $\xrightarrow{\text{reduced to}}$ hidden size
+- **How**: Look-up table / [Linear](../basics.md#linear).
 
-**Cons**:
-- require sufficient computation resources
-- require sufficient large-scale data
+### Positional Encoding
+- **What**: Semantic vectors $\xrightarrow{+\text{positional info}}$ Position-aware vectors
+- **Why**:
+    - Transformers don't know positions.
+    - BUT positions matter!
+        - No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
 
-## Positional Encoding
-**What**: Positional Encoding encodes sequence order info of tokens into embeddings.
+#### Sinusoidal PE
+- **What**: Positional info $\rightarrow$ Sine waves
+- **Why**:
+    - Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
+    - No params $\rightarrow$ Low computational cost
+    - Empirically performed as well as learned PE
 
-**Why**: So that the model can still make use of the sequence order info since no recurrence/convolution is available for it.
-
-**Where**: After tokenization & Before feeding into model.
-
-**When**: The hypothesis that **relative positions** allow the model to learn to attend easier holds.
-
-**How**: sinusoid with wavelengths from a geometric progression from $ 2\pi$ to $10000\cdot2\pi $
+```{admonition} Math
+:class: note, dropdown
+Sinusoidal PE:
 
 $$\begin{align*}
-\text{PE}\_{(pos,2i)}&=\sin(\frac{pos}{10000^{\frac{2i}{d_\text{model}}}})\\\\
-\text{PE}\_{(pos,2i+1)}&=\cos(\frac{pos}{10000^{\frac{2i}{d_\text{model}}}})
+&PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
+&PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
 \end{align*}$$
-
-- $ pos $: absolute position of the token
-- $ i $: dimension
-- For any fixed offset $ k$, $PE_{pos+k}$ is a linear function of $PE_{pos} $.
-
-**Pros**:
-- allow model to extrapolate to sequence lengths longer than the training sequences
-
-**Cons**: ???
-
-
-
-## Scaled Dot-Product Attention
-
-```{image} ../images/scaled_dot_product_attention.png
-:width: 200
-:align: center
+- Input:
+    - $pos\in\mathbb{R}$: Token position.
+- Hyperparams:
+    - $i$: Embedding dimension index.
+    - $d_{\text{model}}$: Embedding dimension.
 ```
 
-**What**: An effective & efficient variation of self-attention.
-
-**Why**:
-- The end goal is **Attention** - "Which parts of the sentence should we focus on?"
-- We want to **capture the most relevant info** in the sentence.
-- And we also want to **keep track of all info** in the sentence as well, just with different weights.
-- We want to create **contextualized representations** of the sentence.
-- Therefore, attention mechanism - we want to assign different attention scores to each token.
-
-**When**:
-- **linearity**: Relationship between tokens can be captured via linear transformation.
-- **Position independence**: Relationship between tokens are independent of positions (fixed by Positional Encoding).
-
-**How**:
-
-$$
-\text{Attention}(Q,K,V)=\text{softmax}(\frac{QK^T}{\sqrt{d_k}})V
-$$
-
-- Preliminaries:
-    - **Query (Q)**: a **question** about a token - "How important is this token in the context of the whole sentence?"
-    - **Key (K)**: a piece of **unique identifier** about a token - "Here's something unique about this token."
-    - **Value (V)**: the **actual meaning** of a token - "Here's the content about this token."
-- Procedure:
-    1. **Compare the similarity** between the **Q** of one word and the **K** of every other word.
-        - The more similar, the more attention we should give to that word for the queried word.
-    2. **Scale down** by $ \sqrt{d_k} $ to avoid the similarity scores being too large.
-        - Dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients.
-        - They grow large because, if $ q,k\sim N(0,1)$, then $qk=\sum_{i=1}^{d_k}q_ik_i\sim N(0,d_k) $.
-    3. Convert the attention scores into a **probability distribution**.
-        - Softmax sums up to 1 and emphasizes important attention weights (and reduces the impact of negligible ones).
-    4. Calculate the **weighted combination** of all words, for each queried word, as the final attention score.
-
-**Pros**:
-- significantly higher computational efficiency (time & space) than additive attention
-
-**Cons**:
-- outperformed by additive attention if without scaling for large values of $ d_k $
-
-
-
-## Multi-Head Attention
-
-```{image} ../images/mha.png
-:width: 300
-:align: center
+```{admonition} Q&A
+:class: tip, dropdown
+*Cons?*
+- No params $\rightarrow$ No learning of task-specific position patterns.
+- Requires uniform token importance across the sequence. {cite:p}`vaswani2017attention`
+- Cannot capture complex, relative, or local positional relationships.
 ```
 
-**What**: A combination of multiple scaled dot-product attention heads in parallel.
-- Masked MHA: mask the succeeding tokens off because they can't be seen during decoding.
+<br><br>
 
-**Why**: To allow the model to jointly attend to info from different representation subspaces at different positions.
-
-**When**: The assumption of independence of attention heads holds.
-
-**How**:
-
-$$\begin{align*}
-\text{MultiHead}(Q,K,V)&=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W^O \\\\
-\text{head}_i&=\text{Attention}(QW_i^Q,KW_i^K,VW_i^V)
-\end{align*}$$
-
-- $ W_i^Q\in\mathbb{R}^{d_\text{model}\times d_k},W_i^K\in\mathbb{R}^{d_\text{model}\times d_k},W_i^V\in\mathbb{R}^{d_\text{model}\times d_v} $: learnable linear projection params.
-- $ W^O\in\mathbb{R}^{d_\text{model}\times hd_v} $: learnable linear combination weights.
-- $ h=8, d_k=d_v=\frac{d_\text{model}}{h}=64 $ in the original paper.
-
-**Pros**:
-- better performance than single head
-
-**Cons**: ???
-
-## Postion-wise Feed-Forward Networks
-**What**: 2 linear transformations with ReLU in between.
-
-**Why**: Just like 2 convolutions with kernel size 1.
-
-**How**:
-
-$$
-\text{FFN}(x)=\max(0,xW_1+b_1)W_2+b_2
-$$
-
-- $ d_\text{model}=512 $
-- $ d_\text{FF}=2048 $
-
-<!-- # Transformer
-## Positional Encoding
 ## Attention
 ### Self-Attention
-### Multi-Head Attention -->
+- **What**: Each element in the sequence pays attention to each other.
+- **Why**: **Long-range dependencies** + **Parallel processing**
+- **How**:
+    1. All elements $\rightarrow$ QKV
+        - Q: What are you looking for?
+        - K: What are your keywords for search?
+        - V: What info do you have?
+    2. For each token T:
+        1. T's Query & All Keys $\rightarrow$ Relevance scores
+        2. $\rightarrow$ Attention weights
+        3. $\rightarrow$ Weighted sum of T's Value (i.e., T's contextual representation)
+
+```{dropdown} ELI5
+You are in a top AI conference.
+
+Each guy is an element.
+
+You have some dumb question in mind. (Q)
+
+Each guy has their badges and posters with titles and metadata. (K)
+
+Each guy knows the details of their projects. (V)
+
+You walk around & check out the whole venue.
+
+You see topics that you don't really care. You skim & skip.
+
+You see topics that are related to your question. You talk to the guys to learn more.
+
+You see topics that you are obsessed with. You ask the guys a billion follow-up questions and memorize every single technical detail of their Github implementation.
+
+The conference ends.
+
+You have learnt something about everything, but not everything weighs the same in your heart.
+```
+
+```{admonition} Math
+:class: note, dropdown
+Scaled Dot-Product Attention:
+
+$$
+\text{Attention}(Q,K,V)=\text{softmax}\left(\frac{QK^T}{\sqrt{d_K}}\right)V
+$$
+- Input:
+    - $X\in\mathbb{R}^{m\times n}$: Input sequence
+- Params:
+    - $W_Q\in\mathbb{R}^{n\times d_K}$: Weight matrix for Q.
+    - $W_K\in\mathbb{R}^{n\times d_K}$: Weight matrix for K.
+    - $W_V\in\mathbb{R}^{n\times d_V}$: Weight matrix for V.
+- Hyperparams:
+    - $m$: #Tokens.
+    - $n$: #Features/Hidden size.
+    - $d_K$: Hidden size of Q & K.
+        - Q & K share the same hidden size for matrix multiplication.
+    - $d_V$: Hidden size of V.
+- Intermediate values:
+    - $Q=XW_Q\in\mathbb{R}^{m\times d_K}$: Q vectors for all elems.
+    - $K=XW_K\in\mathbb{R}^{m\times d_K}$: K vectors for all elems.
+    - $V=XW_V\in\mathbb{R}^{m\times d_V}$: V vectors for all elems.
+```
+
+```{admonition} Derivation (Backprop)
+:class: important, dropdown
+Notations:
+- $S=\frac{QK^T}{\sqrt{d_K}}$
+- $A=\text{softmax}(S)$
+- $Y=AV$
+
+STEP 1 - V:
+
+$$
+\frac{\partial L}{\partial V}=A^T\frac{\partial L}{\partial Y}
+$$
+
+STEP 2 - A:
+
+$$
+\frac{\partial L}{\partial A}=\frac{\partial L}{\partial Y}V^T
+$$
+
+STEP 3 - S:
+
+- Recall that for $\mathbf{a}=\text{softmax}(\mathbf{s})$:
+
+    $$
+    \frac{\partial a_i}{\partial s_j}=a_i(\delta_{ij}-a_j)
+    $$
+
+    where $\delta_{ij}=1\text{ if }i=j\text{ else }0$.
+
+- For each row $i$ of $S$:
+
+    $$\begin{align*}
+    \frac{\partial L}{\partial S_{ij}}&=\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}\frac{\partial A_{ik}}{\partial S_{ij}} \\
+    &=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k\neq j}\frac{\partial L}{\partial A_{ik}}A_{ik} \\
+    &=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}A_{ik}
+    \end{align*}$$
+
+STEP 4 - Q&K:
+
+$$\begin{align*}
+&\frac{\partial L}{\partial Q}=\frac{\partial L}{\partial S}\frac{K}{\sqrt{d_K}} \\
+&\frac{\partial L}{\partial K}=\frac{\partial L}{\partial S}^T\frac{Q}{\sqrt{d_K}}
+\end{align*}$$
+
+STEP 5 - Ws:
+
+$$\begin{align*}
+&\frac{\partial L}{\partial W_Q}=X^T\frac{\partial L}{\partial Q}\\
+&\frac{\partial L}{\partial W_K}=X^T\frac{\partial L}{\partial K}\\
+&\frac{\partial L}{\partial W_V}=X^T\frac{\partial L}{\partial V}
+\end{align*}$$
+
+STEP 6 - X:
+
+$$
+\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Q}W_Q^T+\frac{\partial L}{\partial K}W_K^T+\frac{\partial L}{\partial V}W_V^T
+$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Cons?*
+- ⬆️ Computational cost $\leftarrow$ $O(n^2)$ (?)
+- Fixed sequence length.
+
+*Why scale?*
+1. Dot product scales with dimension size.
+2. Assume elements follow $\mathcal{N}(0,1)$, then dot product follows $\mathcal{N}(0,d_K)$.
+3. Scaling normalizes this variance.
+    
+*Why softmax?*
+- Scores $\rightarrow$ Probability distribution
+    - All weights > 0.
+    - All weights sum to 1.
+- Score margins are amplified $\rightarrow$ More attention to relevant elements
+```
+
+### Masked/Causal Attention
+- **What**: Self-attention BUT each token can only see its previous tokens (and itself).
+- **Why**: Autoregressive generation.
+- **How**: For each token, mask attention scores of all future tokens to $-\infty$ before softmax.
+    - $\text{softmax}(-\infty)$=0
+
+```{admonition} Math
+:class: note, dropdown
+Causal Attention:
+
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + M\right)V
+$$
+- $M\in\mathbb{R}^{m\times m}$: Mask matrix
+    - $M_{ij}=0\text{ if }i\geq j$ else $-\infty$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Conditions?*
+- Only applicable in decoder.
+    - Main goal of encoder: convert sequence into a meaningful representation.
+    - Main goal of decoder: predict next token.
+
+*Cons?*
+- Unidirectional context.
+- Limited context for early tokens.
+    - Token 1 only sees 1 token.
+    - Token 2 only sees 2 tokens.
+    - ...
+```
+
+### Cross Attention
+- **What**: Scaled Dot-Product Attention BUT
+    - K&V $\leftarrow$ Source (e.g., Encoder)
+    - Q $\leftarrow$ Current sequence (i.e., Decoder)
+- **Why**: Additional source info may be helpful for predicting next token for current sequence.
+- **How**: See [Self-Attention](#self-attention).
+
+### Multi-Head Attention
+- **What**: Multiple self-attention modules running in parallel.
+- **Why**:
+    - $1$ attention module $\xrightarrow{\text{monitor}}$ $1$ representation subspace
+    - Language is complex: morphology, syntax, semantics, context, ...
+    - $h$ attention modules $\xrightarrow{\text{monitor}}$ $h$ representation subspaces
+- **How**: Each head $\xrightarrow{\text{self-attention}}$ Each output $\xrightarrow{\text{concatenate}}$ All outputs $\xrightarrow{\text{linear transform}}$ Final output
+
+```{admonition} Math
+:class: note, dropdown
+MHA:
+
+$$
+\text{MultiHead}(Q,K,V)=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W_O
+$$
+- Params:
+    - $W_O$: Weight matrix to transform concatenated head outputs.
+- Hyperparams:
+    - $h$: #Heads.
+- Intermediate values:
+    - $\text{head}_i\in\mathbb{R}^{m\times d_V}$: Weighted representation of input sequence from the $i$th head.
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Cons?*
+- ⬆️ Computational cost
+- ⬇️ Interpretability
+- Redundancy $\leftarrow$ some heads may learn similar patterns
+```
 
 # Convolutional
 - **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
