@@ -382,8 +382,42 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Activations</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#activation">Activation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-like">Binary-like</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sigmoid">Sigmoid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tanh">Tanh</a></li>
 </ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-rectified">Linear Units (Rectified)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relu">ReLU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lrelu">LReLU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prelu">PReLU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rrelu">RReLU</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-exponential">Linear Units (Exponential)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elu">ELU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#selu">SELU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#celu">CELU</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-others">Linear Units (Others)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gelu">GELU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#silu">SiLU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softplus">Softplus</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiclass">Multiclass</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmin">Softmin</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Softmax</a></li>
+</ul>
+</li>
+</ul>
+
             </nav>
         </div>
     </div>
@@ -397,8 +431,367 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="activations">
 <h1>Activations<a class="headerlink" href="#activations" title="Link to this heading">#</a></h1>
 <p>Activation functions adds non-linearity to enable layers to learn complex patterns.</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="activation">
+<h1>Activation<a class="headerlink" href="#activation" title="Link to this heading">#</a></h1>
+<p>An activation function adds nonlinearity to the output of a layer to enhance complexity. <a class="reference internal" href="#relu"><span class="xref myst">ReLU</span></a> and <a class="reference internal" href="#softmax"><span class="xref myst">Softmax</span></a> are SOTA.</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\( z \)</span>: input (element-wise)</p></li>
+</ul>
+<section id="binary-like">
+<h2>Binary-like<a class="headerlink" href="#binary-like" title="Link to this heading">#</a></h2>
+<section id="sigmoid">
+<h3>Sigmoid<a class="headerlink" href="#sigmoid" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\sigma(z)=\frac{1}{1+e^{-z}}
+\]</div>
+<p>Idea:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\( \sigma(z)\in(0,1)\)</span> and <span class="math notranslate nohighlight">\(\sigma(0)=0.5 \)</span>.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>imitation of the firing rate of a neuron, 0 if too negative and 1 if too positive.</p></li>
+<li><p>smooth gradient.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>vanishing gradient: gradients rapidly shrink to 0 along backprop as long as any input is too positive or too negative.</p></li>
+<li><p>non-zero centric bias <span class="math notranslate nohighlight">\( \rightarrow \)</span> non-zero mean activations.</p></li>
+<li><p>computationally expensive.</p></li>
+</ul>
+</section>
+<section id="tanh">
+<h3>Tanh<a class="headerlink" href="#tanh" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
+\]</div>
+<p>Idea:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\( \tanh(z)\in(-1,1)\)</span> and <span class="math notranslate nohighlight">\(\tanh(0)=0 \)</span>.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>zero-centered</p></li>
+<li><p>imitation of the firing rate of a neuron, -1 if too negative and 1 if too positive.</p></li>
+<li><p>smooth gradient.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>vanishing gradient.</p></li>
+<li><p>computationally expensive.</p></li>
+</ul>
+</section>
+</section>
+<section id="linear-units-rectified">
+<h2>Linear Units (Rectified)<a class="headerlink" href="#linear-units-rectified" title="Link to this heading">#</a></h2>
+<section id="relu">
+<h3>ReLU<a class="headerlink" href="#relu" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{ReLU}(z)=\max{(0,z)}
+\]</div>
+<p>Name: Rectified Linear Unit</p>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>convert negative linear outputs to 0.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>no vanishing gradient</p></li>
+<li><p>activate fewer neurons</p></li>
+<li><p>much less computationally expensive compared to sigmoid and tanh.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>dying ReLU: if most inputs are negative, then most neurons output 0 <span class="math notranslate nohighlight">\( \rightarrow\)</span> no gradient for such neurons <span class="math notranslate nohighlight">\(\rightarrow\)</span> no param update <span class="math notranslate nohighlight">\(\rightarrow \)</span> they die. (NOTE: A SOLVABLE DISADVANTAGE)</p>
+<ul>
+<li><p>Cause 1: high learning rate <span class="math notranslate nohighlight">\( \rightarrow\)</span> too much subtraction in param update <span class="math notranslate nohighlight">\(\rightarrow\)</span> weight too negative <span class="math notranslate nohighlight">\(\rightarrow \)</span> input for neuron too negative.</p></li>
+<li><p>Cause 2: bias too negative <span class="math notranslate nohighlight">\( \rightarrow \)</span> input for neuron too negative.</p></li>
+</ul>
+</li>
+<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>. (NOTE: NOT A SEVERE DISADVANTAGE SO FAR)</p></li>
+</ul>
+</section>
+<section id="lrelu">
+<h3>LReLU<a class="headerlink" href="#lrelu" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{LReLU}(z)=\max{(\alpha z,z)}
+\]</div>
+<p>Name: Leaky Rectified Linear Unit</p>
+<p>Params:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\( \alpha\in(0,1) \)</span>: hyperparam (negative slope), default 0.01.</p></li>
+</ul>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>scale negative linear outputs by <span class="math notranslate nohighlight">\( \alpha \)</span>.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>no dying ReLU.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>slightly more computationally expensive than ReLU.</p></li>
+<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
+</ul>
+</section>
+<section id="prelu">
+<h3>PReLU<a class="headerlink" href="#prelu" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{PReLU}(z)=\max{(\alpha z,z)}
+\]</div>
+<p>Name: Parametric Rectified Linear Unit</p>
+<p>Params:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\( \alpha\in(0,1) \)</span>: learnable param (negative slope), default 0.25.</p></li>
+</ul>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>scale negative linear outputs by a learnable <span class="math notranslate nohighlight">\( \alpha \)</span>.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>a variable, adaptive param learned from data.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>slightly more computationally expensive than LReLU.</p></li>
+<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
+</ul>
+</section>
+<section id="rrelu">
+<h3>RReLU<a class="headerlink" href="#rrelu" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{RReLU}(z)=\max{(\alpha z,z)}
+\]</div>
+<p>Name: Randomized Rectified Linear Unit</p>
+<p>Params:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\( \alpha\sim\mathrm{Uniform}(l,u) \)</span>: a random number sampled from a uniform distribution.</p></li>
+<li><p><span class="math notranslate nohighlight">\( l,u \)</span>: hyperparams (lower bound, upper bound)</p></li>
+</ul>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>scale negative linear outputs by a random <span class="math notranslate nohighlight">\( \alpha \)</span>.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>reduce overfitting by randomization.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>slightly more computationally expensive than LReLU.</p></li>
+<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
+</ul>
+</section>
+</section>
+<section id="linear-units-exponential">
+<h2>Linear Units (Exponential)<a class="headerlink" href="#linear-units-exponential" title="Link to this heading">#</a></h2>
+<section id="elu">
+<h3>ELU<a class="headerlink" href="#elu" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathrm{ELU}(z)=\begin{cases}
+z &amp; \mathrm{if}\ z\geq0 \\\\
+\alpha(e^z-1) &amp; \mathrm{if}\ z&lt;0
+\end{cases}
+\end{split}\]</div>
+<p>Name: Exponential Linear Unit</p>
+<p>Params:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\( \alpha \)</span>: hyperparam, default 1.</p></li>
+</ul>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>convert negative linear outputs to the non-linear exponential function above.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>mean unit activation is closer to 0 <span class="math notranslate nohighlight">\( \rightarrow \)</span> reduce bias shift (i.e., non-zero mean activation is intrinsically a bias for the next layer.)</p></li>
+<li><p>lower computational complexity compared to batch normalization.</p></li>
+<li><p>smooth to <span class="math notranslate nohighlight">\( -\alpha \)</span> slowly with smaller derivatives that decrease forwardprop variation.</p></li>
+<li><p>faster learning and higher accuracy for image classification in practice.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>slightly more computationally expensive than ReLU.</p></li>
+<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
+</ul>
+</section>
+<section id="selu">
+<h3>SELU<a class="headerlink" href="#selu" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathrm{SELU}(z)=\lambda\begin{cases}
+z &amp; \mathrm{if}\ z\geq0 \\
+\alpha(e^z-1) &amp; \mathrm{if}\ z&lt;0
+\end{cases}
+\end{split}\]</div>
+<p>Name: Scaled Exponential Linear Unit</p>
+<p>Params:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\( \alpha \)</span>: hyperparam, default 1.67326.</p></li>
+<li><p><span class="math notranslate nohighlight">\( \lambda \)</span>: hyperparam (scale), default 1.05070.</p></li>
+</ul>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>scale ELU.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>self-normalization <span class="math notranslate nohighlight">\( \rightarrow \)</span> activations close to zero mean and unit variance that are propagated through many network layers will converge towards zero mean and unit variance.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>more computationally expensive than ReLU.</p></li>
+<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
+</ul>
+</section>
+<section id="celu">
+<h3>CELU<a class="headerlink" href="#celu" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathrm{CELU}(z)=\begin{cases}
+z &amp; \mathrm{if}\ z\geq0\\
+\alpha(e^{\frac{z}{\alpha}}-1) &amp; \mathrm{if}\ z&lt;0
+\end{cases}
+\end{split}\]</div>
+<p>Name: Continuously Differentiable Exponential Linear Unit</p>
+<p>Params:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\( \alpha \)</span>: hyperparam, default 1.</p></li>
+</ul>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>scale the exponential part of ELU with <span class="math notranslate nohighlight">\( \frac{1}{\alpha} \)</span> to make it continuously differentiable.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>smooth gradient due to continuous differentiability (i.e., <span class="math notranslate nohighlight">\( \mathrm{CELU}'(0)=1 \)</span>).</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>slightly more computationally expensive than ELU.</p></li>
+<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
+</ul>
+</section>
+</section>
+<section id="linear-units-others">
+<h2>Linear Units (Others)<a class="headerlink" href="#linear-units-others" title="Link to this heading">#</a></h2>
+<section id="gelu">
+<h3>GELU<a class="headerlink" href="#gelu" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{GELU}(z)=z*\Phi(z)=0.5z(1+\tanh{[\sqrt{\frac{2}{\pi}}(z+0.044715z^3)]})
+\]</div>
+<p>Name: Gaussian Error Linear Unit</p>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>weigh each output value by its Gaussian cdf.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>throw away gate structure and add probabilistic-ish feature to neuron outputs.</p></li>
+<li><p>seemingly better performance than the ReLU and ELU families, SOTA in transformers.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>slightly more computationally expensive than ReLU.</p></li>
+<li><p>lack of practical testing at the moment.</p></li>
+</ul>
+</section>
+<section id="silu">
+<h3>SiLU<a class="headerlink" href="#silu" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{SiLU}(z)=z*\sigma(z)
+\]</div>
+<p>Name: Sigmoid Linear Unit</p>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>weigh each output value by its sigmoid value.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>throw away gate structure.</p></li>
+<li><p>seemingly better performance than the ReLU and ELU families.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>worse than GELU.</p></li>
+</ul>
+</section>
+<section id="softplus">
+<h3>Softplus<a class="headerlink" href="#softplus" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{softplus}(z)=\frac{1}{\beta}\log{(1+e^{\beta z})}
+\]</div>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>smooth approximation of ReLU.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>differentiable and thus theoretically better than ReLU.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>empirically far worse than ReLU in terms of computation and performance.</p></li>
+</ul>
+</section>
+</section>
+<section id="multiclass">
+<h2>Multiclass<a class="headerlink" href="#multiclass" title="Link to this heading">#</a></h2>
 <section id="softmax">
-<h2>Softmax<a class="headerlink" href="#softmax" title="Link to this heading">#</a></h2>
+<h3>Softmax<a class="headerlink" href="#softmax" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{softmax}(z_i)=\frac{\exp{(z_i)}}{\sum_j{\exp{(z_j)}}}
+\]</div>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>convert each value <span class="math notranslate nohighlight">\( z_i\)</span> in the output tensor <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> into its corresponding exponential probability s.t. <span class="math notranslate nohighlight">\(\sum_i{\mathrm{softmax}(z_i)}=1 \)</span>.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>your single best choice for multiclass classification.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>mutually exclusive classes (i.e., one input can only be classified into one class.)</p></li>
+</ul>
+</section>
+<section id="softmin">
+<h3>Softmin<a class="headerlink" href="#softmin" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{softmin}(z_i)=\mathrm{softmax}(-z_i)=\frac{\exp{(-z_i)}}{\sum_j{\exp{(-z_j)}}}
+\]</div>
+<p>Idea:</p>
+<ul class="simple">
+<li><p>reverse softmax.</p></li>
+</ul>
+<p>Pros:</p>
+<ul class="simple">
+<li><p>suitable for multiclass classification.</p></li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li><p>why not softmax.</p></li>
+</ul>
+</section>
+</section>
+<section id="id1">
+<h2>Softmax<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Raw logits -&gt; Probabilities.</p></li>
 <li><p><strong>Why</strong>: Provides a <strong>probability distribution</strong> for <strong>multi-class classification</strong>.</p></li>
@@ -525,8 +918,42 @@ g_{x_j}=y_j(g_{y_j}-\mathbf{g}\mathbf{y})
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Activations</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#activation">Activation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-like">Binary-like</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sigmoid">Sigmoid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tanh">Tanh</a></li>
 </ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-rectified">Linear Units (Rectified)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relu">ReLU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lrelu">LReLU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prelu">PReLU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rrelu">RReLU</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-exponential">Linear Units (Exponential)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elu">ELU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#selu">SELU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#celu">CELU</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-others">Linear Units (Others)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gelu">GELU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#silu">SiLU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softplus">Softplus</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiclass">Multiclass</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmin">Softmin</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Softmax</a></li>
+</ul>
+</li>
+</ul>
+
   </nav></div>
 
 </div></div>

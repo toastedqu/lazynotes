@@ -31,13 +31,13 @@ kernelspec:
 
 <br><br>
 
-# Input
-## Tokenization
+## Input
+### Tokenization
 - **What**: Sequence $\xrightarrow{\text{split}}$ Tokens
 - **Why**: Machines can only read numbers.
 - **How**: (tbd)
 
-## Token Embedding
+### Token Embedding
 - **What**: Tokens $\rightarrow$ Semantic vectors.
 - **Why**:
 	- Discrete $\rightarrow$ Continuous
@@ -45,14 +45,14 @@ kernelspec:
 	- Vocab size $\xrightarrow{\text{reduced to}}$ hidden size
 - **How**: Look-up table / [Linear](../basics.md#linear).
 
-## Positional Encoding
+### Positional Encoding
 - **What**: Semantic vectors $\xrightarrow{+\text{positional info}}$ Position-aware vectors
 - **Why**:
 	- Transformers don't know positions.
 	- BUT positions matter!
 		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
 
-### Sinusoidal PE
+#### Sinusoidal PE
 - **What**: Positional info $\rightarrow$ Sine waves
 - **Why**:
 	- Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
@@ -84,8 +84,8 @@ $$\begin{align*}
 
 <br><br>
 
-# Attention
-## Self-Attention
+## Attention
+### Self-Attention
 - **What**: Each element in the sequence pays attention to each other.
 - **Why**: **Long-range dependencies** + **Parallel processing**
 - **How**:
@@ -137,7 +137,7 @@ $$
 	- $W_V\in\mathbb{R}^{n\times d_V}$: Weight matrix for V.
 - Hyperparams:
 	- $m$: #Tokens.
-	- $n$: #Features/Hidden size.
+	- $n$: Hidden size.
 	- $d_K$: Hidden size of Q & K.
 		- Q & K share the same hidden size for matrix multiplication.
 	- $d_V$: Hidden size of V.
@@ -224,7 +224,7 @@ $$
 - Score margins are amplified $\rightarrow$ More attention to relevant elements
 ```
 
-## Masked/Causal Attention
+### Masked/Causal Attention
 - **What**: Self-attention BUT each token can only see its previous tokens (and itself).
 - **Why**: Autoregressive generation.
 - **How**: For each token, mask attention scores of all future tokens to $-\infty$ before softmax.
@@ -256,14 +256,14 @@ $$
 	- ...
 ```
 
-## Cross Attention
+### Cross Attention
 - **What**: Scaled Dot-Product Attention BUT
 	- K&V $\leftarrow$ Source (e.g., Encoder)
 	- Q $\leftarrow$ Current sequence (i.e., Decoder)
 - **Why**: Additional source info may be helpful for predicting next token for current sequence.
 - **How**: See [Self-Attention](#self-attention).
 
-## Multi-Head Attention
+### Multi-Head Attention
 - **What**: Multiple self-attention modules running in parallel.
 - **Why**:
 	- $1$ attention module $\xrightarrow{\text{monitor}}$ $1$ representation subspace

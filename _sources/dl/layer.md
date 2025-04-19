@@ -22,14 +22,37 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 - **Why**: The simplest way to transform data & learn patterns.
 - **How**: input features * weights (+ bias).
 
-```{admonition} Math
+````{admonition} Math
 :class: note, dropdown
+:class: note, dropdown
+```{tab} Vector
+**Notations**:
+- IO:
+    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
+    - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
+- Params:
+    - $W\in\mathbb{R}^{H_{out}\times H_{in}}$: Weight matrix.
+    - $\textbf{b}\in\mathbb{R}^{H_{out}}$: Bias vector.
+- Hyperparams:
+    - $H_{in}$: Input feature dimension.
+    - $H_{out}$: Output feature dimension.
+
 **Forward**:
 
 $$
-\textbf{Y}=\textbf{X}W^T+\textbf{b}
+\textbf{y}=W\textbf{x}+\textbf{b}
 $$
 
+**Backward**:
+
+$$\begin{align*}
+&\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}\textbf{x}^T \\
+&\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\textbf{g}\\
+&\frac{\partial\mathcal{L}}{\partial\textbf{x}}=W^T\textbf{g}
+\end{align*}$$
+```
+```{tab} Tensor
+**Notations**:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
     - $\mathbf{Y}\in\mathbb{R}^{*\times H_{out}}$: Output tensor.
@@ -40,6 +63,12 @@ $$
     - $H_{in}$: Input feature dimension.
     - $H_{out}$: Output feature dimension.
 
+**Forward**:
+
+$$
+\textbf{Y}=\textbf{X}W^T+\textbf{b}
+$$
+
 **Backward**:
 
 $$\begin{align*}
@@ -47,7 +76,7 @@ $$\begin{align*}
 &\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\sum_*\textbf{g}_*\\
 &\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
 \end{align*}$$
-```
+````
 
 
 ## Dropout
@@ -57,13 +86,32 @@ $$\begin{align*}
     1. Randomly set a fraction of neurons to 0.
     2. Scale the outputs/gradients on active neurons by the keep probability.
 
-```{admonition} Math
+````{admonition} Math
 :class: note, dropdown
+```{tab} Vector
+**Notations**:
+- IO:
+    - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
+    - $\mathbf{y}\in\mathbb{R}^{H_{in}}$: Output vector.
+- Hyperparams:
+    - $p$: Keep probability.
+- Intermediate values:
+    - $\textbf{m}\in\mathbb{R}^{H_{in}}$: binary mask, where each element $m\sim\text{Bernoulli}(p)$.
+
 **Forward**:
 
 $$
-\textbf{Y}=\frac{\textbf{M}\odot\textbf{X}}{p}
+\textbf{y}=\frac{\textbf{m}\odot\textbf{x}}{p}
 $$
+
+**Backward**:
+
+$$
+\frac{\partial\mathcal{L}}{\partial\textbf{x}} = \frac{\textbf{m}\odot\textbf{g}}{p}
+$$
+```
+```{tab} Tensor
+**Notations**:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
     - $\mathbf{Y}\in\mathbb{R}^{*\times H_{in}}$: Output tensor.
@@ -72,34 +120,36 @@ $$
 - Intermediate values:
     - $\textbf{M}\in\mathbb{R}^{*\times H_{in}}$: binary mask, where each element $m\sim\text{Bernoulli}(p)$.
 
+**Forward**:
+
+$$
+\textbf{Y}=\frac{\textbf{M}\odot\textbf{X}}{p}
+$$
+
 **Backward**:
 
 $$
-\frac{\partial\mathcal{L}}{\partial\textbf{M}\odot\textbf{X}}= \frac{\mathbf{g}}{p}
+\frac{\partial\mathcal{L}}{\partial\textbf{X}} = \frac{\textbf{M}\odot\textbf{g}}{p}
 $$
 ```
+````
 
 ```{admonition} Q&A
 :class: tip, dropdown
 *Cons?*
-- ⬆️ Training time $\leftarrow$ Longer convergence
+- ⬆️Training time $\leftarrow$ Longer convergence
 - Needs Hyperparameter Tuning
 ```
 
 ## Residual Connection
-- **What**: Model the residual ($Y-X$) instead of the output ($Y$). ([paper](https://arxiv.org/pdf/1512.03385))
+- **What**: Model the residual ($Y-X$) instead of the output ($Y$).
 - **Why**: To mitigate [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
-- **How**:
-    1. Add the input $X$ to the block output $F(X)$.
-    2. If the feature dimension of $X$ and $F(X)$ doesn't match, use a shortcut linear layer on $X$ to change its feature dimension.
-- **When**: There is clear evidence of convergence failures or extreme gradient values.
-- **Where**: Inside deep NNs.
-- **Pros**: Higher performance on complex tasks.
-- **Cons**: Slightly high computational cost.
+- **How**: Add input $X$ to block output $F(X)$.
+    - If the feature dimension of $X$ and $F(X)$ doesn't match, use a shortcut linear layer on $X$ to change its feature dimension.
 
-<!-- ````{admonition} Math
+````{admonition} Math
 :class: note, dropdown
-```{tab} One sample
+```{tab} Vector
 **Notation**:
 - IO:
     - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
@@ -119,11 +169,11 @@ $$
 \frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial F(\textbf{x})}{\partial\textbf{x}})
 $$
 ```
-```{tab} Multi samples
+```{tab} Tensor
 **Notation**:
 - IO:
-    - $\mathbf{x}\in\mathbb{R}^{*\times H_{in}}$: Input vector.
-    - $\mathbf{y}\in\mathbb{R}^{*\times H_{out}}$: Output vector.
+    - $\mathbf{x}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
+    - $\mathbf{y}\in\mathbb{R}^{*\times H_{out}}$: Output tensor.
 - Hyperparams:
     - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
 
@@ -139,29 +189,22 @@ $$
 \frac{\partial\mathcal{L}}{\partial\textbf{X}}=\mathbf{g}(1+\frac{\partial F(\textbf{X})}{\partial\textbf{X}})
 $$
 ```
-```` -->
+````
+
 
 ## Normalization
 ### Batch Normalization
-- **What**: Normalize each feature across the input samples to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1502.03167))
-- **Why**: To mitigate internal covariate shift.
+- **What**: Normalize each feature across input samples to zero mean & unit variance.
+- **Why**: To mitigate [internal covariate shift](../dl/issues.md/#vanishing/internal-covariate-shift).
 - **How**:
     1. Calculate the mean and variance for each batch.
     2. Normalize the batch.
     3. Scale and shift the normalized output using learnable params.
-- **When**: Each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.
-- **Where**: Typically applied before activation functions, after linear layers & convolutional layers.
-- **Pros**:
-    - Accelerates training with higher learning rates.
-    - Reduces sensitivity to weight initialization.
-    - Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
-- **Cons**:
-    - Adds computation overhead and complexity.
-    - Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
 
-<!-- ```{admonition} Math
-:class: note, dropdown -->
-<!-- **Notation**:
+
+```{admonition} Math
+:class: note, dropdown
+**Notation**:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
     - $\mathbf{Y}\in\mathbb{R}^{m\times n}$: Output matrix.
@@ -206,10 +249,23 @@ $$
     &\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}=\sum_{i=1}^{m}\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}\cdot\left(-\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\boldsymbol{\sigma}_B^2}\cdot\left(-\frac{2}{m}\sum_{i=1}^{m}(\textbf{x}_i-\boldsymbol{\mu}_B)\right)\\
     &\frac{\partial\mathcal{L}}{\partial\textbf{x}_i}=\frac{1}{\sqrt{\boldsymbol{\sigma}_B^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial\textbf{z}_i}+\frac{2}{m}\frac{\partial\ma                                                                         thcal{L}}{\partial\boldsymbol{\sigma}_B^2}(\textbf{x}_i-\boldsymbol{\mu}_B)+\frac{1}{m}\frac{\partial\mathcal{L}}{\partial\boldsymbol{\mu}_B}\right)
     \end{align*}$$
-``` -->
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros?*
+- Accelerates training with higher learning rates.
+- Reduces sensitivity to weight initialization.
+- Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
+
+*Cons?*
+- Adds computation overhead and complexity.
+- Works best when each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.
+- Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
+```
 
 ### Layer Normalization
-- **What**: Normalize each sample across the input features to zero mean and unit variance. ([paper](https://arxiv.org/pdf/1607.06450))
+- **What**: Normalize each sample across the input features to zero mean and unit variance.
 - **Why**: Batch normalization depends on the batch size.
     - When it's too big, high computational cost.
     - When it's too small, the batch may not be representative of the underlying data distribution.
@@ -218,261 +274,81 @@ $$
     1. Calculate the mean and variance for each feature.
     2. Normalize the feature.
     3. Scale and shift the normalized output using learnable params.
-- **When**: Layer-wise statistics are more representative than batch-wise statistics.
-- **Where**: Typically applied to NLP tasks that are sensitive to batch size.
-- **Pros**:
-    - Reduces hyperparam tuning effort.
-    - High consistency during training and inference.
-    - Mitigates [vanishing/exploding gradients](#residual-connection).
-- **Cons**:
-    - Adds computation overhead and complexity.
-    - Inapplicable in CNNs due to varied statistics of spatial features.
 
-<!-- ```{admonition} Math
+```{admonition} Math
 :class: note, dropdown
 It's easy to explain with the vector form for batch normalization, but it's more intuitive to explain with the scalar form for layer normalization.
 
-- Notation
-    - IO:
-        - $x_{ij}\in\mathbb{R}$: $j$th feature value for $i$th input sample.
-        - $y_{ij}\in\mathbb{R}$: $j$th feature value for $i$th output sample.
-    - Params:
-        - $\boldsymbol{\gamma}\in\mathbb{R}^n$: Scale param.
-        - $\boldsymbol{\beta}\in\mathbb{R}^n$: Shift param.
+**Notations**:
+- IO:
+    - $x_{ij}\in\mathbb{R}$: $j$th feature value for $i$th input sample.
+    - $y_{ij}\in\mathbb{R}$: $j$th feature value for $i$th output sample.
+- Params:
+    - $\boldsymbol{\gamma}\in\mathbb{R}^n$: Scale param.
+    - $\boldsymbol{\beta}\in\mathbb{R}^n$: Shift param.
+
 **Forward**:
-    1. Calculate the mean and variance for each feature.
+1. Calculate the mean and variance for each feature.
 
-        $$\begin{align*}
-        \mu_i&=\frac{1}{n}\sum_{j=1}^{n}x_{ij}\\
-        \sigma_i^2&=\frac{1}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)^2
-        \end{align*}$$
+    $$\begin{align*}
+    \mu_i&=\frac{1}{n}\sum_{j=1}^{n}x_{ij}\\
+    \sigma_i^2&=\frac{1}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)^2
+    \end{align*}$$
 
-    2. Normalize each feature.
+2. Normalize each feature.
 
-        $$
-        z_{ij}=\frac{x_{ij}-\mu_i}{\sqrt{\sigma_i^2+\epsilon}}
-        $$
+    $$
+    z_{ij}=\frac{x_{ij}-\mu_i}{\sqrt{\sigma_i^2+\epsilon}}
+    $$
 
-        where $\epsilon$ is a small constant to avoid dividing by 0.
+    where $\epsilon$ is a small constant to avoid dividing by 0.
 
-    3. Scale and shift the normalized output.
+3. Scale and shift the normalized output.
 
-        $$
-        y_{ij}=\gamma_jz_{ij}+\beta_j
-        $$
+    $$
+    y_{ij}=\gamma_jz_{ij}+\beta_j
+    $$
+
 **Backward**:
-    1. Gradient w.r.t. params:
+1. Gradient w.r.t. params:
 
-        $$\begin{align*}
-        &\frac{\partial\mathcal{L}}{\partial\gamma_j}=\sum_{i=1}^{m}g_{ij}z_{ij}\\
-        &\frac{\partial\mathcal{L}}{\partial\beta_j}=\sum_{i=1}^{m}g_{ij}
-        \end{align*}$$
-    2. Gradient w.r.t. input:
+    $$\begin{align*}
+    &\frac{\partial\mathcal{L}}{\partial\gamma_j}=\sum_{i=1}^{m}g_{ij}z_{ij}\\
+    &\frac{\partial\mathcal{L}}{\partial\beta_j}=\sum_{i=1}^{m}g_{ij}
+    \end{align*}$$
+2. Gradient w.r.t. input:
 
-        $$\begin{align*}
-        &\frac{\partial\mathcal{L}}{\partial z_{ij}}=\gamma_jg_{ij}\\
-        &\frac{\partial\mathcal{L}}{\partial\sigma_i^2}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}(x_{ij}-\mu_i)\left(-\frac{1}{2}(\sigma_i^2+\epsilon)^{-\frac{3}{2}}\right)\\
-        &\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
-        &\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
-        \end{align*}$$
-``` -->
+    $$\begin{align*}
+    &\frac{\partial\mathcal{L}}{\partial z_{ij}}=\gamma_jg_{ij}\\
+    &\frac{\partial\mathcal{L}}{\partial\sigma_i^2}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}(x_{ij}-\mu_i)\left(-\frac{1}{2}(\sigma_i^2+\epsilon)^{-\frac{3}{2}}\right)\\
+    &\frac{\partial\mathcal{L}}{\partial\mu_i}=\sum_{j=1}^{n}\frac{\partial\mathcal{L}}{\partial z_{ij}}\cdot\left(-\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\right)+\frac{\partial\mathcal{L}}{\partial\sigma_i^2}\cdot\left(-\frac{2}{n}\sum_{j=1}^{n}(x_{ij}-\mu_i)\right)\\
+    &\frac{\partial\mathcal{L}}{x_{ij}}=\frac{1}{\sqrt{\sigma_i^2+\epsilon}}\left(\frac{\partial\mathcal{L}}{\partial z_{ij}}+\frac{2}{n}\frac{\partial\mathcal{L}}{\partial\sigma_i^2}(x_{ij}-\mu_i)+\frac{1}{n}\frac{\partial\mathcal{L}}{\partial\mu_i}\right)
+    \end{align*}$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros*:
+- Reduces hyperparam tuning effort.
+- High consistency during training and inference.
+- Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
+
+*Cons*:
+- Adds computation overhead and complexity.
+- Inapplicable in CNNs due to varied statistics of spatial features.
+```
 
 <br/>
 
-# Transformer
-```{image} ../images/transformer.png
-:width: 500
-:align: center
-```
-- **What**: **Self-attention** for sequential data.
-- **Why**: RNNs had severe limitations:
-    - **Lack of long-range dependencies**: RNNs struggled to capture long-range dependencies in sequences due to vanishing gradients.
-    - **Sequential computation**: The training for RNN was extremely slow, especially for long sequences, due to its sequential nature.
-- **How**:
-    - [Positional Encoding](#positional-encoding)
-    - [Residual Connection](#residual-connection)
-    - [Multi-Head Attention](#multi-head-attention)
-    - [Layer Normalization](#layer-normalization)
-    - [Position-wise Feed-Forward Networks](#postion-wise-feed-forward-networks)
-- **When**:
-    - There are sufficient data.
-    - There are sufficient computational resources.
-    - The data can be converted into a sequential format and processed in parallel without affecting the underlying data distribution.
-- **Where**: Widely applicable.
-- **Pros**:
-    - Long-range dependencies.
-    - Parallel processing $\rightarrow$ Lower training time compared to RNN.
-    - High scalability.
-    - Allows transfer learning.
-    - Wide range of applications.
-- **Cons**:
-    - High computational cost $\rightarrow$ $O(n^2)$, where $n$ is sequence length.
-    -
 
-**Training**:
-- **Parameters**:
-    - Encoder: $ \text{\\#params}=h\cdot d\_{\text{model}}\cdot (2d\_k+d\_v)+2\cdot d\_{\text{model}}\cdot d\_{\text{ff}} $
-    - Decoder: $ \text{\\#params}=2\cdot h\cdot d\_{\text{model}}\cdot (2d\_k+d\_v)+2\cdot d\_{\text{model}}\cdot d\_{\text{ff}} $
-- **Hyperparams**:
-    - #layers
-    - hidden size
-    - #heads
-    - learning rate (& warm-up steps)
-
-**Inference**:
-1. Process input tokens in parallel via encoder.
-2. Generate output tokens sequentially via decoder.
-
-**Pros**:
-- high computation efficiency (training & inference)
-- high performance
-- wide applicability
-
-**Cons**:
-- require sufficient computation resources
-- require sufficient large-scale data
-
-## Positional Encoding
-**What**: Positional Encoding encodes sequence order info of tokens into embeddings.
-
-**Why**: So that the model can still make use of the sequence order info since no recurrence/convolution is available for it.
-
-**Where**: After tokenization & Before feeding into model.
-
-**When**: The hypothesis that **relative positions** allow the model to learn to attend easier holds.
-
-**How**: sinusoid with wavelengths from a geometric progression from $ 2\pi$ to $10000\cdot2\pi $
-
-$$\begin{align*}
-\text{PE}\_{(pos,2i)}&=\sin(\frac{pos}{10000^{\frac{2i}{d_\text{model}}}})\\\\
-\text{PE}\_{(pos,2i+1)}&=\cos(\frac{pos}{10000^{\frac{2i}{d_\text{model}}}})
-\end{align*}$$
-
-- $ pos $: absolute position of the token
-- $ i $: dimension
-- For any fixed offset $ k$, $PE_{pos+k}$ is a linear function of $PE_{pos} $.
-
-**Pros**:
-- allow model to extrapolate to sequence lengths longer than the training sequences
-
-**Cons**: ???
-
-
-
-## Scaled Dot-Product Attention
-
-```{image} ../images/scaled_dot_product_attention.png
-:width: 200
-:align: center
-```
-
-**What**: An effective & efficient variation of self-attention.
-
-**Why**:
-- The end goal is **Attention** - "Which parts of the sentence should we focus on?"
-- We want to **capture the most relevant info** in the sentence.
-- And we also want to **keep track of all info** in the sentence as well, just with different weights.
-- We want to create **contextualized representations** of the sentence.
-- Therefore, attention mechanism - we want to assign different attention scores to each token.
-
-**When**:
-- **linearity**: Relationship between tokens can be captured via linear transformation.
-- **Position independence**: Relationship between tokens are independent of positions (fixed by Positional Encoding).
-
-**How**:
-
-$$
-\text{Attention}(Q,K,V)=\text{softmax}(\frac{QK^T}{\sqrt{d_k}})V
-$$
-
-- Preliminaries:
-    - **Query (Q)**: a **question** about a token - "How important is this token in the context of the whole sentence?"
-    - **Key (K)**: a piece of **unique identifier** about a token - "Here's something unique about this token."
-    - **Value (V)**: the **actual meaning** of a token - "Here's the content about this token."
-- Procedure:
-    1. **Compare the similarity** between the **Q** of one word and the **K** of every other word.
-        - The more similar, the more attention we should give to that word for the queried word.
-    2. **Scale down** by $ \sqrt{d_k} $ to avoid the similarity scores being too large.
-        - Dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients.
-        - They grow large because, if $ q,k\sim N(0,1)$, then $qk=\sum_{i=1}^{d_k}q_ik_i\sim N(0,d_k) $.
-    3. Convert the attention scores into a **probability distribution**.
-        - Softmax sums up to 1 and emphasizes important attention weights (and reduces the impact of negligible ones).
-    4. Calculate the **weighted combination** of all words, for each queried word, as the final attention score.
-
-**Pros**:
-- significantly higher computational efficiency (time & space) than additive attention
-
-**Cons**:
-- outperformed by additive attention if without scaling for large values of $ d_k $
-
-
-
-## Multi-Head Attention
-
-```{image} ../images/mha.png
-:width: 300
-:align: center
-```
-
-**What**: A combination of multiple scaled dot-product attention heads in parallel.
-- Masked MHA: mask the succeeding tokens off because they can't be seen during decoding.
-
-**Why**: To allow the model to jointly attend to info from different representation subspaces at different positions.
-
-**When**: The assumption of independence of attention heads holds.
-
-**How**:
-
-$$\begin{align*}
-\text{MultiHead}(Q,K,V)&=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W^O \\\\
-\text{head}_i&=\text{Attention}(QW_i^Q,KW_i^K,VW_i^V)
-\end{align*}$$
-
-- $ W_i^Q\in\mathbb{R}^{d_\text{model}\times d_k},W_i^K\in\mathbb{R}^{d_\text{model}\times d_k},W_i^V\in\mathbb{R}^{d_\text{model}\times d_v} $: learnable linear projection params.
-- $ W^O\in\mathbb{R}^{d_\text{model}\times hd_v} $: learnable linear combination weights.
-- $ h=8, d_k=d_v=\frac{d_\text{model}}{h}=64 $ in the original paper.
-
-**Pros**:
-- better performance than single head
-
-**Cons**: ???
-
-## Postion-wise Feed-Forward Networks
-**What**: 2 linear transformations with ReLU in between.
-
-**Why**: Just like 2 convolutions with kernel size 1.
-
-**How**:
-
-$$
-\text{FFN}(x)=\max(0,xW_1+b_1)W_2+b_2
-$$
-
-- $ d_\text{model}=512 $
-- $ d_\text{FF}=2048 $
-
-<!-- # Transformer
-## Positional Encoding
-## Attention
-### Self-Attention
-### Multi-Head Attention -->
 
 # Convolutional
 - **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
 - **Why**: To learn spatial hierarchies of features.
-- **How**: Slide multiple filters/kernel (i.e., small matrices) over the input data.
+- **How**: Slide multiple filters/kernels (i.e., small matrices) over the input data.
     - At each step, perform element-wise multiplication and summation between each filter and the scanned area, producing a feature map.
-- **When**: Used with grid-like data such as images and video frames.
-- **Where**: Computer Vision.
-- **Pros**:
-    - Translation invariance.
-    - Efficiently captures spatial hierarchies.
-- **Cons**:
-    - High computational cost for big data
-    - Requires big data to be performant.
-    - Requires extensive hyperparam tuning.
 
-<!-- ```{admonition} Math
+```{admonition} Math
 :class: note, dropdown
 **Notations**:
     - IO:
@@ -510,8 +386,20 @@ $$
     \end{align*}$$
 
     Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
-``` -->
+```
 
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros*:
+- Translation invariance.
+- Efficiently captures spatial hierarchies.
+
+*Cons*:
+- High computational cost for big data.
+- Requires big data to be performant.
+- Requires extensive hyperparam tuning.
+```
+<!-- 
 ## Depthwise Separable Convolution
 - **What**: Depthwise convolution + Pointwise convolution. ([paper](https://arxiv.org/pdf/1610.02357))
 - **Why**: To significantly reduce computational cost and #params.
@@ -521,7 +409,7 @@ $$
 - **When**: When computational efficiency and model size are crucial.
 - **Where**: [MobileNets](https://arxiv.org/pdf/1704.04861), [Xception](https://openaccess.thecvf.com/content_cvpr_2017/papers/Chollet_Xception_Deep_Learning_CVPR_2017_paper.pdf), etc.
 - **Pros**: Significantly higher computational efficiency (time & space).
-- **Cons**: Lower accuracy.
+- **Cons**: Lower accuracy. -->
 
 <!-- ```{admonition} Math
 :class: note, dropdown
@@ -576,7 +464,7 @@ $$
         \end{align*}$$
 ``` -->
 
-## Atrous/Dilated Convolution
+<!-- ## Atrous/Dilated Convolution
 - **What**: Add holes between filter elements (i.e., dilation). ([paper](https://arxiv.org/pdf/1511.07122))
 - **Why**: The filters can capture larger contextual info without increasing #params.
 - **How**: Introduce a dilation rate $r$ to determine the space between the filter elements. Then compute convolution accordingly.
@@ -586,7 +474,7 @@ $$
     - Larger receptive fields without increasing #params.
     - Captures multi-scale info without upsampling layers.
 - **Cons**:
-    - Requires very careful hyperparam tuning, or info loss.
+    - Requires very careful hyperparam tuning, or info loss. -->
 
 <!-- ```{admonition} Math
 :class: note, dropdown
