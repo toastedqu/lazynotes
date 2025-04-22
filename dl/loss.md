@@ -167,8 +167,6 @@ $$
 \mathcal{L}=-\sum_{i=1}^{m}\sum_{k=1}^{K}y_{ik}\log\hat{p}_{ik}
 $$
 
-<br/>
-
 **Gradient**:
 1. Gradient over Probability Estimates:
 
