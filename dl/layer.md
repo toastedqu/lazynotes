@@ -340,8 +340,6 @@ It's easy to explain with the vector form for batch normalization, but it's more
 
 <br/>
 
-
-
 # Convolutional
 - **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
 - **Why**: To learn spatial hierarchies of features.
