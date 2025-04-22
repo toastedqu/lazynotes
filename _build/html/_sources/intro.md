@@ -3,9 +3,15 @@
 A minimalist handbook of AI topics, focusing on intuition and theory.
 
 Each concept is structured as follows:
-- **What**: Intuition.
-- **Why**: Problem/Motivation.
-- **How**: Functionality.
+- Mandatory:
+    - **What**: Intuition.
+    - **Why**: Problem/Motivation.
+    - **How**: Functionality.
+- Optional:
+    - Analogy
+    - Math
+    - Derivation
+    - Q&A
 
 Common notations include (section-specific notations take priority):
 - $ a $: scalar / variable

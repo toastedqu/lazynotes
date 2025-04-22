@@ -21,6 +21,7 @@ parts:
   - caption: Deep Learning
     chapters:
     - file: dl/layer
+    - file: dl/loss
   - caption: LLM
     chapters:
     # - file: llm/transformer
