@@ -59,9 +59,13 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'dl/loss';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RL for LLMs" href="../llm/rl.html" />
+    <link rel="prev" title="Layer" href="layer.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -124,8 +128,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -173,11 +175,19 @@
  </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="layer.html">Layer</a></li>
+
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Loss</a></li>
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../llm/transformer.html">Transformer</a></li>
-
-
 <li class="toctree-l1"><a class="reference internal" href="../llm/rl.html">RL for LLMs</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="../llm/peft.html">PEFT</a></li>
@@ -382,10 +392,13 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Loss</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#regression">Regression</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mse-loss">MSE Loss</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mse">MSE</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#classification">Classification</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#classification">Classification</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-entropy">Cross Entropy</a></li>
+</ul>
+</li>
 </ul>
 
             </nav>
@@ -400,22 +413,262 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="loss">
 <h1>Loss<a class="headerlink" href="#loss" title="Link to this heading">#</a></h1>
-<p>A loss function is the objective of optimization (mostly minimization). It measures the discrepancy between predicted and actual targets.</p>
+<ul>
+<li><p><strong>What</strong>: The discrepancy between predicted and actual values as the optimization (i.e., minimization) objective.</p></li>
+<li><p><strong>Why</strong>: <strong>ML = Function Approximation</strong>.</p>
+<ul class="simple">
+<li><p>There is an underlying function which maps features to targets, but we don’t know what it is.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Function Approximation</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Many ways of doing it…</p>
+<ol class="arabic simple">
+<li><p><strong>Discrepancy Minimization</strong></p>
+<ul>
+<li><p>BUT how do we measure discrepancy without knowing the underlying function?</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Get samples</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Predict on samples</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Measure discrepancy over the samples</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> LOSS!</p></li>
+</ul>
+</li>
+<li><p><strong>Distribution Estimation</strong></p>
+<ul>
+<li><p>BUT how do we directly estimate the underlying data distribution with no knowledge of it?</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Get samples</p></li>
+<li><p>Distribution Estimation <span class="math notranslate nohighlight">\(\xrightarrow{become}\)</span> Likelihood Estimation</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Tune our function to maximize the likelihood of observing these samples (i.e., <strong>MLE</strong>)</p></li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>MLE &amp; Loss Minimization are essentially doing the same thing but differently.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>For each sample, measure discrepancy between predicted and actual target value.</p></li>
+<li><p>Aggregate the discrepancies over all samples (i.e., <strong>reduction</strong>).</p></li>
+</ol>
+<ul class="simple">
+<li><p>This page only uses <strong>sum reduction</strong>, for interpretability.</p></li>
+</ul>
+</li>
+</ul>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Reduction: Sum vs Mean</em></p>
+<ul class="simple">
+<li><p>Sum:</p>
+<ul>
+<li><p>Direct objective</p></li>
+<li><p>Preserves sample importance <span class="math notranslate nohighlight">\(\leftarrow\)</span> Each sample contributes its full error.</p></li>
+<li><p>Sensitive to batch size (<span class="math notranslate nohighlight">\(\propto\)</span> batch size)</p></li>
+</ul>
+</li>
+<li><p>Mean:</p>
+<ul>
+<li><p>Default objective</p></li>
+<li><p>Batch size invariance</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Optimization stability</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Awful performance when samples have uneven distributions across small batches</p></li>
+</ul>
+</li>
+<li><p>Insensitive to outliers <span class="math notranslate nohighlight">\(\rightarrow\)</span> Reduces the impact of important but rare samples</p></li>
+</ul>
+</li>
+</ul>
+</div>
 <br/>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="regression">
 <h1>Regression<a class="headerlink" href="#regression" title="Link to this heading">#</a></h1>
-<section id="mse-loss">
-<h2>MSE Loss<a class="headerlink" href="#mse-loss" title="Link to this heading">#</a></h2>
+<section id="mse">
+<h2>MSE<a class="headerlink" href="#mse" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Mean Squared Error between predicted and actual values.</p></li>
-<li><p><strong>Why</strong>:</p></li>
-<li><p><strong>How</strong></p></li>
+<li><p><strong>What</strong>: Mean Squared Error.</p></li>
+<li><p><strong>Why</strong>: Assumption: <strong>Gaussian Distribution</strong>.</p></li>
+<li><p><strong>How</strong>: Get errors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Square errors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Aggregate</p></li>
 </ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p><strong>Forward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{L}=\sum_{i=1}^{m}(y_i-\hat{y}_i)^2
+\]</div>
+<p><strong>Backward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial\mathcal{L}}{\partial\mathcal{\hat{y}_i}}=\frac{2}{m}(\hat{y}_i-y_i)
+\]</div>
+</div>
+<div class="important dropdown admonition">
+<p class="admonition-title">Derivation</p>
+<ol class="arabic">
+<li><p>Relationship between true &amp; predicted values:</p>
+<div class="math notranslate nohighlight">
+\[y_i=\hat{y}_i+\varepsilon_i\]</div>
+</li>
+<li><p>Gaussian Distribution:</p>
+<div class="math notranslate nohighlight">
+\[\varepsilon_i\sim N(0,\sigma^2)\Rightarrow y_i\sim N(\hat{y}_i,\sigma^2)\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(y_i\)</span> is a random variable ONLY because <span class="math notranslate nohighlight">\(\varepsilon_i\)</span> is a random variable. <span class="math notranslate nohighlight">\(\hat{y}_i\)</span> is deterministic.</p></li>
+</ul>
+</li>
+<li><p>MLE:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;p(y_i|\hat{y}_i)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(y_i-\hat{y}_i)}{2\sigma^2}\right) \\
+&amp;L(f)=\prod_{i=1}^mp(y_i|\hat{y}_i)\\
+&amp;\log L(f)=-\frac{m}{2}\log(2\pi\sigma^2)-\frac{1}{2\sigma^2}\sum_{i=1}^m(y_i-\hat{y}_i)^2 \\
+&amp;\arg\max_{\hat{y}_i}\log L(f)=\arg\max_{\hat{y}_i}\left(-\sum_{i=1}^m(y_i-\hat{y}_i)^2\right)=\arg\min_{\hat{y}_i}\sum_{i=1}^m(y_i-\hat{y}_i)^2
+\end{align*}\end{split}\]</div>
+<ol class="arabic simple" start="4">
+<li><p>MSE = MLE:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{L}=\sum_{i=1}^{m}(y_i-\hat{y}_i)^2
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Pros?</em></p>
+<ul class="simple">
+<li><p>Penalizes higher/lower errors more/less.</p></li>
+<li><p>Smooth <span class="math notranslate nohighlight">\(\rightarrow\)</span> Differentiable</p></li>
+<li><p>Convex <span class="math notranslate nohighlight">\(\rightarrow\)</span> Guaranteed global minimum.</p></li>
+</ul>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>Sensitive to outliers <span class="math notranslate nohighlight">\(\leftarrow\)</span> Outliers take too much gradient</p></li>
+<li><p>Scale variant.</p></li>
+</ul>
+</div>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="classification">
 <h1>Classification<a class="headerlink" href="#classification" title="Link to this heading">#</a></h1>
+<section id="cross-entropy">
+<h2>Cross Entropy<a class="headerlink" href="#cross-entropy" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Entropy of 2 probability distributions (predicted &amp; actual) crossed over each other.</p></li>
+<li><p><strong>Why</strong>: Assumption: <strong>Categorical Dsitribution</strong> (i.e., the probability of an observation belonging to each class <span class="math notranslate nohighlight">\(k\)</span>).</p></li>
+<li><p><strong>How</strong>: Get cross entropy per sample <span class="math notranslate nohighlight">\(\rightarrow\)</span> Aggregate</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p><strong>Forward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{L}=-\sum_{i=1}^{m}\sum_{k=1}^{K}y_{ik}\log\hat{p}_{ik}
+\]</div>
+<p><strong>Backward</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\frac{\partial\mathcal{L}}{\partial\mathcal{\hat{p}_{ik}}}&amp;=-\frac{y_{ik}}{\hat{p}_{ik}}\\
+\frac{\partial\mathcal{L}}{\partial z_{ic}}&amp;=\hat{p}_{ic}-y_{ic}
+\end{align*}\end{split}\]</div>
+</div>
+<div class="important dropdown admonition">
+<p class="admonition-title">Derivation</p>
+<p><strong>Forward Formula</strong>:</p>
+<ol class="arabic">
+<li><p>Categorical Distribution:</p>
+<div class="math notranslate nohighlight">
+\[p(y=k|p_1,\cdots,p_K)=p_k\]</div>
+</li>
+<li><p>One-hot representation:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{y}_i=[0;\cdots;1;\cdots;0]\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\text{index}(1)=k\Leftrightarrow y_{ik}=1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{index}(0)\neq k \Leftrightarrow y_{i,\neg k}=1\)</span></p></li>
+</ul>
+</li>
+<li><p>Sample Likelihood:</p>
+<div class="math notranslate nohighlight">
+\[l(\hat{\mathbf{p}}_{i})=\prod_{k=1}^{K}\hat{p}_{ik}^{y_{ik}}\]</div>
+<ul class="simple">
+<li><p>Assume target label is <span class="math notranslate nohighlight">\(k'\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(k=k'\rightarrow y_{ik}=1\rightarrow \hat{p}_{ik}^{y_{ik}}=\hat{p}_{ik}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(k\neq k'\rightarrow y_{ik}=0\rightarrow \hat{p}_{ik}^{y_{ik}}=1\)</span></p></li>
+</ul>
+</li>
+<li><p>Likelihood:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+L(f)&amp;=\prod_{i=1}^{m}\prod_{k=1}^{K}\hat{p}_{ik}^{y_{ik}} \\
+\log L(f)&amp;=\sum_{i=1}^{m}\sum_{k=1}^{K}y_{ik}\log\hat{p}_{ik}
+\end{align*}\end{split}\]</div>
+<ol class="arabic simple" start="5">
+<li><p>NLL:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{L}=-\sum_{i=1}^{m}\sum_{k=1}^{K}y_{ik}\log\hat{p}_{ik}
+\]</div>
+<br/>
+<p><strong>Gradient</strong>:</p>
+<ol class="arabic simple">
+<li><p>Gradient over Probability Estimates:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial\mathcal{L}}{\partial\mathcal{\hat{p}_{k}}}=-\frac{y_{k}}{\hat{p}_{k}}
+\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Logits <span class="math notranslate nohighlight">\(\xrightarrow{\text{softmax}}\)</span> Probability Estimates:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\hat{p}_{k}=\frac{e^{z_k}}{\sum_{c=1}^{K}e^{z_c}}
+\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Derivative of softmax:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\frac{\partial\mathcal{\hat{p}_{k}}}{\partial\mathcal{z_c}}=\begin{cases}
+\hat{p}_k(1-\hat{p}_k) &amp; k=c \\
+-\hat{p}_c\hat{p}_k &amp; k\neq c
+\end{cases}
+\end{split}\]</div>
+<ol class="arabic simple" start="4">
+<li><p>Chain:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\frac{\partial\mathcal{L}}{\partial\mathcal{z_{k}}}&amp;=-\sum_{c=1}^{K}\frac{y_c}{\hat{p}_c}\frac{\partial\mathcal{\hat{p}_c}}{\partial\mathcal{z_k}} \\
+&amp;=-y_k(1-\hat{p}_k)+\sum_{c\neq k}y_c\hat{p}_k \\
+&amp;=-y_k(1-\hat{p}_k)+\hat{p}_k(1-y_k)\ \ \ \ \ \ (\Leftarrow\sum_{c=1}^{K}y_c=1)\\
+&amp;=\hat{p}_k-y_k
+\end{align*}\end{split}\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>What is Entropy?</em></p>
+<ul class="simple">
+<li><p>Degree of uncertainty in a probability distribution.</p></li>
+<li><p>⬆️Entropy <span class="math notranslate nohighlight">\(\rightarrow\)</span> More uncertain/balanced outcomes.</p></li>
+<li><p>⬇️Entropy <span class="math notranslate nohighlight">\(\rightarrow\)</span> More deterministic outcomes.</p></li>
+</ul>
+<p><em>Pros?</em></p>
+<ul class="simple">
+<li><p>Penalizes higher/lower errors more/less.</p></li>
+<li><p>Smooth <span class="math notranslate nohighlight">\(\rightarrow\)</span> Differentiable</p></li>
+<li><p>Convex <span class="math notranslate nohighlight">\(\rightarrow\)</span> Guaranteed global minimum.</p></li>
+</ul>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>Sensitive to outliers <span class="math notranslate nohighlight">\(\leftarrow\)</span> Outliers take too much gradient</p></li>
+<li><p>Scale variant.</p></li>
+</ul>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -448,6 +701,24 @@ document.write(`
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="layer.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Layer</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../llm/rl.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">RL for LLMs</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -466,10 +737,13 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Loss</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#regression">Regression</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mse-loss">MSE Loss</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mse">MSE</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#classification">Classification</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#classification">Classification</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-entropy">Cross Entropy</a></li>
+</ul>
+</li>
 </ul>
 
   </nav></div>
