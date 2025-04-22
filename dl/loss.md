@@ -110,6 +110,8 @@ $$
 - Scale variant.
 ```
 
+<br/>
+
 # Classification
 ## Cross Entropy
 - **What**: Entropy of 2 probability distributions (predicted & actual) crossed over each other.
