@@ -110,6 +110,72 @@ $$
 - Scale variant.
 ```
 
+## MAE
+- **What**: Mean Absolute Error.
+- **Why**: Assumption: **Laplace Distribution**.
+- **How**: Get errors $\rightarrow$ Absolute values $\rightarrow$ Aggregate
+
+```{admonition} Math
+:class: note, dropdown
+**Forward**:
+
+$$
+\mathcal{L}=\sum_{i=1}^{m}|y_i-\hat{y}_i|
+$$
+
+**Backward**:
+
+$$
+\frac{\partial\mathcal{L}}{\partial\mathcal{\hat{y}_i}}=\frac{1}{m}\text{sign}(\hat{y}_i-y_i)
+$$
+```
+
+```{admonition} Derivation
+:class: important, dropdown
+1. Relationship between true & predicted values:
+
+	$$y_i=\hat{y}_i+\varepsilon_i$$
+
+2. Laplace Distribution:
+
+	$$\varepsilon_i\sim \text{Laplace}(0,b)\Rightarrow y_i\sim \text{Laplace}(\hat{y}_i,b)$$
+
+	- $y_i$ is a random variable ONLY because $\varepsilon_i$ is a random variable. $\hat{y}_i$ is deterministic.
+
+3. MLE:
+
+$$\begin{align*}
+&p(y_i|\hat{y}_i)=\frac{1}{2b}\exp\left(-\frac{|y_i-\hat{y}_i|}{b}\right) \\
+&L(f)=\prod_{i=1}^mp(y_i|\hat{y}_i)\\
+&\log L(f)=-m\log(2b)-\frac{1}{b}\sum_{i=1}^m|y_i-\hat{y}_i| \\
+&\arg\max_{\hat{y}_i}\log L(f)=\arg\max_{\hat{y}_i}\left(-\sum_{i=1}^m|y_i-\hat{y}_i|\right)=\arg\min_{\hat{y}_i}\sum_{i=1}^m|y_i-\hat{y}_i|
+\end{align*}$$
+
+4. MAE = MLE:
+
+$$
+\mathcal{L}=\sum_{i=1}^{m}|y_i-\hat{y}_i|
+$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros?*
+- Robust to outliers $\leftarrow$ Equal gradient for all errors
+- More interpretable (average error magnitude).
+- Scale follows the original units.
+
+*Cons?*
+- Non-differentiable at zero $\rightarrow$ Requires subgradients
+- Constant gradient $\rightarrow$ Slower learning
+- No closed-form solution.
+```
+
+## Huber Loss
+
+
+## Quantile Loss
+
 <br/>
 
 # Classification
@@ -217,3 +283,45 @@ $$\begin{align*}
 - Sensitive to outliers $\leftarrow$ Outliers take too much gradient
 - Scale variant.
 ```
+
+## Hinge
+
+<br/>
+
+# Ranking
+
+## Contrastive
+
+
+## Triplet
+
+<br/>
+
+# Generative Model
+## Adversarial
+
+## KL Divergence
+
+## Wasserstein
+
+<br/>
+
+# Sequence Model
+## CTC
+- **What**: Connectionist Temporal Classification.
+
+<br/>
+
+# Segmentation
+## Dice
+## Jaccard (IoU)
+## GDL
+- **What**: Generalized Dice Loss.
+
+<br/>
+
+# Object Detection
+## YOLO (Composite)
+## Faster R-CNN (Composite)
+## Focal (Dense Object Detection)
+## SSD
