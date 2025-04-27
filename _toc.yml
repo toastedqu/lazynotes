@@ -29,4 +29,5 @@ parts:
     - file: llm/peft
   - caption: Misc
     chapters:
+    - file: info
     - file: references
