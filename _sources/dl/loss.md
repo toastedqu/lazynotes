@@ -291,6 +291,19 @@ $$\begin{align*}
 # Ranking
 
 ## Contrastive
+- **What**: Group similar embeddings closer & Separate dissimilar embeddings further.
+
+<!-- ```{admonition} Math
+:class: note, dropdown -->
+**Forward**:
+
+$$
+L(W, Y, X_1, X_2) = (1-Y) \frac{1}{2} (D_W)^2 + (Y) \frac{1}{2} \max(0, m - D_W)^2
+$$
+
+**Backward**:
+
+<!-- ``` -->
 
 
 ## Triplet
@@ -301,6 +314,10 @@ $$\begin{align*}
 ## Adversarial
 
 ## KL Divergence
+- **What**: Relative entropy (i.e., Cross Entropy - Entropy).
+	- How one probability distribution diverges from an expected probability distribution.
+- **Why**: To force the learned distribution to resemble the target distribution.
+- **How**: 
 
 ## Wasserstein
 
