@@ -44,4 +44,60 @@ kernelspec:
 $$
 I(x)=-\log P(x)
 $$
+- $x$: Event outcome.
+- $P$: Probability.
+- $I$: Information.
+- Units of $I(x)$:
+	- **Bits**: $\log_2$, mainly used in EECS.
+	- **Nats**: $\ln$, mainly used in Math/Stats for convenience in calculus.
+	- $1\text{ nat}=\frac{1}{\ln 2}\text{ bits}$
+```
+
+## Entropy
+- **What**: Average surprise.
+	- More/Less randomness $\rightarrow$ High/Low entropy
+- **Why**: To quantitatively measure the inherent randomness in a system/process.
+- **How**: Take the expectation of info across the probability distribution. 
+
+```{dropdown} ELI5
+*What is entropy?*
+- So somehow it wasn't sunny in Egypt last time.
+- But then it's been sunny all the time.
+- How much surprise do we expect on average?
+- Not much. We need a measure of the predictability.
+```
+
+```{admonition} Math
+:class: note, dropdown
+**Entropy**:
+
+$$
+H(X)=E_{x\sim P}[I(x)]=-\sum_xP(x)\log P(x)=-\int_{-\infty}^\infty p(x)\log p(x)dx
+$$
+- $X$: Random variable.
+- $p(x)$: PDF.
+- Properties:
+	- $H(X)\geq 0$
+	- $H(X)\leq \log N$, where $N$ is # of possible outcomes.
+		- $H(X)=\log N\text{ iff }\forall x\sim P: P(x)=\frac{1}{N}$
+	- $H(X)$ is concave.
+
+**Joint Entropy**:
+
+$$
+H(X,Y)=-\sum_x\sum_yP(x,y)\log P(x,y)
+$$
+
+**Conditional Entropy**:
+
+$$\begin{align*}
+H(Y|X)&=\sum_xP(x)H(Y|X=x) \\
+H(Y|X=x)&=-\sum_yP(y|x)\log P(y|x)
+\end{align*}$$
+
+**Chain Rule**:
+
+$$
+H(X,Y)=H(X)+H(Y|X)
+$$
 ```

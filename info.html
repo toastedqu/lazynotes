@@ -400,6 +400,7 @@ document.write(`
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Information Theory</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basics">Basics</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information">Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entropy">Entropy</a></li>
 </ul>
 </li>
 </ul>
@@ -467,6 +468,80 @@ document.write(`
 <div class="math notranslate nohighlight">
 \[
 I(x)=-\log P(x)
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(x\)</span>: Event outcome.</p></li>
+<li><p><span class="math notranslate nohighlight">\(P\)</span>: Probability.</p></li>
+<li><p><span class="math notranslate nohighlight">\(I\)</span>: Information.</p></li>
+<li><p>Units of <span class="math notranslate nohighlight">\(I(x)\)</span>:</p>
+<ul>
+<li><p><strong>Bits</strong>: <span class="math notranslate nohighlight">\(\log_2\)</span>, mainly used in EECS.</p></li>
+<li><p><strong>Nats</strong>: <span class="math notranslate nohighlight">\(\ln\)</span>, mainly used in Math/Stats for convenience in calculus.</p></li>
+<li><p><span class="math notranslate nohighlight">\(1\text{ nat}=\frac{1}{\ln 2}\text{ bits}\)</span></p></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="entropy">
+<h2>Entropy<a class="headerlink" href="#entropy" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Average surprise.</p>
+<ul>
+<li><p>More/Less randomness <span class="math notranslate nohighlight">\(\rightarrow\)</span> High/Low entropy</p></li>
+</ul>
+</li>
+<li><p><strong>Why</strong>: To quantitatively measure the inherent randomness in a system/process.</p></li>
+<li><p><strong>How</strong>: Take the expectation of info across the probability distribution.</p></li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">ELI5</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><em>What is entropy?</em></p>
+<ul class="simple">
+<li><p class="sd-card-text">So somehow it wasn’t sunny in Egypt last time.</p></li>
+<li><p class="sd-card-text">But then it’s been sunny all the time.</p></li>
+<li><p class="sd-card-text">How much surprise do we expect on average?</p></li>
+<li><p class="sd-card-text">Not much. We need a measure of the predictability.</p></li>
+</ul>
+</div>
+</details><div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p><strong>Entropy</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+H(X)=E_{x\sim P}[I(x)]=-\sum_xP(x)\log P(x)=-\int_{-\infty}^\infty p(x)\log p(x)dx
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(X\)</span>: Random variable.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p(x)\)</span>: PDF.</p></li>
+<li><p>Properties:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(H(X)\geq 0\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(H(X)\leq \log N\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is # of possible outcomes.</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(H(X)=\log N\text{ iff }\forall x\sim P: P(x)=\frac{1}{N}\)</span></p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(H(X)\)</span> is concave.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Joint Entropy</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+H(X,Y)=-\sum_x\sum_yP(x,y)\log P(x,y)
+\]</div>
+<p><strong>Conditional Entropy</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+H(Y|X)&amp;=\sum_xP(x)H(Y|X=x) \\
+H(Y|X=x)&amp;=-\sum_yP(y|x)\log P(y|x)
+\end{align*}\end{split}\]</div>
+<p><strong>Chain Rule</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+H(X,Y)=H(X)+H(Y|X)
 \]</div>
 </div>
 </section>
@@ -539,6 +614,7 @@ I(x)=-\log P(x)
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Information Theory</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basics">Basics</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information">Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entropy">Entropy</a></li>
 </ul>
 </li>
 </ul>
