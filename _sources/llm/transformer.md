@@ -18,9 +18,9 @@ kernelspec:
 - **Why**: **Long-range dependencies** + **Parallel processing**
 - **How**:
 	- Input:
-		1. **Tokenization**: Sequence $\xrightarrow{\text{split}}$ Tokens
+		1. **Tokenization**: Sequence $\rightarrow$ Tokens
 		2. **Token Embedding**: Tokens $\rightarrow$ Semantic vectors
-		3. **Positional Encoding**: Semantic vectors $\xrightarrow{+\text{positional info}}$ Position-aware vectors
+		3. **Positional Encoding**: Semantic vectors + Positional info $\rightarrow$ Position-aware vectors
 	- Attention:
 		1. **Encoder**: (Input) Position-aware vectors $\rightarrow$ (Input) Context-aware vectors
 		2. **Decoder**:
@@ -31,13 +31,13 @@ kernelspec:
 
 <br><br>
 
-## Input
-### Tokenization
-- **What**: Sequence $\xrightarrow{\text{split}}$ Tokens
+# Input
+## Tokenization
+- **What**: Sequence $\rightarrow$ Tokens
 - **Why**: Machines can only read numbers.
 - **How**: (tbd)
 
-### Token Embedding
+## Token Embedding
 - **What**: Tokens $\rightarrow$ Semantic vectors.
 - **Why**:
 	- Discrete $\rightarrow$ Continuous
@@ -45,14 +45,19 @@ kernelspec:
 	- Vocab size $\xrightarrow{\text{reduced to}}$ hidden size
 - **How**: Look-up table / [Linear](../basics.md#linear).
 
-### Positional Encoding
-- **What**: Semantic vectors $\xrightarrow{+\text{positional info}}$ Position-aware vectors
+## Positional Encoding
+- **What**: Semantic vectors + Positional info $\rightarrow$ Position-aware vectors
 - **Why**:
 	- Transformers don't know positions.
 	- BUT positions matter!
 		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
 
-#### Sinusoidal PE
+### RoPE
+- **What**: Rotation matrix $\times$ Token embeddings $\xrightarrow{\text{encode}}$ Relative Position.
+- **Why**:
+
+
+## Sinusoidal PE
 - **What**: Positional info $\rightarrow$ Sine waves
 - **Why**:
 	- Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
@@ -84,8 +89,8 @@ $$\begin{align*}
 
 <br><br>
 
-## Attention
-### Self-Attention
+# Attention
+## Self-Attention
 - **What**: Each element in the sequence pays attention to each other.
 - **Why**: **Long-range dependencies** + **Parallel processing**
 - **How**:
@@ -224,7 +229,7 @@ $$
 - Score margins are amplified $\rightarrow$ More attention to relevant elements
 ```
 
-### Masked/Causal Attention
+## Masked/Causal Attention
 - **What**: Self-attention BUT each token can only see its previous tokens (and itself).
 - **Why**: Autoregressive generation.
 - **How**: For each token, mask attention scores of all future tokens to $-\infty$ before softmax.
@@ -256,14 +261,14 @@ $$
 	- ...
 ```
 
-### Cross Attention
+## Cross Attention
 - **What**: Scaled Dot-Product Attention BUT
 	- K&V $\leftarrow$ Source (e.g., Encoder)
 	- Q $\leftarrow$ Current sequence (i.e., Decoder)
 - **Why**: Additional source info may be helpful for predicting next token for current sequence.
 - **How**: See [Self-Attention](#self-attention).
 
-### Multi-Head Attention
+## Multi-Head Attention
 - **What**: Multiple self-attention modules running in parallel.
 - **Why**:
 	- $1$ attention module $\xrightarrow{\text{monitor}}$ $1$ representation subspace
@@ -294,7 +299,7 @@ $$
 - Redundancy $\leftarrow$ some heads may learn similar patterns
 ```
 
-<!-- ## Encoder
+<!-- # Encoder
 - **What**: Sequence -> **Contextual representation**.
 - **Why**: To produce more meaningful representations (context + semantics + position).
 - **How**:
@@ -304,21 +309,21 @@ $$
 	4. [Feed-Forward Network](#feed-forward-network): Refines the representation & Captures additional complex patterns.
 - **Where**: Inference models (e.g., BERT family).
 
-### Multi-Head Attention
+## Multi-Head Attention
 
-#### Scale Dot-Product Attention
+## Scale Dot-Product Attention
 ```{image} ../../images/scaled_dot_product_attention.png
 :align: center
 :width: 250px
 ```
 
-### Residual Connection
+## Residual Connection
 
-### Layer Normalization
+## Layer Normalization
 
-### Feed-Forward Network
+## Feed-Forward Network
 
-## Decoder
+# Decoder
 - **What**: Encoded representation -> **Sequence**.
 - **Why**: To produce context-aware outputs via encoder's info & previously generated tokens.
 - **How**:
@@ -329,14 +334,14 @@ $$
 	5. [Feed-Forward Network](#feed-forward-network): Refines the representation & Captures additional complex patterns.
 - **Where**: Generative models (e.g., GPT family)
 
-### Masked Multi-Head Attention
+## Masked Multi-Head Attention
 
-### Encoder-Decoder Cross-Attention
+## Encoder-Decoder Cross-Attention
 
-## Output
+# Output
 
-### Linear
+## Linear
 See [Linear](../modules/basics.md#linear)
 
-### Softmax
+## Softmax
 See [Softmax](../modules/activations.md#softmax) -->
