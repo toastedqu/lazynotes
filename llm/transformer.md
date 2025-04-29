@@ -52,12 +52,7 @@ kernelspec:
 	- BUT positions matter!
 		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
 
-### RoPE
-- **What**: Rotation matrix $\times$ Token embeddings $\xrightarrow{\text{encode}}$ Relative Position.
-- **Why**:
-
-
-## Sinusoidal PE
+### Sinusoidal PE
 - **What**: Positional info $\rightarrow$ Sine waves
 - **Why**:
 	- Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
@@ -86,6 +81,11 @@ $$\begin{align*}
 - Requires uniform token importance across the sequence. {cite:p}`vaswani2017attention`
 - Cannot capture complex, relative, or local positional relationships.
 ```
+
+### RoPE
+- **What**: Rotation matrix $\times$ Token embeddings $\xrightarrow{\text{encode}}$ Relative Position.
+- **Why**:
+
 
 <br><br>
 
