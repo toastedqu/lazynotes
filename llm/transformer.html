@@ -402,10 +402,10 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rope">RoPE</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
@@ -505,16 +505,8 @@ document.write(`
 </ul>
 </li>
 </ul>
-<section id="rope">
-<h3>RoPE<a class="headerlink" href="#rope" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>What</strong>: Rotation matrix <span class="math notranslate nohighlight">\(\times\)</span> Token embeddings <span class="math notranslate nohighlight">\(\xrightarrow{\text{encode}}\)</span> Relative Position.</p></li>
-<li><p><strong>Why</strong>:</p></li>
-</ul>
-</section>
-</section>
 <section id="sinusoidal-pe">
-<h2>Sinusoidal PE<a class="headerlink" href="#sinusoidal-pe" title="Link to this heading">#</a></h2>
+<h3>Sinusoidal PE<a class="headerlink" href="#sinusoidal-pe" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Positional info <span class="math notranslate nohighlight">\(\rightarrow\)</span> Sine waves</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -556,7 +548,15 @@ document.write(`
 <li><p>Cannot capture complex, relative, or local positional relationships.</p></li>
 </ul>
 </div>
+</section>
+<section id="rope">
+<h3>RoPE<a class="headerlink" href="#rope" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Rotation matrix <span class="math notranslate nohighlight">\(\times\)</span> Token embeddings <span class="math notranslate nohighlight">\(\xrightarrow{\text{encode}}\)</span> Relative Position.</p></li>
+<li><p><strong>Why</strong>:</p></li>
+</ul>
 <p><br><br></p>
+</section>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="attention">
@@ -930,10 +930,10 @@ See [Softmax](../modules/activations.md#softmax) --></section>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rope">RoPE</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
