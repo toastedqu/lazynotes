@@ -15,22 +15,7 @@ kernelspec:
 ## LoRA
 - **Name**: **[Low-Rank Adaptation](https://arxiv.org/pdf/2106.09685)**
 - **What**: Injects **low-rank** matrices into the weights of specific layers, without modifying the original weights directly.
-- **Why**: #params $\downarrow$ -> Finetuning becomes more **efficient**.
-- **When**:
-	- Linear transformation dominates the model architecture.
-	- Optimal weight updates for downstream tasks lie in a low-rank subspace.
-	- Initial weights are already optimized via **pretraining** -> only **small adaptations** are required for downstream tasks.
-	- Parameter efficiency matters more than Performance (e.g., limited computational time & resources).
-- **Where**: All transformer-based models.
-- **Pros**:
-	- High parameter efficiency -> High computational efficiency.
-	- High scalability.
-	- Task-specific adaptation without modifying the original params -> No overfitting.
-- **Cons**:
-	- ONLY applicable to linear transformation.
-	- Lower performance relative to full finetuning.
-	- ONLY great performance with pretrained models.
-	- High sensitivity to hyperparameters.
+- **Why**: #params $\downarrow$ $\rightarrow$ Finetuning efficiency $\uparrow$.
 
 ```{admonition} Math
 :class: note, dropdown
@@ -59,4 +44,15 @@ $$\begin{align}
 g_{B}=\frac{\alpha}{r}g_{\Delta W}A^T \\
 g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 \end{align}$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros*:
+- No overfitting $\leftarrow$ Task-specific adaptation without modifying the original params
+
+*Cons*:
+- ONLY applicable to linear transformation.
+- ONLY great performance with pretrained models $\rightarrow$ Lower performance relative to full finetuning
+- High sensitivity to hyperparameters.
 ```

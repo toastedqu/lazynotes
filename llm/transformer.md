@@ -84,7 +84,7 @@ $$\begin{align*}
 
 ### RoPE
 - **What**: Rotation matrix $\times$ Token embeddings $\xrightarrow{\text{encode}}$ Relative Position.
-- **Why**:
+- **Why**: 
 
 
 <br><br>
