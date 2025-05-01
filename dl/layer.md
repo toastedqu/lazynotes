@@ -24,7 +24,6 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 
 ````{admonition} Math
 :class: note, dropdown
-:class: note, dropdown
 ```{tab} Vector
 **Notations**:
 - IO:
@@ -666,10 +665,9 @@ Notations:
 <br/>
 
 # Activation
-An activation function adds nonlinearity to the output of a layer to enhance complexity. [ReLU](#relu) and [Softmax](#softmax) are SOTA.
-
-Notations:
-- $ z $: input (element-wise)
+- **What**: An element-wise non-linear function over a layer's output.
+- **Why**: Non-linearity.
+    - Without it, a full NN is just simple linear regression.
 
 ## Binary-like
 
