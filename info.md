@@ -100,4 +100,10 @@ H(Y|X=x)&=-\sum_yP(y|x)\log P(y|x)
 $$
 H(X,Y)=H(X)+H(Y|X)
 $$
+
+**Mutual Info**:
+
+$$
+I(X,Y)=H(X)-H(X|Y)=H(Y)-H(Y|X)=H(X)+H(Y)-H(X,Y)
+$$
 ```
