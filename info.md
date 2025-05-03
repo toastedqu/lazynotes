@@ -107,3 +107,15 @@ $$
 I(X,Y)=H(X)-H(X|Y)=H(Y)-H(Y|X)=H(X)+H(Y)-H(X,Y)
 $$
 ```
+
+## KL Divergence
+- **What**
+
+```{admonition} Math
+:class: note, dropdown
+KL Divergence
+
+$$
+D_\text{KL}(P||Q)=\sum P(x)\log\frac{P(x)}{Q(x)}
+$$
+```
