@@ -25,7 +25,7 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 ````{admonition} Math
 :class: note, dropdown
 ```{tab} Vector
-**Notations**:
+Notations:
 - IO:
     - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
     - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
@@ -36,13 +36,13 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
     - $H_{in}$: Input feature dimension.
     - $H_{out}$: Output feature dimension.
 
-**Forward**:
+Forward:
 
 $$
 \textbf{y}=W\textbf{x}+\textbf{b}
 $$
 
-**Backward**:
+Backward:
 
 $$\begin{align*}
 &\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}\textbf{x}^T \\
@@ -51,7 +51,7 @@ $$\begin{align*}
 \end{align*}$$
 ```
 ```{tab} Tensor
-**Notations**:
+Notations:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
     - $\mathbf{Y}\in\mathbb{R}^{*\times H_{out}}$: Output tensor.
@@ -62,13 +62,13 @@ $$\begin{align*}
     - $H_{in}$: Input feature dimension.
     - $H_{out}$: Output feature dimension.
 
-**Forward**:
+Forward:
 
 $$
 \textbf{Y}=\textbf{X}W^T+\textbf{b}
 $$
 
-**Backward**:
+Backward:
 
 $$\begin{align*}
 &\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}^T\textbf{X} \\
@@ -88,7 +88,7 @@ $$\begin{align*}
 ````{admonition} Math
 :class: note, dropdown
 ```{tab} Vector
-**Notations**:
+Notations:
 - IO:
     - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
     - $\mathbf{y}\in\mathbb{R}^{H_{in}}$: Output vector.
@@ -97,20 +97,20 @@ $$\begin{align*}
 - Intermediate values:
     - $\textbf{m}\in\mathbb{R}^{H_{in}}$: binary mask, where each element $m\sim\text{Bernoulli}(p)$.
 
-**Forward**:
+Forward:
 
 $$
 \textbf{y}=\frac{\textbf{m}\odot\textbf{x}}{p}
 $$
 
-**Backward**:
+Backward:
 
 $$
 \frac{\partial\mathcal{L}}{\partial\textbf{x}} = \frac{\textbf{m}\odot\textbf{g}}{p}
 $$
 ```
 ```{tab} Tensor
-**Notations**:
+Notations:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
     - $\mathbf{Y}\in\mathbb{R}^{*\times H_{in}}$: Output tensor.
@@ -119,13 +119,13 @@ $$
 - Intermediate values:
     - $\textbf{M}\in\mathbb{R}^{*\times H_{in}}$: binary mask, where each element $m\sim\text{Bernoulli}(p)$.
 
-**Forward**:
+Forward:
 
 $$
 \textbf{Y}=\frac{\textbf{M}\odot\textbf{X}}{p}
 $$
 
-**Backward**:
+Backward:
 
 $$
 \frac{\partial\mathcal{L}}{\partial\textbf{X}} = \frac{\textbf{M}\odot\textbf{g}}{p}
@@ -156,13 +156,13 @@ $$
 - Hyperparams:
     - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
 
-**Forward**:
+Forward:
 
 $$
 \textbf{y}=F(\textbf{x})+\textbf{x}
 $$
 
-**Backward**:
+Backward:
 
 $$
 \frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial F(\textbf{x})}{\partial\textbf{x}})
@@ -176,13 +176,13 @@ $$
 - Hyperparams:
     - $F(\cdot)\in\mathbb{R}^{H_{out}}$: The aggregate function of all layers within the residual block.
 
-**Forward**:
+Forward:
 
 $$
 \textbf{Y}=F(\textbf{X})+\textbf{X}
 $$
 
-**Backward**:
+Backward:
 
 $$
 \frac{\partial\mathcal{L}}{\partial\textbf{X}}=\mathbf{g}(1+\frac{\partial F(\textbf{X})}{\partial\textbf{X}})
@@ -211,7 +211,7 @@ $$
     - $\gamma\in\mathbb{R}$: Scale param.
     - $\beta\in\mathbb{R}$: Shift param.
 
-**Forward**:
+Forward:
 1. Calculate the mean and variance for each batch.
 
     $$\begin{align*}
@@ -233,7 +233,7 @@ $$
     \textbf{y}_i=\gamma\textbf{z}_i+\beta
     $$
 
-**Backward**:
+Backward:
 1. Gradient w.r.t. params:
 
     $$\begin{align*}
@@ -278,7 +278,7 @@ $$
 :class: note, dropdown
 It's easy to explain with the vector form for batch normalization, but it's more intuitive to explain with the scalar form for layer normalization.
 
-**Notations**:
+Notations:
 - IO:
     - $x_{ij}\in\mathbb{R}$: $j$th feature value for $i$th input sample.
     - $y_{ij}\in\mathbb{R}$: $j$th feature value for $i$th output sample.
@@ -286,7 +286,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
     - $\boldsymbol{\gamma}\in\mathbb{R}^n$: Scale param.
     - $\boldsymbol{\beta}\in\mathbb{R}^n$: Shift param.
 
-**Forward**:
+Forward:
 1. Calculate the mean and variance for each feature.
 
     $$\begin{align*}
@@ -308,7 +308,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
     y_{ij}=\gamma_jz_{ij}+\beta_j
     $$
 
-**Backward**:
+Backward:
 1. Gradient w.r.t. params:
 
     $$\begin{align*}
@@ -339,7 +339,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
 
 <br/>
 
-# Convolutional
+# Convolution
 - **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
 - **Why**: To learn spatial hierarchies of features.
 - **How**: Slide multiple filters/kernels (i.e., small matrices) over the input data.
@@ -347,7 +347,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
 
 ```{admonition} Math
 :class: note, dropdown
-**Notations**:
+Notations:
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
         - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
@@ -361,7 +361,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
         - $f_h, f_w$: Filter height & width.
         - $s$: Stride size.
         - $p$: Padding size.
-**Forward**:
+Forward:
 
     $$
     Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
@@ -374,7 +374,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
     W_{out}&=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
     \end{align*}$$
 
-**Backward**:
+Backward:
 
     $$\begin{align*}
     &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
@@ -410,7 +410,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
 
 <!-- ```{admonition} Math
 :class: note, dropdown
-**Notations**:
+Notations:
     - IO:
         - $\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}$: Input volume.
         - $\mathbf{Y} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}$: Output volume.
@@ -426,7 +426,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
         - $f_h, f_w$: Filter height & width.
         - $s$: Stride size.
         - $p$: Padding size.
-**Forward**:
+Forward:
     1. Depthwise convolution: Calculate $\mathbf{Z} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{in}}$:
 
         $$
@@ -444,7 +444,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
         W_{out} &= \left\lfloor \frac{W_{in} + 2p - f_w}{s} \right\rfloor + 1
         \end{align*}$$
 
-**Backward**:
+Backward:
     1. Pointwise convolution: Let $g^{p}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Y}}$.
 
         $$\begin{align*}
@@ -475,7 +475,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
 
 <!-- ```{admonition} Math
 :class: note, dropdown
-**Notations**:
+Notations:
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
         - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
@@ -490,7 +490,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
         - $s$: Stride size.
         - $p$: Padding size.
         - $r$: Dilation rate.
-**Forward**:
+Forward:
     1. (optional) Pad input tensor: $\mathbf{X}^\text{pad}\in\mathbb{R}^{(H_{in}+2p)\times (W_{in}+2p)\times C_{in}}$
     2. Perform element-wise multiplication (i.e., convolution):
 
@@ -505,7 +505,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
         W_{out}&=\left\lfloor\frac{W_{in}+2p-r(f_w-1)-1}{s}\right\rfloor+1
         \end{align*}$$
 
-**Backward**:
+Backward:
 
     $$\begin{align*}
     &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+r(i-1)-p, sw+r(j-1)-p, c_{in}}\\
@@ -540,7 +540,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
 
 <!-- ```{admonition} Math
 :class: note, dropdown
-**Notations**:
+Notations:
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
         - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$: Output volume.
@@ -549,7 +549,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
         - $C_{in}$: #Input channels.
         - $f_h, f_w$: Filter height & width.
         - $s$: Stride size.
-**Forward**:
+Forward:
 
     $$\begin{array}{ll}
     \text{Max:} & Y_{h,w,c}=\max_{i=1,\cdots,f_h\ |\ j=1,\cdots,f_w}X_{sh+i,sw+j,c}\\
@@ -563,7 +563,7 @@ It's easy to explain with the vector form for batch normalization, but it's more
     W_{out}&=\left\lfloor\frac{W_{in}-f_h}{s}\right\rfloor+1
     \end{align*}$$
 
-**Backward**:
+Backward:
 
     $$\begin{array}{ll}
     \text{Max:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=g_{h,w,c}\text{ if }X_{sh+i,sw+j,c}=Y_{h,w,c}\\
@@ -670,24 +670,41 @@ Notations:
     - Without it, a full NN is just simple linear regression.
 
 ## Binary-like
+- **What**: Functions with near-binary outputs.
+- **Why**: Biology - Biological neurons generally:
+    - react little to small inputs
+    - react rapidly after input stimulus passes a threshold
+    - converge to a max as stimulus increases
 
 ### Sigmoid
+- **What**: Sigmoid function.
+- **Why**: Mathematically convenient $\rightarrow$ Smooth gradient.
+
+
+
+```{admonition} Math
+:class: note, dropdown
+Forward:
 
 $$
 \sigma(z)=\frac{1}{1+e^{-z}}
 $$
+-  $\sigma(z)\in(0,1)$ and $\sigma(0)=0.5 $.
 
-Idea:
--  $ \sigma(z)\in(0,1)$ and $\sigma(0)=0.5 $.
 
-Pros:
--  imitation of the firing rate of a neuron, 0 if too negative and 1 if too positive.
--  smooth gradient.
+Backward:
 
-Cons:
--  vanishing gradient: gradients rapidly shrink to 0 along backprop as long as any input is too positive or too negative.
--  non-zero centric bias $ \rightarrow $ non-zero mean activations.
--  computationally expensive.
+$$
+\frac{\partial\mathcal{L}}{\partial z}=\frac{\partial\mathcal{L}}{\partial y}y(1-y)
+$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Cons?*
+-  Vanishing gradient.
+-  Non-zero centric bias $\rightarrow$ Non-zero mean activations
+```
 
 ### Tanh
 
