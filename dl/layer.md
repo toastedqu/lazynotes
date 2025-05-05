@@ -678,18 +678,17 @@ Notations:
 
 ### Sigmoid
 - **What**: Sigmoid function.
-- **Why**: Mathematically convenient $\rightarrow$ Smooth gradient.
-
-
+- **Why**: Mathematically convenient $\leftarrow$ Smooth gradient.
 
 ```{admonition} Math
 :class: note, dropdown
 Forward:
 
 $$
-\sigma(z)=\frac{1}{1+e^{-z}}
+y=\sigma(z)=\frac{1}{1+e^{-z}}
 $$
--  $\sigma(z)\in(0,1)$ and $\sigma(0)=0.5 $.
+- $\sigma(z)\in(0,1)$
+- $\sigma(0)=0.5$
 
 
 Backward:
@@ -707,22 +706,34 @@ $$
 ```
 
 ### Tanh
+- **What**: Tanh function.
+- **Why**: Mathematically convenient $\leftarrow$ Smooth gradient.
+
+```{admonition} Math
+:class: note, dropdown
+Forward:
 
 $$
-\tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
+y=\tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
 $$
+- $\tanh(z)\in(-1,1)$
+- $\tanh(0)=0$
 
-Idea:
-- $ \tanh(z)\in(-1,1)$ and $\tanh(0)=0 $.
+Backward:
 
-Pros:
-- zero-centered
-- imitation of the firing rate of a neuron, -1 if too negative and 1 if too positive.
-- smooth gradient.
+$$
+\frac{\partial\mathcal{L}}{\partial z}=\frac{\partial\mathcal{L}}{\partial y}(1-y^2)
+$$
+```
 
-Cons:
-- vanishing gradient.
-- computationally expensive.
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros?*
+- Zero-centered.
+
+*Cons?*
+-  Vanishing gradient.
+```
 
 ## Linear Units (Rectified)
 
