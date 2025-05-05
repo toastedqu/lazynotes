@@ -9,18 +9,15 @@ kernelspec:
   language: python
   name: python3
 ---
-# Activations
-Activation functions adds non-linearity to enable layers to learn complex patterns.
-
 # Activation
-An activation function adds nonlinearity to the output of a layer to enhance complexity. [ReLU](#relu) and [Softmax](#softmax) are SOTA.
+An activation function adds nonlinearity to the output of a layer to enhance complexity.
 
-Notations:
-- $ z $: input (element-wise)
+[ReLU](#relu) and [Softmax](#softmax) are SOTA.
 
-## Binary-like
+# Binary-like
 
-### Sigmoid
+## Sigmoid
+- **What**: Sigmoid
 
 $$
 \sigma(z)=\frac{1}{1+e^{-z}}
@@ -38,7 +35,7 @@ Cons:
 -  non-zero centric bias $ \rightarrow $ non-zero mean activations.
 -  computationally expensive.
 
-### Tanh
+## Tanh
 
 $$
 \tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
@@ -56,9 +53,9 @@ Cons:
 - vanishing gradient.
 - computationally expensive.
 
-## Linear Units (Rectified)
+# Linear Units (Rectified)
 
-### ReLU
+## ReLU
 
 $$
 \mathrm{ReLU}(z)=\max{(0,z)}
@@ -83,7 +80,7 @@ Cons:
 -  activation explosion as $ z\rightarrow\infty $. (NOTE: NOT A SEVERE DISADVANTAGE SO FAR)
 
 
-### LReLU
+## LReLU
 
 $$
 \mathrm{LReLU}(z)=\max{(\alpha z,z)}
@@ -106,7 +103,7 @@ Cons:
 - activation explosion as $ z\rightarrow\infty $.
 
 
-### PReLU
+## PReLU
 
 $$
 \mathrm{PReLU}(z)=\max{(\alpha z,z)}
@@ -129,7 +126,7 @@ Cons:
 
 
 
-### RReLU
+## RReLU
 
 $$
 \mathrm{RReLU}(z)=\max{(\alpha z,z)}
@@ -152,9 +149,9 @@ Cons:
 - slightly more computationally expensive than LReLU.
 - activation explosion as $ z\rightarrow\infty $.
 
-## Linear Units (Exponential)
+# Linear Units (Exponential)
 
-### ELU
+## ELU
 
 $$
 \mathrm{ELU}(z)=\begin{cases}
@@ -184,7 +181,7 @@ Cons:
 
 
 
-### SELU
+## SELU
 
 $$
 \mathrm{SELU}(z)=\lambda\begin{cases}
@@ -212,7 +209,7 @@ Cons:
 
 
 
-### CELU
+## CELU
 
 $$
 \mathrm{CELU}(z)=\begin{cases}
@@ -237,9 +234,9 @@ Cons:
 - slightly more computationally expensive than ELU.
 - activation explosion as $ z\rightarrow\infty $.
 
-## Linear Units (Others)
+# Linear Units (Others)
 
-### GELU
+## GELU
 
 $$
 \mathrm{GELU}(z)=z*\Phi(z)=0.5z(1+\tanh{[\sqrt{\frac{2}{\pi}}(z+0.044715z^3)]})
@@ -261,7 +258,7 @@ Cons:
 
 
 
-### SiLU
+## SiLU
 
 $$
 \mathrm{SiLU}(z)=z*\sigma(z)
@@ -281,7 +278,7 @@ Cons:
 
 
 
-### Softplus
+## Softplus
 
 $$
 \mathrm{softplus}(z)=\frac{1}{\beta}\log{(1+e^{\beta z})}
@@ -299,9 +296,9 @@ Cons:
 
 
 
-## Multiclass
+# Multiclass
 
-### Softmax
+## Softmax
 
 $$
 \mathrm{softmax}(z_i)=\frac{\exp{(z_i)}}{\sum_j{\exp{(z_j)}}}
@@ -317,7 +314,7 @@ Pros:
 Cons:
 - mutually exclusive classes (i.e., one input can only be classified into one class.)
 
-### Softmin
+## Softmin
 
 $$
 \mathrm{softmin}(z_i)=\mathrm{softmax}(-z_i)=\frac{\exp{(-z_i)}}{\sum_j{\exp{(-z_j)}}}
@@ -332,7 +329,7 @@ Pros:
 Cons:
 - why not softmax.
 
-## Softmax
+# Softmax
 - **What**: Raw logits -> Probabilities.
 - **Why**: Provides a **probability distribution** for **multi-class classification**.
 - **How**:

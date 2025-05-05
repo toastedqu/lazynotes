@@ -409,7 +409,7 @@ document.write(`
 </li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolutional">Convolutional</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution">Convolution</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pooling">Pooling</a></li>
 </ul>
 </li>
@@ -483,7 +483,7 @@ document.write(`
 <p class="admonition-title">Math</p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Vector</label><div class="tab-content docutils">
-<p><strong>Notations</strong>:</p>
+<p>Notations:</p>
 <ul class="simple">
 <li><p>IO:</p>
 <ul>
@@ -504,12 +504,12 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
 \textbf{y}=W\textbf{x}+\textbf{b}
 \]</div>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
 &amp;\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}\textbf{x}^T \\
@@ -518,7 +518,7 @@ document.write(`
 \end{align*}\end{split}\]</div>
 </div>
 <input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">Tensor</label><div class="tab-content docutils">
-<p><strong>Notations</strong>:</p>
+<p>Notations:</p>
 <ul class="simple">
 <li><p>IO:</p>
 <ul>
@@ -539,12 +539,12 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
 \textbf{Y}=\textbf{X}W^T+\textbf{b}
 \]</div>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
 &amp;\frac{\partial\mathcal{L}}{\partial W}=\textbf{g}^T\textbf{X} \\
@@ -571,7 +571,7 @@ document.write(`
 <p class="admonition-title">Math</p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--1">Vector</label><div class="tab-content docutils">
-<p><strong>Notations</strong>:</p>
+<p>Notations:</p>
 <ul class="simple">
 <li><p>IO:</p>
 <ul>
@@ -590,19 +590,19 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
 \textbf{y}=\frac{\textbf{m}\odot\textbf{x}}{p}
 \]</div>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <div class="math notranslate nohighlight">
 \[
 \frac{\partial\mathcal{L}}{\partial\textbf{x}} = \frac{\textbf{m}\odot\textbf{g}}{p}
 \]</div>
 </div>
 <input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--2">Tensor</label><div class="tab-content docutils">
-<p><strong>Notations</strong>:</p>
+<p>Notations:</p>
 <ul class="simple">
 <li><p>IO:</p>
 <ul>
@@ -621,12 +621,12 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
 \textbf{Y}=\frac{\textbf{M}\odot\textbf{X}}{p}
 \]</div>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <div class="math notranslate nohighlight">
 \[
 \frac{\partial\mathcal{L}}{\partial\textbf{X}} = \frac{\textbf{M}\odot\textbf{g}}{p}
@@ -672,12 +672,12 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
 \textbf{y}=F(\textbf{x})+\textbf{x}
 \]</div>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <div class="math notranslate nohighlight">
 \[
 \frac{\partial\mathcal{L}}{\partial\textbf{x}}=\mathbf{g}(1+\frac{\partial F(\textbf{x})}{\partial\textbf{x}})
@@ -698,12 +698,12 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
 \textbf{Y}=F(\textbf{X})+\textbf{X}
 \]</div>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <div class="math notranslate nohighlight">
 \[
 \frac{\partial\mathcal{L}}{\partial\textbf{X}}=\mathbf{g}(1+\frac{\partial F(\textbf{X})}{\partial\textbf{X}})
@@ -744,7 +744,7 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <ol class="arabic">
 <li><p>Calculate the mean and variance for each batch.</p>
 <div class="math notranslate nohighlight">
@@ -767,7 +767,7 @@ document.write(`
     \]</div>
 </li>
 </ol>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <ol class="arabic">
 <li><p>Gradient w.r.t. params:</p>
 <div class="math notranslate nohighlight">
@@ -825,7 +825,7 @@ document.write(`
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
 <p>It’s easy to explain with the vector form for batch normalization, but it’s more intuitive to explain with the scalar form for layer normalization.</p>
-<p><strong>Notations</strong>:</p>
+<p>Notations:</p>
 <ul class="simple">
 <li><p>IO:</p>
 <ul>
@@ -840,7 +840,7 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <ol class="arabic">
 <li><p>Calculate the mean and variance for each feature.</p>
 <div class="math notranslate nohighlight">
@@ -863,7 +863,7 @@ document.write(`
     \]</div>
 </li>
 </ol>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <ol class="arabic">
 <li><p>Gradient w.r.t. params:</p>
 <div class="math notranslate nohighlight">
@@ -901,8 +901,8 @@ document.write(`
 </section>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="convolutional">
-<h1>Convolutional<a class="headerlink" href="#convolutional" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="convolution">
+<h1>Convolution<a class="headerlink" href="#convolution" title="Link to this heading">#</a></h1>
 <ul class="simple">
 <li><p><strong>What</strong>: Apply a set of filters to input data to extract local features. (<a class="reference external" href="https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf">paper</a>)</p></li>
 <li><p><strong>Why</strong>: To learn spatial hierarchies of features.</p></li>
@@ -914,7 +914,7 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<p><strong>Notations</strong>:
+<p>Notations:
 - IO:
 - <span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.
 - <span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.
@@ -928,7 +928,7 @@ document.write(`
 - <span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.
 - <span class="math notranslate nohighlight">\(s\)</span>: Stride size.
 - <span class="math notranslate nohighlight">\(p\)</span>: Padding size.
-<strong>Forward</strong>:</p>
+Forward:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$$
 Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
 $$
@@ -941,7 +941,7 @@ W_{out}&amp;=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
 \end{align*}$$
 </pre></div>
 </div>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$$\begin{align*}
 &amp;\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
 &amp;\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
@@ -979,7 +979,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
 - **Cons**: Lower accuracy. -->
 <!-- ```{admonition} Math
 :class: note, dropdown
-**Notations**:
+Notations:
     - IO:
         - $\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}$: Input volume.
         - $\mathbf{Y} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}$: Output volume.
@@ -995,7 +995,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
         - $f_h, f_w$: Filter height & width.
         - $s$: Stride size.
         - $p$: Padding size.
-**Forward**:
+Forward:
     1. Depthwise convolution: Calculate $\mathbf{Z} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{in}}$:
 
         $$
@@ -1013,7 +1013,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
         W_{out} &= \left\lfloor \frac{W_{in} + 2p - f_w}{s} \right\rfloor + 1
         \end{align*}$$
 
-**Backward**:
+Backward:
     1. Pointwise convolution: Let $g^{p}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Y}}$.
 
         $$\begin{align*}
@@ -1042,7 +1042,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
     - Requires very careful hyperparam tuning, or info loss. -->
 <!-- ```{admonition} Math
 :class: note, dropdown
-**Notations**:
+Notations:
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
         - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
@@ -1057,7 +1057,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
         - $s$: Stride size.
         - $p$: Padding size.
         - $r$: Dilation rate.
-**Forward**:
+Forward:
     1. (optional) Pad input tensor: $\mathbf{X}^\text{pad}\in\mathbb{R}^{(H_{in}+2p)\times (W_{in}+2p)\times C_{in}}$
     2. Perform element-wise multiplication (i.e., convolution):
 
@@ -1072,7 +1072,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
         W_{out}&=\left\lfloor\frac{W_{in}+2p-r(f_w-1)-1}{s}\right\rfloor+1
         \end{align*}$$
 
-**Backward**:
+Backward:
 
     $$\begin{align*}
     &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+r(i-1)-p, sw+r(j-1)-p, c_{in}}\\
@@ -1126,7 +1126,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
 </ul>
 <!-- ```{admonition} Math
 :class: note, dropdown
-**Notations**:
+Notations:
     - IO:
         - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
         - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$: Output volume.
@@ -1135,7 +1135,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
         - $C_{in}$: #Input channels.
         - $f_h, f_w$: Filter height & width.
         - $s$: Stride size.
-**Forward**:
+Forward:
 
     $$\begin{array}{ll}
     \text{Max:} & Y_{h,w,c}=\max_{i=1,\cdots,f_h\ |\ j=1,\cdots,f_w}X_{sh+i,sw+j,c}\\
@@ -1149,7 +1149,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
     W_{out}&=\left\lfloor\frac{W_{in}-f_h}{s}\right\rfloor+1
     \end{align*}$$
 
-**Backward**:
+Backward:
 
     $$\begin{array}{ll}
     \text{Max:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=g_{h,w,c}\text{ if }X_{sh+i,sw+j,c}=Y_{h,w,c}\\
@@ -1254,56 +1254,92 @@ h_t=\tanh(x_tW_{xh}^T+h_{t-1}W_{hh}^T)
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="activation">
 <h1>Activation<a class="headerlink" href="#activation" title="Link to this heading">#</a></h1>
-<p>An activation function adds nonlinearity to the output of a layer to enhance complexity. <a class="reference internal" href="#relu"><span class="xref myst">ReLU</span></a> and <a class="reference internal" href="#softmax"><span class="xref myst">Softmax</span></a> are SOTA.</p>
-<p>Notations:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( z \)</span>: input (element-wise)</p></li>
+<li><p><strong>What</strong>: An element-wise non-linear function over a layer’s output.</p></li>
+<li><p><strong>Why</strong>: Non-linearity.</p>
+<ul>
+<li><p>Without it, a full NN is just simple linear regression.</p></li>
+</ul>
+</li>
 </ul>
 <section id="binary-like">
 <h2>Binary-like<a class="headerlink" href="#binary-like" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Functions with near-binary outputs.</p></li>
+<li><p><strong>Why</strong>: Biology - Biological neurons generally:</p>
+<ul>
+<li><p>react little to small inputs</p></li>
+<li><p>react rapidly after input stimulus passes a threshold</p></li>
+<li><p>converge to a max as stimulus increases</p></li>
+</ul>
+</li>
+</ul>
 <section id="sigmoid">
 <h3>Sigmoid<a class="headerlink" href="#sigmoid" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Sigmoid function.</p></li>
+<li><p><strong>Why</strong>: Mathematically convenient <span class="math notranslate nohighlight">\(\leftarrow\)</span> Smooth gradient.</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
-\sigma(z)=\frac{1}{1+e^{-z}}
+y=\sigma(z)=\frac{1}{1+e^{-z}}
 \]</div>
-<p>Idea:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( \sigma(z)\in(0,1)\)</span> and <span class="math notranslate nohighlight">\(\sigma(0)=0.5 \)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma(z)\in(0,1)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma(0)=0.5\)</span></p></li>
 </ul>
-<p>Pros:</p>
+<p>Backward:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial\mathcal{L}}{\partial z}=\frac{\partial\mathcal{L}}{\partial y}y(1-y)
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
 <ul class="simple">
-<li><p>imitation of the firing rate of a neuron, 0 if too negative and 1 if too positive.</p></li>
-<li><p>smooth gradient.</p></li>
+<li><p>Vanishing gradient.</p></li>
+<li><p>Non-zero centric bias <span class="math notranslate nohighlight">\(\rightarrow\)</span> Non-zero mean activations</p></li>
 </ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>vanishing gradient: gradients rapidly shrink to 0 along backprop as long as any input is too positive or too negative.</p></li>
-<li><p>non-zero centric bias <span class="math notranslate nohighlight">\( \rightarrow \)</span> non-zero mean activations.</p></li>
-<li><p>computationally expensive.</p></li>
-</ul>
+</div>
 </section>
 <section id="tanh">
 <h3>Tanh<a class="headerlink" href="#tanh" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Tanh function.</p></li>
+<li><p><strong>Why</strong>: Mathematically convenient <span class="math notranslate nohighlight">\(\leftarrow\)</span> Smooth gradient.</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
-\tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
+y=\tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
 \]</div>
-<p>Idea:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( \tanh(z)\in(-1,1)\)</span> and <span class="math notranslate nohighlight">\(\tanh(0)=0 \)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tanh(z)\in(-1,1)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\tanh(0)=0\)</span></p></li>
 </ul>
-<p>Pros:</p>
+<p>Backward:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial\mathcal{L}}{\partial z}=\frac{\partial\mathcal{L}}{\partial y}(1-y^2)
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Pros?</em></p>
 <ul class="simple">
-<li><p>zero-centered</p></li>
-<li><p>imitation of the firing rate of a neuron, -1 if too negative and 1 if too positive.</p></li>
-<li><p>smooth gradient.</p></li>
+<li><p>Zero-centered.</p></li>
 </ul>
-<p>Cons:</p>
+<p><em>Cons?</em></p>
 <ul class="simple">
-<li><p>vanishing gradient.</p></li>
-<li><p>computationally expensive.</p></li>
+<li><p>Vanishing gradient.</p></li>
 </ul>
+</div>
 </section>
 </section>
 <section id="linear-units-rectified">
@@ -1688,7 +1724,7 @@ z &amp; \mathrm{if}\ z\geq0\\
 </li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolutional">Convolutional</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution">Convolution</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pooling">Pooling</a></li>
 </ul>
 </li>

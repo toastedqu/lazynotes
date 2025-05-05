@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -64,7 +64,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'llm/peft';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="References" href="../references.html" />
+    <link rel="next" title="Information Theory" href="../info.html" />
     <link rel="prev" title="RL for LLMs" href="rl.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -199,6 +199,8 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../info.html">Information Theory</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
 </ul>
 
@@ -415,31 +417,7 @@ document.write(`
 <ul class="simple">
 <li><p><strong>Name</strong>: <strong><a class="reference external" href="https://arxiv.org/pdf/2106.09685">Low-Rank Adaptation</a></strong></p></li>
 <li><p><strong>What</strong>: Injects <strong>low-rank</strong> matrices into the weights of specific layers, without modifying the original weights directly.</p></li>
-<li><p><strong>Why</strong>: #params <span class="math notranslate nohighlight">\(\downarrow\)</span> -&gt; Finetuning becomes more <strong>efficient</strong>.</p></li>
-<li><p><strong>When</strong>:</p>
-<ul>
-<li><p>Linear transformation dominates the model architecture.</p></li>
-<li><p>Optimal weight updates for downstream tasks lie in a low-rank subspace.</p></li>
-<li><p>Initial weights are already optimized via <strong>pretraining</strong> -&gt; only <strong>small adaptations</strong> are required for downstream tasks.</p></li>
-<li><p>Parameter efficiency matters more than Performance (e.g., limited computational time &amp; resources).</p></li>
-</ul>
-</li>
-<li><p><strong>Where</strong>: All transformer-based models.</p></li>
-<li><p><strong>Pros</strong>:</p>
-<ul>
-<li><p>High parameter efficiency -&gt; High computational efficiency.</p></li>
-<li><p>High scalability.</p></li>
-<li><p>Task-specific adaptation without modifying the original params -&gt; No overfitting.</p></li>
-</ul>
-</li>
-<li><p><strong>Cons</strong>:</p>
-<ul>
-<li><p>ONLY applicable to linear transformation.</p></li>
-<li><p>Lower performance relative to full finetuning.</p></li>
-<li><p>ONLY great performance with pretrained models.</p></li>
-<li><p>High sensitivity to hyperparameters.</p></li>
-</ul>
-</li>
+<li><p><strong>Why</strong>: #params <span class="math notranslate nohighlight">\(\downarrow\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> Finetuning efficiency <span class="math notranslate nohighlight">\(\uparrow\)</span>.</p></li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -477,6 +455,19 @@ document.write(`
 g_{B}=\frac{\alpha}{r}g_{\Delta W}A^T \\
 g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 \end{align}\end{split}\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Pros</em>:</p>
+<ul class="simple">
+<li><p>No overfitting <span class="math notranslate nohighlight">\(\leftarrow\)</span> Task-specific adaptation without modifying the original params</p></li>
+</ul>
+<p><em>Cons</em>:</p>
+<ul class="simple">
+<li><p>ONLY applicable to linear transformation.</p></li>
+<li><p>ONLY great performance with pretrained models <span class="math notranslate nohighlight">\(\rightarrow\)</span> Lower performance relative to full finetuning</p></li>
+<li><p>High sensitivity to hyperparameters.</p></li>
+</ul>
 </div>
 </section>
 </section>
@@ -521,11 +512,11 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
       </div>
     </a>
     <a class="right-next"
-       href="../references.html"
+       href="../info.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">References</p>
+        <p class="prev-next-title">Information Theory</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

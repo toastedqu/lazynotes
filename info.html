@@ -401,6 +401,7 @@ document.write(`
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basics">Basics</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information">Information</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entropy">Entropy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kl-divergence">KL Divergence</a></li>
 </ul>
 </li>
 </ul>
@@ -543,6 +544,25 @@ H(Y|X=x)&amp;=-\sum_yP(y|x)\log P(y|x)
 \[
 H(X,Y)=H(X)+H(Y|X)
 \]</div>
+<p><strong>Mutual Info</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+I(X,Y)=H(X)-H(X|Y)=H(Y)-H(Y|X)=H(X)+H(Y)-H(X,Y)
+\]</div>
+</div>
+</section>
+<section id="kl-divergence">
+<h2>KL Divergence<a class="headerlink" href="#kl-divergence" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong></p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>KL Divergence</p>
+<div class="math notranslate nohighlight">
+\[
+D_\text{KL}(P||Q)=\sum P(x)\log\frac{P(x)}{Q(x)}
+\]</div>
 </div>
 </section>
 </section>
@@ -615,6 +635,7 @@ H(X,Y)=H(X)+H(Y|X)
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basics">Basics</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information">Information</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entropy">Entropy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kl-divergence">KL Divergence</a></li>
 </ul>
 </li>
 </ul>
