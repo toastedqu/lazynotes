@@ -738,29 +738,44 @@ $$
 ## Linear Units (Rectified)
 
 ### ReLU
+- **What**: Rectified Linear Unit
+- **Why**:
+    - Binary-like activation functions suffered from vanishing gradients.
+    - Biological neurons either fire or remain inactive.
+    - ReLU-like functions existed long ago ([Householder, 1941](https://link.springer.com/article/10.1007/BF02478220)).
+- **How**: Linear for positive, 0 for negative.
+
+```{admonition} Math
+:class: note, dropdown
+Forward:
 
 $$
-\mathrm{ReLU}(z)=\max{(0,z)}
+y=\text{ReLU}(z)=\max{(0,z)}
 $$
 
-Name: Rectified Linear Unit
+Backward:
 
-Idea:
-- convert negative linear outputs to 0.
+$$
+\frac{\partial\mathcal{L}}{\partial z}=\begin{cases}
+\frac{\partial\mathcal{L}}{\partial y} & z\geq0 \\
+0 & z<0
+\end{cases}
+$$
+```
 
-Pros:
-- no vanishing gradient
-- activate fewer neurons
-- much less computationally expensive compared to sigmoid and tanh.
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros?*
+- ❌Vanishing gradient.
+- ✅Sparsity.
+- ✅Computational efficiency.
 
-Cons:
-- dying ReLU: if most inputs are negative, then most neurons output 0 $ \rightarrow$ no gradient for such neurons $\rightarrow$ no param update $\rightarrow $ they die. (NOTE: A SOLVABLE DISADVANTAGE)
-
-    - Cause 1: high learning rate $ \rightarrow$ too much subtraction in param update $\rightarrow$ weight too negative $\rightarrow $ input for neuron too negative.
-    - Cause 2: bias too negative $ \rightarrow $ input for neuron too negative.
-
--  activation explosion as $ z\rightarrow\infty $. (NOTE: NOT A SEVERE DISADVANTAGE SO FAR)
-
+*Cons?*
+- **Dying ReLU**: If most inputs are negative, then most neurons output 0 $\rightarrow$ No gradient $\rightarrow$ No param update $\rightarrow $ Dead. (NOTE: A SOLVABLE DISADVANTAGE)
+    - Cause 1: High learning rate $ \rightarrow$ Too much subtraction in param update $\rightarrow$ Weight⬇️⬇️ $\rightarrow$ Input for neuron⬇️⬇️.
+    - Cause 2: Bias too negative $\rightarrow$ Input for neuron⬇️⬇️.
+- Activation explosion $\longleftarrow$ $z\rightarrow\infty$. (NOTE: NOT A SEVERE DISADVANTAGE SO FAR)
+```
 
 ### LReLU
 
