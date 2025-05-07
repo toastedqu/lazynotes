@@ -1346,31 +1346,52 @@ y=\tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
 <h2>Linear Units (Rectified)<a class="headerlink" href="#linear-units-rectified" title="Link to this heading">#</a></h2>
 <section id="relu">
 <h3>ReLU<a class="headerlink" href="#relu" title="Link to this heading">#</a></h3>
-<div class="math notranslate nohighlight">
-\[
-\mathrm{ReLU}(z)=\max{(0,z)}
-\]</div>
-<p>Name: Rectified Linear Unit</p>
-<p>Idea:</p>
 <ul class="simple">
-<li><p>convert negative linear outputs to 0.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>no vanishing gradient</p></li>
-<li><p>activate fewer neurons</p></li>
-<li><p>much less computationally expensive compared to sigmoid and tanh.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>dying ReLU: if most inputs are negative, then most neurons output 0 <span class="math notranslate nohighlight">\( \rightarrow\)</span> no gradient for such neurons <span class="math notranslate nohighlight">\(\rightarrow\)</span> no param update <span class="math notranslate nohighlight">\(\rightarrow \)</span> they die. (NOTE: A SOLVABLE DISADVANTAGE)</p>
+<li><p><strong>What</strong>: Rectified Linear Unit</p></li>
+<li><p><strong>Why</strong>:</p>
 <ul>
-<li><p>Cause 1: high learning rate <span class="math notranslate nohighlight">\( \rightarrow\)</span> too much subtraction in param update <span class="math notranslate nohighlight">\(\rightarrow\)</span> weight too negative <span class="math notranslate nohighlight">\(\rightarrow \)</span> input for neuron too negative.</p></li>
-<li><p>Cause 2: bias too negative <span class="math notranslate nohighlight">\( \rightarrow \)</span> input for neuron too negative.</p></li>
+<li><p>Binary-like activation functions suffered from vanishing gradients.</p></li>
+<li><p>Biological neurons either fire or remain inactive.</p></li>
+<li><p>ReLU-like functions existed long ago (<a class="reference external" href="https://link.springer.com/article/10.1007/BF02478220">Householder, 1941</a>).</p></li>
 </ul>
 </li>
-<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>. (NOTE: NOT A SEVERE DISADVANTAGE SO FAR)</p></li>
+<li><p><strong>How</strong>: Linear for positive, 0 for negative.</p></li>
 </ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Forward:</p>
+<div class="math notranslate nohighlight">
+\[
+y=\text{ReLU}(z)=\max{(0,z)}
+\]</div>
+<p>Backward:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\frac{\partial\mathcal{L}}{\partial z}=\begin{cases}
+\frac{\partial\mathcal{L}}{\partial y} &amp; z\geq0 \\
+0 &amp; z&lt;0
+\end{cases}
+\end{split}\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Pros?</em></p>
+<ul class="simple">
+<li><p>❌Vanishing gradient.</p></li>
+<li><p>✅Sparsity.</p></li>
+<li><p>✅Computational efficiency.</p></li>
+</ul>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p><strong>Dying ReLU</strong>: If most inputs are negative, then most neurons output 0 <span class="math notranslate nohighlight">\(\rightarrow\)</span> No gradient <span class="math notranslate nohighlight">\(\rightarrow\)</span> No param update <span class="math notranslate nohighlight">\(\rightarrow \)</span> Dead. (NOTE: A SOLVABLE DISADVANTAGE)</p>
+<ul>
+<li><p>Cause 1: High learning rate <span class="math notranslate nohighlight">\( \rightarrow\)</span> Too much subtraction in param update <span class="math notranslate nohighlight">\(\rightarrow\)</span> Weight⬇️⬇️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Input for neuron⬇️⬇️.</p></li>
+<li><p>Cause 2: Bias too negative <span class="math notranslate nohighlight">\(\rightarrow\)</span> Input for neuron⬇️⬇️.</p></li>
+</ul>
+</li>
+<li><p>Activation explosion <span class="math notranslate nohighlight">\(\longleftarrow\)</span> <span class="math notranslate nohighlight">\(z\rightarrow\infty\)</span>. (NOTE: NOT A SEVERE DISADVANTAGE SO FAR)</p></li>
+</ul>
+</div>
 </section>
 <section id="lrelu">
 <h3>LReLU<a class="headerlink" href="#lrelu" title="Link to this heading">#</a></h3>
