@@ -339,7 +339,7 @@ Backward:
 
 <br/>
 
-# Convolution
+<!-- # Convolution
 - **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
 - **Why**: To learn spatial hierarchies of features.
 - **How**: Slide multiple filters/kernels (i.e., small matrices) over the input data.
@@ -395,7 +395,7 @@ Backward:
 - High computational cost for big data.
 - Requires big data to be performant.
 - Requires extensive hyperparam tuning.
-```
+``` -->
 <!-- 
 ## Depthwise Separable Convolution
 - **What**: Depthwise convolution + Pointwise convolution. ([paper](https://arxiv.org/pdf/1610.02357))
@@ -514,7 +514,7 @@ Backward:
     \end{align*}$$
 ``` -->
 
-## Pooling
+<!-- ## Pooling
 - **What**: Convolution but ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
     - computes a heuristic per scanned patch.
     - uses the same #channels.
@@ -536,7 +536,7 @@ Backward:
         - Large filter or stride results in coarse features.
 - **Max vs Average**:
     - **Max**: Captures most dominant features; higher robustness.
-    - **Avg**: Preserves more info; provides smoother features; dilutes the importance of dominant features.
+    - **Avg**: Preserves more info; provides smoother features; dilutes the importance of dominant features. -->
 
 <!-- ```{admonition} Math
 :class: note, dropdown
@@ -576,7 +576,7 @@ Backward:
 
 <br/>
 
-# Recurrent
+<!-- # Recurrent
 ```{image} ../images/RNN.png
 :width: 400
 :align: center
@@ -660,7 +660,7 @@ Notations:
 - $ H_{cell}$: cell hidden size (in most cases same as $H_{out} $)
 
 ## Bidirectional
-## Stacked
+## Stacked -->
 
 <br/>
 
@@ -735,9 +735,7 @@ $$
 -  Vanishing gradient.
 ```
 
-## Linear Units (Rectified)
-
-### ReLU
+## ReLU
 - **What**: Rectified Linear Unit
 - **Why**:
     - Binary-like activation functions suffered from vanishing gradients.
@@ -778,28 +776,42 @@ $$
 ```
 
 ### LReLU
+- **What**: Leaky ReLU.
+- **Why**: Dying ReLU.
+- **How**: Linear for positive, tiny linear for negative.
+
+```{admonition} Math
+:class: note, dropdown
+Forward:
 
 $$
-\mathrm{LReLU}(z)=\max{(\alpha z,z)}
+y=\text{LReLU}(z)=\max{(\alpha z,z)}
 $$
+- $\alpha\in(0,1)$: Negative slope hyperparameter, default 0.01.
 
+Backward:
 
-Name: Leaky Rectified Linear Unit
+$$
+\frac{\partial\mathcal{L}}{\partial z}=\begin{cases}
+\frac{\partial\mathcal{L}}{\partial y} & z\geq0 \\
+\alpha\frac{\partial\mathcal{L}}{\partial y} & z<0
+\end{cases}
+$$
+```
 
-Params:
-- $ \alpha\in(0,1) $: hyperparam (negative slope), default 0.01.
+```{admonition} Q&A
+:class: tip, dropdown
+*Why aren't we using LReLU in place of ReLU?*
 
-Idea:
-- scale negative linear outputs by $ \alpha $.
+Because Dying ReLU became insignificant.
+- Empirical performance: ReLU >> LReLU $\leftarrow$ Sparsity
+- Dying ReLU is solvable with other structural changes:
+    - Weight Init $\rightarrow$ Ensure sufficient initial positive weights.
+    - Batch Norm $\rightarrow$ Ensure $\sim$50% input values are positive.
+    - Residual Connection $\rightarrow$ Gradients can flow directly back to input even if ReLU is dead.
+```
 
-Pros:
-- no dying ReLU.
-
-Cons:
-- slightly more computationally expensive than ReLU.
-- activation explosion as $ z\rightarrow\infty $.
-
-
+<!-- 
 ### PReLU
 
 $$
@@ -846,19 +858,16 @@ Cons:
 - slightly more computationally expensive than LReLU.
 - activation explosion as $ z\rightarrow\infty $.
 
-## Linear Units (Exponential)
-
-### ELU
+## ELU
+- **What**: Exponential Linear Units
+- **Why**: 
 
 $$
 \mathrm{ELU}(z)=\begin{cases}
-z & \mathrm{if}\ z\geq0 \\\\
-\alpha(e^z-1) & \mathrm{if}\ z<0
+z & z\geq0 \\\\
+\alpha(e^z-1) & z<0
 \end{cases}
 $$
-
-
-Name: Exponential Linear Unit
 
 Params:
 - $ \alpha $: hyperparam, default 1.
@@ -874,11 +883,9 @@ Pros:
 
 Cons:
 - slightly more computationally expensive than ReLU.
-- activation explosion as $ z\rightarrow\infty $.
+- activation explosion as $ z\rightarrow\infty $. -->
 
-
-
-### SELU
+<!-- ### SELU
 
 $$
 \mathrm{SELU}(z)=\lambda\begin{cases}
@@ -951,11 +958,11 @@ Pros:
 
 Cons:
 - slightly more computationally expensive than ReLU.
-- lack of practical testing at the moment.
+- lack of practical testing at the moment. -->
 
 
 
-### SiLU
+<!-- ### SiLU
 
 $$
 \mathrm{SiLU}(z)=z*\sigma(z)
@@ -1024,4 +1031,4 @@ Pros:
 - suitable for multiclass classification.
 
 Cons:
-- why not softmax.
+- why not softmax. -->
