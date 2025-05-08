@@ -180,8 +180,6 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Layer</a></li>
 
 
-
-
 <li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
 
 
@@ -409,45 +407,14 @@ document.write(`
 </li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution">Convolution</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pooling">Pooling</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#recurrent">Recurrent</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gru">GRU</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lstm">LSTM</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bidirectional">Bidirectional</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stacked">Stacked</a></li>
-</ul>
-</li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#activation">Activation</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-like">Binary-like</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sigmoid">Sigmoid</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tanh">Tanh</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-rectified">Linear Units (Rectified)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relu">ReLU</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relu">ReLU</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lrelu">LReLU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prelu">PReLU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rrelu">RReLU</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-exponential">Linear Units (Exponential)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elu">ELU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#selu">SELU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#celu">CELU</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-others">Linear Units (Others)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gelu">GELU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#silu">SiLU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softplus">Softplus</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiclass">Multiclass</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmin">Softmin</a></li>
 </ul>
 </li>
 </ul>
@@ -898,74 +865,63 @@ document.write(`
 </ul>
 </div>
 <br/>
-</section>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="convolution">
-<h1>Convolution<a class="headerlink" href="#convolution" title="Link to this heading">#</a></h1>
-<ul class="simple">
-<li><p><strong>What</strong>: Apply a set of filters to input data to extract local features. (<a class="reference external" href="https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf">paper</a>)</p></li>
-<li><p><strong>Why</strong>: To learn spatial hierarchies of features.</p></li>
-<li><p><strong>How</strong>: Slide multiple filters/kernels (i.e., small matrices) over the input data.</p>
-<ul>
-<li><p>At each step, perform element-wise multiplication and summation between each filter and the scanned area, producing a feature map.</p></li>
-</ul>
-</li>
-</ul>
-<div class="note dropdown admonition">
-<p class="admonition-title">Math</p>
-<p>Notations:
-- IO:
-- <span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.
-- <span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.
-- Params:
-- <span class="math notranslate nohighlight">\(\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}\)</span>: Filters.
-- <span class="math notranslate nohighlight">\(\mathbf{b}\in\mathbb{R}^{C_{out}}\)</span>: Biases.
-- Hyperparams:
-- <span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.
-- <span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.
-- <span class="math notranslate nohighlight">\(C_{out}\)</span>: #Filters (i.e., #Output channels).
-- <span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.
-- <span class="math notranslate nohighlight">\(s\)</span>: Stride size.
-- <span class="math notranslate nohighlight">\(p\)</span>: Padding size.
-Forward:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$$
-Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
-$$
+<!-- # Convolution
+- **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
+- **Why**: To learn spatial hierarchies of features.
+- **How**: Slide multiple filters/kernels (i.e., small matrices) over the input data.
+    - At each step, perform element-wise multiplication and summation between each filter and the scanned area, producing a feature map.
 
-where
+```{admonition} Math
+:class: note, dropdown
+Notations:
+    - IO:
+        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
+        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
+    - Params:
+        - $\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}$: Filters.
+        - $\mathbf{b}\in\mathbb{R}^{C_{out}}$: Biases.
+    - Hyperparams:
+        - $H_{in}, W_{in}$: Input height & width.
+        - $C_{in}$: #Input channels.
+        - $C_{out}$: #Filters (i.e., #Output channels).
+        - $f_h, f_w$: Filter height & width.
+        - $s$: Stride size.
+        - $p$: Padding size.
+Forward:
 
-$$\begin{align*}
-H_{out}&amp;=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
-W_{out}&amp;=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
-\end{align*}$$
-</pre></div>
-</div>
-<p>Backward:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$$\begin{align*}
-&amp;\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
-&amp;\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
-&amp;\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-sh+p,j-sw+p,c_{out},c_{in}}
-\end{align*}$$
+    $$
+    Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
+    $$
 
-Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
-</pre></div>
-</div>
-</div>
-<div class="tip dropdown admonition">
-<p class="admonition-title">Q&amp;A</p>
-<p><em>Pros</em>:</p>
-<ul class="simple">
-<li><p>Translation invariance.</p></li>
-<li><p>Efficiently captures spatial hierarchies.</p></li>
-</ul>
-<p><em>Cons</em>:</p>
-<ul class="simple">
-<li><p>High computational cost for big data.</p></li>
-<li><p>Requires big data to be performant.</p></li>
-<li><p>Requires extensive hyperparam tuning.</p></li>
-</ul>
-</div>
+    where
+
+    $$\begin{align*}
+    H_{out}&=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
+    W_{out}&=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
+    \end{align*}$$
+
+Backward:
+
+    $$\begin{align*}
+    &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
+    &\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
+    &\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-sh+p,j-sw+p,c_{out},c_{in}}
+    \end{align*}$$
+
+    Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros*:
+- Translation invariance.
+- Efficiently captures spatial hierarchies.
+
+*Cons*:
+- High computational cost for big data.
+- Requires big data to be performant.
+- Requires extensive hyperparam tuning.
+``` -->
 <!-- 
 ## Depthwise Separable Convolution
 - **What**: Depthwise convolution + Pointwise convolution. ([paper](https://arxiv.org/pdf/1610.02357))
@@ -1080,50 +1036,29 @@ Backward:
     &\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{r(i-1)-sh+p,r(j-1)-sw+p,c_{out},c_{in}}
     \end{align*}$$
 ``` -->
-<section id="pooling">
-<h2>Pooling<a class="headerlink" href="#pooling" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>What</strong>: Convolution but (<a class="reference external" href="https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf">paper</a>)</p>
-<ul>
-<li><p>computes a heuristic per scanned patch.</p></li>
-<li><p>uses the same #channels.</p></li>
-</ul>
-</li>
-<li><p><strong>Why</strong>: Dimensionality reduction while preserving dominant features.</p></li>
-<li><p><strong>How</strong>: Slide the pooling window over the input &amp; apply the heuristic within the scanned patch.</p>
-<ul>
-<li><p><strong>Max</strong>: Output the maximum value from each patch.</p></li>
-<li><p><strong>Average</strong>: Output the average value of each patch.</p></li>
-</ul>
-</li>
-<li><p><strong>When</strong>: When downsampling is necessary.</p></li>
-<li><p><strong>Where</strong>: After convolutional layer.</p></li>
-<li><p><strong>Pros</strong>:</p>
-<ul>
-<li><p>Significantly higher computational efficiency (time &amp; space).</p></li>
-<li><p>No params to train.</p></li>
-<li><p>Reduces overfitting.</p></li>
-<li><p>Preserves translation invariance without losing too much info.</p></li>
-<li><p>High robustness.</p></li>
-</ul>
-</li>
-<li><p><strong>Cons</strong>:</p>
-<ul>
-<li><p>Slight spatial info loss.</p></li>
-<li><p>Requires hyperparam tuning.</p>
-<ul>
-<li><p>Large filter or stride results in coarse features.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Max vs Average</strong>:</p>
-<ul>
-<li><p><strong>Max</strong>: Captures most dominant features; higher robustness.</p></li>
-<li><p><strong>Avg</strong>: Preserves more info; provides smoother features; dilutes the importance of dominant features.</p></li>
-</ul>
-</li>
-</ul>
+<!-- ## Pooling
+- **What**: Convolution but ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
+    - computes a heuristic per scanned patch.
+    - uses the same #channels.
+- **Why**: Dimensionality reduction while preserving dominant features.
+- **How**: Slide the pooling window over the input & apply the heuristic within the scanned patch.
+    - **Max**: Output the maximum value from each patch.
+    - **Average**: Output the average value of each patch.
+- **When**: When downsampling is necessary.
+- **Where**: After convolutional layer.
+- **Pros**:
+    - Significantly higher computational efficiency (time & space).
+    - No params to train.
+    - Reduces overfitting.
+    - Preserves translation invariance without losing too much info.
+    - High robustness.
+- **Cons**:
+    - Slight spatial info loss.
+    - Requires hyperparam tuning.
+        - Large filter or stride results in coarse features.
+- **Max vs Average**:
+    - **Max**: Captures most dominant features; higher robustness.
+    - **Avg**: Preserves more info; provides smoother features; dilutes the importance of dominant features. -->
 <!-- ```{admonition} Math
 :class: note, dropdown
 Notations:
@@ -1160,96 +1095,93 @@ Backward:
     - Avg: Gradients are equally distributed among all elements in each window.
 ``` -->
 <br/>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="recurrent">
-<h1>Recurrent<a class="headerlink" href="#recurrent" title="Link to this heading">#</a></h1>
-<a class="reference internal image-reference" href="images/RNN.png"><img alt="images/RNN.png" class="align-center" src="images/RNN.png" style="width: 400px;" />
-</a>
-<div class="math notranslate nohighlight">
-\[
+<!-- # Recurrent
+```{image} ../images/RNN.png
+:width: 400
+:align: center
+```
+
+$$
 h_t=\tanh(x_tW_{xh}^T+h_{t-1}W_{hh}^T)
-\]</div>
-<p>Idea: <strong>recurrence</strong> - maintain a hidden state that captures information about previous inputs in the sequence</p>
-<p>Notations:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( x_t\)</span>: input at time <span class="math notranslate nohighlight">\(t\)</span> of shape <span class="math notranslate nohighlight">\((m,H_{in}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( h_t\)</span>: hidden state at time <span class="math notranslate nohighlight">\(t\)</span> of shape <span class="math notranslate nohighlight">\((D,m,H_{out}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( W_{xh}\)</span>: weight matrix of shape <span class="math notranslate nohighlight">\((H_{out},H_{in})\)</span> if initial layer, else <span class="math notranslate nohighlight">\((H_{out},DH_{out}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( W_{hh}\)</span>: weight matrix of shape <span class="math notranslate nohighlight">\((H_{out},H_{out}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( H_{in}\)</span>: input size, #features in <span class="math notranslate nohighlight">\(x_t \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( H_{out}\)</span>: hidden size, #features in <span class="math notranslate nohighlight">\(h_t \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( m \)</span>: batch size</p></li>
-<li><p><span class="math notranslate nohighlight">\( D\)</span>: <span class="math notranslate nohighlight">\(=2\)</span> if bi-directional else <span class="math notranslate nohighlight">\(1 \)</span></p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>Short-term memory: hard to carry info from earlier steps to later ones if long seq</p></li>
-<li><p>Vanishing gradient: gradients in earlier parts become extremely small if long seq</p></li>
-</ul>
-<section id="gru">
-<h2>GRU<a class="headerlink" href="#gru" title="Link to this heading">#</a></h2>
-<a class="reference internal image-reference" href="images/GRU.png"><img alt="images/GRU.png" class="align-center" src="images/GRU.png" style="width: 400px;" />
-</a>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-&amp;r_t=\sigma(x_tW_{xr}^T+h_{t-1}W_{hr}^T) \\\\
-&amp;z_t=\sigma(x_tW_{xz}^T+h_{t-1}W_{hz}^T) \\\\
-&amp;\tilde{h}\_t=\tanh(x_tW_{xn}^T+r_t\odot(h_{t-1}W_{hn}^T)) \\\\
-&amp;h_t=(1-z_t)\odot\tilde{h}\_t+z_t\odot h_{t-1}
-\end{align*}\end{split}\]</div>
-<p>Idea: Gated Recurrent Unit - use 2 gates to address long-term info propagation issue in RNN:</p>
-<ol class="arabic simple">
-<li><p><strong>Reset gate</strong>: determine how much of <span class="math notranslate nohighlight">\( h_{t-1}\)</span> should be ignored when computing <span class="math notranslate nohighlight">\(\tilde{h}\_t \)</span>.</p></li>
-<li><p><strong>Update gate</strong>: determine how much of <span class="math notranslate nohighlight">\( h_{t-1}\)</span> should be retained for <span class="math notranslate nohighlight">\(h_t \)</span>.</p></li>
-<li><p><strong>Candidate</strong>: calculate candidate <span class="math notranslate nohighlight">\( \tilde{h}\_t\)</span> with reset <span class="math notranslate nohighlight">\(h_{t-1} \)</span>.</p></li>
-<li><p><strong>Final</strong>: calculate weighted average between candidate <span class="math notranslate nohighlight">\( \tilde{h}\_t\)</span> and prev state <span class="math notranslate nohighlight">\(h_{t-1} \)</span> with the retain ratio.</p></li>
-</ol>
-<p>Notations:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( r_t\)</span>: reset gate at time <span class="math notranslate nohighlight">\(t\)</span> of shape <span class="math notranslate nohighlight">\((m,H_{out}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( z_t\)</span>: update gate at time <span class="math notranslate nohighlight">\(t\)</span> of shape <span class="math notranslate nohighlight">\((m,H_{out}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( \tilde{h}\_t\)</span>: candidate hidden state at time <span class="math notranslate nohighlight">\(t\)</span> of shape <span class="math notranslate nohighlight">\((m,H_{out}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( \odot \)</span>: element-wise product</p></li>
-</ul>
-</section>
-<section id="lstm">
-<h2>LSTM<a class="headerlink" href="#lstm" title="Link to this heading">#</a></h2>
-<a class="reference internal image-reference" href="images/LSTM.png"><img alt="images/LSTM.png" class="align-center" src="images/LSTM.png" style="width: 400px;" />
-</a>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-&amp;i_t=\sigma(x_tW_{xi}^T+h_{t-1}W_{hi}^T) \\\\
-&amp;f_t=\sigma(x_tW_{xf}^T+h_{t-1}W_{hf}^T) \\\\
-&amp;\tilde{c}\_t=\tanh(x_tW_{xc}^T+h_{t-1}W_{hc}^T) \\\\
-&amp;c_t=f_t\odot c_{t-1}+i_t\odot \tilde{c}\_t \\\\
-&amp;o_t=\sigma(x_tW_{xo}^T+h_{t-1}W_{ho}^T) \\\\
-&amp;h_t=o_t\odot\tanh(c_t)
-\end{align*}\end{split}\]</div>
-<p>Idea: Long Short-Term Memory - use 3 gates:</p>
-<ol class="arabic simple">
-<li><p><strong>Input gate</strong>: determine what new info from <span class="math notranslate nohighlight">\( x_t\)</span> should be added to cell state <span class="math notranslate nohighlight">\(c_t \)</span>.</p></li>
-<li><p><strong>Forget gate</strong>: determine what info from prev cell <span class="math notranslate nohighlight">\( c_{t-1} \)</span> should be forgotten.</p></li>
-<li><p><strong>Candidate cell</strong>: create a new candidate cell from <span class="math notranslate nohighlight">\( x_t\)</span> and <span class="math notranslate nohighlight">\(h_{t-1} \)</span>.</p></li>
-<li><p><strong>Update cell</strong>: use <span class="math notranslate nohighlight">\( i_t\)</span> and <span class="math notranslate nohighlight">\(f_t \)</span> to combine prev and new candidate cells.</p></li>
-<li><p><strong>Output gate</strong>: determine what info from curr cell <span class="math notranslate nohighlight">\( c_t\)</span> should be added to output <span class="math notranslate nohighlight">\(h_t \)</span>.</p></li>
-<li><p><strong>Final</strong>: simply apply <span class="math notranslate nohighlight">\( o_t\)</span> to activated cell <span class="math notranslate nohighlight">\(c_t \)</span>.</p></li>
-</ol>
-<p>Notations:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( i_t\)</span>: input gate at time <span class="math notranslate nohighlight">\(t\)</span> of shape <span class="math notranslate nohighlight">\((m,H_{out}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( f_t\)</span>: forget gate at time <span class="math notranslate nohighlight">\(t\)</span> of shape <span class="math notranslate nohighlight">\((m,H_{out}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( c_t\)</span>: cell state at time <span class="math notranslate nohighlight">\(t\)</span> of shape <span class="math notranslate nohighlight">\((m,H_{cell}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( o_t\)</span>: output gate at time <span class="math notranslate nohighlight">\(t\)</span> of shape <span class="math notranslate nohighlight">\((m,H_{out}) \)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\( H_{cell}\)</span>: cell hidden size (in most cases same as <span class="math notranslate nohighlight">\(H_{out} \)</span>)</p></li>
-</ul>
-</section>
-<section id="bidirectional">
-<h2>Bidirectional<a class="headerlink" href="#bidirectional" title="Link to this heading">#</a></h2>
-</section>
-<section id="stacked">
-<h2>Stacked<a class="headerlink" href="#stacked" title="Link to this heading">#</a></h2>
+$$
+
+Idea: **recurrence** - maintain a hidden state that captures information about previous inputs in the sequence
+
+Notations:
+- $ x_t$: input at time $t$ of shape $(m,H_{in}) $
+- $ h_t$: hidden state at time $t$ of shape $(D,m,H_{out}) $
+- $ W_{xh}$: weight matrix of shape $(H_{out},H_{in})$ if initial layer, else $(H_{out},DH_{out}) $
+- $ W_{hh}$: weight matrix of shape $(H_{out},H_{out}) $
+- $ H_{in}$: input size, #features in $x_t $
+- $ H_{out}$: hidden size, #features in $h_t $
+- $ m $: batch size
+- $ D$: $=2$ if bi-directional else $1 $
+
+Cons:
+- Short-term memory: hard to carry info from earlier steps to later ones if long seq
+- Vanishing gradient: gradients in earlier parts become extremely small if long seq
+
+## GRU
+
+```{image} ../images/GRU.png
+:width: 400
+:align: center
+```
+
+$$\begin{align*}
+&r_t=\sigma(x_tW_{xr}^T+h_{t-1}W_{hr}^T) \\\\
+&z_t=\sigma(x_tW_{xz}^T+h_{t-1}W_{hz}^T) \\\\
+&\tilde{h}\_t=\tanh(x_tW_{xn}^T+r_t\odot(h_{t-1}W_{hn}^T)) \\\\
+&h_t=(1-z_t)\odot\tilde{h}\_t+z_t\odot h_{t-1}
+\end{align*}$$
+
+Idea: Gated Recurrent Unit - use 2 gates to address long-term info propagation issue in RNN:
+1. **Reset gate**: determine how much of $ h_{t-1}$ should be ignored when computing $\tilde{h}\_t $.
+2. **Update gate**: determine how much of $ h_{t-1}$ should be retained for $h_t $.
+3. **Candidate**: calculate candidate $ \tilde{h}\_t$ with reset $h_{t-1} $.
+4. **Final**: calculate weighted average between candidate $ \tilde{h}\_t$ and prev state $h_{t-1} $ with the retain ratio.
+
+Notations:
+- $ r_t$: reset gate at time $t$ of shape $(m,H_{out}) $
+- $ z_t$: update gate at time $t$ of shape $(m,H_{out}) $
+- $ \tilde{h}\_t$: candidate hidden state at time $t$ of shape $(m,H_{out}) $
+- $ \odot $: element-wise product
+
+## LSTM
+
+```{image} ../images/LSTM.png
+:width: 400
+:align: center
+```
+
+$$\begin{align*}
+&i_t=\sigma(x_tW_{xi}^T+h_{t-1}W_{hi}^T) \\\\
+&f_t=\sigma(x_tW_{xf}^T+h_{t-1}W_{hf}^T) \\\\
+&\tilde{c}\_t=\tanh(x_tW_{xc}^T+h_{t-1}W_{hc}^T) \\\\
+&c_t=f_t\odot c_{t-1}+i_t\odot \tilde{c}\_t \\\\
+&o_t=\sigma(x_tW_{xo}^T+h_{t-1}W_{ho}^T) \\\\
+&h_t=o_t\odot\tanh(c_t)
+\end{align*}$$
+
+Idea: Long Short-Term Memory - use 3 gates:
+1. **Input gate**: determine what new info from $ x_t$ should be added to cell state $c_t $.
+2. **Forget gate**: determine what info from prev cell $ c_{t-1} $ should be forgotten.
+3. **Candidate cell**: create a new candidate cell from $ x_t$ and $h_{t-1} $.
+4. **Update cell**: use $ i_t$ and $f_t $ to combine prev and new candidate cells.
+5. **Output gate**: determine what info from curr cell $ c_t$ should be added to output $h_t $.
+6. **Final**: simply apply $ o_t$ to activated cell $c_t $.
+
+Notations:
+- $ i_t$: input gate at time $t$ of shape $(m,H_{out}) $
+- $ f_t$: forget gate at time $t$ of shape $(m,H_{out}) $
+- $ c_t$: cell state at time $t$ of shape $(m,H_{cell}) $
+- $ o_t$: output gate at time $t$ of shape $(m,H_{out}) $
+- $ H_{cell}$: cell hidden size (in most cases same as $H_{out} $)
+
+## Bidirectional
+## Stacked -->
 <br/>
+</section>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="activation">
@@ -1342,10 +1274,8 @@ y=\tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
 </div>
 </section>
 </section>
-<section id="linear-units-rectified">
-<h2>Linear Units (Rectified)<a class="headerlink" href="#linear-units-rectified" title="Link to this heading">#</a></h2>
 <section id="relu">
-<h3>ReLU<a class="headerlink" href="#relu" title="Link to this heading">#</a></h3>
+<h2>ReLU<a class="headerlink" href="#relu" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Rectified Linear Unit</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -1392,280 +1322,264 @@ y=\text{ReLU}(z)=\max{(0,z)}
 <li><p>Activation explosion <span class="math notranslate nohighlight">\(\longleftarrow\)</span> <span class="math notranslate nohighlight">\(z\rightarrow\infty\)</span>. (NOTE: NOT A SEVERE DISADVANTAGE SO FAR)</p></li>
 </ul>
 </div>
-</section>
 <section id="lrelu">
 <h3>LReLU<a class="headerlink" href="#lrelu" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Leaky ReLU.</p></li>
+<li><p><strong>Why</strong>: Dying ReLU.</p></li>
+<li><p><strong>How</strong>: Linear for positive, tiny linear for negative.</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
-\mathrm{LReLU}(z)=\max{(\alpha z,z)}
+y=\text{LReLU}(z)=\max{(\alpha z,z)}
 \]</div>
-<p>Name: Leaky Rectified Linear Unit</p>
-<p>Params:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( \alpha\in(0,1) \)</span>: hyperparam (negative slope), default 0.01.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha\in(0,1)\)</span>: Negative slope hyperparameter, default 0.01.</p></li>
 </ul>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>scale negative linear outputs by <span class="math notranslate nohighlight">\( \alpha \)</span>.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>no dying ReLU.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>slightly more computationally expensive than ReLU.</p></li>
-<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
-</ul>
-</section>
-<section id="prelu">
-<h3>PReLU<a class="headerlink" href="#prelu" title="Link to this heading">#</a></h3>
+<p>Backward:</p>
 <div class="math notranslate nohighlight">
-\[
+\[\begin{split}
+\frac{\partial\mathcal{L}}{\partial z}=\begin{cases}
+\frac{\partial\mathcal{L}}{\partial y} &amp; z\geq0 \\
+\alpha\frac{\partial\mathcal{L}}{\partial y} &amp; z&lt;0
+\end{cases}
+\end{split}\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Why aren’t we using LReLU in place of ReLU?</em></p>
+<p>Because Dying ReLU became insignificant.</p>
+<ul class="simple">
+<li><p>Empirical performance: ReLU &gt;&gt; LReLU <span class="math notranslate nohighlight">\(\leftarrow\)</span> Sparsity</p></li>
+<li><p>Dying ReLU is solvable with other structural changes:</p>
+<ul>
+<li><p>Weight Init <span class="math notranslate nohighlight">\(\rightarrow\)</span> Ensure sufficient initial positive weights.</p></li>
+<li><p>Batch Norm <span class="math notranslate nohighlight">\(\rightarrow\)</span> Ensure <span class="math notranslate nohighlight">\(\sim\)</span>50% input values are positive.</p></li>
+<li><p>Residual Connection <span class="math notranslate nohighlight">\(\rightarrow\)</span> Gradients can flow directly back to input even if ReLU is dead.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<!-- 
+### PReLU
+
+$$
 \mathrm{PReLU}(z)=\max{(\alpha z,z)}
-\]</div>
-<p>Name: Parametric Rectified Linear Unit</p>
-<p>Params:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( \alpha\in(0,1) \)</span>: learnable param (negative slope), default 0.25.</p></li>
-</ul>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>scale negative linear outputs by a learnable <span class="math notranslate nohighlight">\( \alpha \)</span>.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>a variable, adaptive param learned from data.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>slightly more computationally expensive than LReLU.</p></li>
-<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
-</ul>
-</section>
-<section id="rrelu">
-<h3>RReLU<a class="headerlink" href="#rrelu" title="Link to this heading">#</a></h3>
-<div class="math notranslate nohighlight">
-\[
+$$
+
+Name: Parametric Rectified Linear Unit
+
+Params:
+- $ \alpha\in(0,1) $: learnable param (negative slope), default 0.25.
+
+Idea:
+- scale negative linear outputs by a learnable $ \alpha $.
+
+Pros:
+- a variable, adaptive param learned from data.
+
+Cons:
+- slightly more computationally expensive than LReLU.
+- activation explosion as $ z\rightarrow\infty $.
+
+
+
+### RReLU
+
+$$
 \mathrm{RReLU}(z)=\max{(\alpha z,z)}
-\]</div>
-<p>Name: Randomized Rectified Linear Unit</p>
-<p>Params:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( \alpha\sim\mathrm{Uniform}(l,u) \)</span>: a random number sampled from a uniform distribution.</p></li>
-<li><p><span class="math notranslate nohighlight">\( l,u \)</span>: hyperparams (lower bound, upper bound)</p></li>
-</ul>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>scale negative linear outputs by a random <span class="math notranslate nohighlight">\( \alpha \)</span>.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>reduce overfitting by randomization.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>slightly more computationally expensive than LReLU.</p></li>
-<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
-</ul>
-</section>
-</section>
-<section id="linear-units-exponential">
-<h2>Linear Units (Exponential)<a class="headerlink" href="#linear-units-exponential" title="Link to this heading">#</a></h2>
-<section id="elu">
-<h3>ELU<a class="headerlink" href="#elu" title="Link to this heading">#</a></h3>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+$$
+
+
+Name: Randomized Rectified Linear Unit
+
+Params:
+- $ \alpha\sim\mathrm{Uniform}(l,u) $: a random number sampled from a uniform distribution.
+- $ l,u $: hyperparams (lower bound, upper bound)
+
+Idea:
+- scale negative linear outputs by a random $ \alpha $.
+
+Pros:
+- reduce overfitting by randomization.
+
+Cons:
+- slightly more computationally expensive than LReLU.
+- activation explosion as $ z\rightarrow\infty $.
+
+## ELU
+- **What**: Exponential Linear Units
+- **Why**: 
+
+$$
 \mathrm{ELU}(z)=\begin{cases}
-z &amp; \mathrm{if}\ z\geq0 \\\\
-\alpha(e^z-1) &amp; \mathrm{if}\ z&lt;0
+z & z\geq0 \\\\
+\alpha(e^z-1) & z<0
 \end{cases}
-\end{split}\]</div>
-<p>Name: Exponential Linear Unit</p>
-<p>Params:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( \alpha \)</span>: hyperparam, default 1.</p></li>
-</ul>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>convert negative linear outputs to the non-linear exponential function above.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>mean unit activation is closer to 0 <span class="math notranslate nohighlight">\( \rightarrow \)</span> reduce bias shift (i.e., non-zero mean activation is intrinsically a bias for the next layer.)</p></li>
-<li><p>lower computational complexity compared to batch normalization.</p></li>
-<li><p>smooth to <span class="math notranslate nohighlight">\( -\alpha \)</span> slowly with smaller derivatives that decrease forwardprop variation.</p></li>
-<li><p>faster learning and higher accuracy for image classification in practice.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>slightly more computationally expensive than ReLU.</p></li>
-<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
-</ul>
-</section>
-<section id="selu">
-<h3>SELU<a class="headerlink" href="#selu" title="Link to this heading">#</a></h3>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+$$
+
+Params:
+- $ \alpha $: hyperparam, default 1.
+
+Idea:
+- convert negative linear outputs to the non-linear exponential function above.
+
+Pros:
+- mean unit activation is closer to 0 $ \rightarrow $ reduce bias shift (i.e., non-zero mean activation is intrinsically a bias for the next layer.)
+- lower computational complexity compared to batch normalization.
+- smooth to $ -\alpha $ slowly with smaller derivatives that decrease forwardprop variation.
+- faster learning and higher accuracy for image classification in practice.
+
+Cons:
+- slightly more computationally expensive than ReLU.
+- activation explosion as $ z\rightarrow\infty $. -->
+<!-- ### SELU
+
+$$
 \mathrm{SELU}(z)=\lambda\begin{cases}
-z &amp; \mathrm{if}\ z\geq0 \\
-\alpha(e^z-1) &amp; \mathrm{if}\ z&lt;0
+z & \mathrm{if}\ z\geq0 \\
+\alpha(e^z-1) & \mathrm{if}\ z<0
 \end{cases}
-\end{split}\]</div>
-<p>Name: Scaled Exponential Linear Unit</p>
-<p>Params:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( \alpha \)</span>: hyperparam, default 1.67326.</p></li>
-<li><p><span class="math notranslate nohighlight">\( \lambda \)</span>: hyperparam (scale), default 1.05070.</p></li>
-</ul>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>scale ELU.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>self-normalization <span class="math notranslate nohighlight">\( \rightarrow \)</span> activations close to zero mean and unit variance that are propagated through many network layers will converge towards zero mean and unit variance.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>more computationally expensive than ReLU.</p></li>
-<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
-</ul>
-</section>
-<section id="celu">
-<h3>CELU<a class="headerlink" href="#celu" title="Link to this heading">#</a></h3>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+$$
+
+
+Name: Scaled Exponential Linear Unit
+
+Params:
+- $ \alpha $: hyperparam, default 1.67326.
+- $ \lambda $: hyperparam (scale), default 1.05070.
+
+Idea:
+- scale ELU.
+
+Pros:
+- self-normalization $ \rightarrow $ activations close to zero mean and unit variance that are propagated through many network layers will converge towards zero mean and unit variance.
+
+Cons:
+- more computationally expensive than ReLU.
+- activation explosion as $ z\rightarrow\infty $.
+
+
+
+### CELU
+
+$$
 \mathrm{CELU}(z)=\begin{cases}
-z &amp; \mathrm{if}\ z\geq0\\
-\alpha(e^{\frac{z}{\alpha}}-1) &amp; \mathrm{if}\ z&lt;0
+z & \mathrm{if}\ z\geq0\\
+\alpha(e^{\frac{z}{\alpha}}-1) & \mathrm{if}\ z<0
 \end{cases}
-\end{split}\]</div>
-<p>Name: Continuously Differentiable Exponential Linear Unit</p>
-<p>Params:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\( \alpha \)</span>: hyperparam, default 1.</p></li>
-</ul>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>scale the exponential part of ELU with <span class="math notranslate nohighlight">\( \frac{1}{\alpha} \)</span> to make it continuously differentiable.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>smooth gradient due to continuous differentiability (i.e., <span class="math notranslate nohighlight">\( \mathrm{CELU}'(0)=1 \)</span>).</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>slightly more computationally expensive than ELU.</p></li>
-<li><p>activation explosion as <span class="math notranslate nohighlight">\( z\rightarrow\infty \)</span>.</p></li>
-</ul>
-</section>
-</section>
-<section id="linear-units-others">
-<h2>Linear Units (Others)<a class="headerlink" href="#linear-units-others" title="Link to this heading">#</a></h2>
-<section id="gelu">
-<h3>GELU<a class="headerlink" href="#gelu" title="Link to this heading">#</a></h3>
-<div class="math notranslate nohighlight">
-\[
+$$
+
+
+Name: Continuously Differentiable Exponential Linear Unit
+
+Params:
+- $ \alpha $: hyperparam, default 1.
+
+Idea:
+- scale the exponential part of ELU with $ \frac{1}{\alpha} $ to make it continuously differentiable.
+
+Pros:
+- smooth gradient due to continuous differentiability (i.e., $ \mathrm{CELU}'(0)=1 $).
+
+Cons:
+- slightly more computationally expensive than ELU.
+- activation explosion as $ z\rightarrow\infty $.
+
+## Linear Units (Others)
+
+### GELU
+
+$$
 \mathrm{GELU}(z)=z*\Phi(z)=0.5z(1+\tanh{[\sqrt{\frac{2}{\pi}}(z+0.044715z^3)]})
-\]</div>
-<p>Name: Gaussian Error Linear Unit</p>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>weigh each output value by its Gaussian cdf.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>throw away gate structure and add probabilistic-ish feature to neuron outputs.</p></li>
-<li><p>seemingly better performance than the ReLU and ELU families, SOTA in transformers.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>slightly more computationally expensive than ReLU.</p></li>
-<li><p>lack of practical testing at the moment.</p></li>
-</ul>
-</section>
-<section id="silu">
-<h3>SiLU<a class="headerlink" href="#silu" title="Link to this heading">#</a></h3>
-<div class="math notranslate nohighlight">
-\[
+$$
+
+
+Name: Gaussian Error Linear Unit
+
+Idea:
+- weigh each output value by its Gaussian cdf.
+
+Pros:
+- throw away gate structure and add probabilistic-ish feature to neuron outputs.
+- seemingly better performance than the ReLU and ELU families, SOTA in transformers.
+
+Cons:
+- slightly more computationally expensive than ReLU.
+- lack of practical testing at the moment. -->
+<!-- ### SiLU
+
+$$
 \mathrm{SiLU}(z)=z*\sigma(z)
-\]</div>
-<p>Name: Sigmoid Linear Unit</p>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>weigh each output value by its sigmoid value.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>throw away gate structure.</p></li>
-<li><p>seemingly better performance than the ReLU and ELU families.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>worse than GELU.</p></li>
-</ul>
-</section>
-<section id="softplus">
-<h3>Softplus<a class="headerlink" href="#softplus" title="Link to this heading">#</a></h3>
-<div class="math notranslate nohighlight">
-\[
+$$
+
+Name: Sigmoid Linear Unit
+
+Idea:
+- weigh each output value by its sigmoid value.
+
+Pros:
+- throw away gate structure.
+- seemingly better performance than the ReLU and ELU families.
+
+Cons:
+- worse than GELU.
+
+
+
+### Softplus
+
+$$
 \mathrm{softplus}(z)=\frac{1}{\beta}\log{(1+e^{\beta z})}
-\]</div>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>smooth approximation of ReLU.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>differentiable and thus theoretically better than ReLU.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>empirically far worse than ReLU in terms of computation and performance.</p></li>
-</ul>
-</section>
-</section>
-<section id="multiclass">
-<h2>Multiclass<a class="headerlink" href="#multiclass" title="Link to this heading">#</a></h2>
-<section id="softmax">
-<h3>Softmax<a class="headerlink" href="#softmax" title="Link to this heading">#</a></h3>
-<div class="math notranslate nohighlight">
-\[
+$$
+
+
+Idea:
+- smooth approximation of ReLU.
+
+Pros:
+- differentiable and thus theoretically better than ReLU.
+
+Cons:
+- empirically far worse than ReLU in terms of computation and performance.
+
+
+
+## Multiclass
+
+### Softmax
+
+$$
 \mathrm{softmax}(z_i)=\frac{\exp{(z_i)}}{\sum_j{\exp{(z_j)}}}
-\]</div>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>convert each value <span class="math notranslate nohighlight">\( z_i\)</span> in the output tensor <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> into its corresponding exponential probability s.t. <span class="math notranslate nohighlight">\(\sum_i{\mathrm{softmax}(z_i)}=1 \)</span>.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>your single best choice for multiclass classification.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>mutually exclusive classes (i.e., one input can only be classified into one class.)</p></li>
-</ul>
-</section>
-<section id="softmin">
-<h3>Softmin<a class="headerlink" href="#softmin" title="Link to this heading">#</a></h3>
-<div class="math notranslate nohighlight">
-\[
+$$
+
+
+Idea:
+- convert each value $ z_i$ in the output tensor $\mathbf{z}$ into its corresponding exponential probability s.t. $\sum_i{\mathrm{softmax}(z_i)}=1 $.
+
+Pros:
+- your single best choice for multiclass classification.
+
+Cons:
+- mutually exclusive classes (i.e., one input can only be classified into one class.)
+
+### Softmin
+
+$$
 \mathrm{softmin}(z_i)=\mathrm{softmax}(-z_i)=\frac{\exp{(-z_i)}}{\sum_j{\exp{(-z_j)}}}
-\]</div>
-<p>Idea:</p>
-<ul class="simple">
-<li><p>reverse softmax.</p></li>
-</ul>
-<p>Pros:</p>
-<ul class="simple">
-<li><p>suitable for multiclass classification.</p></li>
-</ul>
-<p>Cons:</p>
-<ul class="simple">
-<li><p>why not softmax.</p></li>
-</ul>
-</section>
+$$
+
+Idea:
+- reverse softmax.
+
+Pros:
+- suitable for multiclass classification.
+
+Cons:
+- why not softmax. --></section>
 </section>
 </section>
 
@@ -1745,45 +1659,14 @@ z &amp; \mathrm{if}\ z\geq0\\
 </li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution">Convolution</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pooling">Pooling</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#recurrent">Recurrent</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gru">GRU</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lstm">LSTM</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bidirectional">Bidirectional</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stacked">Stacked</a></li>
-</ul>
-</li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#activation">Activation</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-like">Binary-like</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sigmoid">Sigmoid</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tanh">Tanh</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-rectified">Linear Units (Rectified)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relu">ReLU</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relu">ReLU</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lrelu">LReLU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prelu">PReLU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rrelu">RReLU</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-exponential">Linear Units (Exponential)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elu">ELU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#selu">SELU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#celu">CELU</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-units-others">Linear Units (Others)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gelu">GELU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#silu">SiLU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softplus">Softplus</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiclass">Multiclass</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmin">Softmin</a></li>
 </ul>
 </li>
 </ul>
