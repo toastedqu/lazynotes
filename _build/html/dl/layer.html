@@ -417,6 +417,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lrelu">LReLU</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
 </ul>
 </li>
 </ul>
@@ -1548,25 +1549,41 @@ Cons:
 
 
 
-## Multiclass
-
-### Softmax
-
-$$
-\mathrm{softmax}(z_i)=\frac{\exp{(z_i)}}{\sum_j{\exp{(z_j)}}}
-$$
-
-
-Idea:
-- convert each value $ z_i$ in the output tensor $\mathbf{z}$ into its corresponding exponential probability s.t. $\sum_i{\mathrm{softmax}(z_i)}=1 $.
-
-Pros:
-- your single best choice for multiclass classification.
-
-Cons:
-- mutually exclusive classes (i.e., one input can only be classified into one class.)
-
-### Softmin
+## Multiclass -->
+</section>
+</section>
+<section id="softmax">
+<h2>Softmax<a class="headerlink" href="#softmax" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Numbers <span class="math notranslate nohighlight">\(\rightarrow\)</span> Probabilities</p></li>
+<li><p><strong>Why</strong>: Multiclass classification.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Exponentiation: Larger/Smaller numbers <span class="math notranslate nohighlight">\(\rightarrow\)</span> even larger/smaller numbers.</p></li>
+<li><p>Normalization: Numbers <span class="math notranslate nohighlight">\(\rightarrow\)</span> Probabilities</p></li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Forward:</p>
+<div class="math notranslate nohighlight">
+\[
+y_i=\text{softmax}(z_i)=\frac{\exp{(z_i)}}{\sum_j{\exp{(z_j)}}}
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i \&amp; j\)</span>: Class indices.</p></li>
+</ul>
+<p>Backward:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\frac{\partial\mathcal{L}}{\partial z_i}=\begin{cases}
+\frac{\partial\mathcal{L}}{\partial y_i}y_i(1-y_i) &amp; i=j \\
+-\frac{\partial\mathcal{L}}{\partial y_i}y_iy_j &amp; i\neq j
+\end{cases}
+\end{split}\]</div>
+</div>
+<!-- ### Softmin
 
 $$
 \mathrm{softmin}(z_i)=\mathrm{softmax}(-z_i)=\frac{\exp{(-z_i)}}{\sum_j{\exp{(-z_j)}}}
@@ -1580,7 +1597,6 @@ Pros:
 
 Cons:
 - why not softmax. --></section>
-</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1669,6 +1685,7 @@ Cons:
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lrelu">LReLU</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
 </ul>
 </li>
 </ul>

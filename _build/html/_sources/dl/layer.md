@@ -1000,25 +1000,35 @@ Cons:
 
 
 
-## Multiclass
+## Multiclass -->
 
-### Softmax
+## Softmax
+- **What**: Numbers $\rightarrow$ Probabilities
+- **Why**: Multiclass classification.
+- **How**:
+    1. Exponentiation: Larger/Smaller numbers $\rightarrow$ even larger/smaller numbers.
+    2. Normalization: Numbers $\rightarrow$ Probabilities
+
+```{admonition} Math
+:class: note, dropdown
+Forward:
 
 $$
-\mathrm{softmax}(z_i)=\frac{\exp{(z_i)}}{\sum_j{\exp{(z_j)}}}
+y_i=\text{softmax}(z_i)=\frac{\exp{(z_i)}}{\sum_j{\exp{(z_j)}}}
 $$
+- $i \& j$: Class indices. 
 
+Backward:
 
-Idea:
-- convert each value $ z_i$ in the output tensor $\mathbf{z}$ into its corresponding exponential probability s.t. $\sum_i{\mathrm{softmax}(z_i)}=1 $.
+$$
+\frac{\partial\mathcal{L}}{\partial z_i}=\begin{cases}
+\frac{\partial\mathcal{L}}{\partial y_i}y_i(1-y_i) & i=j \\
+-\frac{\partial\mathcal{L}}{\partial y_i}y_iy_j & i\neq j
+\end{cases}
+$$
+```
 
-Pros:
-- your single best choice for multiclass classification.
-
-Cons:
-- mutually exclusive classes (i.e., one input can only be classified into one class.)
-
-### Softmin
+<!-- ### Softmin
 
 $$
 \mathrm{softmin}(z_i)=\mathrm{softmax}(-z_i)=\frac{\exp{(-z_i)}}{\sum_j{\exp{(-z_j)}}}
