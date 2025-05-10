@@ -18,7 +18,7 @@ Common notations include (section-specific notations take priority):
 - $ \textbf{a} $: vector
 - $ A $: matrix / random variable / upper bound
 - $ \mathbf{A} $: tensor (dim > 2)
-- $ \mathcal{A} $: set
+- $ \mathcal{A} $: set / special notation
 - $ \mathbb{A} $: common number set
 <!--  -->
 - $ [] $: vector brackets
