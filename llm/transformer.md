@@ -406,3 +406,63 @@ $$
 	- $\tau\rightarrow \infty$: More random/uniform.
 	- $\tau=1$: Standard softmax. Probabilities reflect differences in logits.
 	- $\tau>1$: Generally NOT recommended $\leftarrow$ Randomness goes BEYOND what the model has learnt.
+
+## Greedy Search
+- **What**: Always take the most probable token at each step.
+- **Why**: Simplest.
+
+```{admonition} Math
+:class: note, dropdown
+Greedy Search:
+
+$$
+y_t=\arg\max_{v}P(y_t=v|Y_{*,<t},X)
+$$
+```
+
+## Beam Search
+- **What**: Iteratively explore & evaluate multiple hypotheses (i.e., beams). 
+- **Why**: Greedy search focuses on local optima $\rightarrow$ May not lead to globally optimal sequence.
+- **How**:
+	1. Initialize $k$ beams with top $k$ most probable tokens.
+	2. For each step:
+		1. For each beam: Compute probability distribution for next token.
+		2. Consider all possible next tokens in vocabulary $\rightarrow$ Form candidate beams.
+		3. For each candidate beam: Compute a **score** based on the log probability of the beam sequence.
+		4. Select top $k$ beams with the highest scores.
+	3. Stop when
+		- Max length.
+		- All $k$ beams have generated the EOS token.
+	4. Output the beam with the highest score.
+
+```{admonition} Math
+:class: note, dropdown
+Beam Search:
+1. At $t=1$, select top $k$ most probable tokens via $P(y_1|X)$. Each forms an initial beam $Y_{1,i}=[y_{1,i}]$.
+2. $\forall t>1$:
+	1. $\forall Y_{t-1,i}=[y_{1,i},\cdots,y_{t-1,i}]$: Compute $P(y_t|Y_{t-1,i},X)$.
+	2. Consider all $|\mathcal{V}|$ possible tokens $\rightarrow$ Form $k\times|\mathcal{V}|$ candidate beams.
+	3. $\forall Y_{t,i}=[y_{1,i},\cdots,y_{t,i}]$: Compute $S(Y_t)=\logP(Y_t|X)=\sum_{t'=1}^{t}\logP(y_{t'}|Y_{<t'},X)$.
+	4. Select top $k$ beams with the highest scores.
+3. Termination.
+4. Output.
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Cons?*
+- Beam Search naturally favors shorter sequences $\leftarrow$ Adding more log probabilities reduces the score.
+
+*Solution?*
+- **Length normalization**:
+
+	$$
+	S(Y_t)=\frac{1}{t^\alpha}\sum_{t'=1}^{t}\logP(y_{t'}|Y_{<t'},X)
+	$$
+	- $\alpha$: Length normalization hyperparameter.
+```
+
+## Sampling
+### Top-k
+
+### Top-p (Nucleus)
