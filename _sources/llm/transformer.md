@@ -27,7 +27,8 @@ kernelspec:
 			- **Encoder-Decoder Decoder**: (Input) Context-aware vectors + (Output) Position-aware vectors $\rightarrow$ (Output) Context-aware vectors
 			- **Decoder-Only Decoder**: (Input) Position-aware vectors $\rightarrow$ (Input) Masked context-aware vectors
 	- Output:
-		1. **Output Layer**: (Output) Context-aware vectors $\xrightarrow{\text{predict}}$ Next token
+		1. **Output Layer**: Masked context-aware vectors $\rightarrow$ 
+		2. (Generation-only) **Decoding**: Token Probabilities $\rightarrow$ Next token
 
 <br><br>
 
@@ -345,3 +346,63 @@ See [Linear](../modules/basics.md#linear)
 
 ## Softmax
 See [Softmax](../modules/activations.md#softmax) -->
+
+# Decoding
+- **What**: Token probabilities $\rightarrow$ Output token
+- **Why**:
+	- In generation tasks, the transformer model only estimates the probabilities of outputting each token via logits.
+	- We need to select which token to output at each step, and we need to find the most probable output sequence given the input sequence.
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- IO:
+	- $X$: Input sequence.
+	- $Y$: Output sequence.
+	- $y_t$: Output token at step $t$.
+	- $Y_{<t}$: Output sequence up till step $t$.
+- Hyperparam:
+	- $\tau$: Temperature.
+- Misc:
+	- $\mathcal{V}$: Vocabulary set.
+	- $v_i$: $i$th token.
+	- $z_{ti}$: Logit of $v_i$ at step $t$.
+	- $T$: Total output sequence length.
+
+Procedure:
+1. Probability of outputting token $v_i$ at step $t$:
+
+$$
+P(y_t=v_i|Y_{<t},X)=\text{softmax}(z_{ti})=\frac{\exp(\frac{z_{ti}}{\tau})}{\sum_{j=1}^{|\mathcal{V}|}\exp(\frac{z_{tj}}{\tau})}
+$$
+
+2. Probability of outputting sequence $Y$:
+
+$$
+P(Y|X)=\prod_{t=1}^{T}P(y_t|Y_{<t},X)
+$$
+
+3. Objective - Find the optimal sequence:
+
+$$
+Y_*=\arg\max_YP(Y|X)
+$$
+```
+
+## Temperature
+- **What**: Randomness control.
+- **Why**: **Boltzmann distribution** from statistical mechanics: $p_i\propto\exp\left(-\frac{E_i}{kT}\right)$
+	- This describes the probability of a system being in a particular state $i$ given the state's energy $E_i$ and the system's temperature $T$.
+	- Temperature $T$ controls the randomness of physical systems:
+		- $T$⬆️ $\rightarrow$ Difference in $p$ between low-energy and high-energy states⬇️ $\rightarrow$ Can't stick to low-energy states $\rightarrow$ Randomness⬆️
+		- $T$⬇️ $\rightarrow$ Difference in $p$ between low-energy and high-energy states⬆️ $\rightarrow$ Stick to low-energy states $\rightarrow$ Randomness⬇️
+	- Identical problem setting:
+		- States $\Leftrightarrow$ Tokens
+		- Energy $\Leftrightarrow$ Logits
+		- $T$⬆️ $\rightarrow$ Less probable tokens become more probable $\rightarrow$ Randomness⬆️
+		- $T$⬇️ $\rightarrow$ Less probable tokens become even less probable $\rightarrow$ Randomness⬇️
+- **How**:
+	- $\tau\rightarrow 0$: More deterministic.
+	- $\tau\rightarrow \infty$: More random/uniform.
+	- $\tau=1$: Standard softmax. Probabilities reflect differences in logits.
+	- $\tau>1$: Generally NOT recommended $\leftarrow$ Randomness goes BEYOND what the model has learnt.

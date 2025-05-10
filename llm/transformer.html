@@ -180,8 +180,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../dl/layer.html">Layer</a></li>
 
 
-
-
 <li class="toctree-l1"><a class="reference internal" href="../dl/loss.html">Loss</a></li>
 
 
@@ -415,6 +413,10 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
 </li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#decoding">Decoding</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
+</ul>
+</li>
 </ul>
 
             </nav>
@@ -458,7 +460,8 @@ document.write(`
 </li>
 <li><p>Output:</p>
 <ol class="arabic simple">
-<li><p><strong>Output Layer</strong>: (Output) Context-aware vectors <span class="math notranslate nohighlight">\(\xrightarrow{\text{predict}}\)</span> Next token</p></li>
+<li><p><strong>Output Layer</strong>: Masked context-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span></p></li>
+<li><p>(Generation-only) <strong>Decoding</strong>: Token Probabilities <span class="math notranslate nohighlight">\(\rightarrow\)</span> Next token</p></li>
 </ol>
 </li>
 </ul>
@@ -876,7 +879,102 @@ document.write(`
 See [Linear](../modules/basics.md#linear)
 
 ## Softmax
-See [Softmax](../modules/activations.md#softmax) --></section>
+See [Softmax](../modules/activations.md#softmax) -->
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="decoding">
+<h1>Decoding<a class="headerlink" href="#decoding" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><strong>What</strong>: Token probabilities <span class="math notranslate nohighlight">\(\rightarrow\)</span> Output token</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>In generation tasks, the transformer model only estimates the probabilities of outputting each token via logits.</p></li>
+<li><p>We need to select which token to output at each step, and we need to find the most probable output sequence given the input sequence.</p></li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(X\)</span>: Input sequence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(Y\)</span>: Output sequence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(y_t\)</span>: Output token at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(Y_{&lt;t}\)</span>: Output sequence up till step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparam:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\tau\)</span>: Temperature.</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{V}\)</span>: Vocabulary set.</p></li>
+<li><p><span class="math notranslate nohighlight">\(v_i\)</span>: <span class="math notranslate nohighlight">\(i\)</span>th token.</p></li>
+<li><p><span class="math notranslate nohighlight">\(z_{ti}\)</span>: Logit of <span class="math notranslate nohighlight">\(v_i\)</span> at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>: Total output sequence length.</p></li>
+</ul>
+</li>
+</ul>
+<p>Procedure:</p>
+<ol class="arabic simple">
+<li><p>Probability of outputting token <span class="math notranslate nohighlight">\(v_i\)</span> at step <span class="math notranslate nohighlight">\(t\)</span>:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+P(y_t=v_i|Y_{&lt;t},X)=\text{softmax}(z_{ti})=\frac{\exp(\frac{z_{ti}}{\tau})}{\sum_{j=1}^{|\mathcal{V}|}\exp(\frac{z_{tj}}{\tau})}
+\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Probability of outputting sequence <span class="math notranslate nohighlight">\(Y\)</span>:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+P(Y|X)=\prod_{t=1}^{T}P(y_t|Y_{&lt;t},X)
+\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Objective - Find the optimal sequence:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+Y_*=\arg\max_YP(Y|X)
+\]</div>
+</div>
+<section id="temperature">
+<h2>Temperature<a class="headerlink" href="#temperature" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Randomness control.</p></li>
+<li><p><strong>Why</strong>: <strong>Boltzmann distribution</strong> from statistical mechanics: <span class="math notranslate nohighlight">\(p_i\propto\exp\left(-\frac{E_i}{kT}\right)\)</span></p>
+<ul>
+<li><p>This describes the probability of a system being in a particular state <span class="math notranslate nohighlight">\(i\)</span> given the state’s energy <span class="math notranslate nohighlight">\(E_i\)</span> and the system’s temperature <span class="math notranslate nohighlight">\(T\)</span>.</p></li>
+<li><p>Temperature <span class="math notranslate nohighlight">\(T\)</span> controls the randomness of physical systems:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>⬆️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Difference in <span class="math notranslate nohighlight">\(p\)</span> between low-energy and high-energy states⬇️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Can’t stick to low-energy states <span class="math notranslate nohighlight">\(\rightarrow\)</span> Randomness⬆️</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>⬇️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Difference in <span class="math notranslate nohighlight">\(p\)</span> between low-energy and high-energy states⬆️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Stick to low-energy states <span class="math notranslate nohighlight">\(\rightarrow\)</span> Randomness⬇️</p></li>
+</ul>
+</li>
+<li><p>Identical problem setting:</p>
+<ul>
+<li><p>States <span class="math notranslate nohighlight">\(\Leftrightarrow\)</span> Tokens</p></li>
+<li><p>Energy <span class="math notranslate nohighlight">\(\Leftrightarrow\)</span> Logits</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>⬆️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Less probable tokens become more probable <span class="math notranslate nohighlight">\(\rightarrow\)</span> Randomness⬆️</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>⬇️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Less probable tokens become even less probable <span class="math notranslate nohighlight">\(\rightarrow\)</span> Randomness⬇️</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\tau\rightarrow 0\)</span>: More deterministic.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau\rightarrow \infty\)</span>: More random/uniform.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau=1\)</span>: Standard softmax. Probabilities reflect differences in logits.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau&gt;1\)</span>: Generally NOT recommended <span class="math notranslate nohighlight">\(\leftarrow\)</span> Randomness goes BEYOND what the model has learnt.</p></li>
+</ul>
+</li>
+</ul>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -941,6 +1039,10 @@ See [Softmax](../modules/activations.md#softmax) --></section>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#decoding">Decoding</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
 </ul>
 </li>
 </ul>
