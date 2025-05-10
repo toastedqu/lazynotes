@@ -415,6 +415,13 @@ document.write(`
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#decoding">Decoding</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">Greedy Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">Beam Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling">Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k">Top-k</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-p-nucleus">Top-p (Nucleus)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -975,6 +982,93 @@ Y_*=\arg\max_YP(Y|X)
 </li>
 </ul>
 </section>
+<section id="greedy-search">
+<h2>Greedy Search<a class="headerlink" href="#greedy-search" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Always take the most probable token at each step.</p></li>
+<li><p><strong>Why</strong>: Simplest.</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Greedy Search:</p>
+<div class="math notranslate nohighlight">
+\[
+y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
+\]</div>
+</div>
+</section>
+<section id="beam-search">
+<h2>Beam Search<a class="headerlink" href="#beam-search" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Iteratively explore &amp; evaluate multiple hypotheses (i.e., beams).</p></li>
+<li><p><strong>Why</strong>: Greedy search focuses on local optima <span class="math notranslate nohighlight">\(\rightarrow\)</span> May not lead to globally optimal sequence.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Initialize <span class="math notranslate nohighlight">\(k\)</span> beams with top <span class="math notranslate nohighlight">\(k\)</span> most probable tokens.</p></li>
+<li><p>For each step:</p>
+<ol class="arabic simple">
+<li><p>For each beam: Compute probability distribution for next token.</p></li>
+<li><p>Consider all possible next tokens in vocabulary <span class="math notranslate nohighlight">\(\rightarrow\)</span> Form candidate beams.</p></li>
+<li><p>For each candidate beam: Compute a <strong>score</strong> based on the log probability of the beam sequence.</p></li>
+<li><p>Select top <span class="math notranslate nohighlight">\(k\)</span> beams with the highest scores.</p></li>
+</ol>
+</li>
+<li><p>Stop when</p>
+<ul>
+<li><p>Max length.</p></li>
+<li><p>All <span class="math notranslate nohighlight">\(k\)</span> beams have generated the EOS token.</p></li>
+</ul>
+</li>
+<li><p>Output the beam with the highest score.</p></li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Beam Search:</p>
+<ol class="arabic simple">
+<li><p>At <span class="math notranslate nohighlight">\(t=1\)</span>, select top <span class="math notranslate nohighlight">\(k\)</span> most probable tokens via <span class="math notranslate nohighlight">\(P(y_1|X)\)</span>. Each forms an initial beam <span class="math notranslate nohighlight">\(Y_{1,i}=[y_{1,i}]\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\forall t&gt;1\)</span>:</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\(\forall Y_{t-1,i}=[y_{1,i},\cdots,y_{t-1,i}]\)</span>: Compute <span class="math notranslate nohighlight">\(P(y_t|Y_{t-1,i},X)\)</span>.</p></li>
+<li><p>Consider all <span class="math notranslate nohighlight">\(|\mathcal{V}|\)</span> possible tokens <span class="math notranslate nohighlight">\(\rightarrow\)</span> Form <span class="math notranslate nohighlight">\(k\times|\mathcal{V}|\)</span> candidate beams.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\forall Y_{t,i}=[y_{1,i},\cdots,y_{t,i}]\)</span>: Compute <span class="math notranslate nohighlight">\(S(Y_t)=\logP(Y_t|X)=\sum_{t'=1}^{t}\logP(y_{t'}|Y_{&lt;t'},X)\)</span>.</p></li>
+<li><p>Select top <span class="math notranslate nohighlight">\(k\)</span> beams with the highest scores.</p></li>
+</ol>
+</li>
+<li><p>Termination.</p></li>
+<li><p>Output.</p></li>
+</ol>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>Beam Search naturally favors shorter sequences <span class="math notranslate nohighlight">\(\leftarrow\)</span> Adding more log probabilities reduces the score.</p></li>
+</ul>
+<p><em>Solution?</em></p>
+<ul>
+<li><p><strong>Length normalization</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+	S(Y_t)=\frac{1}{t^\alpha}\sum_{t'=1}^{t}\logP(y_{t'}|Y_{&lt;t'},X)
+	\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\alpha\)</span>: Length normalization hyperparameter.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="sampling">
+<h2>Sampling<a class="headerlink" href="#sampling" title="Link to this heading">#</a></h2>
+<section id="top-k">
+<h3>Top-k<a class="headerlink" href="#top-k" title="Link to this heading">#</a></h3>
+</section>
+<section id="top-p-nucleus">
+<h3>Top-p (Nucleus)<a class="headerlink" href="#top-p-nucleus" title="Link to this heading">#</a></h3>
+</section>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1043,6 +1137,13 @@ Y_*=\arg\max_YP(Y|X)
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#decoding">Decoding</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">Greedy Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">Beam Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling">Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k">Top-k</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-p-nucleus">Top-p (Nucleus)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
