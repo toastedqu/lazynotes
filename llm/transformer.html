@@ -1032,7 +1032,7 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
 <ol class="arabic simple">
 <li><p><span class="math notranslate nohighlight">\(\forall Y_{t-1,i}=[y_{1,i},\cdots,y_{t-1,i}]\)</span>: Compute <span class="math notranslate nohighlight">\(P(y_t|Y_{t-1,i},X)\)</span>.</p></li>
 <li><p>Consider all <span class="math notranslate nohighlight">\(|\mathcal{V}|\)</span> possible tokens <span class="math notranslate nohighlight">\(\rightarrow\)</span> Form <span class="math notranslate nohighlight">\(k\times|\mathcal{V}|\)</span> candidate beams.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\forall Y_{t,i}=[y_{1,i},\cdots,y_{t,i}]\)</span>: Compute <span class="math notranslate nohighlight">\(S(Y_t)=\logP(Y_t|X)=\sum_{t'=1}^{t}\logP(y_{t'}|Y_{&lt;t'},X)\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\forall Y_{t,i}=[y_{1,i},\cdots,y_{t,i}]\)</span>: Compute <span class="math notranslate nohighlight">\(S(Y_t)=\log P(Y_t|X)=\sum_{t'=1}^{t}\log P(y_{t'}|Y_{&lt;t'},X)\)</span>.</p></li>
 <li><p>Select top <span class="math notranslate nohighlight">\(k\)</span> beams with the highest scores.</p></li>
 </ol>
 </li>
@@ -1051,7 +1051,7 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
 <li><p><strong>Length normalization</strong>:</p>
 <div class="math notranslate nohighlight">
 \[
-	S(Y_t)=\frac{1}{t^\alpha}\sum_{t'=1}^{t}\logP(y_{t'}|Y_{&lt;t'},X)
+	S(Y_t)=\frac{1}{t^\alpha}\sum_{t'=1}^{t}\log P(y_{t'}|Y_{&lt;t'},X)
 	\]</div>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha\)</span>: Length normalization hyperparameter.</p></li>
