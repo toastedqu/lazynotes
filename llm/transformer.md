@@ -442,7 +442,7 @@ Beam Search:
 2. $\forall t>1$:
 	1. $\forall Y_{t-1,i}=[y_{1,i},\cdots,y_{t-1,i}]$: Compute $P(y_t|Y_{t-1,i},X)$.
 	2. Consider all $|\mathcal{V}|$ possible tokens $\rightarrow$ Form $k\times|\mathcal{V}|$ candidate beams.
-	3. $\forall Y_{t,i}=[y_{1,i},\cdots,y_{t,i}]$: Compute $S(Y_t)=\logP(Y_t|X)=\sum_{t'=1}^{t}\logP(y_{t'}|Y_{<t'},X)$.
+	3. $\forall Y_{t,i}=[y_{1,i},\cdots,y_{t,i}]$: Compute $S(Y_t)=\log P(Y_t|X)=\sum_{t'=1}^{t}\log P(y_{t'}|Y_{<t'},X)$.
 	4. Select top $k$ beams with the highest scores.
 3. Termination.
 4. Output.
@@ -457,7 +457,7 @@ Beam Search:
 - **Length normalization**:
 
 	$$
-	S(Y_t)=\frac{1}{t^\alpha}\sum_{t'=1}^{t}\logP(y_{t'}|Y_{<t'},X)
+	S(Y_t)=\frac{1}{t^\alpha}\sum_{t'=1}^{t}\log P(y_{t'}|Y_{<t'},X)
 	$$
 	- $\alpha$: Length normalization hyperparameter.
 ```
