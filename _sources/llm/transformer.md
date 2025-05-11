@@ -364,7 +364,7 @@ Notations:
 - Hyperparam:
 	- $\tau$: Temperature.
 - Misc:
-	- $\mathcal{V}$: Vocabulary set.
+	- $\mathcal{V}$: Vocab set.
 	- $v_i$: $i$th token.
 	- $z_{ti}$: Logit of $v_i$ at step $t$.
 	- $T$: Total output sequence length.
@@ -427,7 +427,7 @@ $$
 	1. Initialize $k$ beams with top $k$ most probable tokens.
 	2. For each step:
 		1. For each beam: Compute probability distribution for next token.
-		2. Consider all possible next tokens in vocabulary $\rightarrow$ Form candidate beams.
+		2. Consider all possible next tokens in vocab $\rightarrow$ Form candidate beams.
 		3. For each candidate beam: Compute a **score** based on the log probability of the beam sequence.
 		4. Select top $k$ beams with the highest scores.
 	3. Stop when
@@ -463,6 +463,33 @@ Beam Search:
 ```
 
 ## Sampling
+- **What**: Random selection from a set/distribution.
+- **Why**: Randomness.
+	- Greedy or Beam Search lead to **deterministic** outcomes.
+		- Greedy: Most probable tokens at each step.
+		- Beam: Most probable sequence at the end.
+	- Deterministic outcomes = Generic, repetitive, lacking creativity.
+
 ### Top-k
+- **What**: Output token $\sim$ Top-$k$ most probable tokens.
+- **Why**: Temperature sampling $\rightarrow$ Too much randomness if large temperature $\rightarrow$ Incoherent sequence
+	- Any token may be selected based on its probability, including less probable ones.
+	- We don't want that, so we limit the vocab options and resample.
+- **How**:
+	1. Compute probabilities of all tokens in vocab.
+	2. Select top $k$ tokens.
+	3. Re-normalize probabilities of top $k$ tokens.
+	4. Sample.
 
 ### Top-p (Nucleus)
+- **What**: Output token $\sim$ Smallest possible set of tokens whose cumulative probability exceeds $p$.
+	- **Nucleus**: the set.
+- **Why**: In Top-k,
+	- If the model is very certain about the next word, large $k$ $\rightarrow$ too random.
+	- If the model is very uncertain about the next word, small $k$ $\rightarrow$ too deterministic.
+- **How**:
+	1. Compute probabilities of all tokens in vocab.
+	2. Sort tokens by probability.
+	3. Form nucleus.
+	4. Re-normalize probabilities of top $k$ tokens.
+	5. Sample.

@@ -919,7 +919,7 @@ See [Softmax](../modules/activations.md#softmax) -->
 </li>
 <li><p>Misc:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\mathcal{V}\)</span>: Vocabulary set.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{V}\)</span>: Vocab set.</p></li>
 <li><p><span class="math notranslate nohighlight">\(v_i\)</span>: <span class="math notranslate nohighlight">\(i\)</span>th token.</p></li>
 <li><p><span class="math notranslate nohighlight">\(z_{ti}\)</span>: Logit of <span class="math notranslate nohighlight">\(v_i\)</span> at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(T\)</span>: Total output sequence length.</p></li>
@@ -1008,7 +1008,7 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
 <li><p>For each step:</p>
 <ol class="arabic simple">
 <li><p>For each beam: Compute probability distribution for next token.</p></li>
-<li><p>Consider all possible next tokens in vocabulary <span class="math notranslate nohighlight">\(\rightarrow\)</span> Form candidate beams.</p></li>
+<li><p>Consider all possible next tokens in vocab <span class="math notranslate nohighlight">\(\rightarrow\)</span> Form candidate beams.</p></li>
 <li><p>For each candidate beam: Compute a <strong>score</strong> based on the log probability of the beam sequence.</p></li>
 <li><p>Select top <span class="math notranslate nohighlight">\(k\)</span> beams with the highest scores.</p></li>
 </ol>
@@ -1062,11 +1062,64 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
 </section>
 <section id="sampling">
 <h2>Sampling<a class="headerlink" href="#sampling" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Random selection from a set/distribution.</p></li>
+<li><p><strong>Why</strong>: Randomness.</p>
+<ul>
+<li><p>Greedy or Beam Search lead to <strong>deterministic</strong> outcomes.</p>
+<ul>
+<li><p>Greedy: Most probable tokens at each step.</p></li>
+<li><p>Beam: Most probable sequence at the end.</p></li>
+</ul>
+</li>
+<li><p>Deterministic outcomes = Generic, repetitive, lacking creativity.</p></li>
+</ul>
+</li>
+</ul>
 <section id="top-k">
 <h3>Top-k<a class="headerlink" href="#top-k" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Output token <span class="math notranslate nohighlight">\(\sim\)</span> Top-<span class="math notranslate nohighlight">\(k\)</span> most probable tokens.</p></li>
+<li><p><strong>Why</strong>: Temperature sampling <span class="math notranslate nohighlight">\(\rightarrow\)</span> Too much randomness if large temperature <span class="math notranslate nohighlight">\(\rightarrow\)</span> Incoherent sequence</p>
+<ul>
+<li><p>Any token may be selected based on its probability, including less probable ones.</p></li>
+<li><p>We don’t want that, so we limit the vocab options and resample.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Compute probabilities of all tokens in vocab.</p></li>
+<li><p>Select top <span class="math notranslate nohighlight">\(k\)</span> tokens.</p></li>
+<li><p>Re-normalize probabilities of top <span class="math notranslate nohighlight">\(k\)</span> tokens.</p></li>
+<li><p>Sample.</p></li>
+</ol>
+</li>
+</ul>
 </section>
 <section id="top-p-nucleus">
 <h3>Top-p (Nucleus)<a class="headerlink" href="#top-p-nucleus" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Output token <span class="math notranslate nohighlight">\(\sim\)</span> Smallest possible set of tokens whose cumulative probability exceeds <span class="math notranslate nohighlight">\(p\)</span>.</p>
+<ul>
+<li><p><strong>Nucleus</strong>: the set.</p></li>
+</ul>
+</li>
+<li><p><strong>Why</strong>: In Top-k,</p>
+<ul>
+<li><p>If the model is very certain about the next word, large <span class="math notranslate nohighlight">\(k\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> too random.</p></li>
+<li><p>If the model is very uncertain about the next word, small <span class="math notranslate nohighlight">\(k\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> too deterministic.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Compute probabilities of all tokens in vocab.</p></li>
+<li><p>Sort tokens by probability.</p></li>
+<li><p>Form nucleus.</p></li>
+<li><p>Re-normalize probabilities of top <span class="math notranslate nohighlight">\(k\)</span> tokens.</p></li>
+<li><p>Sample.</p></li>
+</ol>
+</li>
+</ul>
 </section>
 </section>
 </section>
