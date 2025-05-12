@@ -87,6 +87,7 @@ Notations:
     - $\rho$: Repetition Penalty factor.
 
 Logits after repetition penalty:
+
 $$
 z_{ti} \leftarrow \begin{cases} 
 z_{ti} / \rho & v_i \in Y_{<t}\ \& \ z_{ti} > 0 \\

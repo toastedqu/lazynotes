@@ -545,14 +545,15 @@ Y_*=\arg\max_YP(Y|X)
 </ul>
 </li>
 </ul>
-<p>Logits after repetition penalty:
-$<span class="math notranslate nohighlight">\(
+<p>Logits after repetition penalty:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
 z_{ti} \leftarrow \begin{cases} 
 z_{ti} / \rho &amp; v_i \in Y_{&lt;t}\ \&amp; \ z_{ti} &gt; 0 \\
 z_{ti} \cdot \rho &amp; v_i \in Y_{&lt;t}\ \&amp; \ z_{ti} &lt; 0 \\
 z_{ti} &amp; v_i \notin Y_{&lt;t}
 \end{cases}
-\)</span>$</p>
+\end{split}\]</div>
 </div>
 </section>
 </section>
