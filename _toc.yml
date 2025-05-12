@@ -25,6 +25,7 @@ parts:
   - caption: LLM
     chapters:
     # - file: llm/transformer
+    - file: llm/decoding
     - file: llm/rl
     - file: llm/peft
   - caption: Misc
