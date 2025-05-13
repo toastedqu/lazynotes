@@ -537,27 +537,46 @@ Y_*=\arg\max_YP(Y|X)
 <!-- ```{dropdown} Table: Penalty Types -->
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>Type</p></th>
-<th class="head"><p>What</p></th>
-<th class="head"><p>Math</p></th>
+<tr class="row-odd"><th class="head text-left"><p>Type</p></th>
+<th class="head text-left"><p>What</p></th>
+<th class="head text-left"><p>Math</p></th>
+<th class="head text-left"><p>Cons</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><strong>Frequency</strong></p></td>
-<td><p>Subtraction based on how many times the token occurred in the output sequence</p></td>
-<td><p><span class="math notranslate nohighlight">\(z_{ti} \leftarrow z_{ti}-\alpha n_{v_i}\)</span></p></td>
+<tr class="row-even"><td class="text-left"><p><strong>Frequency</strong></p></td>
+<td class="text-left"><p>Subtraction based on how many times the token occurred in the output sequence</p></td>
+<td class="text-left"><p><span class="math notranslate nohighlight">\(z_{ti} \leftarrow z_{ti}-\alpha n_{v_i}\)</span></p></td>
+<td class="text-left"><p>Suppresses important keywords</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Presence</strong></p></td>
-<td><p>Subtraction based on the <strong>existence</strong> of the token in the output sequence</p></td>
-<td><p><span class="math notranslate nohighlight">\(z_{ti} \leftarrow z_{ti}-\beta \mathbb{1}_{v_i}[Y_{&lt;t}]\)</span></p></td>
+<tr class="row-odd"><td class="text-left"><p><strong>Presence</strong></p></td>
+<td class="text-left"><p>Subtraction based on the <strong>existence</strong> of the token in the output sequence</p></td>
+<td class="text-left"><p><span class="math notranslate nohighlight">\(z_{ti} \leftarrow z_{ti}-\beta \mathbf{1}_{v_i}[Y_{&lt;t}]\)</span></p></td>
+<td class="text-left"><p>Incoherence <span class="math notranslate nohighlight">\(\leftarrow\)</span> Too harsh compared to frequency penalty</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>Repetition</strong></p></td>
-<td><p>Multiplication based on the <strong>existence</strong> of the token in the <strong>entire sequence</strong></p></td>
-<td><p>$<span class="math notranslate nohighlight">\(z_{ti} \leftarrow \begin{cases} z_{ti} / \rho &amp; v_i \in Y_{&lt;t}\ \&amp; \ z_{ti} &gt; 0 \\ z_{ti} \cdot \rho &amp; v_i \in Y_{&lt;t}\ \&amp; \ z_{ti} &lt; 0 \\ z_{ti} &amp; v_i \notin Y_{&lt;t} \end{cases}\)</span>$</p></td>
+<tr class="row-even"><td class="text-left"><p><strong>Repetition</strong></p></td>
+<td class="text-left"><p>Multiplication based on the <strong>existence</strong> of the token in the <strong>entire sequence</strong></p></td>
+<td class="text-left"><p><span class="math notranslate nohighlight">\(z_{ti} \leftarrow \begin{cases} z_{ti} / \rho &amp; v_i \in [X, Y_{&lt;t}]\ \&amp; \ z_{ti} &gt; 0 \\ z_{ti} \cdot \rho &amp; v_i \in [X, Y_{&lt;t}]\ \&amp; \ z_{ti} &lt; 0 \\ z_{ti} &amp; v_i \notin [X, Y_{&lt;t}] \end{cases}\)</span></p></td>
+<td class="text-left"><p>Suppresses references to important keywords in the input</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\alpha\)</span>: Frequency penalty hyperparam.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>: Presence penalty hyperparam.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rho\)</span>: Repetition penalty hyperparam.</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{1}_{v_i}[Y_{&lt;t}]\)</span>: 1 if token <span class="math notranslate nohighlight">\(v_i\)</span> is present in <span class="math notranslate nohighlight">\(Y_{&lt;t}\)</span>, else 0.</p></li>
+</ul>
+</li>
+</ul>
 <!-- ``` -->
 <section id="repetition-penalty">
 <h2>Repetition Penalty<a class="headerlink" href="#repetition-penalty" title="Link to this heading">#</a></h2>
