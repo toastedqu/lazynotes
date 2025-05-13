@@ -51,9 +51,7 @@ Y_*=\arg\max_YP(Y|X)
 $$
 ```
 
-# Hyperparams
-
-## Temperature
+# Temperature
 - **What**: Randomness control.
 - **Why**: **Boltzmann distribution** from statistical mechanics: $p_i\propto\exp\left(-\frac{E_i}{kT}\right)$
 	- This describes the probability of a system being in a particular state $i$ given the state's energy $E_i$ and the system's temperature $T$.
@@ -71,14 +69,25 @@ $$
 	- $\tau=1$: Standard softmax. Probabilities reflect differences in logits.
 	- $\tau>1$: Generally NOT recommended $\leftarrow$ Randomness goes BEYOND what the model has learnt.
 
-## Repetition Penalty
-- **What**: Penalize the logits of tokens present in current output sequence.
+# Penalty
+- **What**: Penalize the logits of tokens present in current token sequence.
 - **Why**: Autoregressive LMs can fall into repetition loops. (Occurs much more often with Greedy/Beam Search)
     - Autoregressive LMs are trained to predicted the most probable next token given current context.
     - If a particular token/phrase is highly probable given the current context & gets picked, it becomes part of the new context.
     - If the same token/phrase is still the most probable given this new slightly longer context, it's likely to get picked again.
     - ...
     - Infinite "positive" feedback loop.
+
+<!-- ```{dropdown} Table: Penalty Types -->
+| Type | What | Math |
+|------------|------|-------------|
+| **Frequency** | Subtraction based on how many times the token occurred in the output sequence | $z_{ti} \leftarrow z_{ti}-\alpha n_{v_i}$ |
+| **Presence** | Subtraction based on the **existence** of the token in the output sequence | $z_{ti} \leftarrow z_{ti}-\beta \mathbb{1}_{v_i}[Y_{<t}]$ |
+| **Repetition** | Multiplication based on the **existence** of the token in the **entire sequence** | $$z_{ti} \leftarrow \begin{cases} z_{ti} / \rho & v_i \in Y_{<t}\ \& \ z_{ti} > 0 \\ z_{ti} \cdot \rho & v_i \in Y_{<t}\ \& \ z_{ti} < 0 \\ z_{ti} & v_i \notin Y_{<t} \end{cases}$$ |
+<!-- ``` -->
+
+## Repetition Penalty
+
 
 ```{admonition} Math
 :class: note, dropdown
@@ -154,7 +163,7 @@ Beam Search:
 
 # Sampling
 - **What**: Random selection from a set/distribution.
-- **Why**: Randomness.
+- **Why**: Controlled randomness.
 	- Greedy or Beam Search lead to **deterministic** outcomes.
 		- Greedy: Most probable tokens at each step.
 		- Beam: Most probable sequence at the end.
