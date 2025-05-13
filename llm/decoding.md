@@ -79,11 +79,19 @@ $$
     - Infinite "positive" feedback loop.
 
 <!-- ```{dropdown} Table: Penalty Types -->
-| Type | What | Math |
-|------------|------|-------------|
-| **Frequency** | Subtraction based on how many times the token occurred in the output sequence | $z_{ti} \leftarrow z_{ti}-\alpha n_{v_i}$ |
-| **Presence** | Subtraction based on the **existence** of the token in the output sequence | $z_{ti} \leftarrow z_{ti}-\beta \mathbb{1}_{v_i}[Y_{<t}]$ |
-| **Repetition** | Multiplication based on the **existence** of the token in the **entire sequence** | $$z_{ti} \leftarrow \begin{cases} z_{ti} / \rho & v_i \in Y_{<t}\ \& \ z_{ti} > 0 \\ z_{ti} \cdot \rho & v_i \in Y_{<t}\ \& \ z_{ti} < 0 \\ z_{ti} & v_i \notin Y_{<t} \end{cases}$$ |
+| Type | What | Math | Cons |
+|:-----|:-----|:-----|:-----|
+| **Frequency** | Subtraction based on how many times the token occurred in the output sequence | $z_{ti} \leftarrow z_{ti}-\alpha n_{v_i}$ | Suppresses important keywords |
+| **Presence** | Subtraction based on the **existence** of the token in the output sequence | $z_{ti} \leftarrow z_{ti}-\beta \mathbf{1}_{v_i}[Y_{<t}]$ | Incoherence $\leftarrow$ Too harsh compared to frequency penalty |
+| **Repetition** | Multiplication based on the **existence** of the token in the **entire sequence** | $z_{ti} \leftarrow \begin{cases} z_{ti} / \rho & v_i \in [X, Y_{<t}]\ \& \ z_{ti} > 0 \\ z_{ti} \cdot \rho & v_i \in [X, Y_{<t}]\ \& \ z_{ti} < 0 \\ z_{ti} & v_i \notin [X, Y_{<t}] \end{cases}$ | Suppresses references to important keywords in the input | 
+
+Notations:
+- Hyperparams:
+	- $\alpha$: Frequency penalty hyperparam.
+	- $\beta$: Presence penalty hyperparam.
+	- $\rho$: Repetition penalty hyperparam.
+- Misc:
+	- $\mathbf{1}_{v_i}[Y_{<t}]$: 1 if token $v_i$ is present in $Y_{<t}$, else 0.
 <!-- ``` -->
 
 ## Repetition Penalty
