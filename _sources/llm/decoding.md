@@ -78,7 +78,7 @@ $$
     - ...
     - Infinite "positive" feedback loop.
 
-<!-- ```{dropdown} Table: Penalty Types -->
+```{dropdown} Table: Penalty Types
 | Type | What | Math | Cons |
 |:-----|:-----|:-----|:-----|
 | **Frequency** | Subtraction based on how many times the token occurred in the output sequence | $z_{ti} \leftarrow z_{ti}-\alpha n_{v_i}$ | Suppresses important keywords |
@@ -92,26 +92,6 @@ Notations:
 	- $\rho$: Repetition penalty hyperparam.
 - Misc:
 	- $\mathbf{1}_{v_i}[Y_{<t}]$: 1 if token $v_i$ is present in $Y_{<t}$, else 0.
-<!-- ``` -->
-
-## Repetition Penalty
-
-
-```{admonition} Math
-:class: note, dropdown
-Notations:
-- Hyperparam:
-    - $\rho$: Repetition Penalty factor.
-
-Logits after repetition penalty:
-
-$$
-z_{ti} \leftarrow \begin{cases} 
-z_{ti} / \rho & v_i \in Y_{<t}\ \& \ z_{ti} > 0 \\
-z_{ti} \cdot \rho & v_i \in Y_{<t}\ \& \ z_{ti} < 0 \\
-z_{ti} & v_i \notin Y_{<t}
-\end{cases}
-$$
 ```
 
 # Greedy Search
