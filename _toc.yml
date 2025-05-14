@@ -24,10 +24,12 @@ parts:
     - file: dl/loss
   - caption: LLM
     chapters:
-    # - file: llm/transformer
+    - file: llm/efficiency
+      sections:
+      - file: llm/efficiency/peft
+      - file: llm/efficiency/distill
     - file: llm/decoding
     - file: llm/rl
-    - file: llm/peft
   - caption: Misc
     chapters:
     - file: info
