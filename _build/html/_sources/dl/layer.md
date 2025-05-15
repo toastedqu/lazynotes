@@ -23,7 +23,7 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 - **How**: input features * weights (+ bias).
 
 ````{admonition} Math
-:class: note, dropdown
+:class: note, dropdown, toggle-hidden
 ```{tab} Vector
 Notations:
 - IO:
