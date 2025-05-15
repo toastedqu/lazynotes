@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -178,6 +178,7 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Layer</a></li>
+
 
 
 <li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
@@ -417,6 +418,7 @@ document.write(`
 </li>
 </ul>
 </li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution">Convolution</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#activation">Activation</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-like">Binary-like</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sigmoid">Sigmoid</a></li>
@@ -876,63 +878,87 @@ document.write(`
 </ul>
 </div>
 <br/>
-<!-- # Convolution
-- **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
-- **Why**: To learn spatial hierarchies of features.
-- **How**: Slide multiple filters/kernels (i.e., small matrices) over the input data.
-    - At each step, perform element-wise multiplication and summation between each filter and the scanned area, producing a feature map.
-
-```{admonition} Math
-:class: note, dropdown
-Notations:
-    - IO:
-        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
-        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
-    - Params:
-        - $\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}$: Filters.
-        - $\mathbf{b}\in\mathbb{R}^{C_{out}}$: Biases.
-    - Hyperparams:
-        - $H_{in}, W_{in}$: Input height & width.
-        - $C_{in}$: #Input channels.
-        - $C_{out}$: #Filters (i.e., #Output channels).
-        - $f_h, f_w$: Filter height & width.
-        - $s$: Stride size.
-        - $p$: Padding size.
-Forward:
-
-    $$
-    Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
-    $$
-
-    where
-
-    $$\begin{align*}
-    H_{out}&=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
-    W_{out}&=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
-    \end{align*}$$
-
-Backward:
-
-    $$\begin{align*}
-    &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
-    &\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
-    &\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-sh+p,j-sw+p,c_{out},c_{in}}
-    \end{align*}$$
-
-    Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
-```
-
-```{admonition} Q&A
-:class: tip, dropdown
-*Pros*:
-- Translation invariance.
-- Efficiently captures spatial hierarchies.
-
-*Cons*:
-- High computational cost for big data.
-- Requires big data to be performant.
-- Requires extensive hyperparam tuning.
-``` -->
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="convolution">
+<h1>Convolution<a class="headerlink" href="#convolution" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><strong>What</strong>: Slide a set of filters over input data to extract local features.</p></li>
+<li><p><strong>Why</strong>: To learn spatial hierarchies of local features.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Initialize multiple small matrices (i.e., <strong>filters/kernels</strong>).</p></li>
+<li><p>From top-left to Bottom-right:</p>
+<ol class="arabic simple">
+<li><p>Perform element-wise multiplication and summation between each filter &amp; scanned area of input data</p></li>
+<li><p>Store the output in the corresponding position as a feature map.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}\)</span>: Input volume.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}\)</span>: Output volume.</p></li>
+</ul>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}\)</span>: Filters.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\in\mathbb{R}^{C_{out}}\)</span>: Biases.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(H_{in}, W_{in}\)</span>: Input height &amp; width.</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_{in}\)</span>: #Input channels.</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_{out}\)</span>: #Filters (i.e., #Output channels).</p></li>
+<li><p><span class="math notranslate nohighlight">\(f_h, f_w\)</span>: Filter height &amp; width.</p></li>
+<li><p><span class="math notranslate nohighlight">\(s\)</span>: Stride size.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p\)</span>: Padding size.</p></li>
+</ul>
+</li>
+</ul>
+<p>Forward:</p>
+<div class="math notranslate nohighlight">
+\[
+Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{s(h-1)+i-p,s(w-1)+j-p,c_{in}}+b_{c_{out}}
+\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+H_{out}&amp;=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
+W_{out}&amp;=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
+\end{align*}\end{split}\]</div>
+<p>Backward:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{s(h-1)+i-p, s(w-1)+j-p, c_{in}}\\
+&amp;\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
+&amp;\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-s(h-1)+p,j-s(w-1)+p,c_{out},c_{in}}
+\end{align*}\end{split}\]</div>
+<p>Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.</p>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Pros</em>:</p>
+<ul class="simple">
+<li><p>Translation invariance.</p></li>
+<li><p>Efficiently captures spatial hierarchies.</p></li>
+</ul>
+<p><em>Cons</em>:</p>
+<ul class="simple">
+<li><p>High computational cost.</p></li>
+<li><p>Requires big data to be performant.</p></li>
+<li><p>Requires extensive hyperparam tuning.</p></li>
+</ul>
+</div>
 <!-- 
 ## Depthwise Separable Convolution
 - **What**: Depthwise convolution + Pointwise convolution. ([paper](https://arxiv.org/pdf/1610.02357))
@@ -1192,8 +1218,6 @@ Notations:
 ## Bidirectional
 ## Stacked -->
 <br/>
-</section>
-</section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="activation">
 <h1>Activation<a class="headerlink" href="#activation" title="Link to this heading">#</a></h1>
@@ -1685,6 +1709,7 @@ Cons:
 </li>
 </ul>
 </li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution">Convolution</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#activation">Activation</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-like">Binary-like</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sigmoid">Sigmoid</a></li>

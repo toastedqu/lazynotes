@@ -339,50 +339,54 @@ Backward:
 
 <br/>
 
-<!-- # Convolution
-- **What**: Apply a set of filters to input data to extract local features. ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
-- **Why**: To learn spatial hierarchies of features.
-- **How**: Slide multiple filters/kernels (i.e., small matrices) over the input data.
-    - At each step, perform element-wise multiplication and summation between each filter and the scanned area, producing a feature map.
+# Convolution
+- **What**: Slide a set of filters over input data to extract local features.
+- **Why**: To learn spatial hierarchies of local features.
+- **How**: 
+    1. Initialize multiple small matrices (i.e., **filters/kernels**).
+    2. From top-left to Bottom-right: 
+        1. Perform element-wise multiplication and summation between each filter & scanned area of input data
+        2. Store the output in the corresponding position as a feature map.
 
 ```{admonition} Math
 :class: note, dropdown
 Notations:
-    - IO:
-        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
-        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
-    - Params:
-        - $\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}$: Filters.
-        - $\mathbf{b}\in\mathbb{R}^{C_{out}}$: Biases.
-    - Hyperparams:
-        - $H_{in}, W_{in}$: Input height & width.
-        - $C_{in}$: #Input channels.
-        - $C_{out}$: #Filters (i.e., #Output channels).
-        - $f_h, f_w$: Filter height & width.
-        - $s$: Stride size.
-        - $p$: Padding size.
+- IO:
+    - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
+    - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
+- Params:
+    - $\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}$: Filters.
+    - $\mathbf{b}\in\mathbb{R}^{C_{out}}$: Biases.
+- Hyperparams:
+    - $H_{in}, W_{in}$: Input height & width.
+    - $C_{in}$: #Input channels.
+    - $C_{out}$: #Filters (i.e., #Output channels).
+    - $f_h, f_w$: Filter height & width.
+    - $s$: Stride size.
+    - $p$: Padding size.
+
 Forward:
 
-    $$
-    Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+i-p,sw+j-p,c_{in}}+b_{c_{out}}
-    $$
+$$
+Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{s(h-1)+i-p,s(w-1)+j-p,c_{in}}+b_{c_{out}}
+$$
 
-    where
+where
 
-    $$\begin{align*}
-    H_{out}&=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
-    W_{out}&=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
-    \end{align*}$$
+$$\begin{align*}
+H_{out}&=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
+W_{out}&=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
+\end{align*}$$
 
 Backward:
 
-    $$\begin{align*}
-    &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+i-p, sw+j-p, c_{in}}\\
-    &\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
-    &\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-sh+p,j-sw+p,c_{out},c_{in}}
-    \end{align*}$$
+$$\begin{align*}
+&\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{s(h-1)+i-p, s(w-1)+j-p, c_{in}}\\
+&\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
+&\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{i-s(h-1)+p,j-s(w-1)+p,c_{out},c_{in}}
+\end{align*}$$
 
-    Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
+Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
 ```
 
 ```{admonition} Q&A
@@ -392,10 +396,11 @@ Backward:
 - Efficiently captures spatial hierarchies.
 
 *Cons*:
-- High computational cost for big data.
+- High computational cost.
 - Requires big data to be performant.
 - Requires extensive hyperparam tuning.
-``` -->
+```
+
 <!-- 
 ## Depthwise Separable Convolution
 - **What**: Depthwise convolution + Pointwise convolution. ([paper](https://arxiv.org/pdf/1610.02357))
