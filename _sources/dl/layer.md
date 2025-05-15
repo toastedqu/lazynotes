@@ -22,8 +22,10 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 - **Why**: The simplest way to transform data & learn patterns.
 - **How**: input features * weights (+ bias).
 
+<!-- #, toggle-hidden -->
+
 ````{admonition} Math
-:class: note, dropdown, toggle-hidden
+:class: note, dropdown 
 ```{tab} Vector
 Notations:
 - IO:
