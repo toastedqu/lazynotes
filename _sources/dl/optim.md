@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Optimizer
+# Optimization
 
 ## Gradient Descent
 ### Stochastic Gradient Descent (SGD)

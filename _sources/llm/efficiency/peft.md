@@ -10,12 +10,13 @@ kernelspec:
   name: python3
 ---
 # PEFT
-**[Parameter-Efficient Fine-Tuning](https://arxiv.org/pdf/2403.14608)** fine-tunes a small part of a large model to save resources while retaining performance.
+- **What**: Modify a small part of a large model $\xrightarrow{\text{adapt to}}$ Downstream tasks
+- **Why**: Reduce cost & Retain pretraining performance.
 
 ## LoRA
-- **Name**: **[Low-Rank Adaptation](https://arxiv.org/pdf/2106.09685)**
-- **What**: Injects **low-rank** matrices into the weights of specific layers, without modifying the original weights directly.
+- **What**: Low-Rank Adaptation.
 - **Why**: #params $\downarrow$ $\rightarrow$ Finetuning efficiency $\uparrow$.
+- **How**: Inject **low-rank** matrices into the weights of specific layers, without modifying the original weights directly.
 
 ```{admonition} Math
 :class: note, dropdown
