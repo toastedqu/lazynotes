@@ -10,7 +10,8 @@ kernelspec:
   name: python3
 ---
 # Layer
-A layer is a function that maps input tensor $X$ to output tensor $Y$.
+- **What**: A function mapping input tensor $X$ to output tensor $Y$.
+- **Why**: Learning a task = Approximating the optimal mapping from $X$ to $Y$.
 
 Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readability.
 
@@ -18,9 +19,9 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 
 # Basic
 ## Linear
-- **What**: Linear transformation.
-- **Why**: The simplest way to transform data & learn patterns.
-- **How**: input features * weights (+ bias).
+- **What**: Linear transform.
+- **Why**: Simplest way to transform data & learn patterns.
+- **How**: Sum of weighted input features (+ bias).
 
 <!-- #, toggle-hidden -->
 
@@ -138,8 +139,8 @@ $$
 ```{admonition} Q&A
 :class: tip, dropdown
 *Cons?*
-- ⬆️Training time $\leftarrow$ Longer convergence
-- Needs Hyperparameter Tuning
+- ⬆️Training time $\leftarrow$ ⬇️Convergence speed $\leftarrow$ Sparsity
+- ✅Hyperparameter Tuning
 ```
 
 ## Residual Connection

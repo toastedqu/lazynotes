@@ -1,6 +1,5 @@
 # LazyNotes
-
-A minimalist handbook of AI topics, focusing on intuition and theory.
+A minimalist AI handbook, focusing on intuition and theory.
 
 Each concept is structured as follows:
 - Mandatory:
