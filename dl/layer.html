@@ -446,7 +446,10 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="layer">
 <h1>Layer<a class="headerlink" href="#layer" title="Link to this heading">#</a></h1>
-<p>A layer is a function that maps input tensor <span class="math notranslate nohighlight">\(X\)</span> to output tensor <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<ul class="simple">
+<li><p><strong>What</strong>: A function mapping input tensor <span class="math notranslate nohighlight">\(X\)</span> to output tensor <span class="math notranslate nohighlight">\(Y\)</span>.</p></li>
+<li><p><strong>Why</strong>: Learning a task = Approximating the optimal mapping from <span class="math notranslate nohighlight">\(X\)</span> to <span class="math notranslate nohighlight">\(Y\)</span>.</p></li>
+</ul>
 <p>Let <span class="math notranslate nohighlight">\(g\)</span> denote the gradient <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial y}\)</span> for readability.</p>
 <br/>
 </section>
@@ -455,9 +458,9 @@ document.write(`
 <section id="linear">
 <h2>Linear<a class="headerlink" href="#linear" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Linear transformation.</p></li>
-<li><p><strong>Why</strong>: The simplest way to transform data &amp; learn patterns.</p></li>
-<li><p><strong>How</strong>: input features * weights (+ bias).</p></li>
+<li><p><strong>What</strong>: Linear transform.</p></li>
+<li><p><strong>Why</strong>: Simplest way to transform data &amp; learn patterns.</p></li>
+<li><p><strong>How</strong>: Sum of weighted input features (+ bias).</p></li>
 </ul>
 <!-- #, toggle-hidden -->
 <div class="note dropdown admonition">
@@ -619,8 +622,8 @@ document.write(`
 <p class="admonition-title">Q&amp;A</p>
 <p><em>Cons?</em></p>
 <ul class="simple">
-<li><p>⬆️Training time <span class="math notranslate nohighlight">\(\leftarrow\)</span> Longer convergence</p></li>
-<li><p>Needs Hyperparameter Tuning</p></li>
+<li><p>⬆️Training time <span class="math notranslate nohighlight">\(\leftarrow\)</span> ⬇️Convergence speed <span class="math notranslate nohighlight">\(\leftarrow\)</span> Sparsity</p></li>
+<li><p>✅Hyperparameter Tuning</p></li>
 </ul>
 </div>
 </section>
