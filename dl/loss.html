@@ -859,16 +859,15 @@ L(f)&amp;=\prod_{i=1}^{m}\prod_{k=1}^{K}\hat{p}_{ik}^{y_{ik}} \\
 <ul class="simple">
 <li><p>Difficult to find high-quality data.</p></li>
 <li><p>Pairwise relations only.</p></li>
-<li><p>⬆️Computational cost over large batches.</p></li>
 <li><p>✅Hard measure (distance/similarity) &amp; ❌Soft measure (probability).</p></li>
 <li><p>✅Hyperparameter Tuning (for dissimilar samples)</p>
 <ul>
 <li><p><span class="math notranslate nohighlight">\(M\)</span> too small <span class="math notranslate nohighlight">\(\rightarrow\)</span> Cannot learn separation between dissimilar samples.</p></li>
 <li><p><span class="math notranslate nohighlight">\(M\)</span> too large
-→ Too difficult to minimize this loss
-→ Ignore negative pair constraint
-→ All embeddings become similar to best satisfy positive pair constraint
-→ <strong>Collapsing</strong></p></li>
+<span class="math notranslate nohighlight">\(\rightarrow\)</span> Too difficult to minimize this loss
+<span class="math notranslate nohighlight">\(\rightarrow\)</span> Ignore negative pair constraint
+<span class="math notranslate nohighlight">\(\rightarrow\)</span> All embeddings become similar to best satisfy positive pair constraint
+<span class="math notranslate nohighlight">\(\rightarrow\)</span> <strong>Collapsing</strong></p></li>
 </ul>
 </li>
 </ul>
