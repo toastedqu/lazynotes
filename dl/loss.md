@@ -57,13 +57,13 @@ kernelspec:
 
 ```{admonition} Math
 :class: note, dropdown
-**Forward**:
+Forward:
 
 $$
 \mathcal{L}=\sum_{i=1}^{m}(y_i-\hat{y}_i)^2
 $$
 
-**Backward**:
+Backward:
 
 $$
 \frac{\partial\mathcal{L}}{\partial\mathcal{\hat{y}_i}}=\frac{2}{m}(\hat{y}_i-y_i)
@@ -117,13 +117,13 @@ $$
 
 ```{admonition} Math
 :class: note, dropdown
-**Forward**:
+Forward:
 
 $$
 \mathcal{L}=\sum_{i=1}^{m}|y_i-\hat{y}_i|
 $$
 
-**Backward**:
+Backward:
 
 $$
 \frac{\partial\mathcal{L}}{\partial\mathcal{\hat{y}_i}}=\frac{1}{m}\text{sign}(\hat{y}_i-y_i)
@@ -186,13 +186,13 @@ $$
 
 ```{admonition} Math
 :class: note, dropdown
-**Forward**:
+Forward:
 
 $$
 \mathcal{L}=-\sum_{i=1}^{m}\sum_{k=1}^{K}y_{ik}\log\hat{p}_{ik}
 $$
 
-**Backward**:
+Backward:
 
 $$\begin{align*}
 \frac{\partial\mathcal{L}}{\partial\mathcal{\hat{p}_{ik}}}&=-\frac{y_{ik}}{\hat{p}_{ik}}\\
@@ -291,19 +291,56 @@ $$\begin{align*}
 # Ranking
 
 ## Contrastive
-- **What**: Group similar embeddings closer & Separate dissimilar embeddings further.
+- **What**: Create an embedding space where similar embeddings are closer & dissimilar embeddings are farther.
+- **Why**: To learn **similarity**.
+- **How**:
+	1. Prepare positive & negative sample pairs.
+	2. For positive/negative pairs, **penalize** wide/narrow distances.
 
-<!-- ```{admonition} Math
-:class: note, dropdown -->
-**Forward**:
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- IO:
+	- $X_1, X_2$: Embedding 1 & 2.
+	- $Y$: Similarity indicator.
+		- $Y=0$ $\leftarrow$ $X_1$ & $X_2$ are similar.
+		- $Y=1$ $\leftarrow$ $X_1$ & $X_2$ are dissimilar.
+- Hyperparams:
+	- $M$: Margin, as minimal distance threshold for negative pairs.
+		- If the distance is below the margin, penalize.
+		- If the distance is above the margin, no penalty.
+	- $D_W(X_1,X_2)$: Distance measure, parametrized by $W$.
 
-$$
-L(W, Y, X_1, X_2) = (1-Y) \frac{1}{2} (D_W)^2 + (Y) \frac{1}{2} \max(0, m - D_W)^2
-$$
+Forward:
 
-**Backward**:
+$$\begin{align*}
+&\mathcal{L}_\text{pos}=\frac{1}{2} (D_W)^2 \\
+&\mathcal{L}_\text{neg}=\frac{1}{2}[\max(0, M-D_W)]^2 \\
+&\mathcal{L}=(1-Y)\mathcal{L}_\text{pos}+Y\mathcal{L}_\text{neg}
+\end{align*}$$
 
-<!-- ``` -->
+Backward:
+
+$$\begin{align*}
+&\frac{\partial\mathcal{L}_\text{pos}}{\partial D_W}=D_W \\
+&\frac{\partial\mathcal{L}_\text{neg}}{\partial D_W}=\begin{cases}
+0 & D_W > M \\
+-D_W & D_W < M
+\end{cases}
+\end{align*}$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Cons*:
+- Difficult to find high-quality data.
+- ✅Hyperparameter Tuning (for dissimilar samples)
+	- $M$ too small $\rightarrow$ Cannot learn separation between dissimilar samples.
+	- $M$ too large $\rightarrow$ Too difficult to minimize this loss $\rightarrow$ Ignore negative pair constraint $\rightarrow$ All embeddings become similar to best satisfy positive pair constraint $\rightarrow$ **Collapsing**
+- ⬆️Computational cost over large batches.
+- Pairwise relations only.
+- ✅Hard measure (distance/similarity) & ❌Soft measure (probability).
+```
 
 
 ## Triplet
