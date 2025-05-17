@@ -335,15 +335,14 @@ $$\begin{align*}
 *Cons*:
 - Difficult to find high-quality data.
 - Pairwise relations only.
-- ⬆️Computational cost over large batches.
 - ✅Hard measure (distance/similarity) & ❌Soft measure (probability).
 - ✅Hyperparameter Tuning (for dissimilar samples)
 	- $M$ too small $\rightarrow$ Cannot learn separation between dissimilar samples.
 	- $M$ too large
-		→ Too difficult to minimize this loss
-		→ Ignore negative pair constraint
-		→ All embeddings become similar to best satisfy positive pair constraint
-		→ **Collapsing**
+		$\rightarrow$ Too difficult to minimize this loss
+		$\rightarrow$ Ignore negative pair constraint
+		$\rightarrow$ All embeddings become similar to best satisfy positive pair constraint
+		$\rightarrow$ **Collapsing**
 ```
 
 
