@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -178,6 +178,7 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="layer.html">Layer</a></li>
+
 
 
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Loss</a></li>
@@ -538,12 +539,12 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
 \mathcal{L}=\sum_{i=1}^{m}(y_i-\hat{y}_i)^2
 \]</div>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <div class="math notranslate nohighlight">
 \[
 \frac{\partial\mathcal{L}}{\partial\mathcal{\hat{y}_i}}=\frac{2}{m}(\hat{y}_i-y_i)
@@ -604,12 +605,12 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
 \mathcal{L}=\sum_{i=1}^{m}|y_i-\hat{y}_i|
 \]</div>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <div class="math notranslate nohighlight">
 \[
 \frac{\partial\mathcal{L}}{\partial\mathcal{\hat{y}_i}}=\frac{1}{m}\text{sign}(\hat{y}_i-y_i)
@@ -681,12 +682,12 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<p><strong>Forward</strong>:</p>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
 \[
 \mathcal{L}=-\sum_{i=1}^{m}\sum_{k=1}^{K}y_{ik}\log\hat{p}_{ik}
 \]</div>
-<p><strong>Backward</strong>:</p>
+<p>Backward:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
 \frac{\partial\mathcal{L}}{\partial\mathcal{\hat{p}_{ik}}}&amp;=-\frac{y_{ik}}{\hat{p}_{ik}}\\
@@ -799,17 +800,75 @@ L(f)&amp;=\prod_{i=1}^{m}\prod_{k=1}^{K}\hat{p}_{ik}^{y_{ik}} \\
 <section id="contrastive">
 <h2>Contrastive<a class="headerlink" href="#contrastive" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Group similar embeddings closer &amp; Separate dissimilar embeddings further.</p></li>
+<li><p><strong>What</strong>: Create an embedding space where similar embeddings are closer &amp; dissimilar embeddings are farther.</p></li>
+<li><p><strong>Why</strong>: To learn <strong>similarity</strong>.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Prepare positive &amp; negative sample pairs.</p></li>
+<li><p>For positive/negative pairs, <strong>penalize</strong> wide/narrow distances.</p></li>
+</ol>
+</li>
 </ul>
-<!-- ```{admonition} Math
-:class: note, dropdown -->
-<p><strong>Forward</strong>:</p>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(X_1, X_2\)</span>: Embedding 1 &amp; 2.</p></li>
+<li><p><span class="math notranslate nohighlight">\(Y\)</span>: Similarity indicator.</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(Y=0\)</span> <span class="math notranslate nohighlight">\(\leftarrow\)</span> <span class="math notranslate nohighlight">\(X_1\)</span> &amp; <span class="math notranslate nohighlight">\(X_2\)</span> are similar.</p></li>
+<li><p><span class="math notranslate nohighlight">\(Y=1\)</span> <span class="math notranslate nohighlight">\(\leftarrow\)</span> <span class="math notranslate nohighlight">\(X_1\)</span> &amp; <span class="math notranslate nohighlight">\(X_2\)</span> are dissimilar.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(M\)</span>: Margin, as minimal distance threshold for negative pairs.</p>
+<ul>
+<li><p>If the distance is below the margin, penalize.</p></li>
+<li><p>If the distance is above the margin, no penalty.</p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(D_W(X_1,X_2)\)</span>: Distance measure, parametrized by <span class="math notranslate nohighlight">\(W\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<p>Forward:</p>
 <div class="math notranslate nohighlight">
-\[
-L(W, Y, X_1, X_2) = (1-Y) \frac{1}{2} (D_W)^2 + (Y) \frac{1}{2} \max(0, m - D_W)^2
-\]</div>
-<p><strong>Backward</strong>:</p>
-<!-- ``` -->
+\[\begin{split}\begin{align*}
+&amp;\mathcal{L}_\text{pos}=\frac{1}{2} (D_W)^2 \\
+&amp;\mathcal{L}_\text{neg}=\frac{1}{2}[\max(0, M-D_W)]^2 \\
+&amp;\mathcal{L}=(1-Y)\mathcal{L}_\text{pos}+Y\mathcal{L}_\text{neg}
+\end{align*}\end{split}\]</div>
+<p>Backward:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\frac{\partial\mathcal{L}_\text{pos}}{\partial D_W}=D_W \\
+&amp;\frac{\partial\mathcal{L}_\text{neg}}{\partial D_W}=\begin{cases}
+0 &amp; D_W &gt; M \\
+-D_W &amp; D_W &lt; M
+\end{cases}
+\end{align*}\end{split}\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons</em>:</p>
+<ul class="simple">
+<li><p>Difficult to find high-quality data.</p></li>
+<li><p>✅Hyperparameter Tuning (for dissimilar samples)</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(M\)</span> too small <span class="math notranslate nohighlight">\(\rightarrow\)</span> Cannot learn separation between dissimilar samples.</p></li>
+<li><p><span class="math notranslate nohighlight">\(M\)</span> too large <span class="math notranslate nohighlight">\(\rightarrow\)</span> Too difficult to minimize this loss <span class="math notranslate nohighlight">\(\rightarrow\)</span> Ignore negative pair constraint <span class="math notranslate nohighlight">\(\rightarrow\)</span> All embeddings become similar to best satisfy positive pair constraint <span class="math notranslate nohighlight">\(\rightarrow\)</span> <strong>Collapsing</strong></p></li>
+</ul>
+</li>
+<li><p>⬆️Computational cost over large batches.</p></li>
+<li><p>Pairwise relations only.</p></li>
+<li><p>✅Hard measure (distance/similarity) &amp; ❌Soft measure (probability).</p></li>
+</ul>
+</div>
 </section>
 <section id="triplet">
 <h2>Triplet<a class="headerlink" href="#triplet" title="Link to this heading">#</a></h2>
