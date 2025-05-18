@@ -886,14 +886,28 @@ L(f)&amp;=\prod_{i=1}^{m}\prod_{k=1}^{K}\hat{p}_{ik}^{y_{ik}} \\
 <section id="kl-divergence">
 <h2>KL Divergence<a class="headerlink" href="#kl-divergence" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Relative entropy (i.e., Cross Entropy - Entropy).</p>
-<ul>
-<li><p>How one probability distribution diverges from an expected probability distribution.</p></li>
-</ul>
-</li>
+<li><p><strong>What</strong>: Relative entropy (i.e., Cross Entropy - Entropy).</p></li>
 <li><p><strong>Why</strong>: To force the learned distribution to resemble the target distribution.</p></li>
 <li><p><strong>How</strong>:</p></li>
 </ul>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Why KL Divergence if we already have Cross Entropy?</em>:</p>
+<ol class="arabic simple">
+<li><p>Information Theory:</p>
+<ul class="simple">
+<li><p>Entropy tells us the minimum possible average #bits needed to encode events drawn from <span class="math notranslate nohighlight">\(P\)</span>.</p></li>
+<li><p>Cross Entropy tells us the average #bits needed to encode events drawn from <span class="math notranslate nohighlight">\(P\)</span>, if we are using an encoding scheme optimized for <span class="math notranslate nohighlight">\(Q\)</span>.</p></li>
+<li><p>KL Divergence tells us the <strong>extra bits</strong> incurred by using <span class="math notranslate nohighlight">\(Q\)</span>-optimized encoding for events that actually follow <span class="math notranslate nohighlight">\(P\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> Quantifies <strong>information lost / inefficiency</strong> when approximating <span class="math notranslate nohighlight">\(P\)</span> with <span class="math notranslate nohighlight">\(Q\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Entropy may not always be constant:</p>
+<ul class="simple">
+<li><p>If we use a fixed model <span class="math notranslate nohighlight">\(Q\)</span> to approximate 2 different true distributions <span class="math notranslate nohighlight">\(P_1\)</span> and <span class="math notranslate nohighlight">\(P_2\)</span>, then KL Divergence may not necessarily follow the pattern of cross entropy.</p></li>
+</ul>
+</li>
+</ol>
+</div>
 </section>
 <section id="wasserstein">
 <h2>Wasserstein<a class="headerlink" href="#wasserstein" title="Link to this heading">#</a></h2>
