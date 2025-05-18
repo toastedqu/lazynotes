@@ -355,9 +355,19 @@ $$\begin{align*}
 
 ## KL Divergence
 - **What**: Relative entropy (i.e., Cross Entropy - Entropy).
-	- How one probability distribution diverges from an expected probability distribution.
 - **Why**: To force the learned distribution to resemble the target distribution.
 - **How**: 
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Why KL Divergence if we already have Cross Entropy?*:
+1. Information Theory:
+	- Entropy tells us the minimum possible average #bits needed to encode events drawn from $P$.
+	- Cross Entropy tells us the average #bits needed to encode events drawn from $P$, if we are using an encoding scheme optimized for $Q$.
+	- KL Divergence tells us the **extra bits** incurred by using $Q$-optimized encoding for events that actually follow $P$ $\rightarrow$ Quantifies **information lost / inefficiency** when approximating $P$ with $Q$.
+2. Entropy may not always be constant:
+	- If we use a fixed model $Q$ to approximate 2 different true distributions $P_1$ and $P_2$, then KL Divergence may not necessarily follow the pattern of cross entropy.
+```
 
 ## Wasserstein
 
