@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Issues &#8212; LazyNotes</title>
+    <title>Overview &#8212; LazyNotes</title>
   
   
   
@@ -61,7 +61,7 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'dl/issues';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ml/intro';</script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -178,11 +178,11 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="layer.html">Layer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dl/layer.html">Layer</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dl/loss.html">Loss</a></li>
 
 
 
@@ -277,7 +277,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fdl/issues.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fml/intro.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -307,7 +307,7 @@
       
       
       
-      <li><a href="../_sources/dl/issues.md" target="_blank"
+      <li><a href="../_sources/ml/intro.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -391,7 +391,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Issues</h1>
+    <h1>Overview</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -401,12 +401,14 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Issues</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-covariate-shift">Internal Covariate Shift</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#overfitting">Overfitting</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#vanishing-exploding-gradient">Vanishing/Exploding Gradient</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling">Modeling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production">Production</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-a-b-testing">Online A/B Testing</a></li>
 </ul>
-
+</li>
+</ul>
             </nav>
         </div>
     </div>
@@ -417,79 +419,174 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="issues">
-<h1>Issues<a class="headerlink" href="#issues" title="Link to this heading">#</a></h1>
-<p>This page lists the common issues in deep learning in Alphabetic order.</p>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="internal-covariate-shift">
-<h1>Internal Covariate Shift<a class="headerlink" href="#internal-covariate-shift" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h1>
+<p>An AI project consists of 4 parts:</p>
+<img alt="images/ml_system_design_flow.png" class="align-center" src="images/ml_system_design_flow.png" />
+<section id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Overview</strong>: Define the problem, the goal, and the expected inputs &amp; outputs.</p></li>
+<li><p><strong>Scope</strong>: Identify constraints.</p>
 <ul class="simple">
-<li><p><strong>What</strong>: During training, the distribution of inputs to each layer changes. Each layer has to continuously adapt to a new distribution.</p></li>
-<li><p><strong>Cause</strong>: During training, the params of all preceding layers change, causing changes in their outputs.</p></li>
-<li><p><strong>Consequence</strong>: Harder convergence &amp; Training instability.</p></li>
-<li><p><strong>Mitigation</strong>:</p>
+<li><p><strong>Data</strong>:</p>
 <ul>
-<li><p>Batch normalization <span class="math notranslate nohighlight">\(\rightarrow\)</span> stabilize input distribution.</p></li>
-<li><p>Proper weight initialization (e.g., Xavier, He, etc.) <span class="math notranslate nohighlight">\(\rightarrow\)</span> maintain stable gradients.</p></li>
-<li><p>Smaller learning rates <span class="math notranslate nohighlight">\(\rightarrow\)</span> reduce the magnitude of param updates.</p>
-<ul>
-<li><p>Cons: slower convergence.</p></li>
+<li><p><strong>Size</strong>: #samples, #features, etc.</p></li>
+<li><p><strong>Features</strong>: content, context, user, etc.</p></li>
+<li><p><strong>Targets</strong>: Explicit (direct), implicit (indirect).</p></li>
 </ul>
 </li>
-<li><p>Adaptive learning rates (e.g., Adam) <span class="math notranslate nohighlight">\(\rightarrow\)</span> dynamically control the magnitude of param updates.</p></li>
+<li><p><strong>Model constraints</strong>:</p>
+<ul>
+<li><p>Priority: Performance / Quality</p></li>
+<li><p>Type: Single general / Multiple specific</p></li>
+<li><p>Interpretability</p></li>
+<li><p>Retrainability</p></li>
+<li><p>…</p></li>
+</ul>
+</li>
+<li><p><strong>Resource constraints</strong>:</p>
+<ul>
+<li><p>Time: Training, inference, project duration, etc.</p></li>
+<li><p>Computation: Training, inference, local/cloud, etc.</p></li>
 </ul>
 </li>
 </ul>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="overfitting">
-<h1>Overfitting<a class="headerlink" href="#overfitting" title="Link to this heading">#</a></h1>
+</li>
+<li><p><strong>Evaluation</strong>: Define success measurement.</p>
 <ul class="simple">
-<li><p><strong>What</strong>: The model performs well on the training data but badly on the test/unseen data.</p></li>
-<li><p><strong>Cause</strong>: Too high model complexity relative to training data size.</p></li>
-<li><p><strong>Consequence</strong>: Poor generalization.</p></li>
-<li><p><strong>How to mitigate</strong>:</p>
+<li><p><strong>Automatic metrics</strong>:</p>
 <ul>
-<li><p>Parameter regularization (L1/L2) <span class="math notranslate nohighlight">\(\rightarrow\)</span> reduce the magnitude of params.</p></li>
-<li><p>Dropout <span class="math notranslate nohighlight">\(\rightarrow\)</span> reduce dependency on certain neurons <span class="math notranslate nohighlight">\(\rightarrow\)</span> promote learning of robust features.</p></li>
-<li><p>Data augmentation <span class="math notranslate nohighlight">\(\rightarrow\)</span> broaden training data distribution.</p></li>
-<li><p>Early stopping <span class="math notranslate nohighlight">\(\rightarrow\)</span> halt training before validation performance drops.</p></li>
-<li><p>Cross validation <span class="math notranslate nohighlight">\(\rightarrow\)</span> ensure consistent model performance across different data splits.</p></li>
-<li><p>Reduce model complexity <span class="math notranslate nohighlight">\(\rightarrow\)</span> a simpler model is less likely to capture too many details in the training data.</p></li>
+<li><p>Offline: MSE, P/R/F1, etc.</p></li>
+<li><p>Online: Usage time, usage frequency, click rate, etc.</p></li>
 </ul>
 </li>
+<li><p><strong>Human metrics</strong>: User interaction, recent reports, company intention for users, personalization, etc.</p></li>
 </ul>
+</li>
+</ol>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="vanishing-exploding-gradient">
-<h1>Vanishing/Exploding Gradient<a class="headerlink" href="#vanishing-exploding-gradient" title="Link to this heading">#</a></h1>
+<section id="data">
+<h2>Data<a class="headerlink" href="#data" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Data Collection/Availability</strong></p>
 <ul class="simple">
-<li><p><strong>What</strong>:</p>
-<ul>
-<li><p><strong>Vanishing gradients</strong>: The gradients become smaller and smaller during backprop. They have almost no effect to the front layers.</p></li>
-<li><p><strong>Exploding gradients</strong>: The gradients become larger and larger during backprop. They change the weights of the front layers too much.</p></li>
+<li><p><strong>Status</strong>: Available/unavailable, quantity, etc.</p></li>
+<li><p><strong>Annotation</strong>: Quality, cost, resolving disagreements, feasibility of auto-annotation, etc.</p></li>
+<li><p><strong>Privacy</strong>: User data accessibility, methods, online/periodic data use, anonymity, etc.</p></li>
+<li><p><strong>Logistics</strong>: Storage location, structure, biases, etc.</p></li>
 </ul>
 </li>
-<li><p><strong>Cause</strong>:</p>
-<ul>
-<li><p>Too many layers.</p></li>
-<li><p>Too small/large gradient on certain layers (e.g., Sigmoid, Tanh, extremely large weight initialization, etc.) <span class="math notranslate nohighlight">\(\rightarrow\)</span> propagates via chain rule.</p></li>
+<li><p><strong>Data Processing</strong></p></li>
+<li><p><strong>Feature Engineering</strong></p></li>
+</ol>
+</section>
+<section id="modeling">
+<h2>Modeling<a class="headerlink" href="#modeling" title="Link to this heading">#</a></h2>
+<p>For each model, specify:</p>
+<ul class="simple">
+<li><p>Why: Motivation</p></li>
+<li><p>What: Functionality</p></li>
+<li><p>How: Objective and optimization</p></li>
+<li><p>Pros &amp; Cons</p></li>
+</ul>
+<p>Procedure:</p>
+<ol class="arabic simple">
+<li><p>Baseline: Stats (mean, median, mode), random benchmarks, etc.</p></li>
+<li><p>Easy model</p></li>
+<li><p>Hard model</p></li>
+<li><p>Experiment, evaluation &amp; ablation study</p></li>
+</ol>
+</section>
+<section id="production">
+<h2>Production<a class="headerlink" href="#production" title="Link to this heading">#</a></h2>
+<p>Performance can degrade in production due to:</p>
+<ul class="simple">
+<li><p><strong>Data Drift</strong>: Production data <span class="math notranslate nohighlight">\(\neq\)</span> training data.</p></li>
+<li><p><strong>Feature Drift</strong>: Changes in features or feature transformations.</p></li>
+<li><p><strong>Concept Drift</strong>: Changes in the relationship between features &amp; target variables, especially in a dynamic environment.</p></li>
+<li><p><strong>Data Quality</strong>: Missing values, outliers, noise, etc.</p></li>
+<li><p><strong>Model Versioning</strong>: R&amp;D models <span class="math notranslate nohighlight">\(\neq\)</span> deployed models.</p></li>
+<li><p><strong>Scaling &amp; Latency</strong>: Handling large data volumes and fast response times.</p></li>
+<li><p><strong>Ethics</strong>: Adversarial attacks, privacy concerns, regulatory compliance, interpretability, etc.</p></li>
+<li><p><strong>Others</strong>: Random errors (e.g., network issues).</p></li>
+</ul>
+<p>Consider these factors for production:</p>
+<ol class="arabic simple">
+<li><p><strong>Inference location</strong>:</p>
+<ul class="simple">
+<li><p><strong>Local</strong>: High memory/storage usage, low latency.</p></li>
+<li><p><strong>Server</strong>: Low memory/storage usage, high latency, privacy concerns.</p></li>
 </ul>
 </li>
-<li><p><strong>Consequence</strong>:</p>
-<ul>
-<li><p><strong>Vanishing gradients</strong>: Slows &amp; potentially stops the learning process for the front layers.</p></li>
-<li><p><strong>Exploding gradients</strong>: Harder convergence &amp; Training instability.</p></li>
+<li><p><strong>Feature serving</strong>:</p>
+<ul class="simple">
+<li><p><strong>Batch</strong>: Handled offline, served online with periodic data generation/collection.</p></li>
+<li><p><strong>Real-time</strong>: Handled &amp; served online at request time, prioritize scalability &amp; latency, use feature stores and caching.</p></li>
 </ul>
 </li>
-<li><p><strong>How to mitigate</strong>:</p>
+<li><p><strong>Performance Monitoring</strong>: Errors, latency, biases, data drift, CPU load, memory usage, retrain frequency, etc.</p></li>
+</ol>
+<section id="online-a-b-testing">
+<h3>Online A/B Testing<a class="headerlink" href="#online-a-b-testing" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Define Objective</strong>: Improve click-through rates, increase sign-up rates, etc.</p>
+<ul class="simple">
+<li><p><strong>Significance level</strong> <span class="math notranslate nohighlight">\((\alpha)\)</span>: Threshold for statistical significance.</p>
 <ul>
-<li><p>Proper activation functions (e.g., ReLU and variants) <span class="math notranslate nohighlight">\(\rightarrow\)</span> low likelihood of tiny gradients.</p></li>
-<li><p>Proper weight initialization (e.g., Xavier, He, etc.) <span class="math notranslate nohighlight">\(\rightarrow\)</span> maintain stable gradients.</p></li>
-<li><p>Batch Normalization <span class="math notranslate nohighlight">\(\rightarrow\)</span></p></li>
-<li><p>Residual connection.</p></li>
-<li><p>Gradient clipping.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha=P(FP)\)</span> (i.e., Type I error): Probability of rejecting a true <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
+<li><p>Common values: 0.05, 0.01.</p></li>
+<li><p>Lower <span class="math notranslate nohighlight">\(\alpha\)</span> makes difference detection harder.</p></li>
+</ul>
+</li>
+<li><p><strong>Power</strong> <span class="math notranslate nohighlight">\((1-\beta)\)</span>: Probability of rejecting a false <span class="math notranslate nohighlight">\(H_0\)</span>.</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\beta=P(FN)\)</span> (i.e., Type II error): Probability of not rejecting a false <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
+<li><p>Common value: 80%.</p></li>
+<li><p>Higher power requires larger sample size.</p></li>
 </ul>
 </li>
 </ul>
+</li>
+<li><p><strong>Create Variations</strong>: Generate versions to test (e.g., button designs: blue round (<strong>control</strong>) vs green square (<strong>treatment</strong>)).</p></li>
+<li><p><strong>Calculate Traffic</strong>: Calculate required sample size per variation:
+$<span class="math notranslate nohighlight">\(
+m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times p(1-p)
+\)</span>$</p>
+<ul class="simple">
+<li><p><strong>Baseline conversion rate</strong> (<span class="math notranslate nohighlight">\(p\)</span>): Event occurrence rate in control.</p></li>
+<li><p><strong>Minimum Detectable Effect</strong> (<span class="math notranslate nohighlight">\(\text{MDE}\)</span>): Smallest detectable difference.</p>
+<ul>
+<li><p>e.g., For <span class="math notranslate nohighlight">\(p\)</span>=10% and desired 2% improvement, <span class="math notranslate nohighlight">\(\text{MDE}\)</span>=20%.</p></li>
+<li><p>Ensure both groups are statistically similar.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Splitting</strong>: Randomly assign users to control and treatment.</p>
+<ul class="simple">
+<li><p><strong>User-level</strong>: Users consistently see the same variation.</p>
+<ul>
+<li><p>Pros: Useful for long-term impact, reduces bias.</p></li>
+</ul>
+</li>
+<li><p><strong>Request-level</strong>: Randomly determine variation per user request.</p>
+<ul>
+<li><p>Pros: Useful for short-term impact, captures immediate or session-specific impact of the tested variations.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Measurement &amp; Analysis</strong>:</p>
+<ol class="arabic simple">
+<li><p>Track user interactions &amp; conversions for both groups.</p></li>
+<li><p>Compare performance using statistical analysis.</p></li>
+<li><p>Determine if differences are statistically significant.</p></li>
+</ol>
+</li>
+</ol>
+</section>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -505,7 +602,7 @@ document.write(`
         },
         kernelOptions: {
             name: "python3",
-            path: "./dl"
+            path: "./ml"
         },
         predefinedOutput: true
     }
@@ -538,12 +635,14 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Issues</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-covariate-shift">Internal Covariate Shift</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#overfitting">Overfitting</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#vanishing-exploding-gradient">Vanishing/Exploding Gradient</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling">Modeling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production">Production</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-a-b-testing">Online A/B Testing</a></li>
 </ul>
-
+</li>
+</ul>
   </nav></div>
 
 </div></div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Issues &#8212; LazyNotes</title>
+    <title>Unsupervised Learning &#8212; LazyNotes</title>
   
   
   
@@ -61,7 +61,7 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'dl/issues';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ml/unsupervised';</script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -178,11 +178,11 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="layer.html">Layer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dl/layer.html">Layer</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dl/loss.html">Loss</a></li>
 
 
 
@@ -277,7 +277,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fdl/issues.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fml/unsupervised.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -307,7 +307,7 @@
       
       
       
-      <li><a href="../_sources/dl/issues.md" target="_blank"
+      <li><a href="../_sources/ml/unsupervised.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -391,7 +391,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Issues</h1>
+    <h1>Unsupervised Learning</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -401,10 +401,44 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Issues</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-covariate-shift">Internal Covariate Shift</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#overfitting">Overfitting</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#vanishing-exploding-gradient">Vanishing/Exploding Gradient</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Unsupervised Learning</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#clustering">Clustering</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#k-means">K-means</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-mixture-models">Gaussian Mixture Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spectral">Spectral</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hierarchical">Hierarchical</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#agglomerative">Agglomerative</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#divisive">Divisive</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dbscan">DBSCAN</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#matrix-factorization">Matrix Factorization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#singular-value-decomposition">Singular Value Decomposition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#principal-component-analysis">Principal Component Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#independent-component-analysis">Independent Component Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#non-negative-matrix-factorization">Non-Negative Matrix Factorization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#latent-dirichlet-allocation">Latent Dirichlet Allocation</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#manifold-learning">Manifold Learning</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#t-sne">t-SNE</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#umap">UMAP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-analysis">Factor Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#anomaly-detection">Anomaly Detection</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distance-based-methods">Distance-Based Methods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#density-based-methods">Density-Based Methods</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#association-rule-learning">Association Rule Learning</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#apriori-algorithm">Apriori Algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eclat-algorithm">Eclat Algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fp-growth-algorithm">FP-Growth Algorithm</a></li>
+</ul>
+</li>
 </ul>
 
             </nav>
@@ -417,79 +451,127 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="issues">
-<h1>Issues<a class="headerlink" href="#issues" title="Link to this heading">#</a></h1>
-<p>This page lists the common issues in deep learning in Alphabetic order.</p>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="internal-covariate-shift">
-<h1>Internal Covariate Shift<a class="headerlink" href="#internal-covariate-shift" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="unsupervised-learning">
+<h1>Unsupervised Learning<a class="headerlink" href="#unsupervised-learning" title="Link to this heading">#</a></h1>
 <ul class="simple">
-<li><p><strong>What</strong>: During training, the distribution of inputs to each layer changes. Each layer has to continuously adapt to a new distribution.</p></li>
-<li><p><strong>Cause</strong>: During training, the params of all preceding layers change, causing changes in their outputs.</p></li>
-<li><p><strong>Consequence</strong>: Harder convergence &amp; Training instability.</p></li>
-<li><p><strong>Mitigation</strong>:</p>
-<ul>
-<li><p>Batch normalization <span class="math notranslate nohighlight">\(\rightarrow\)</span> stabilize input distribution.</p></li>
-<li><p>Proper weight initialization (e.g., Xavier, He, etc.) <span class="math notranslate nohighlight">\(\rightarrow\)</span> maintain stable gradients.</p></li>
-<li><p>Smaller learning rates <span class="math notranslate nohighlight">\(\rightarrow\)</span> reduce the magnitude of param updates.</p>
-<ul>
-<li><p>Cons: slower convergence.</p></li>
-</ul>
-</li>
-<li><p>Adaptive learning rates (e.g., Adam) <span class="math notranslate nohighlight">\(\rightarrow\)</span> dynamically control the magnitude of param updates.</p></li>
-</ul>
-</li>
+<li><p><strong>What</strong>: Learn from unlabeled data.</p></li>
+<li><p><strong>Why</strong>: To discover hidden patterns in data without prior guidance.</p></li>
 </ul>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="overfitting">
-<h1>Overfitting<a class="headerlink" href="#overfitting" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="clustering">
+<h1>Clustering<a class="headerlink" href="#clustering" title="Link to this heading">#</a></h1>
 <ul class="simple">
-<li><p><strong>What</strong>: The model performs well on the training data but badly on the test/unseen data.</p></li>
-<li><p><strong>Cause</strong>: Too high model complexity relative to training data size.</p></li>
-<li><p><strong>Consequence</strong>: Poor generalization.</p></li>
-<li><p><strong>How to mitigate</strong>:</p>
+<li><p><strong>What</strong>: Group samples based on intrinsic similarities.</p></li>
+<li><p><strong>Why</strong>:</p></li>
+</ul>
+<section id="k-means">
+<h2>K-means<a class="headerlink" href="#k-means" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Iteratively group samples into <span class="math notranslate nohighlight">\(k\)</span> clusters till the centroids stabilize</p></li>
+<li><p><strong>Why</strong>: Find natural groupings within data.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Initialize <span class="math notranslate nohighlight">\(k\)</span> centroids.</p></li>
+<li><p>Repeat:</p>
+<ol class="arabic simple">
+<li><p>Assign each sample to its nearest centroid.</p></li>
+<li><p>Update the centroids based on the mean of all samples assigned to them.</p></li>
+</ol>
+</li>
+<li><p>Break if required or until the centroids stabilize.</p></li>
+</ol>
+</li>
+<li><p><strong>When</strong>:</p>
 <ul>
-<li><p>Parameter regularization (L1/L2) <span class="math notranslate nohighlight">\(\rightarrow\)</span> reduce the magnitude of params.</p></li>
-<li><p>Dropout <span class="math notranslate nohighlight">\(\rightarrow\)</span> reduce dependency on certain neurons <span class="math notranslate nohighlight">\(\rightarrow\)</span> promote learning of robust features.</p></li>
-<li><p>Data augmentation <span class="math notranslate nohighlight">\(\rightarrow\)</span> broaden training data distribution.</p></li>
-<li><p>Early stopping <span class="math notranslate nohighlight">\(\rightarrow\)</span> halt training before validation performance drops.</p></li>
-<li><p>Cross validation <span class="math notranslate nohighlight">\(\rightarrow\)</span> ensure consistent model performance across different data splits.</p></li>
-<li><p>Reduce model complexity <span class="math notranslate nohighlight">\(\rightarrow\)</span> a simpler model is less likely to capture too many details in the training data.</p></li>
+<li><p>There are exactly <span class="math notranslate nohighlight">\(k\)</span> clusters in the data.</p></li>
+<li><p>The data is scale-independent.</p></li>
+<li><p>The clusters are spherical, equally sized, and well-separated with hard margins.</p></li>
+</ul>
+</li>
+<li><p><strong>Pros</strong>:</p>
+<ul>
+<li><p>Simple.</p></li>
+</ul>
+</li>
+<li><p><strong>Cons</strong>:</p>
+<ul>
+<li><p>Requires prior knowledge of <span class="math notranslate nohighlight">\(k\)</span>.</p></li>
+<li><p>Sensitive to centroid initialization.</p></li>
+<li><p>Bad performance on non-spherical, overlapping, or varying-sized clusters.</p></li>
+<li><p>Possible convergence to local minima.</p></li>
 </ul>
 </li>
 </ul>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="vanishing-exploding-gradient">
-<h1>Vanishing/Exploding Gradient<a class="headerlink" href="#vanishing-exploding-gradient" title="Link to this heading">#</a></h1>
-<ul class="simple">
-<li><p><strong>What</strong>:</p>
-<ul>
-<li><p><strong>Vanishing gradients</strong>: The gradients become smaller and smaller during backprop. They have almost no effect to the front layers.</p></li>
-<li><p><strong>Exploding gradients</strong>: The gradients become larger and larger during backprop. They change the weights of the front layers too much.</p></li>
-</ul>
-</li>
-<li><p><strong>Cause</strong>:</p>
-<ul>
-<li><p>Too many layers.</p></li>
-<li><p>Too small/large gradient on certain layers (e.g., Sigmoid, Tanh, extremely large weight initialization, etc.) <span class="math notranslate nohighlight">\(\rightarrow\)</span> propagates via chain rule.</p></li>
-</ul>
-</li>
-<li><p><strong>Consequence</strong>:</p>
-<ul>
-<li><p><strong>Vanishing gradients</strong>: Slows &amp; potentially stops the learning process for the front layers.</p></li>
-<li><p><strong>Exploding gradients</strong>: Harder convergence &amp; Training instability.</p></li>
-</ul>
-</li>
-<li><p><strong>How to mitigate</strong>:</p>
-<ul>
-<li><p>Proper activation functions (e.g., ReLU and variants) <span class="math notranslate nohighlight">\(\rightarrow\)</span> low likelihood of tiny gradients.</p></li>
-<li><p>Proper weight initialization (e.g., Xavier, He, etc.) <span class="math notranslate nohighlight">\(\rightarrow\)</span> maintain stable gradients.</p></li>
-<li><p>Batch Normalization <span class="math notranslate nohighlight">\(\rightarrow\)</span></p></li>
-<li><p>Residual connection.</p></li>
-<li><p>Gradient clipping.</p></li>
-</ul>
-</li>
-</ul>
+<section id="gaussian-mixture-models">
+<h2>Gaussian Mixture Models<a class="headerlink" href="#gaussian-mixture-models" title="Link to this heading">#</a></h2>
+</section>
+<section id="spectral">
+<h2>Spectral<a class="headerlink" href="#spectral" title="Link to this heading">#</a></h2>
+</section>
+<section id="hierarchical">
+<h2>Hierarchical<a class="headerlink" href="#hierarchical" title="Link to this heading">#</a></h2>
+<section id="agglomerative">
+<h3>Agglomerative<a class="headerlink" href="#agglomerative" title="Link to this heading">#</a></h3>
+</section>
+<section id="divisive">
+<h3>Divisive<a class="headerlink" href="#divisive" title="Link to this heading">#</a></h3>
+</section>
+</section>
+<section id="dbscan">
+<h2>DBSCAN<a class="headerlink" href="#dbscan" title="Link to this heading">#</a></h2>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="matrix-factorization">
+<h1>Matrix Factorization<a class="headerlink" href="#matrix-factorization" title="Link to this heading">#</a></h1>
+<section id="singular-value-decomposition">
+<h2>Singular Value Decomposition<a class="headerlink" href="#singular-value-decomposition" title="Link to this heading">#</a></h2>
+</section>
+<section id="principal-component-analysis">
+<h2>Principal Component Analysis<a class="headerlink" href="#principal-component-analysis" title="Link to this heading">#</a></h2>
+</section>
+<section id="independent-component-analysis">
+<h2>Independent Component Analysis<a class="headerlink" href="#independent-component-analysis" title="Link to this heading">#</a></h2>
+</section>
+<section id="non-negative-matrix-factorization">
+<h2>Non-Negative Matrix Factorization<a class="headerlink" href="#non-negative-matrix-factorization" title="Link to this heading">#</a></h2>
+</section>
+<section id="latent-dirichlet-allocation">
+<h2>Latent Dirichlet Allocation<a class="headerlink" href="#latent-dirichlet-allocation" title="Link to this heading">#</a></h2>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="manifold-learning">
+<h1>Manifold Learning<a class="headerlink" href="#manifold-learning" title="Link to this heading">#</a></h1>
+<section id="t-sne">
+<h2>t-SNE<a class="headerlink" href="#t-sne" title="Link to this heading">#</a></h2>
+</section>
+<section id="umap">
+<h2>UMAP<a class="headerlink" href="#umap" title="Link to this heading">#</a></h2>
+</section>
+<section id="factor-analysis">
+<h2>Factor Analysis<a class="headerlink" href="#factor-analysis" title="Link to this heading">#</a></h2>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="anomaly-detection">
+<h1>Anomaly Detection<a class="headerlink" href="#anomaly-detection" title="Link to this heading">#</a></h1>
+<section id="distance-based-methods">
+<h2>Distance-Based Methods<a class="headerlink" href="#distance-based-methods" title="Link to this heading">#</a></h2>
+</section>
+<section id="density-based-methods">
+<h2>Density-Based Methods<a class="headerlink" href="#density-based-methods" title="Link to this heading">#</a></h2>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="association-rule-learning">
+<h1>Association Rule Learning<a class="headerlink" href="#association-rule-learning" title="Link to this heading">#</a></h1>
+<section id="apriori-algorithm">
+<h2>Apriori Algorithm<a class="headerlink" href="#apriori-algorithm" title="Link to this heading">#</a></h2>
+</section>
+<section id="eclat-algorithm">
+<h2>Eclat Algorithm<a class="headerlink" href="#eclat-algorithm" title="Link to this heading">#</a></h2>
+</section>
+<section id="fp-growth-algorithm">
+<h2>FP-Growth Algorithm<a class="headerlink" href="#fp-growth-algorithm" title="Link to this heading">#</a></h2>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -505,7 +587,7 @@ document.write(`
         },
         kernelOptions: {
             name: "python3",
-            path: "./dl"
+            path: "./ml"
         },
         predefinedOutput: true
     }
@@ -538,10 +620,44 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Issues</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-covariate-shift">Internal Covariate Shift</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#overfitting">Overfitting</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#vanishing-exploding-gradient">Vanishing/Exploding Gradient</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Unsupervised Learning</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#clustering">Clustering</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#k-means">K-means</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-mixture-models">Gaussian Mixture Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spectral">Spectral</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hierarchical">Hierarchical</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#agglomerative">Agglomerative</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#divisive">Divisive</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dbscan">DBSCAN</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#matrix-factorization">Matrix Factorization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#singular-value-decomposition">Singular Value Decomposition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#principal-component-analysis">Principal Component Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#independent-component-analysis">Independent Component Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#non-negative-matrix-factorization">Non-Negative Matrix Factorization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#latent-dirichlet-allocation">Latent Dirichlet Allocation</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#manifold-learning">Manifold Learning</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#t-sne">t-SNE</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#umap">UMAP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-analysis">Factor Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#anomaly-detection">Anomaly Detection</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distance-based-methods">Distance-Based Methods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#density-based-methods">Density-Based Methods</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#association-rule-learning">Association Rule Learning</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#apriori-algorithm">Apriori Algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eclat-algorithm">Eclat Algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fp-growth-algorithm">FP-Growth Algorithm</a></li>
+</ul>
+</li>
 </ul>
 
   </nav></div>
