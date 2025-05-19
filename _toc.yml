@@ -34,5 +34,4 @@ parts:
     chapters:
     - file: info
     - file: references
-  - caption: About
-    - file: about
+  - file: about
