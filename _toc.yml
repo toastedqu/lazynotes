@@ -4,8 +4,8 @@
 format: jb-book
 root: intro
 parts:
-  - caption: Machine Learning
-    chapters:
+  # - caption: Machine Learning
+  #   chapters:
     # - file: ml/intro
     # - file: ml/feature
     # - file: ml/unsupervised
