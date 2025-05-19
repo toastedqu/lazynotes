@@ -140,7 +140,7 @@ $$
 :class: tip, dropdown
 *Cons?*
 - ⬆️Training time $\leftarrow$ ⬇️Convergence speed $\leftarrow$ Sparsity
-- ✅Hyperparameter Tuning
+- ✅Hyperparameter Tuning.
 ```
 
 ## Residual Connection

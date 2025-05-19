@@ -4,34 +4,28 @@
 format: jb-book
 root: intro
 parts:
-  # - caption: Machine Learning
-  #   chapters:
-  #   - file: ml/intro
-  #   - file: ml/supervised-tag
-  #     sections:
-  #     - file: ml/supervised/linear
-  #     - file: ml/supervised/bayesian
-  #     - file: ml/supervised/nn
-  #     - file: ml/supervised/svm
-  #     - file: ml/supervised/ensemble
-  #     - file: ml/supervised/semi-supervised
-  #     - file: ml/supervised/self-supervised
-  #     - file: ml/supervised/online
-  #   - file: ml/hyperparams-tag
+  - caption: Machine Learning
+    chapters:
+    # - file: ml/intro
+    # - file: ml/feature
+    # - file: ml/unsupervised
+    # - file: ml/supervised
+    # - file: ml/paramopt
+    # - file: ml/hyperopt
   - caption: Deep Learning
     chapters:
     - file: dl/layer
     - file: dl/loss
   - caption: LLM
     chapters:
-    - file: llm/efficiency
-      sections:
-      - file: llm/efficiency/peft
-      - file: llm/efficiency/distill
+    # - file: llm/efficiency
+    #   sections:
+    #   - file: llm/efficiency/peft
+      # - file: llm/efficiency/distill
     - file: llm/decoding
     - file: llm/rl
   - caption: Misc
     chapters:
-    - file: info
+    # - file: info
     - file: references
     - file: about
