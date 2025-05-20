@@ -14,16 +14,24 @@ parts:
     # - file: ml/hyperopt
   - caption: Deep Learning
     chapters:
-    - file: dl/layer
+    - file: dl/module
+    # - file: dl/optim
     - file: dl/loss
+    # - file: dl/train
+    # - file: dl/issues
   - caption: LLM
     chapters:
-    # - file: llm/efficiency
-    #   sections:
-    #   - file: llm/efficiency/peft
-      # - file: llm/efficiency/distill
+    - file: llm/transformer
+    # - file: llm/model
+    # - file: llm/training
     - file: llm/decoding
-    - file: llm/rl
+    - file: llm/peft
+    - file: llm/rlhf
+    # - file: llm/efficiency
+    # - file: llm/scale
+  - caption: Math
+    chapters:
+    - file: math/info
   - caption: Misc
     chapters:
     # - file: info

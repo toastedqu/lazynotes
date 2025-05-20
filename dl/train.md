@@ -39,12 +39,6 @@ The choice of initialization methods matters.
 
 ## Weight Regularization
 
-## Hyperparameter Tuning
-### Grid Search
-### Random Search
-### Bayesian Optimization
-### Hyperband
-
 ## Transfer Learning
 ### Pre-training
 ### Fine-tuning

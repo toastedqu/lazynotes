@@ -9,9 +9,12 @@ kernelspec:
   language: python
   name: python3
 ---
-# Layer
+# Module
 - **What**: A function mapping input tensor $X$ to output tensor $Y$.
-- **Why**: Learning a task = Approximating the optimal mapping from $X$ to $Y$.
+- **Why**:
+    1. ML = Function Approximation.
+    2. DL = Function Approximation with a deep NN.
+    3. Deep NN = A bunch of modules stacked together.
 
 Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readability.
 
@@ -267,7 +270,7 @@ Backward:
 ```
 
 ### Layer Normalization
-- **What**: Normalize each sample across the input features to zero mean and unit variance.
+- **What**: Normalize each sample across input features to zero mean and unit variance.
 - **Why**: Batch normalization depends on the batch size.
     - When it's too big, high computational cost.
     - When it's too small, the batch may not be representative of the underlying data distribution.
@@ -330,12 +333,12 @@ Backward:
 
 ```{admonition} Q&A
 :class: tip, dropdown
-*Pros*:
+*Pros?*
 - Reduces hyperparam tuning effort.
 - High consistency during training and inference.
 - Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
 
-*Cons*:
+*Cons?*
 - Adds computation overhead and complexity.
 - Inapplicable in CNNs due to varied statistics of spatial features.
 ```
@@ -394,18 +397,82 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
 
 ```{admonition} Q&A
 :class: tip, dropdown
-*Pros*:
+*Pros?*
 - Translation invariance.
 - Efficiently captures spatial hierarchies.
 
-*Cons*:
+*Cons?*
 - High computational cost.
 - Requires big data to be performant.
 - Requires extensive hyperparam tuning.
 ```
 
-<!-- 
-## Depthwise Separable Convolution
+## Depthwise Convolution
+- **What**: Apply a single convolutional filter to each input channel independently.
+- **Why**: To learn spatial features within each channel separately, significantly reducing computational cost and model parameters compared to standard convolution.
+- **How**:
+    1. Initialize a set of filters, one for each input channel.
+    2. For each input channel, from top-left to bottom-right:
+        1. Perform element-wise multiplication & summation between its dedicated filter & the scanned area.
+        2. Store the output in the corresponding position in the respective output feature map.
+    3. The resulting feature maps (one for each input channel) are typically stacked together.
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- IO:
+    - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
+    - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$: Output volume. (Note: $C_{out} = C_{in}$ for a pure depthwise convolution layer)
+- Params:
+    - $\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{in}}$: Filters (one $F_H \times F_W$ filter per input channel).
+    - $\mathbf{b}\in\mathbb{R}^{C_{in}}$: Biases (one bias per input channel).
+- Hyperparams:
+    - $H_{in}, W_{in}$: Input height & width.
+    - $C_{in}$: #Input channels (and also #Output channels).
+    - $f_h, f_w$: Filter height & width.
+    - $s$: Stride size.
+    - $p$: Padding size.
+
+Forward:
+
+The output for each channel $c$ is computed independently:
+$$
+Y_{h,w,c}=\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c}\cdot X_{s(h-1)+i-p,s(w-1)+j-p,c}+b_{c}
+$$
+
+where
+
+$$\begin{align*}
+H_{out}&=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
+W_{out}&=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
+\end{align*}$$
+
+Backward:
+
+Let $g_{h,w,c} = \frac{\partial\mathcal{L}}{\partial Y_{h,w,c}}$ be the gradient of the loss $\mathcal{L}$ with respect to the output $Y_{h,w,c}$.
+
+$$\begin{align*}
+&\frac{\partial\mathcal{L}}{\partial W_{i,j,c}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c}\cdot X_{s(h-1)+i-p, s(w-1)+j-p, c}\\
+&\frac{\partial\mathcal{L}}{\partial b_{c}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c}\\
+&\frac{\partial\mathcal{L}}{\partial X_{i',j',c}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}\sum_{k_h=1}^{f_h}\sum_{k_w=1}^{f_w} \left( g_{h,w,c} \cdot W_{k_h,k_w,c} \cdot \mathbb{I}(i' = s(h-1)+k_h-p \land j' = s(w-1)+k_w-p) \right)
+\end{align*}$$
+
+where $\mathbb{I}(\cdot)$ is the indicator function. More practically, the gradient with respect to the input $\mathbf{X}$ involves a "full" convolution of the gradients $g_c$ (padded appropriately) with the corresponding flipped filter $W_c$.
+
+Notice the similarity to the standard convolution's backpropagation but applied independently for each channel.
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros?*
+- Computational cost⬇️⬇️ $\leftarrow$ #Params⬇️⬇️ & #Multiplications⬇️⬇️
+- Learns per-channel spatial features.
+
+*Cons?*
+- ❌Cross-channel info.
+```
+
+<!-- ## Depthwise Separable Convolution
 - **What**: Depthwise convolution + Pointwise convolution. ([paper](https://arxiv.org/pdf/1610.02357))
 - **Why**: To significantly reduce computational cost and #params.
 - **How**:
@@ -416,7 +483,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
 - **Pros**: Significantly higher computational efficiency (time & space).
 - **Cons**: Lower accuracy. -->
 
-<!-- ```{admonition} Math
+```{admonition} Math
 :class: note, dropdown
 Notations:
     - IO:

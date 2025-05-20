@@ -13,10 +13,10 @@ kernelspec:
 - **What**: Modify a small part of a large model $\xrightarrow{\text{adapt to}}$ Downstream tasks
 - **Why**: Reduce cost & Retain pretraining performance.
 
-## LoRA
-- **What**: Low-Rank Adaptation.
-- **Why**: #params $\downarrow$ $\rightarrow$ Finetuning efficiency $\uparrow$.
-- **How**: Inject **low-rank** matrices into the weights of specific layers, without modifying the original weights directly.
+## Low-Rank Adaptation (LoRA)
+- **What**: Train **low-rank** matrices to adapt to downstream tasks.
+- **Why**: #params ⇓ $\rightarrow$ Finetuning efficiency ⇑.
+- **How**: Inject low-rank matrices into the weights of specific layers, without modifying the original weights directly.
 
 ```{admonition} Math
 :class: note, dropdown
@@ -57,3 +57,10 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 - ONLY great performance with pretrained models $\rightarrow$ Lower performance relative to full finetuning
 - High sensitivity to hyperparameters.
 ```
+
+## LoRA for Quantized LLMs (QLoRA)
+- **What**: Insert learnable LoRAs into each layer of a quantized pretrained LM.
+- **Why**: Standard fine-tuning scales linearly with model size in memory $\rightarrow$ HUGE memory cost
+	- QLoRA dramatically cuts down memory WHILE preserving full-precision performance.
+- **How**:
+	1. **4-bit NormalFloat Quantization**: 
