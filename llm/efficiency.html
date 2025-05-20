@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -59,6 +59,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'llm/efficiency';</script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -176,7 +178,7 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../dl/layer.html">Layer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dl/module.html">Module</a></li>
 
 
 
@@ -191,13 +193,22 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="transformer.html">Transformer</a></li>
+
+
 <li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
 
 
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="rl.html">RL for LLMs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="peft.html">PEFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rlhf.html">RL for LLMs</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../math/info.html">Information Theory</a></li>
 
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
@@ -376,7 +387,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -392,6 +405,16 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Efficiency</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#knowledge-distillation">Knowledge Distillation</a></li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -403,7 +426,19 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="efficiency">
 <h1>Efficiency<a class="headerlink" href="#efficiency" title="Link to this heading">#</a></h1>
-<p>ToC:</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="knowledge-distillation">
+<h1>Knowledge Distillation<a class="headerlink" href="#knowledge-distillation" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><strong>What</strong>: Large, pre-trained <strong>teacher</strong> model <span class="math notranslate nohighlight">\(\xrightarrow{\text{transfer knowledge}}\)</span> Small <strong>student</strong> model</p>
+<ul>
+<li><p>Teacher &amp; Student are trained on the same data.</p></li>
+<li><p>Teacher sees true labels (i.e., <strong>hard targets</strong>).</p></li>
+<li><p>Student sees both true labels and teacher’s outputs (i.e., <strong>soft targets</strong>).</p></li>
+</ul>
+</li>
+<li><p><strong>Why</strong>: Model compression + Domain-specific knowledge transfer.</p></li>
+</ul>
 </section>
 
     <script type="text/x-thebe-config">
@@ -442,6 +477,23 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Efficiency</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#knowledge-distillation">Knowledge Distillation</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
               
             
           </div>

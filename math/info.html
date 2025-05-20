@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview &#8212; LazyNotes</title>
+    <title>Information Theory &#8212; LazyNotes</title>
   
   
   
@@ -61,10 +61,12 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'ml/intro';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'math/info';</script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="References" href="../references.html" />
+    <link rel="prev" title="RL for LLMs" href="../llm/rlhf.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -126,8 +128,6 @@
     <div class="bd-container__inner bd-page-width">
       
       
-      
-        
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -207,8 +207,8 @@
 
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../math/info.html">Information Theory</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Information Theory</a></li>
 
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
@@ -286,7 +286,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fml/intro.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fmath/info.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -316,7 +316,7 @@
       
       
       
-      <li><a href="../_sources/ml/intro.md" target="_blank"
+      <li><a href="../_sources/math/info.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -400,7 +400,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Overview</h1>
+    <h1>Information Theory</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -410,14 +410,15 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling">Modeling</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production">Production</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-a-b-testing">Online A/B Testing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Information Theory</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basics">Basics</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information">Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entropy">Entropy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kl-divergence">KL Divergence</a></li>
 </ul>
 </li>
 </ul>
+
             </nav>
         </div>
     </div>
@@ -428,173 +429,154 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h1>
-<p>An AI project consists of 4 parts:</p>
-<img alt="images/ml_system_design_flow.png" class="align-center" src="images/ml_system_design_flow.png" />
-<section id="problem">
-<h2>Problem<a class="headerlink" href="#problem" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Overview</strong>: Define the problem, the goal, and the expected inputs &amp; outputs.</p></li>
-<li><p><strong>Scope</strong>: Identify constraints.</p>
-<ul class="simple">
-<li><p><strong>Data</strong>:</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="information-theory">
+<h1>Information Theory<a class="headerlink" href="#information-theory" title="Link to this heading">#</a></h1>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="basics">
+<h1>Basics<a class="headerlink" href="#basics" title="Link to this heading">#</a></h1>
+<section id="information">
+<h2>Information<a class="headerlink" href="#information" title="Link to this heading">#</a></h2>
 <ul>
-<li><p><strong>Size</strong>: #samples, #features, etc.</p></li>
-<li><p><strong>Features</strong>: content, context, user, etc.</p></li>
-<li><p><strong>Targets</strong>: Explicit (direct), implicit (indirect).</p></li>
+<li><p><strong>What</strong>: Surprise.</p>
+<ul class="simple">
+<li><p>Less/More likely events <span class="math notranslate nohighlight">\(\rightarrow\)</span> More/Less info</p></li>
 </ul>
 </li>
-<li><p><strong>Model constraints</strong>:</p>
-<ul>
-<li><p>Priority: Performance / Quality</p></li>
-<li><p>Type: Single general / Multiple specific</p></li>
-<li><p>Interpretability</p></li>
-<li><p>Retrainability</p></li>
+<li><p><strong>Why</strong>: To mathematically analyze, optimize, &amp; understand the fundamental limits of systems that store, process, &amp; transmit data.</p>
+<ul class="simple">
+<li><p>Data compression</p></li>
+<li><p>Communication</p></li>
+<li><p>Systems</p></li>
+<li><p>Cryptography</p></li>
+<li><p>ML</p></li>
 <li><p>…</p></li>
 </ul>
 </li>
-<li><p><strong>Resource constraints</strong>:</p>
-<ul>
-<li><p>Time: Training, inference, project duration, etc.</p></li>
-<li><p>Computation: Training, inference, local/cloud, etc.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Evaluation</strong>: Define success measurement.</p>
-<ul class="simple">
-<li><p><strong>Automatic metrics</strong>:</p>
-<ul>
-<li><p>Offline: MSE, P/R/F1, etc.</p></li>
-<li><p>Online: Usage time, usage frequency, click rate, etc.</p></li>
-</ul>
-</li>
-<li><p><strong>Human metrics</strong>: User interaction, recent reports, company intention for users, personalization, etc.</p></li>
-</ul>
-</li>
+<li><p><strong>How</strong>: To quantify surprise (i.e., self-information), we want</p>
+<ol class="arabic simple">
+<li><p>Higher surprise for less probable events.</p></li>
+<li><p>Zero surprise for deterministic events.</p></li>
+<li><p>If 2 independent events happen, their surprises should add up.</p></li>
 </ol>
+<ul class="simple">
+<li><p>2 &amp; 3 <span class="math notranslate nohighlight">\(\rightarrow\)</span> <span class="math notranslate nohighlight">\(\log P\)</span></p></li>
+<li><p>1 <span class="math notranslate nohighlight">\(\rightarrow\)</span> <span class="math notranslate nohighlight">\(-\log P\)</span></p></li>
+</ul>
+</li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">ELI5</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><em>What is information?</em></p>
+<ul class="simple">
+<li><p class="sd-card-text">You live in the middle of Egypt.</p></li>
+<li><p class="sd-card-text">Weather forecast: “It will be sunny tmrw.”</p></li>
+<li><p class="sd-card-text">You: “lol as expected.” (You didn’t get much info)</p></li>
+<li><p class="sd-card-text">Weather forecast: “It will snow tmrw.”</p></li>
+<li><p class="sd-card-text">You: “Hol up WTF???” (You got huge info)</p></li>
+</ul>
+</div>
+</details><div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p><strong>Information</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+I(x)=-\log P(x)
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(x\)</span>: Event outcome.</p></li>
+<li><p><span class="math notranslate nohighlight">\(P\)</span>: Probability.</p></li>
+<li><p><span class="math notranslate nohighlight">\(I\)</span>: Information.</p></li>
+<li><p>Units of <span class="math notranslate nohighlight">\(I(x)\)</span>:</p>
+<ul>
+<li><p><strong>Bits</strong>: <span class="math notranslate nohighlight">\(\log_2\)</span>, mainly used in EECS.</p></li>
+<li><p><strong>Nats</strong>: <span class="math notranslate nohighlight">\(\ln\)</span>, mainly used in Math/Stats for convenience in calculus.</p></li>
+<li><p><span class="math notranslate nohighlight">\(1\text{ nat}=\frac{1}{\ln 2}\text{ bits}\)</span></p></li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
-<section id="data">
-<h2>Data<a class="headerlink" href="#data" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Data Collection/Availability</strong></p>
+<section id="entropy">
+<h2>Entropy<a class="headerlink" href="#entropy" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>Status</strong>: Available/unavailable, quantity, etc.</p></li>
-<li><p><strong>Annotation</strong>: Quality, cost, resolving disagreements, feasibility of auto-annotation, etc.</p></li>
-<li><p><strong>Privacy</strong>: User data accessibility, methods, online/periodic data use, anonymity, etc.</p></li>
-<li><p><strong>Logistics</strong>: Storage location, structure, biases, etc.</p></li>
+<li><p><strong>What</strong>: Average surprise.</p>
+<ul>
+<li><p>More/Less randomness <span class="math notranslate nohighlight">\(\rightarrow\)</span> High/Low entropy</p></li>
 </ul>
 </li>
-<li><p><strong>Data Processing</strong></p></li>
-<li><p><strong>Feature Engineering</strong></p></li>
-</ol>
+<li><p><strong>Why</strong>: To quantitatively measure the inherent randomness in a system/process.</p></li>
+<li><p><strong>How</strong>: Take the expectation of info across the probability distribution.</p></li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">ELI5</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><em>What is entropy?</em></p>
+<ul class="simple">
+<li><p class="sd-card-text">So somehow it wasn’t sunny in Egypt last time.</p></li>
+<li><p class="sd-card-text">But then it’s been sunny all the time.</p></li>
+<li><p class="sd-card-text">How much surprise do we expect on average?</p></li>
+<li><p class="sd-card-text">Not much. We need a measure of the predictability.</p></li>
+</ul>
+</div>
+</details><div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p><strong>Entropy</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+H(X)=E_{x\sim P}[I(x)]=-\sum_xP(x)\log P(x)=-\int_{-\infty}^\infty p(x)\log p(x)dx
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(X\)</span>: Random variable.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p(x)\)</span>: PDF.</p></li>
+<li><p>Properties:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(H(X)\geq 0\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(H(X)\leq \log N\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is # of possible outcomes.</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(H(X)=\log N\text{ iff }\forall x\sim P: P(x)=\frac{1}{N}\)</span></p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(H(X)\)</span> is concave.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Joint Entropy</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+H(X,Y)=-\sum_x\sum_yP(x,y)\log P(x,y)
+\]</div>
+<p><strong>Conditional Entropy</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+H(Y|X)&amp;=\sum_xP(x)H(Y|X=x) \\
+H(Y|X=x)&amp;=-\sum_yP(y|x)\log P(y|x)
+\end{align*}\end{split}\]</div>
+<p><strong>Chain Rule</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+H(X,Y)=H(X)+H(Y|X)
+\]</div>
+<p><strong>Mutual Info</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+I(X,Y)=H(X)-H(X|Y)=H(Y)-H(Y|X)=H(X)+H(Y)-H(X,Y)
+\]</div>
+</div>
 </section>
-<section id="modeling">
-<h2>Modeling<a class="headerlink" href="#modeling" title="Link to this heading">#</a></h2>
-<p>For each model, specify:</p>
+<section id="kl-divergence">
+<h2>KL Divergence<a class="headerlink" href="#kl-divergence" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Why: Motivation</p></li>
-<li><p>What: Functionality</p></li>
-<li><p>How: Objective and optimization</p></li>
-<li><p>Pros &amp; Cons</p></li>
+<li><p><strong>What</strong></p></li>
 </ul>
-<p>Procedure:</p>
-<ol class="arabic simple">
-<li><p>Baseline: Stats (mean, median, mode), random benchmarks, etc.</p></li>
-<li><p>Easy model</p></li>
-<li><p>Hard model</p></li>
-<li><p>Experiment, evaluation &amp; ablation study</p></li>
-</ol>
-</section>
-<section id="production">
-<h2>Production<a class="headerlink" href="#production" title="Link to this heading">#</a></h2>
-<p>Performance can degrade in production due to:</p>
-<ul class="simple">
-<li><p><strong>Data Drift</strong>: Production data <span class="math notranslate nohighlight">\(\neq\)</span> training data.</p></li>
-<li><p><strong>Feature Drift</strong>: Changes in features or feature transformations.</p></li>
-<li><p><strong>Concept Drift</strong>: Changes in the relationship between features &amp; target variables, especially in a dynamic environment.</p></li>
-<li><p><strong>Data Quality</strong>: Missing values, outliers, noise, etc.</p></li>
-<li><p><strong>Model Versioning</strong>: R&amp;D models <span class="math notranslate nohighlight">\(\neq\)</span> deployed models.</p></li>
-<li><p><strong>Scaling &amp; Latency</strong>: Handling large data volumes and fast response times.</p></li>
-<li><p><strong>Ethics</strong>: Adversarial attacks, privacy concerns, regulatory compliance, interpretability, etc.</p></li>
-<li><p><strong>Others</strong>: Random errors (e.g., network issues).</p></li>
-</ul>
-<p>Consider these factors for production:</p>
-<ol class="arabic simple">
-<li><p><strong>Inference location</strong>:</p>
-<ul class="simple">
-<li><p><strong>Local</strong>: High memory/storage usage, low latency.</p></li>
-<li><p><strong>Server</strong>: Low memory/storage usage, high latency, privacy concerns.</p></li>
-</ul>
-</li>
-<li><p><strong>Feature serving</strong>:</p>
-<ul class="simple">
-<li><p><strong>Batch</strong>: Handled offline, served online with periodic data generation/collection.</p></li>
-<li><p><strong>Real-time</strong>: Handled &amp; served online at request time, prioritize scalability &amp; latency, use feature stores and caching.</p></li>
-</ul>
-</li>
-<li><p><strong>Performance Monitoring</strong>: Errors, latency, biases, data drift, CPU load, memory usage, retrain frequency, etc.</p></li>
-</ol>
-<section id="online-a-b-testing">
-<h3>Online A/B Testing<a class="headerlink" href="#online-a-b-testing" title="Link to this heading">#</a></h3>
-<ol class="arabic simple">
-<li><p><strong>Define Objective</strong>: Improve click-through rates, increase sign-up rates, etc.</p>
-<ul class="simple">
-<li><p><strong>Significance level</strong> <span class="math notranslate nohighlight">\((\alpha)\)</span>: Threshold for statistical significance.</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\alpha=P(FP)\)</span> (i.e., Type I error): Probability of rejecting a true <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
-<li><p>Common values: 0.05, 0.01.</p></li>
-<li><p>Lower <span class="math notranslate nohighlight">\(\alpha\)</span> makes difference detection harder.</p></li>
-</ul>
-</li>
-<li><p><strong>Power</strong> <span class="math notranslate nohighlight">\((1-\beta)\)</span>: Probability of rejecting a false <span class="math notranslate nohighlight">\(H_0\)</span>.</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\beta=P(FN)\)</span> (i.e., Type II error): Probability of not rejecting a false <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
-<li><p>Common value: 80%.</p></li>
-<li><p>Higher power requires larger sample size.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Create Variations</strong>: Generate versions to test (e.g., button designs: blue round (<strong>control</strong>) vs green square (<strong>treatment</strong>)).</p></li>
-<li><p><strong>Calculate Traffic</strong>: Calculate required sample size per variation:
-$<span class="math notranslate nohighlight">\(
-m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times p(1-p)
-\)</span>$</p>
-<ul class="simple">
-<li><p><strong>Baseline conversion rate</strong> (<span class="math notranslate nohighlight">\(p\)</span>): Event occurrence rate in control.</p></li>
-<li><p><strong>Minimum Detectable Effect</strong> (<span class="math notranslate nohighlight">\(\text{MDE}\)</span>): Smallest detectable difference.</p>
-<ul>
-<li><p>e.g., For <span class="math notranslate nohighlight">\(p\)</span>=10% and desired 2% improvement, <span class="math notranslate nohighlight">\(\text{MDE}\)</span>=20%.</p></li>
-<li><p>Ensure both groups are statistically similar.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Splitting</strong>: Randomly assign users to control and treatment.</p>
-<ul class="simple">
-<li><p><strong>User-level</strong>: Users consistently see the same variation.</p>
-<ul>
-<li><p>Pros: Useful for long-term impact, reduces bias.</p></li>
-</ul>
-</li>
-<li><p><strong>Request-level</strong>: Randomly determine variation per user request.</p>
-<ul>
-<li><p>Pros: Useful for short-term impact, captures immediate or session-specific impact of the tested variations.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Measurement &amp; Analysis</strong>:</p>
-<ol class="arabic simple">
-<li><p>Track user interactions &amp; conversions for both groups.</p></li>
-<li><p>Compare performance using statistical analysis.</p></li>
-<li><p>Determine if differences are statistically significant.</p></li>
-</ol>
-</li>
-</ol>
-</section>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>KL Divergence</p>
+<div class="math notranslate nohighlight">
+\[
+D_\text{KL}(P||Q)=\sum P(x)\log\frac{P(x)}{Q(x)}
+\]</div>
+</div>
 </section>
 </section>
 
@@ -611,7 +593,7 @@ m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times 
         },
         kernelOptions: {
             name: "python3",
-            path: "./ml"
+            path: "./math"
         },
         predefinedOutput: true
     }
@@ -628,6 +610,24 @@ m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times 
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="../llm/rlhf.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">RL for LLMs</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../references.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">References</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -644,14 +644,15 @@ m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times 
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling">Modeling</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production">Production</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-a-b-testing">Online A/B Testing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Information Theory</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basics">Basics</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information">Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entropy">Entropy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kl-divergence">KL Divergence</a></li>
 </ul>
 </li>
 </ul>
+
   </nav></div>
 
 </div></div>
