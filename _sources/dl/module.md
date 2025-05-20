@@ -481,7 +481,7 @@ Notice the similarity to the standard convolution's backpropagation but applied 
 - **When**: When computational efficiency and model size are crucial.
 - **Where**: [MobileNets](https://arxiv.org/pdf/1704.04861), [Xception](https://openaccess.thecvf.com/content_cvpr_2017/papers/Chollet_Xception_Deep_Learning_CVPR_2017_paper.pdf), etc.
 - **Pros**: Significantly higher computational efficiency (time & space).
-- **Cons**: Lower accuracy. -->
+- **Cons**: Lower accuracy.
 
 ```{admonition} Math
 :class: note, dropdown
