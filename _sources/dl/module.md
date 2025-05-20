@@ -435,29 +435,19 @@ Notations:
 
 Forward:
 
-The output for each channel $c$ is computed independently:
 $$
 Y_{h,w,c}=\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c}\cdot X_{s(h-1)+i-p,s(w-1)+j-p,c}+b_{c}
 $$
 
-where
-
-$$\begin{align*}
-H_{out}&=\left\lfloor\frac{H_{in}+2p-f_h}{s}\right\rfloor+1\\
-W_{out}&=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
-\end{align*}$$
-
 Backward:
-
-Let $g_{h,w,c} = \frac{\partial\mathcal{L}}{\partial Y_{h,w,c}}$ be the gradient of the loss $\mathcal{L}$ with respect to the output $Y_{h,w,c}$.
 
 $$\begin{align*}
 &\frac{\partial\mathcal{L}}{\partial W_{i,j,c}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c}\cdot X_{s(h-1)+i-p, s(w-1)+j-p, c}\\
 &\frac{\partial\mathcal{L}}{\partial b_{c}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c}\\
-&\frac{\partial\mathcal{L}}{\partial X_{i',j',c}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}\sum_{k_h=1}^{f_h}\sum_{k_w=1}^{f_w} \left( g_{h,w,c} \cdot W_{k_h,k_w,c} \cdot \mathbb{I}(i' = s(h-1)+k_h-p \land j' = s(w-1)+k_w-p) \right)
+&\frac{\partial\mathcal{L}}{\partial X_{i',j',c}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}\sum_{k_h=1}^{f_h}\sum_{k_w=1}^{f_w} \left( g_{h,w,c} \cdot W_{k_h,k_w,c} \cdot \mathbb{1}(i' = s(h-1)+k_h-p \land j' = s(w-1)+k_w-p) \right)
 \end{align*}$$
 
-where $\mathbb{I}(\cdot)$ is the indicator function. More practically, the gradient with respect to the input $\mathbf{X}$ involves a "full" convolution of the gradients $g_c$ (padded appropriately) with the corresponding flipped filter $W_c$.
+- More practically, the gradient with respect to the input $\mathbf{X}$ involves a "full" convolution of the gradients $g_c$ (padded appropriately) with the corresponding flipped filter $W_c$.
 
 Notice the similarity to the standard convolution's backpropagation but applied independently for each channel.
 ```
