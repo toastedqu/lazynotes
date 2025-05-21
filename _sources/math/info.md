@@ -10,7 +10,6 @@ kernelspec:
   name: python3
 ---
 # Information Theory
-# Basics
 ## Information
 - **What**: Surprise.
     - Less/More likely events $\rightarrow$ More/Less info

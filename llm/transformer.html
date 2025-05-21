@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -196,6 +196,8 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Transformer</a></li>
 
 
+
+
 <li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
 
 
@@ -209,7 +211,6 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../math/info.html">Information Theory</a></li>
-
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
 <ul class="nav bd-sidenav">
@@ -411,14 +412,11 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Transformer</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rope">RoPE</a></li>
-</ul>
-</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rope">RoPE</a></li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
@@ -478,20 +476,19 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p><br><br></p>
+<br/>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="input">
-<h1>Input<a class="headerlink" href="#input" title="Link to this heading">#</a></h1>
-<section id="tokenization">
-<h2>Tokenization<a class="headerlink" href="#tokenization" title="Link to this heading">#</a></h2>
+<section class="tex2jax_ignore mathjax_ignore" id="tokenization">
+<h1>Tokenization<a class="headerlink" href="#tokenization" title="Link to this heading">#</a></h1>
 <ul class="simple">
 <li><p><strong>What</strong>: Sequence <span class="math notranslate nohighlight">\(\rightarrow\)</span> Tokens</p></li>
 <li><p><strong>Why</strong>: Machines can only read numbers.</p></li>
 <li><p><strong>How</strong>: (tbd)</p></li>
 </ul>
+<br/>
 </section>
-<section id="token-embedding">
-<h2>Token Embedding<a class="headerlink" href="#token-embedding" title="Link to this heading">#</a></h2>
+<section class="tex2jax_ignore mathjax_ignore" id="token-embedding">
+<h1>Token Embedding<a class="headerlink" href="#token-embedding" title="Link to this heading">#</a></h1>
 <ul class="simple">
 <li><p><strong>What</strong>: Tokens <span class="math notranslate nohighlight">\(\rightarrow\)</span> Semantic vectors.</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -503,9 +500,10 @@ document.write(`
 </li>
 <li><p><strong>How</strong>: Look-up table / <a class="reference internal" href="#../basics.md#linear"><span class="xref myst">Linear</span></a>.</p></li>
 </ul>
+<br/>
 </section>
-<section id="positional-encoding">
-<h2>Positional Encoding<a class="headerlink" href="#positional-encoding" title="Link to this heading">#</a></h2>
+<section class="tex2jax_ignore mathjax_ignore" id="positional-encoding">
+<h1>Positional Encoding<a class="headerlink" href="#positional-encoding" title="Link to this heading">#</a></h1>
 <ul class="simple">
 <li><p><strong>What</strong>: Semantic vectors + Positional info <span class="math notranslate nohighlight">\(\rightarrow\)</span> Position-aware vectors</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -520,7 +518,7 @@ document.write(`
 </li>
 </ul>
 <section id="sinusoidal-pe">
-<h3>Sinusoidal PE<a class="headerlink" href="#sinusoidal-pe" title="Link to this heading">#</a></h3>
+<h2>Sinusoidal PE<a class="headerlink" href="#sinusoidal-pe" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Positional info <span class="math notranslate nohighlight">\(\rightarrow\)</span> Sine waves</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -564,13 +562,12 @@ document.write(`
 </div>
 </section>
 <section id="rope">
-<h3>RoPE<a class="headerlink" href="#rope" title="Link to this heading">#</a></h3>
+<h2>RoPE<a class="headerlink" href="#rope" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Rotation matrix <span class="math notranslate nohighlight">\(\times\)</span> Token embeddings <span class="math notranslate nohighlight">\(\xrightarrow{\text{encode}}\)</span> Relative Position.</p></li>
 <li><p><strong>Why</strong>:</p></li>
 </ul>
-<p><br><br></p>
-</section>
+<br/>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="attention">
@@ -845,6 +842,7 @@ document.write(`
 <li><p>Redundancy <span class="math notranslate nohighlight">\(\leftarrow\)</span> some heads may learn similar patterns</p></li>
 </ul>
 </div>
+<br/>
 <!-- # Encoder
 - **What**: Sequence -> **Contextual representation**.
 - **Why**: To produce more meaningful representations (context + semantics + position).
@@ -958,14 +956,11 @@ See [Softmax](../modules/activations.md#softmax) --></section>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Transformer</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rope">RoPE</a></li>
-</ul>
-</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rope">RoPE</a></li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
