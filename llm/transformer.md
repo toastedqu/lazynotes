@@ -30,15 +30,16 @@ kernelspec:
 		1. **Output Layer**: Masked context-aware vectors $\rightarrow$ 
 		2. (Generation-only) **Decoding**: Token Probabilities $\rightarrow$ Next token
 
-<br><br>
+<br/>
 
-# Input
-## Tokenization
+# Tokenization
 - **What**: Sequence $\rightarrow$ Tokens
 - **Why**: Machines can only read numbers.
 - **How**: (tbd)
 
-## Token Embedding
+<br/>
+
+# Token Embedding
 - **What**: Tokens $\rightarrow$ Semantic vectors.
 - **Why**:
 	- Discrete $\rightarrow$ Continuous
@@ -46,14 +47,16 @@ kernelspec:
 	- Vocab size $\xrightarrow{\text{reduced to}}$ hidden size
 - **How**: Look-up table / [Linear](../basics.md#linear).
 
-## Positional Encoding
+<br/>
+
+# Positional Encoding
 - **What**: Semantic vectors + Positional info $\rightarrow$ Position-aware vectors
 - **Why**:
 	- Transformers don't know positions.
 	- BUT positions matter!
 		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
 
-### Sinusoidal PE
+## Sinusoidal PE
 - **What**: Positional info $\rightarrow$ Sine waves
 - **Why**:
 	- Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
@@ -83,12 +86,12 @@ $$\begin{align*}
 - Cannot capture complex, relative, or local positional relationships.
 ```
 
-### RoPE
+## RoPE
 - **What**: Rotation matrix $\times$ Token embeddings $\xrightarrow{\text{encode}}$ Relative Position.
 - **Why**: 
 
 
-<br><br>
+<br/>
 
 # Attention
 ## Self-Attention
@@ -299,6 +302,8 @@ $$
 - ⬇️ Interpretability
 - Redundancy $\leftarrow$ some heads may learn similar patterns
 ```
+
+<br/>
 
 <!-- # Encoder
 - **What**: Sequence -> **Contextual representation**.

@@ -51,6 +51,8 @@ Y_*=\arg\max_YP(Y|X)
 $$
 ```
 
+<br/>
+
 # Temperature
 - **What**: Randomness control.
 - **Why**: **Boltzmann distribution** from statistical mechanics: $p_i\propto\exp\left(-\frac{E_i}{kT}\right)$
@@ -68,6 +70,8 @@ $$
 	- $\tau\rightarrow \infty$: More random/uniform.
 	- $\tau=1$: Standard softmax. Probabilities reflect differences in logits.
 	- $\tau>1$: Generally NOT recommended $\leftarrow$ Randomness goes BEYOND what the model has learnt.
+
+<br/>
 
 # Penalty
 - **What**: Penalize the logits of tokens present in current token sequence.
@@ -94,6 +98,8 @@ Notations:
 	- $\mathbf{1}_{v_i}[Y_{<t}]$: 1 if token $v_i$ is present in $Y_{<t}$, else 0.
 ```
 
+<br/>
+
 # Greedy Search
 - **What**: Always take the most probable token at each step.
 - **Why**: Simplest.
@@ -106,6 +112,8 @@ $$
 y_t=\arg\max_{v}P(y_t=v|Y_{*,<t},X)
 $$
 ```
+
+<br/>
 
 # Beam Search
 - **What**: Iteratively explore & evaluate multiple hypotheses (i.e., beams). 
@@ -148,6 +156,8 @@ Beam Search:
 	$$
 	- $\alpha$: Length normalization hyperparameter.
 ```
+
+<br/>
 
 # Sampling
 - **What**: Random selection from a set/distribution.
