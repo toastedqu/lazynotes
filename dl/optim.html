@@ -623,18 +623,18 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 </ol>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-&amp;\text{Init}: &amp;v_0 = 0\\
-&amp;\text{EWMA}: &amp;v_t = \beta v_{t-1} + (1 - \beta) g_t \\
-&amp;\text{Accumulation}: &amp;v_t= \beta v_{t-1} + g_t \\
-&amp;\text{Direct}: &amp;v_t= \beta v_{t-1} + \eta g_t
+&amp;\text{Init}: &amp;&amp;v_0 = 0\\
+&amp;\text{EWMA}: &amp;&amp;v_t = \beta v_{t-1} + (1 - \beta) g_t \\
+&amp;\text{Accumulation}: &amp;&amp;v_t= \beta v_{t-1} + g_t \\
+&amp;\text{Direct}: &amp;&amp;v_t= \beta v_{t-1} + \eta g_t
 \end{align*}\end{split}\]</div>
 <ol class="arabic simple" start="2">
 <li><p>Param update:</p></li>
 </ol>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-&amp;w_t \leftarrow w_{t-1} - \eta v_t &amp;\text{EWMA &amp; Accumulation} \\
-&amp;w_t \leftarrow w_{t-1} - v_t &amp;\text{Direct} \\
+&amp;w_t \leftarrow w_{t-1} - \eta v_t &amp;&amp;\text{EWMA &amp; Accumulation} \\
+&amp;w_t \leftarrow w_{t-1} - v_t &amp;&amp;\text{Direct}
 \end{align*}\end{split}\]</div>
 </div>
 <section id="nesterov-accelerated-gradient-nag">
