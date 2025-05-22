@@ -16,7 +16,7 @@ kernelspec:
 ## Low-Rank Adaptation (LoRA)
 - **What**: Train **low-rank** matrices to adapt to downstream tasks.
 - **Why**: #params ⇓ $\rightarrow$ Finetuning efficiency ⇑.
-- **How**: Inject low-rank matrices into the weights of specific layers, without modifying the original weights directly.
+- **How**: Inject low-rank matrices into the weights of specific layers, w/o modifying the original weights directly.
 
 ```{admonition} Math
 :class: note, dropdown
@@ -50,7 +50,7 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 ```{admonition} Q&A
 :class: tip, dropdown
 *Pros*:
-- No overfitting $\leftarrow$ Task-specific adaptation without modifying the original params
+- No overfitting $\leftarrow$ Task-specific adaptation w/o modifying the original params
 
 *Cons*:
 - ONLY applicable to linear transformation.

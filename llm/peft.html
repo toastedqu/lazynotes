@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -196,6 +196,8 @@
 <li class="toctree-l1"><a class="reference internal" href="transformer.html">Transformer</a></li>
 
 
+
+
 <li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
 
 
@@ -209,7 +211,6 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../math/info.html">Information Theory</a></li>
-
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
 <ul class="nav bd-sidenav">
@@ -434,7 +435,7 @@ document.write(`
 <ul class="simple">
 <li><p><strong>What</strong>: Train <strong>low-rank</strong> matrices to adapt to downstream tasks.</p></li>
 <li><p><strong>Why</strong>: #params ⇓ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Finetuning efficiency ⇑.</p></li>
-<li><p><strong>How</strong>: Inject low-rank matrices into the weights of specific layers, without modifying the original weights directly.</p></li>
+<li><p><strong>How</strong>: Inject low-rank matrices into the weights of specific layers, w/o modifying the original weights directly.</p></li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -477,7 +478,7 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 <p class="admonition-title">Q&amp;A</p>
 <p><em>Pros</em>:</p>
 <ul class="simple">
-<li><p>No overfitting <span class="math notranslate nohighlight">\(\leftarrow\)</span> Task-specific adaptation without modifying the original params</p></li>
+<li><p>No overfitting <span class="math notranslate nohighlight">\(\leftarrow\)</span> Task-specific adaptation w/o modifying the original params</p></li>
 </ul>
 <p><em>Cons</em>:</p>
 <ul class="simple">

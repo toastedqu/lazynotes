@@ -196,6 +196,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../llm/transformer.html">Transformer</a></li>
 
 
+
+
 <li class="toctree-l1"><a class="reference internal" href="../llm/decoding.html">Decoding</a></li>
 
 
@@ -209,7 +211,6 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../math/info.html">Information Theory</a></li>
-
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
 <ul class="nav bd-sidenav">
@@ -1114,13 +1115,13 @@ Backward:
 ``` -->
 <!-- ## Atrous/Dilated Convolution
 - **What**: Add holes between filter elements (i.e., dilation). ([paper](https://arxiv.org/pdf/1511.07122))
-- **Why**: The filters can capture larger contextual info without increasing #params.
+- **Why**: The filters can capture larger contextual info w/o increasing #params.
 - **How**: Introduce a dilation rate $r$ to determine the space between the filter elements. Then compute convolution accordingly.
 - **When**: When understanding the broader context is important.
 - **Where**: Semantic image segmentation, object detection, depth estimation, optical flow estimation, etc.
 - **Pros**:
-    - Larger receptive fields without increasing #params.
-    - Captures multi-scale info without upsampling layers.
+    - Larger receptive fields w/o increasing #params.
+    - Captures multi-scale info w/o upsampling layers.
 - **Cons**:
     - Requires very careful hyperparam tuning, or info loss. -->
 <!-- ```{admonition} Math
@@ -1177,7 +1178,7 @@ Backward:
     - Significantly higher computational efficiency (time & space).
     - No params to train.
     - Reduces overfitting.
-    - Preserves translation invariance without losing too much info.
+    - Preserves translation invariance w/o losing too much info.
     - High robustness.
 - **Cons**:
     - Slight spatial info loss.
@@ -1316,7 +1317,7 @@ Notations:
 <li><p><strong>What</strong>: An element-wise non-linear function over a layer’s output.</p></li>
 <li><p><strong>Why</strong>: Non-linearity.</p>
 <ul>
-<li><p>Without it, a full NN is just simple linear regression.</p></li>
+<li><p>w/o it, a full NN is just simple linear regression.</p></li>
 </ul>
 </li>
 </ul>

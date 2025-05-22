@@ -760,13 +760,6 @@ w_t \leftarrow w_{t-1} - \eta v_t
 &amp;\text{Vector form}: &amp;&amp;G_t=G_{t-1}+g_t\odot g_t
 \end{align*}\end{split}\]</div>
 <ol class="arabic simple" start="2">
-<li><p>Velocity update (accumulation):</p></li>
-</ol>
-<div class="math notranslate nohighlight">
-\[
-\mathbf{v}_t = \beta \mathbf{v}_{t-1} + \tilde{g}_t
-\]</div>
-<ol class="arabic simple" start="3">
 <li><p>Param update:</p></li>
 </ol>
 <div class="math notranslate nohighlight">
@@ -788,6 +781,15 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
 </section>
 <section id="adadelta">
 <h2>Adadelta<a class="headerlink" href="#adadelta" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Adagrad w/o manually set global learning rate.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Performance is highly sensitive to learning rate.</p></li>
+<li><p>Learning rate decays too much <span class="math notranslate nohighlight">\(\leftarrow\)</span> Grad sum grows till training ends.</p></li>
+</ul>
+</li>
+</ul>
 </section>
 <section id="rmsprop-root-mean-square-propagation">
 <h2>RMSprop (Root Mean Square Propagation)<a class="headerlink" href="#rmsprop-root-mean-square-propagation" title="Link to this heading">#</a></h2>

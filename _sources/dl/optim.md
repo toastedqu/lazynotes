@@ -186,13 +186,7 @@ $$\begin{align*}
 &\text{Vector form}: &&G_t=G_{t-1}+g_t\odot g_t
 \end{align*}$$
 
-2. Velocity update (accumulation):
-
-$$
-\mathbf{v}_t = \beta \mathbf{v}_{t-1} + \tilde{g}_t
-$$
-
-3. Param update:
+2. Param update:
 
 $$
 w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
@@ -209,6 +203,11 @@ $$
 ```
 
 ## Adadelta
+- **What**: Adagrad w/o manually set global learning rate.
+- **Why**:
+	- Performance is highly sensitive to learning rate.
+	- Learning rate decays too much $\leftarrow$ Grad sum grows till training ends.
+
 ## RMSprop (Root Mean Square Propagation)
 ## Adam (Adaptive Moment Estimation)
 ## AdamW (Adam with Weight Decay)
