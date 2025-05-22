@@ -13,6 +13,8 @@ kernelspec:
 - **What**: Find the optimal params of the given model for the given task.
 - **Why**: To best solve the task.
 
+<br/>
+
 # Gradient Descent
 - **What**: Update the params based on the grad's size and direction.
 	- **Gradient**: First-order derivative of the loss w.r.t. the corresponding param.
@@ -66,7 +68,7 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 $$
 ```
 
-## Momentum
+# Momentum
 - **What**: GD + Cache of past movements.
 - **Why**: GD is:
 	- too slow in flat regions.
@@ -127,15 +129,62 @@ Notations:
 	- $\eta$: Learning rate.
 - Misc:
 	- $g_t$: Gradient $\frac{\partial\mathcal{L}}{\partial w_{t-1}}$.
-	- $\tilde{g}_t$: Preliminary grad at step $t$.
+	- $\tilde{g}_t$: Preliminary grad $\frac{\partial\mathcal{L}}{\partial \tilde{w}_t}$ at step $t$.
 	- $v_t$: Velocity at step $t$.
 
 Process:
 1. Look-ahead position:
 
 $$
-\tilde{w}_t = w_t - \beta \mathbf{v}_{t-1}
+\tilde{w}_t = w_t - \beta v_{t-1}
 $$
+
+2. Velocity update (accumulation):
+
+$$
+v_t = \beta v_{t-1} + \tilde{g}_t
+$$
+
+3. Param update:
+
+$$
+w_t \leftarrow w_{t-1} - \eta v_t 
+$$
+```
+
+<br/>
+
+# Adaptive Learning Rate
+## Adagrad (Adaptive Gradient)
+- **What**: GD + Adaptive learning rate for each param.
+- **Why**: A single, fixed learning rate is problematic:
+	- Diff feature frequencies: Rare/Common features $\rightarrow$ Rarely/Commonly update their corresponding params $\rightarrow$ Need to take larger/smaller steps.
+	- Diff param sizes: Large/Small params $\rightarrow$ Large/Small grads in nature
+- **How**:
+	1. Track past grads for each param.
+	2. Scale learning rate by $\sqrt{\sum\text{grads}^2}$.
+		- Large/Small past grads $\rightarrow$ Small/Large learning rate
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+	- $w_t$: Param at step $t$.
+- Hyperparams:
+	- $\eta$: Global learning rate.
+	- $\epsilon$: Small constant (prevent division by 0).
+- Misc:
+	- $g_t$: Gradient $\frac{\partial\mathcal{L}}{\partial w_{t-1}}$.
+	- $G_t$: Accumulated squared gradients.
+	- $v_t$: Velocity at step $t$.
+
+Process:
+1. Grad accumulation:
+
+$$\begin{align*}
+&\text{Matrix form}: &&G_{t,ii}=G_{t-1,ii}+(g_{t,i})^2 \\
+&\text{Vector form}: &&G_t=G_{t-1}+g_t\odot g_t
+\end{align*}$$
 
 2. Velocity update (accumulation):
 
@@ -146,13 +195,18 @@ $$
 3. Param update:
 
 $$
-w_t \leftarrow w_{t-1} - \eta v_t 
+w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
 $$
 ```
 
-# Adaptive Learning Rate
-## Adagrad (Adaptive Gradient)
-- **What**: 
+```{admonition} Q&A
+:class: tip, dropdown
+*Why square?*
+- Positive + Penalizes larger grads more.
+
+*Why sum?*
+- Memory of how active the param has been throughout the entire training process.
+```
 
 ## Adadelta
 ## RMSprop (Root Mean Square Propagation)
