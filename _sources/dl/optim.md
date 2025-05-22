@@ -93,17 +93,17 @@ Process:
 1. Velocity update:
 
 $$\begin{align*}
-&\text{Init}: \quad v_0 &= 0  \quad \text{ Init} \\
-&\text{EWMA (Exponentially Weighted MA)}: \quad v_t &= \beta v_{t-1} + (1 - \beta) g_t \\
-&\text{Accumulation}: \quad v_t &= \beta v_{t-1} + g_t \\
-&\text{Direct}: \quad v_t &= \beta v_{t-1} + \eta g_t
+&\text{Init}: &v_0 = 0\\
+&\text{EWMA}: &v_t = \beta v_{t-1} + (1 - \beta) g_t \\
+&\text{Accumulation}: &v_t= \beta v_{t-1} + g_t \\
+&\text{Direct}: &v_t= \beta v_{t-1} + \eta g_t
 \end{align*}$$
 
 2. Param update:
 
 $$\begin{align*}
-&w_t \leftarrow w_{t-1} - \eta v_t \quad &\text{EWMA & Accumulation} \\
-&w_t \leftarrow w_{t-1} - v_t \quad &\text{Direct} \\
+&w_t \leftarrow w_{t-1} - \eta v_t &\text{EWMA & Accumulation} \\
+&w_t \leftarrow w_{t-1} - v_t &\text{Direct} \\
 \end{align*}$$
 ```
 
