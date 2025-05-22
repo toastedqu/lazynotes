@@ -414,7 +414,6 @@ document.write(`
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Parameter Optimization</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Momentum</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nesterov-accelerated-gradient-nag">Nesterov Accelerated Gradient (NAG)</a></li>
 </ul>
 </li>
@@ -541,12 +540,12 @@ document.write(`
 </li>
 <li><p>Params:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(w\)</span>: Param.</p></li>
+<li><p><span class="math notranslate nohighlight">\(w_t\)</span>: Param at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
 </ul>
 </li>
 <li><p>Hyperparams:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\alpha\)</span>: Learning rate.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta\)</span>: Learning rate.</p></li>
 </ul>
 </li>
 </ul>
@@ -556,29 +555,88 @@ document.write(`
 </ul>
 <div class="math notranslate nohighlight">
 \[
-w \leftarrow w - \alpha \frac{\partial \mathcal{L}(w; x_i,y_i)}{\partial w}
+w_{t+1} \leftarrow w_t - \eta \frac{\partial \mathcal{L}(w_t; x_i,y_i)}{\partial w_t}
 \]</div>
 <ul class="simple">
 <li><p><strong>Mini-Batch</strong>:</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[
-w \leftarrow w - \alpha \frac{\partial \mathcal{L}(w; \mathcal{D}_{\mathrm{mini}})}{\partial w}
+w_{t+1} \leftarrow w_t - \eta \frac{\partial \mathcal{L}(w_t; \mathcal{D}_{\mathrm{mini}})}{\partial w_t}
 \]</div>
 <ul class="simple">
 <li><p><strong>Batch</strong>:</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[
-w \leftarrow w - \alpha \frac{\partial L(w; \mathcal{D})}{\partial w}
+w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 \]</div>
 </div>
 </section>
 <section id="momentum">
 <h2>Momentum<a class="headerlink" href="#momentum" title="Link to this heading">#</a></h2>
-<section id="id1">
-<h3>Momentum<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-</section>
+<ul class="simple">
+<li><p><strong>What</strong>: SGD + Cache of past movements.</p></li>
+<li><p><strong>Why</strong>: SGD is:</p>
+<ul>
+<li><p>too slow in flat regions.</p></li>
+<li><p>oscillates too much in steep valley regions.</p></li>
+<li><p>stuck in local minima.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>: <strong>Velocity</strong>: Exponentially decaying moving average of past gradients.</p>
+<ul>
+<li><p>At each param update step, add a fraction of the previous update to the curr gradient.</p>
+<ul>
+<li><p>Flat region: Prev grad &amp; Curr grad same direction <span class="math notranslate nohighlight">\(\rightarrow\)</span> Velocity builds up <span class="math notranslate nohighlight">\(\rightarrow\)</span> Faster convergence</p></li>
+<li><p>Valley region: Prev grad &amp; Curr grad diff direction <span class="math notranslate nohighlight">\(\rightarrow\)</span> Velocity cancels out <span class="math notranslate nohighlight">\(\rightarrow\)</span> Oscillations are dampened</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(w_t\)</span>: Param at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>: Momentum coeff.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta\)</span>: Learning rate.</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(g_t\)</span>: Gradient <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial w_{t-1}}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(v_t\)</span>: Velocity at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<p>Process:</p>
+<ol class="arabic simple">
+<li><p>Velocity update:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\text{Init}: \quad v_0 &amp;= 0  \quad \text{ Init} \\
+&amp;\text{EWMA (Exponentially Weighted MA)}: \quad v_t &amp;= \beta v_{t-1} + (1 - \beta) g_t \\
+&amp;\text{Accumulation}: \quad v_t &amp;= \beta v_{t-1} + g_t \\
+&amp;\text{Direct}: \quad v_t &amp;= \beta v_{t-1} + \eta g_t
+\end{align*}\end{split}\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Param update:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;w_t \leftarrow w_{t-1} - \eta v_t \quad &amp;\text{EWMA &amp; Accumulation} \\
+&amp;w_t \leftarrow w_{t-1} - v_t \quad &amp;\text{Direct} \\
+\end{align*}\end{split}\]</div>
+</div>
 <section id="nesterov-accelerated-gradient-nag">
 <h3>Nesterov Accelerated Gradient (NAG)<a class="headerlink" href="#nesterov-accelerated-gradient-nag" title="Link to this heading">#</a></h3>
 </section>
@@ -742,7 +800,6 @@ w \leftarrow w - \alpha \frac{\partial L(w; \mathcal{D})}{\partial w}
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Parameter Optimization</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Momentum</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nesterov-accelerated-gradient-nag">Nesterov Accelerated Gradient (NAG)</a></li>
 </ul>
 </li>

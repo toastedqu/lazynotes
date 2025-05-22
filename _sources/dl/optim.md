@@ -42,32 +42,71 @@ Notations:
 	- $\mathcal{D}_{\mathrm{mini}}$: Mini-batch.
 	- $\mathcal{D}$: Dataset.
 - Params:
-    - $w$: Param.
+    - $w_t$: Param at step $t$.
 - Hyperparams:
-    - $\alpha$: Learning rate.
+    - $\eta$: Learning rate.
 
 Types:
 - **Stochastic (SGD)**:
 
 $$
-w \leftarrow w - \alpha \frac{\partial \mathcal{L}(w; x_i,y_i)}{\partial w}
+w_{t+1} \leftarrow w_t - \eta \frac{\partial \mathcal{L}(w_t; x_i,y_i)}{\partial w_t}
 $$
 
 - **Mini-Batch**:
 
 $$
-w \leftarrow w - \alpha \frac{\partial \mathcal{L}(w; \mathcal{D}_{\mathrm{mini}})}{\partial w}
+w_{t+1} \leftarrow w_t - \eta \frac{\partial \mathcal{L}(w_t; \mathcal{D}_{\mathrm{mini}})}{\partial w_t}
 $$
 
 - **Batch**:
 
 $$
-w \leftarrow w - \alpha \frac{\partial L(w; \mathcal{D})}{\partial w}
+w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 $$
 ```
 
 ## Momentum
-### Momentum
+- **What**: SGD + Cache of past movements.
+- **Why**: SGD is:
+	- too slow in flat regions.
+	- oscillates too much in steep valley regions.
+	- stuck in local minima.
+- **How**: **Velocity**: Exponentially decaying moving average of past gradients.
+	- At each param update step, add a fraction of the previous update to the curr gradient.
+		- Flat region: Prev grad & Curr grad same direction $\rightarrow$ Velocity builds up $\rightarrow$ Faster convergence
+		- Valley region: Prev grad & Curr grad diff direction $\rightarrow$ Velocity cancels out $\rightarrow$ Oscillations are dampened
+	
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+	- $w_t$: Param at step $t$.
+- Hyperparams:
+	- $\beta$: Momentum coeff.
+	- $\eta$: Learning rate.
+- Misc:
+	- $g_t$: Gradient $\frac{\partial\mathcal{L}}{\partial w_{t-1}}$.
+	- $v_t$: Velocity at step $t$.
+
+Process:
+1. Velocity update:
+
+$$\begin{align*}
+&\text{Init}: \quad v_0 &= 0  \quad \text{ Init} \\
+&\text{EWMA (Exponentially Weighted MA)}: \quad v_t &= \beta v_{t-1} + (1 - \beta) g_t \\
+&\text{Accumulation}: \quad v_t &= \beta v_{t-1} + g_t \\
+&\text{Direct}: \quad v_t &= \beta v_{t-1} + \eta g_t
+\end{align*}$$
+
+2. Param update:
+
+$$\begin{align*}
+&w_t \leftarrow w_{t-1} - \eta v_t \quad &\text{EWMA & Accumulation} \\
+&w_t \leftarrow w_{t-1} - v_t \quad &\text{Direct} \\
+\end{align*}$$
+```
+
 ### Nesterov Accelerated Gradient (NAG)
 
 ## Adaptive Learning Rate
