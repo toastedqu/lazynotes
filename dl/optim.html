@@ -412,8 +412,8 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Parameter Optimization</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nesterov-accelerated-gradient-nag">Nesterov Accelerated Gradient (NAG)</a></li>
 </ul>
 </li>
@@ -487,6 +487,7 @@ document.write(`
 <li><p><strong>What</strong>: Find the optimal params of the given model for the given task.</p></li>
 <li><p><strong>Why</strong>: To best solve the task.</p></li>
 </ul>
+<br/>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="gradient-descent">
 <h1>Gradient Descent<a class="headerlink" href="#gradient-descent" title="Link to this heading">#</a></h1>
@@ -571,8 +572,9 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial \mathcal{L}(w_t; \mathcal{D}_{\math
 w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 \]</div>
 </div>
-<section id="momentum">
-<h2>Momentum<a class="headerlink" href="#momentum" title="Link to this heading">#</a></h2>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="momentum">
+<h1>Momentum<a class="headerlink" href="#momentum" title="Link to this heading">#</a></h1>
 <ul class="simple">
 <li><p><strong>What</strong>: GD + Cache of past movements.</p></li>
 <li><p><strong>Why</strong>: GD is:</p>
@@ -635,7 +637,6 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 &amp;\text{Direct} &amp;&amp;w_t \leftarrow w_{t-1} - v_t 
 \end{align*}\end{split}\]</div>
 </div>
-</section>
 <section id="nesterov-accelerated-gradient-nag">
 <h2>Nesterov Accelerated Gradient (NAG)<a class="headerlink" href="#nesterov-accelerated-gradient-nag" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -672,7 +673,7 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 <li><p>Misc:</p>
 <ul>
 <li><p><span class="math notranslate nohighlight">\(g_t\)</span>: Gradient <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial w_{t-1}}\)</span>.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\tilde{g}_t\)</span>: Preliminary grad at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tilde{g}_t\)</span>: Preliminary grad <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial \tilde{w}_t}\)</span> at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(v_t\)</span>: Velocity at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
 </ul>
 </li>
@@ -683,8 +684,81 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 </ol>
 <div class="math notranslate nohighlight">
 \[
-\tilde{w}_t = w_t - \beta \mathbf{v}_{t-1}
+\tilde{w}_t = w_t - \beta v_{t-1}
 \]</div>
+<ol class="arabic simple" start="2">
+<li><p>Velocity update (accumulation):</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+v_t = \beta v_{t-1} + \tilde{g}_t
+\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Param update:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+w_t \leftarrow w_{t-1} - \eta v_t 
+\]</div>
+</div>
+<br/>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="adaptive-learning-rate">
+<h1>Adaptive Learning Rate<a class="headerlink" href="#adaptive-learning-rate" title="Link to this heading">#</a></h1>
+<section id="adagrad-adaptive-gradient">
+<h2>Adagrad (Adaptive Gradient)<a class="headerlink" href="#adagrad-adaptive-gradient" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: GD + Adaptive learning rate for each param.</p></li>
+<li><p><strong>Why</strong>: A single, fixed learning rate is problematic:</p>
+<ul>
+<li><p>Diff feature frequencies: Rare/Common features <span class="math notranslate nohighlight">\(\rightarrow\)</span> Rarely/Commonly update their corresponding params <span class="math notranslate nohighlight">\(\rightarrow\)</span> Need to take larger/smaller steps.</p></li>
+<li><p>Diff param sizes: Large/Small params <span class="math notranslate nohighlight">\(\rightarrow\)</span> Large/Small grads in nature</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Track past grads for each param.</p></li>
+<li><p>Scale learning rate by <span class="math notranslate nohighlight">\(\sqrt{\sum\text{grads}^2}\)</span>.</p>
+<ul>
+<li><p>Large/Small past grads <span class="math notranslate nohighlight">\(\rightarrow\)</span> Small/Large learning rate</p></li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(w_t\)</span>: Param at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta\)</span>: Global learning rate.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon\)</span>: Small constant (prevent division by 0).</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(g_t\)</span>: Gradient <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial w_{t-1}}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(G_t\)</span>: Accumulated squared gradients.</p></li>
+<li><p><span class="math notranslate nohighlight">\(v_t\)</span>: Velocity at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<p>Process:</p>
+<ol class="arabic simple">
+<li><p>Grad accumulation:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\text{Matrix form}: &amp;&amp;G_{t,ii}=G_{t-1,ii}+(g_{t,i})^2 \\
+&amp;\text{Vector form}: &amp;&amp;G_t=G_{t-1}+g_t\odot g_t
+\end{align*}\end{split}\]</div>
 <ol class="arabic simple" start="2">
 <li><p>Velocity update (accumulation):</p></li>
 </ol>
@@ -697,18 +771,20 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 </ol>
 <div class="math notranslate nohighlight">
 \[
-w_t \leftarrow w_{t-1} - \eta v_t 
+w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
 \]</div>
 </div>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="adaptive-learning-rate">
-<h1>Adaptive Learning Rate<a class="headerlink" href="#adaptive-learning-rate" title="Link to this heading">#</a></h1>
-<section id="adagrad-adaptive-gradient">
-<h2>Adagrad (Adaptive Gradient)<a class="headerlink" href="#adagrad-adaptive-gradient" title="Link to this heading">#</a></h2>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Why square?</em></p>
 <ul class="simple">
-<li><p><strong>What</strong>:</p></li>
+<li><p>Positive + Penalizes larger grads more.</p></li>
 </ul>
+<p><em>Why sum?</em></p>
+<ul class="simple">
+<li><p>Memory of how active the param has been throughout the entire training process.</p></li>
+</ul>
+</div>
 </section>
 <section id="adadelta">
 <h2>Adadelta<a class="headerlink" href="#adadelta" title="Link to this heading">#</a></h2>
@@ -861,8 +937,8 @@ w_t \leftarrow w_{t-1} - \eta v_t
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Parameter Optimization</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nesterov-accelerated-gradient-nag">Nesterov Accelerated Gradient (NAG)</a></li>
 </ul>
 </li>
