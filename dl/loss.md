@@ -16,7 +16,7 @@ kernelspec:
 	- $\rightarrow$ Function Approximation
 	- $\rightarrow$ Many ways of doing it...
 		1. **Discrepancy Minimization**
-			- BUT how do we measure discrepancy without knowing the underlying function?
+			- BUT how do we measure discrepancy w/o knowing the underlying function?
 			- $\rightarrow$ Get samples
 			- $\rightarrow$ Predict on samples
 			- $\rightarrow$ Measure discrepancy over the samples

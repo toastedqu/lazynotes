@@ -528,13 +528,13 @@ Backward:
 
 <!-- ## Atrous/Dilated Convolution
 - **What**: Add holes between filter elements (i.e., dilation). ([paper](https://arxiv.org/pdf/1511.07122))
-- **Why**: The filters can capture larger contextual info without increasing #params.
+- **Why**: The filters can capture larger contextual info w/o increasing #params.
 - **How**: Introduce a dilation rate $r$ to determine the space between the filter elements. Then compute convolution accordingly.
 - **When**: When understanding the broader context is important.
 - **Where**: Semantic image segmentation, object detection, depth estimation, optical flow estimation, etc.
 - **Pros**:
-    - Larger receptive fields without increasing #params.
-    - Captures multi-scale info without upsampling layers.
+    - Larger receptive fields w/o increasing #params.
+    - Captures multi-scale info w/o upsampling layers.
 - **Cons**:
     - Requires very careful hyperparam tuning, or info loss. -->
 
@@ -593,7 +593,7 @@ Backward:
     - Significantly higher computational efficiency (time & space).
     - No params to train.
     - Reduces overfitting.
-    - Preserves translation invariance without losing too much info.
+    - Preserves translation invariance w/o losing too much info.
     - High robustness.
 - **Cons**:
     - Slight spatial info loss.
@@ -732,7 +732,7 @@ Notations:
 # Activation
 - **What**: An element-wise non-linear function over a layer's output.
 - **Why**: Non-linearity.
-    - Without it, a full NN is just simple linear regression.
+    - w/o it, a full NN is just simple linear regression.
 
 ## Binary-like
 - **What**: Functions with near-binary outputs.

@@ -11,7 +11,7 @@ kernelspec:
 ---
 # Unsupervised Learning
 - **What**: Learn from unlabeled data.
-- **Why**: To discover hidden patterns in data without prior guidance.
+- **Why**: To discover hidden patterns in data w/o prior guidance.
 
 # Clustering
 - **What**: Group samples based on intrinsic similarities.
