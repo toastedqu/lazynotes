@@ -13,15 +13,15 @@ kernelspec:
 - **What**: Find the optimal params of the given model for the given task.
 - **Why**: To best solve the task.
 
-## Gradient Descent
-- **What**: Update the params based on the gradient's size and direction.
+# Gradient Descent
+- **What**: Update the params based on the grad's size and direction.
 	- **Gradient**: First-order derivative of the loss w.r.t. the corresponding param.
-	- **Descent**: Subtract the gradient.
+	- **Descent**: Subtract the grad.
 		- Objective: **Loss minimization**.
 		- Assumption: Loss function is **convex**.
 		- Descent in both cases:
-			- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}>0\rightarrow \mathcal{L}\propto w\rightarrow$ Reduce $w$ to reduce $\mathcal{L}$ $\rightarrow$ Subtract the positive gradient.
-			- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}<0\rightarrow \mathcal{L}\propto -w\rightarrow$ Raise $w$ to reduce $\mathcal{L}$ $\rightarrow$ Subtract the negative gradient.
+			- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}>0\rightarrow \mathcal{L}\propto w\rightarrow$ Reduce $w$ to reduce $\mathcal{L}$ $\rightarrow$ Subtract the positive grad.
+			- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}<0\rightarrow \mathcal{L}\propto -w\rightarrow$ Raise $w$ to reduce $\mathcal{L}$ $\rightarrow$ Subtract the negative grad.
 - **Why**: Practical.
 	- *Analytical solutions?* Often impossible.
 	- *Search?* Impractical.
@@ -29,8 +29,8 @@ kernelspec:
 	- *Second-order derivative?* High computational cost.
 	- Gradient descent: practical, simple, intuitive, iterative, scalable, empirically effective, ...
 - **How**: For each param:
-	1. Calculate gradient.
-	2. Subtract gradient.
+	1. Calculate grad.
+	2. Subtract grad.
 	3. Use new params to calculate loss.
 	4. Repeat Steps 1-3 till training ends.
 
@@ -67,13 +67,13 @@ $$
 ```
 
 ## Momentum
-- **What**: SGD + Cache of past movements.
-- **Why**: SGD is:
+- **What**: GD + Cache of past movements.
+- **Why**: GD is:
 	- too slow in flat regions.
 	- oscillates too much in steep valley regions.
 	- stuck in local minima.
-- **How**: **Velocity**: Exponentially decaying moving average of past gradients.
-	- At each param update step, add a fraction of the previous update to the curr gradient.
+- **How**: **Velocity**: Exponentially decaying moving average of past grads.
+	- At each param update step, add a fraction of the previous update to the curr grad.
 		- Flat region: Prev grad & Curr grad same direction $\rightarrow$ Velocity builds up $\rightarrow$ Faster convergence
 		- Valley region: Prev grad & Curr grad diff direction $\rightarrow$ Velocity cancels out $\rightarrow$ Oscillations are dampened
 	
@@ -102,22 +102,65 @@ $$\begin{align*}
 2. Param update:
 
 $$\begin{align*}
-&w_t \leftarrow w_{t-1} - \eta v_t &&\text{EWMA & Accumulation} \\
-&w_t \leftarrow w_{t-1} - v_t &&\text{Direct}
+&\text{EWMA & Accumulation} &&w_t \leftarrow w_{t-1} - \eta v_t \\
+&\text{Direct} &&w_t \leftarrow w_{t-1} - v_t 
 \end{align*}$$
 ```
 
-### Nesterov Accelerated Gradient (NAG)
+## Nesterov Accelerated Gradient (NAG)
+- **What**: Momentum + "Look-ahead"
+- **Why**: Momentum can sometimes jump over the global minimum.
+	- It adds the accumulated momentum, THEN considers curr grad.
+- **How**:
+	1. Look ahead.
+	2. Compute grad from the preliminary position (i.e., preliminary jump).
+	3. Update param with this preliminary grad + accumulated momentum.
 
-## Adaptive Learning Rate
-### Adagrad (Adaptive Gradient Algorithm)
-### Adadelta
-### RMSprop (Root Mean Square Propagation)
-### Adam (Adaptive Moment Estimation)
-### AdamW (Adam with Weight Decay)
-### Nadam (Nesterov-accelerated Adaptive Moment Estimation)
-### AdaMax
-### AMSGrad
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+	- $w_t$: Param at step $t$.
+	- $\tilde{w}_t$: Preliminary param at step $t$.
+- Hyperparams:
+	- $\beta$: Momentum coeff.
+	- $\eta$: Learning rate.
+- Misc:
+	- $g_t$: Gradient $\frac{\partial\mathcal{L}}{\partial w_{t-1}}$.
+	- $\tilde{g}_t$: Preliminary grad at step $t$.
+	- $v_t$: Velocity at step $t$.
+
+Process:
+1. Look-ahead position:
+
+$$
+\tilde{w}_t = w_t - \beta \mathbf{v}_{t-1}
+$$
+
+2. Velocity update (accumulation):
+
+$$
+\mathbf{v}_t = \beta \mathbf{v}_{t-1} + \tilde{g}_t
+$$
+
+3. Param update:
+
+$$
+w_t \leftarrow w_{t-1} - \eta v_t 
+$$
+```
+
+# Adaptive Learning Rate
+## Adagrad (Adaptive Gradient)
+- **What**: 
+
+## Adadelta
+## RMSprop (Root Mean Square Propagation)
+## Adam (Adaptive Moment Estimation)
+## AdamW (Adam with Weight Decay)
+## Nadam (Nesterov-accelerated Adaptive Moment Estimation)
+## AdaMax
+## AMSGrad
 
 ## Second-Order
 ### L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)
