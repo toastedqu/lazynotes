@@ -207,6 +207,67 @@ $$
 - **Why**:
 	- Performance is highly sensitive to learning rate.
 	- Learning rate decays too much $\leftarrow$ Grad sum grows till training ends.
+- **How**:
+    1.  ~~Grad sum~~ EMA (Exponentially Moving Average) of past squared grads ($E[g^2]_t$) $\rightarrow$ No infinite growth
+	2.  ~~Global LR~~ EMA of past squared param updates ($E[\Delta w^2]_t$) $\rightarrow$ No LR decay
+    3.  ~~Fixed LR~~ Adaptive ratio between RMS of prev param updates & RMS of curr accumulated squared grads ($\frac{\text{RMS}[\Delta w]_{\text{prev}}}{\text{RMS}[g]_{\text{curr}}}$)
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $w_t$: Param at step $t$.
+- Hyperparams:
+    - $\rho$: Decay rate for the EMAs.
+    - $\epsilon$: Small constant (prevent division by 0).
+- Misc:
+    - $g_t$: Grad $\frac{\partial\mathcal{L}}{\partial w_t}$.
+	- $\Delta w_t$: param update at step $t$.
+    - $E[g^2]_t$: EMA of squared grads.
+    - $E[\Delta w^2]_t$: EMA of squared param updates.
+
+Process:
+1. Init:
+	- Accumulated squared gradients: $E[g^2]_0 = 0$
+	- Accumulated squared updates: $E[\Delta w^2]_0 = 0$
+2. For each step $t$:
+	1.  Accumulate squared grads (EMA):
+
+		$$
+		E[g^2]_t = \rho E[g^2]_{t-1} + (1-\rho) (g_t \odot g_t)
+		$$
+
+	2.  Calculate param update:
+
+		$$\begin{align*}
+		\Delta w_t &=-\frac{\sqrt{E[\Delta w^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} \odot g_t \\
+		&=-\frac{\text{RMS}[\Delta w]_{t-1}}{$\text{RMS}[g]_t$}\odot g_t
+		\end{align*}$$
+
+	3.  Accumulate squared param updates (EMA):**
+
+		$$
+		E[\Delta w^2]_t = \rho E[\Delta w^2]_{t-1} + (1-\rho) (\Delta w_t \odot \Delta w_t)
+		$$
+
+	4.  Apply param update:
+
+		$$
+		w_{t+1} = w_t + \Delta w_t
+		$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Why RMS?*
+1. It's in the exact **same unit** as the value it applies to.
+2. $\frac{\text{RMS}[\Delta w]_{t-1}}{$\text{RMS}[g]_t$}$ has units "$\Delta$param/grad".
+3. Multiply this by grad gives $\Delta$param.
+
+*Why sum?*
+- Memory of how active the param has been throughout the entire training process.
+```
+
 
 ## RMSprop (Root Mean Square Propagation)
 ## Adam (Adaptive Moment Estimation)

@@ -789,7 +789,90 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
 <li><p>Learning rate decays too much <span class="math notranslate nohighlight">\(\leftarrow\)</span> Grad sum grows till training ends.</p></li>
 </ul>
 </li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>~~Grad sum~~ EMA (Exponentially Moving Average) of past squared grads (<span class="math notranslate nohighlight">\(E[g^2]_t\)</span>) <span class="math notranslate nohighlight">\(\rightarrow\)</span> No infinite growth</p></li>
+<li><p>~~Global LR~~ EMA of past squared param updates (<span class="math notranslate nohighlight">\(E[\Delta w^2]_t\)</span>) <span class="math notranslate nohighlight">\(\rightarrow\)</span> No LR decay</p></li>
+<li><p>~~Fixed LR~~ Adaptive ratio between RMS of prev param updates &amp; RMS of curr accumulated squared grads (<span class="math notranslate nohighlight">\(\frac{\text{RMS}[\Delta w]_{\text{prev}}}{\text{RMS}[g]_{\text{curr}}}\)</span>)</p></li>
+</ol>
+</li>
 </ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(w_t\)</span>: Param at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\rho\)</span>: Decay rate for the EMAs.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon\)</span>: Small constant (prevent division by 0).</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(g_t\)</span>: Grad <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial w_t}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Delta w_t\)</span>: param update at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(E[g^2]_t\)</span>: EMA of squared grads.</p></li>
+<li><p><span class="math notranslate nohighlight">\(E[\Delta w^2]_t\)</span>: EMA of squared param updates.</p></li>
+</ul>
+</li>
+</ul>
+<p>Process:</p>
+<ol class="arabic">
+<li><p>Init:</p>
+<ul class="simple">
+<li><p>Accumulated squared gradients: <span class="math notranslate nohighlight">\(E[g^2]_0 = 0\)</span></p></li>
+<li><p>Accumulated squared updates: <span class="math notranslate nohighlight">\(E[\Delta w^2]_0 = 0\)</span></p></li>
+</ul>
+</li>
+<li><p>For each step <span class="math notranslate nohighlight">\(t\)</span>:</p>
+<ol class="arabic">
+<li><p>Accumulate squared grads (EMA):</p>
+<div class="math notranslate nohighlight">
+\[
+		E[g^2]_t = \rho E[g^2]_{t-1} + (1-\rho) (g_t \odot g_t)
+		\]</div>
+</li>
+<li><p>Calculate param update:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+		\Delta w_t &amp;=-\frac{\sqrt{E[\Delta w^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} \odot g_t \\
+		&amp;=-\frac{\text{RMS}[\Delta w]_{t-1}}{$\text{RMS}[g]_t$}\odot g_t
+		\end{align*}\end{split}\]</div>
+</li>
+<li><p>Accumulate squared param updates (EMA):**</p>
+<div class="math notranslate nohighlight">
+\[
+		E[\Delta w^2]_t = \rho E[\Delta w^2]_{t-1} + (1-\rho) (\Delta w_t \odot \Delta w_t)
+		\]</div>
+</li>
+<li><p>Apply param update:</p>
+<div class="math notranslate nohighlight">
+\[
+		w_{t+1} = w_t + \Delta w_t
+		\]</div>
+</li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Why RMS?</em></p>
+<ol class="arabic simple">
+<li><p>It’s in the exact <strong>same unit</strong> as the value it applies to.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\frac{\text{RMS}[\Delta w]_{t-1}}{\)</span>\text{RMS}[g]_t<span class="math notranslate nohighlight">\(}\)</span> has units “<span class="math notranslate nohighlight">\(\Delta\)</span>param/grad”.</p></li>
+<li><p>Multiply this by grad gives <span class="math notranslate nohighlight">\(\Delta\)</span>param.</p></li>
+</ol>
+<p><em>Why sum?</em></p>
+<ul class="simple">
+<li><p>Memory of how active the param has been throughout the entire training process.</p></li>
+</ul>
+</div>
 </section>
 <section id="rmsprop-root-mean-square-propagation">
 <h2>RMSprop (Root Mean Square Propagation)<a class="headerlink" href="#rmsprop-root-mean-square-propagation" title="Link to this heading">#</a></h2>
