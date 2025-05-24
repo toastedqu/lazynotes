@@ -313,6 +313,8 @@ $$
 - Adam is built upon RMSprop & outperforms everything above.
 ```
 
+<br/>
+
 # Adam (Adaptive Moment Estimation)
 - **What**: Momentum + RMSprop.
 - **Why**: Combine benefits from Momentum & RMSprop:
