@@ -207,7 +207,7 @@ $$
 - **What**: Adagrad w EWMA (Exponentially Weighted Moving Average) of squared grads instead of sum.
 - **Why**:
 	- Learning rate decays too much $\leftarrow$ Grad sum grows till training ends.
-- **How**: ~~Grad sum~~ EWMA of past squared grads $\rightarrow$ No infinite growth
+- **How**: ❌Grad sum, ✅EWMA of past squared grads $\rightarrow$ No infinite growth
 
 ```{admonition} Math
 :class: note, dropdown
@@ -216,9 +216,10 @@ Notations:
     - $w_t$: Param at step $t$.
 - Hyperparams:
     - $\beta$: Decay rate for the EWMAs.
+	- $\eta$: Learning rate.
     - $\epsilon$: Small constant (prevent division by 0).
 - Misc:
-    - $g_t$: Grad $\frac{\partial\mathcal{L}}{\partial w_t}$.
+    - $g_t$: Grad $\frac{\partial\mathcal{L}}{\partial w_{t-1}}$.
     - $G_t$: EWMA of squared grads.
 
 Process:
@@ -237,10 +238,16 @@ $$
 
 ```{admonition} Q&A
 :class: tip, dropdown
-*Why RMS?*
+*Why name it RMS?*
 - Square: $g^2_t$.
 - Mean: EWMA.
 - Root: $\frac{1}{\sqrt{G_t+\epsilon}}$.
+
+*Why RMS?*
+- Same unit.
+
+*Why EWMA?*
+- The older/newer the grad, the less/more influence it has on curr param update.
 ```
 
 ## Adadelta
@@ -248,9 +255,9 @@ $$
 - **Why**:
 	- Performance is highly sensitive to learning rate.
 - **How**:
-    1.  ~~Grad sum~~ EWMA of past squared grads ($G_t$) $\rightarrow$ No infinite growth
-	2.  ~~Global LR~~ EWMA of past squared param updates ($\Delta W_{t}$) $\rightarrow$ No LR decay
-    3.  ~~Fixed LR~~ Adaptive ratio between RMS of prev param updates & RMS of curr accumulated squared grads ($\frac{\text{RMS}[\Delta w]_{\text{prev}}}{\text{RMS}[g]_{\text{curr}}}$)
+    1.  ❌Grad sum, ✅EWMA of past squared grads ($G_t$) $\rightarrow$ No infinite growth
+	2.  ❌Global LR, ✅EWMA of past squared param updates ($\Delta W_{t}$) $\rightarrow$ No LR decay
+    3.  ❌Fixed LR, ✅Adaptive ratio between RMS of prev param updates & RMS of curr accumulated squared grads ($\frac{\text{RMS}[\Delta w]_{\text{prev}}}{\text{RMS}[g]_{\text{curr}}}$)
 
 ```{admonition} Math
 :class: note, dropdown
@@ -277,7 +284,7 @@ $$
 
 $$\begin{align*}
 \Delta w_t &=-\frac{\sqrt{\Delta W_{t-1} + \epsilon}}{\sqrt{G_t + \epsilon}} \odot g_t \\
-&=-\frac{\text{RMS}[\Delta w]_{t-1}}{$\text{RMS}[g]_t$}\odot g_t
+&=-\frac{\text{RMS}[\Delta w]_{t-1}}{\text{RMS}[g]_t}\odot g_t
 \end{align*}$$
 
 3.  Accumulate squared param updates (EWMA):**
@@ -299,17 +306,88 @@ $$
 1. It's in the exact **same unit** as the value it applies to.
 2. $\frac{\text{RMS}[\Delta w]_{t-1}}{\text{RMS}[g]_t}$ has units "$\Delta$param/grad".
 3. Multiply this by grad gives $\Delta$param.
+
+*Why RMSprop instead of Adadelta?*
+- ⬆️Empirical performance & convergence speed.
+- ⬆️Simplicity & Interpretability.
+- Adam is built upon RMSprop & outperforms everything above.
 ```
 
-## Adam (Adaptive Moment Estimation)
+# Adam (Adaptive Moment Estimation)
+- **What**: Momentum + RMSprop.
+- **Why**: Combine benefits from Momentum & RMSprop:
+	- **Momentum = 1st moment (mean) of grads**
+		- Momentum keeps track of the **direction** of recent grads.
+		- Momentum speeds up optimization in that direction.
+	- **RMSprop = 2nd moment (uncentered variance) of grads**
+		- RMSprop keep track of the **magnitude** of recent grads.
+		- RMSprop adapts LR for each param based on its grad size.
+- **How**:
+	1. Update 1st moment using new grads.
+	2. Update 2nd moment using new squared grads.
+	3. Bias Correction: EWMAs are init to 0 $\rightarrow$ They are biased toward 0 early in training $\rightarrow$ Need to correct it
+	4. Update params.
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $w_t$: Param at step $t$.
+- Hyperparams:
+    - $\beta_1$: Decay rate for 1st moment. Default 0.9.
+	- $\beta_2$: Decay rate for 2nd moment. Default 0.999.
+	- $\eta$: Learning rate.
+    - $\epsilon$: Small constant (prevent division by 0).
+- Misc:
+	- $g_t$: Grad $\frac{\partial\mathcal{L}}{\partial w_{t-1}}$.
+    - $v_t$: 1st moment estimate at step $t$.
+	- $G_t$: 2nd moment estimate at step $t$.
+
+Process:
+1.  Update 1st moment:
+
+$$
+v_t = \beta_1 v_{t-1} + (1 - \beta_1) g_t
+$$
+
+2. Update 2nd moment:
+
+$$
+G_t = \beta_2 G_{t-1} + (1-\beta_2) (g_t \odot g_t)
+$$
+
+3. Correct bias:
+
+$$\begin{align*}
+&\hat{v}_t=\frac{v_t}{1-\beta_1^t} \\
+&\hat{G}_t=\frac{G_t}{1-\beta_2^t}
+\end{align*}$$
+
+4. Update params:
+
+$$
+w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{\hat{G}_t+\epsilon}} \hat{v}_t
+$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Pros?*
+- ✅Best empirical performance & convergence speed.
+
+*Cons?*
+- ⬆️Memory cost.
+- May still get stuck in local optima.
+```
+
 ## AdamW (Adam with Weight Decay)
 ## Nadam (Nesterov-accelerated Adaptive Moment Estimation)
 ## AdaMax
 ## AMSGrad
 
-## Second-Order
+<!-- ## Second-Order
 ### L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)
-### Hessian-Free Optimization
+### Hessian-Free Optimization -->
 
 <!-- 
 ## Evolutionary

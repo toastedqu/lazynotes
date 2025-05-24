@@ -421,16 +421,13 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nadam-nesterov-accelerated-adaptive-moment-estimation">Nadam (Nesterov-accelerated Adaptive Moment Estimation)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamax">AdaMax</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#amsgrad">AMSGrad</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#second-order">Second-Order</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l-bfgs-limited-memory-broyden-fletcher-goldfarb-shanno">L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hessian-free-optimization">Hessian-Free Optimization</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#scheduler">Scheduler</a><ul class="visible nav section-nav flex-column">
@@ -774,7 +771,7 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 <li><p>Learning rate decays too much <span class="math notranslate nohighlight">\(\leftarrow\)</span> Grad sum grows till training ends.</p></li>
 </ul>
 </li>
-<li><p><strong>How</strong>: ~~Grad sum~~ EWMA of past squared grads <span class="math notranslate nohighlight">\(\rightarrow\)</span> No infinite growth</p></li>
+<li><p><strong>How</strong>: ❌Grad sum, ✅EWMA of past squared grads <span class="math notranslate nohighlight">\(\rightarrow\)</span> No infinite growth</p></li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -788,12 +785,13 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 <li><p>Hyperparams:</p>
 <ul>
 <li><p><span class="math notranslate nohighlight">\(\beta\)</span>: Decay rate for the EWMAs.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta\)</span>: Learning rate.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\epsilon\)</span>: Small constant (prevent division by 0).</p></li>
 </ul>
 </li>
 <li><p>Misc:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(g_t\)</span>: Grad <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial w_t}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(g_t\)</span>: Grad <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial w_{t-1}}\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(G_t\)</span>: EWMA of squared grads.</p></li>
 </ul>
 </li>
@@ -816,11 +814,19 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Q&amp;A</p>
-<p><em>Why RMS?</em></p>
+<p><em>Why name it RMS?</em></p>
 <ul class="simple">
 <li><p>Square: <span class="math notranslate nohighlight">\(g^2_t\)</span>.</p></li>
 <li><p>Mean: EWMA.</p></li>
 <li><p>Root: <span class="math notranslate nohighlight">\(\frac{1}{\sqrt{G_t+\epsilon}}\)</span>.</p></li>
+</ul>
+<p><em>Why RMS?</em></p>
+<ul class="simple">
+<li><p>Same unit.</p></li>
+</ul>
+<p><em>Why EWMA?</em></p>
+<ul class="simple">
+<li><p>The older/newer the grad, the less/more influence it has on curr param update.</p></li>
 </ul>
 </div>
 </section>
@@ -835,9 +841,9 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 </li>
 <li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
-<li><p>~~Grad sum~~ EWMA of past squared grads (<span class="math notranslate nohighlight">\(G_t\)</span>) <span class="math notranslate nohighlight">\(\rightarrow\)</span> No infinite growth</p></li>
-<li><p>~~Global LR~~ EWMA of past squared param updates (<span class="math notranslate nohighlight">\(\Delta W_{t}\)</span>) <span class="math notranslate nohighlight">\(\rightarrow\)</span> No LR decay</p></li>
-<li><p>~~Fixed LR~~ Adaptive ratio between RMS of prev param updates &amp; RMS of curr accumulated squared grads (<span class="math notranslate nohighlight">\(\frac{\text{RMS}[\Delta w]_{\text{prev}}}{\text{RMS}[g]_{\text{curr}}}\)</span>)</p></li>
+<li><p>❌Grad sum, ✅EWMA of past squared grads (<span class="math notranslate nohighlight">\(G_t\)</span>) <span class="math notranslate nohighlight">\(\rightarrow\)</span> No infinite growth</p></li>
+<li><p>❌Global LR, ✅EWMA of past squared param updates (<span class="math notranslate nohighlight">\(\Delta W_{t}\)</span>) <span class="math notranslate nohighlight">\(\rightarrow\)</span> No LR decay</p></li>
+<li><p>❌Fixed LR, ✅Adaptive ratio between RMS of prev param updates &amp; RMS of curr accumulated squared grads (<span class="math notranslate nohighlight">\(\frac{\text{RMS}[\Delta w]_{\text{prev}}}{\text{RMS}[g]_{\text{curr}}}\)</span>)</p></li>
 </ol>
 </li>
 </ul>
@@ -879,7 +885,7 @@ G_t = \beta G_{t-1} + (1-\beta) (g_t \odot g_t)
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
 \Delta w_t &amp;=-\frac{\sqrt{\Delta W_{t-1} + \epsilon}}{\sqrt{G_t + \epsilon}} \odot g_t \\
-&amp;=-\frac{\text{RMS}[\Delta w]_{t-1}}{$\text{RMS}[g]_t$}\odot g_t
+&amp;=-\frac{\text{RMS}[\Delta w]_{t-1}}{\text{RMS}[g]_t}\odot g_t
 \end{align*}\end{split}\]</div>
 <ol class="arabic simple" start="3">
 <li><p>Accumulate squared param updates (EWMA):**</p></li>
@@ -904,11 +910,112 @@ w_{t+1} = w_t + \Delta w_t
 <li><p><span class="math notranslate nohighlight">\(\frac{\text{RMS}[\Delta w]_{t-1}}{\text{RMS}[g]_t}\)</span> has units “<span class="math notranslate nohighlight">\(\Delta\)</span>param/grad”.</p></li>
 <li><p>Multiply this by grad gives <span class="math notranslate nohighlight">\(\Delta\)</span>param.</p></li>
 </ol>
+<p><em>Why RMSprop instead of Adadelta?</em></p>
+<ul class="simple">
+<li><p>⬆️Empirical performance &amp; convergence speed.</p></li>
+<li><p>⬆️Simplicity &amp; Interpretability.</p></li>
+<li><p>Adam is built upon RMSprop &amp; outperforms everything above.</p></li>
+</ul>
 </div>
 </section>
-<section id="adam-adaptive-moment-estimation">
-<h2>Adam (Adaptive Moment Estimation)<a class="headerlink" href="#adam-adaptive-moment-estimation" title="Link to this heading">#</a></h2>
 </section>
+<section class="tex2jax_ignore mathjax_ignore" id="adam-adaptive-moment-estimation">
+<h1>Adam (Adaptive Moment Estimation)<a class="headerlink" href="#adam-adaptive-moment-estimation" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><strong>What</strong>: Momentum + RMSprop.</p></li>
+<li><p><strong>Why</strong>: Combine benefits from Momentum &amp; RMSprop:</p>
+<ul>
+<li><p><strong>Momentum = 1st moment (mean) of grads</strong></p>
+<ul>
+<li><p>Momentum keeps track of the <strong>direction</strong> of recent grads.</p></li>
+<li><p>Momentum speeds up optimization in that direction.</p></li>
+</ul>
+</li>
+<li><p><strong>RMSprop = 2nd moment (uncentered variance) of grads</strong></p>
+<ul>
+<li><p>RMSprop keep track of the <strong>magnitude</strong> of recent grads.</p></li>
+<li><p>RMSprop adapts LR for each param based on its grad size.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Update 1st moment using new grads.</p></li>
+<li><p>Update 2nd moment using new squared grads.</p></li>
+<li><p>Bias Correction: EWMAs are init to 0 <span class="math notranslate nohighlight">\(\rightarrow\)</span> They are biased toward 0 early in training <span class="math notranslate nohighlight">\(\rightarrow\)</span> Need to correct it</p></li>
+<li><p>Update params.</p></li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(w_t\)</span>: Param at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\beta_1\)</span>: Decay rate for 1st moment. Default 0.9.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta_2\)</span>: Decay rate for 2nd moment. Default 0.999.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta\)</span>: Learning rate.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon\)</span>: Small constant (prevent division by 0).</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(g_t\)</span>: Grad <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial w_{t-1}}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(v_t\)</span>: 1st moment estimate at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(G_t\)</span>: 2nd moment estimate at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<p>Process:</p>
+<ol class="arabic simple">
+<li><p>Update 1st moment:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+v_t = \beta_1 v_{t-1} + (1 - \beta_1) g_t
+\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Update 2nd moment:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+G_t = \beta_2 G_{t-1} + (1-\beta_2) (g_t \odot g_t)
+\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Correct bias:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\hat{v}_t=\frac{v_t}{1-\beta_1^t} \\
+&amp;\hat{G}_t=\frac{G_t}{1-\beta_2^t}
+\end{align*}\end{split}\]</div>
+<ol class="arabic simple" start="4">
+<li><p>Update params:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{\hat{G}_t+\epsilon}} \hat{v}_t
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Pros?</em></p>
+<ul class="simple">
+<li><p>✅Best empirical performance &amp; convergence speed.</p></li>
+</ul>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>⬆️Memory cost.</p></li>
+<li><p>May still get stuck in local optima.</p></li>
+</ul>
+</div>
 <section id="adamw-adam-with-weight-decay">
 <h2>AdamW (Adam with Weight Decay)<a class="headerlink" href="#adamw-adam-with-weight-decay" title="Link to this heading">#</a></h2>
 </section>
@@ -920,14 +1027,9 @@ w_{t+1} = w_t + \Delta w_t
 </section>
 <section id="amsgrad">
 <h2>AMSGrad<a class="headerlink" href="#amsgrad" title="Link to this heading">#</a></h2>
-</section>
-<section id="second-order">
-<h2>Second-Order<a class="headerlink" href="#second-order" title="Link to this heading">#</a></h2>
-<section id="l-bfgs-limited-memory-broyden-fletcher-goldfarb-shanno">
-<h3>L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)<a class="headerlink" href="#l-bfgs-limited-memory-broyden-fletcher-goldfarb-shanno" title="Link to this heading">#</a></h3>
-</section>
-<section id="hessian-free-optimization">
-<h3>Hessian-Free Optimization<a class="headerlink" href="#hessian-free-optimization" title="Link to this heading">#</a></h3>
+<!-- ## Second-Order
+### L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)
+### Hessian-Free Optimization -->
 <!-- 
 ## Evolutionary
 ### Genetic Algorithms
@@ -940,7 +1042,6 @@ w_{t+1} = w_t + \Delta w_t
 ### Yogi Optimizer
 ### RAdam (Rectified Adam)
 ### Lookahead Optimizer -->
-</section>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="scheduler">
@@ -1042,16 +1143,13 @@ w_{t+1} = w_t + \Delta w_t
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nadam-nesterov-accelerated-adaptive-moment-estimation">Nadam (Nesterov-accelerated Adaptive Moment Estimation)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamax">AdaMax</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#amsgrad">AMSGrad</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#second-order">Second-Order</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l-bfgs-limited-memory-broyden-fletcher-goldfarb-shanno">L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hessian-free-optimization">Hessian-Free Optimization</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#scheduler">Scheduler</a><ul class="visible nav section-nav flex-column">
