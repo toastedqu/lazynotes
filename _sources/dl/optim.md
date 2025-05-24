@@ -68,6 +68,8 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 $$
 ```
 
+<br/>
+
 # Momentum
 - **What**: GD + Cache of past movements.
 - **Why**: GD is:
@@ -176,7 +178,6 @@ Notations:
 - Misc:
 	- $g_t$: Gradient $\frac{\partial\mathcal{L}}{\partial w_{t-1}}$.
 	- $G_t$: Accumulated squared gradients.
-	- $v_t$: Velocity at step $t$.
 
 Process:
 1. Grad accumulation:
@@ -189,7 +190,7 @@ $$\begin{align*}
 2. Param update:
 
 $$
-w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
+w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 $$
 ```
 
@@ -202,14 +203,53 @@ $$
 - Memory of how active the param has been throughout the entire training process.
 ```
 
+## RMSprop (Root Mean Square Propagation)
+- **What**: Adagrad w EWMA (Exponentially Weighted Moving Average) of squared grads instead of sum.
+- **Why**:
+	- Learning rate decays too much $\leftarrow$ Grad sum grows till training ends.
+- **How**: ~~Grad sum~~ EWMA of past squared grads $\rightarrow$ No infinite growth
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $w_t$: Param at step $t$.
+- Hyperparams:
+    - $\beta$: Decay rate for the EWMAs.
+    - $\epsilon$: Small constant (prevent division by 0).
+- Misc:
+    - $g_t$: Grad $\frac{\partial\mathcal{L}}{\partial w_t}$.
+    - $G_t$: EWMA of squared grads.
+
+Process:
+1. Accumulate squared grads (EWMA):
+
+$$
+G_t=\beta G_{t-1}+(1-\beta)g_t\odot g_t
+$$
+
+2. Update param:
+
+$$
+w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
+$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Why RMS?*
+- Square: $g^2_t$.
+- Mean: EWMA.
+- Root: $\frac{1}{\sqrt{G_t+\epsilon}}$.
+```
+
 ## Adadelta
-- **What**: Adagrad w/o manually set global learning rate.
+- **What**: RMSprop w/o manually set global learning rate + EWMA on param updates.
 - **Why**:
 	- Performance is highly sensitive to learning rate.
-	- Learning rate decays too much $\leftarrow$ Grad sum grows till training ends.
 - **How**:
-    1.  ~~Grad sum~~ EMA (Exponentially Moving Average) of past squared grads ($E[g^2]_t$) $\rightarrow$ No infinite growth
-	2.  ~~Global LR~~ EMA of past squared param updates ($E[\Delta w^2]_t$) $\rightarrow$ No LR decay
+    1.  ~~Grad sum~~ EWMA of past squared grads ($G_t$) $\rightarrow$ No infinite growth
+	2.  ~~Global LR~~ EWMA of past squared param updates ($\Delta W_{t}$) $\rightarrow$ No LR decay
     3.  ~~Fixed LR~~ Adaptive ratio between RMS of prev param updates & RMS of curr accumulated squared grads ($\frac{\text{RMS}[\Delta w]_{\text{prev}}}{\text{RMS}[g]_{\text{curr}}}$)
 
 ```{admonition} Math
@@ -218,58 +258,49 @@ Notations:
 - Params:
     - $w_t$: Param at step $t$.
 - Hyperparams:
-    - $\rho$: Decay rate for the EMAs.
+    - $\beta$: Decay rate for the EWMAs.
     - $\epsilon$: Small constant (prevent division by 0).
 - Misc:
     - $g_t$: Grad $\frac{\partial\mathcal{L}}{\partial w_t}$.
 	- $\Delta w_t$: param update at step $t$.
-    - $E[g^2]_t$: EMA of squared grads.
-    - $E[\Delta w^2]_t$: EMA of squared param updates.
+    - $G_t$: EWMA of squared grads.
+    - $\Delta W_{t}$: EWMA of squared param updates.
 
 Process:
-1. Init:
-	- Accumulated squared gradients: $E[g^2]_0 = 0$
-	- Accumulated squared updates: $E[\Delta w^2]_0 = 0$
-2. For each step $t$:
-	1.  Accumulate squared grads (EMA):
+1.  Accumulate squared grads (EWMA):
 
-		$$
-		E[g^2]_t = \rho E[g^2]_{t-1} + (1-\rho) (g_t \odot g_t)
-		$$
+$$
+G_t = \beta G_{t-1} + (1-\beta) (g_t \odot g_t)
+$$
 
-	2.  Calculate param update:
+2.  Calculate param update:
 
-		$$\begin{align*}
-		\Delta w_t &=-\frac{\sqrt{E[\Delta w^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} \odot g_t \\
-		&=-\frac{\text{RMS}[\Delta w]_{t-1}}{$\text{RMS}[g]_t$}\odot g_t
-		\end{align*}$$
+$$\begin{align*}
+\Delta w_t &=-\frac{\sqrt{\Delta W_{t-1} + \epsilon}}{\sqrt{G_t + \epsilon}} \odot g_t \\
+&=-\frac{\text{RMS}[\Delta w]_{t-1}}{$\text{RMS}[g]_t$}\odot g_t
+\end{align*}$$
 
-	3.  Accumulate squared param updates (EMA):**
+3.  Accumulate squared param updates (EWMA):**
 
-		$$
-		E[\Delta w^2]_t = \rho E[\Delta w^2]_{t-1} + (1-\rho) (\Delta w_t \odot \Delta w_t)
-		$$
+$$
+\Delta W_{t} = \beta \Delta W_{t-1} + (1-\beta) (\Delta w_t \odot \Delta w_t)
+$$
 
-	4.  Apply param update:
+4.  Update param:
 
-		$$
-		w_{t+1} = w_t + \Delta w_t
-		$$
+$$
+w_{t+1} = w_t + \Delta w_t
+$$
 ```
 
 ```{admonition} Q&A
 :class: tip, dropdown
-*Why RMS?*
+*Why RMS ratio?*
 1. It's in the exact **same unit** as the value it applies to.
-2. $\frac{\text{RMS}[\Delta w]_{t-1}}{$\text{RMS}[g]_t$}$ has units "$\Delta$param/grad".
+2. $\frac{\text{RMS}[\Delta w]_{t-1}}{\text{RMS}[g]_t}$ has units "$\Delta$param/grad".
 3. Multiply this by grad gives $\Delta$param.
-
-*Why sum?*
-- Memory of how active the param has been throughout the entire training process.
 ```
 
-
-## RMSprop (Root Mean Square Propagation)
 ## Adam (Adaptive Moment Estimation)
 ## AdamW (Adam with Weight Decay)
 ## Nadam (Nesterov-accelerated Adaptive Moment Estimation)
@@ -280,6 +311,7 @@ Process:
 ### L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)
 ### Hessian-Free Optimization
 
+<!-- 
 ## Evolutionary
 ### Genetic Algorithms
 ### Particle Swarm Optimization (PSO)
@@ -290,7 +322,7 @@ Process:
 ### FTRL (Follow The Regularized Leader)
 ### Yogi Optimizer
 ### RAdam (Rectified Adam)
-### Lookahead Optimizer
+### Lookahead Optimizer -->
 
 # Scheduler
 ## Basic

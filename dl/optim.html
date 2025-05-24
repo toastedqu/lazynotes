@@ -419,8 +419,8 @@ document.write(`
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-learning-rate">Adaptive Learning Rate</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nadam-nesterov-accelerated-adaptive-moment-estimation">Nadam (Nesterov-accelerated Adaptive Moment Estimation)</a></li>
@@ -429,20 +429,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#second-order">Second-Order</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l-bfgs-limited-memory-broyden-fletcher-goldfarb-shanno">L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hessian-free-optimization">Hessian-Free Optimization</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evolutionary">Evolutionary</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#genetic-algorithms">Genetic Algorithms</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#particle-swarm-optimization-pso">Particle Swarm Optimization (PSO)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#differential-evolution-de">Differential Evolution (DE)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance-matrix-adaptation-evolution-strategy-cma-es">Covariance Matrix Adaptation Evolution Strategy (CMA-ES)</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#misc">Misc</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ftrl-follow-the-regularized-leader">FTRL (Follow The Regularized Leader)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#yogi-optimizer">Yogi Optimizer</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#radam-rectified-adam">RAdam (Rectified Adam)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lookahead-optimizer">Lookahead Optimizer</a></li>
 </ul>
 </li>
 </ul>
@@ -572,6 +558,7 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial \mathcal{L}(w_t; \mathcal{D}_{\math
 w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 \]</div>
 </div>
+<br/>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="momentum">
 <h1>Momentum<a class="headerlink" href="#momentum" title="Link to this heading">#</a></h1>
@@ -746,7 +733,6 @@ w_t \leftarrow w_{t-1} - \eta v_t
 <ul>
 <li><p><span class="math notranslate nohighlight">\(g_t\)</span>: Gradient <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial w_{t-1}}\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(G_t\)</span>: Accumulated squared gradients.</p></li>
-<li><p><span class="math notranslate nohighlight">\(v_t\)</span>: Velocity at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
 </ul>
 </li>
 </ul>
@@ -764,7 +750,7 @@ w_t \leftarrow w_{t-1} - \eta v_t
 </ol>
 <div class="math notranslate nohighlight">
 \[
-w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
+w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 \]</div>
 </div>
 <div class="tip dropdown admonition">
@@ -779,20 +765,78 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
 </ul>
 </div>
 </section>
+<section id="rmsprop-root-mean-square-propagation">
+<h2>RMSprop (Root Mean Square Propagation)<a class="headerlink" href="#rmsprop-root-mean-square-propagation" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Adagrad w EWMA (Exponentially Weighted Moving Average) of squared grads instead of sum.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Learning rate decays too much <span class="math notranslate nohighlight">\(\leftarrow\)</span> Grad sum grows till training ends.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>: ~~Grad sum~~ EWMA of past squared grads <span class="math notranslate nohighlight">\(\rightarrow\)</span> No infinite growth</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(w_t\)</span>: Param at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>: Decay rate for the EWMAs.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon\)</span>: Small constant (prevent division by 0).</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(g_t\)</span>: Grad <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial w_t}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(G_t\)</span>: EWMA of squared grads.</p></li>
+</ul>
+</li>
+</ul>
+<p>Process:</p>
+<ol class="arabic simple">
+<li><p>Accumulate squared grads (EWMA):</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+G_t=\beta G_{t-1}+(1-\beta)g_t\odot g_t
+\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Update param:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Why RMS?</em></p>
+<ul class="simple">
+<li><p>Square: <span class="math notranslate nohighlight">\(g^2_t\)</span>.</p></li>
+<li><p>Mean: EWMA.</p></li>
+<li><p>Root: <span class="math notranslate nohighlight">\(\frac{1}{\sqrt{G_t+\epsilon}}\)</span>.</p></li>
+</ul>
+</div>
+</section>
 <section id="adadelta">
 <h2>Adadelta<a class="headerlink" href="#adadelta" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: Adagrad w/o manually set global learning rate.</p></li>
+<li><p><strong>What</strong>: RMSprop w/o manually set global learning rate + EWMA on param updates.</p></li>
 <li><p><strong>Why</strong>:</p>
 <ul>
 <li><p>Performance is highly sensitive to learning rate.</p></li>
-<li><p>Learning rate decays too much <span class="math notranslate nohighlight">\(\leftarrow\)</span> Grad sum grows till training ends.</p></li>
 </ul>
 </li>
 <li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
-<li><p>~~Grad sum~~ EMA (Exponentially Moving Average) of past squared grads (<span class="math notranslate nohighlight">\(E[g^2]_t\)</span>) <span class="math notranslate nohighlight">\(\rightarrow\)</span> No infinite growth</p></li>
-<li><p>~~Global LR~~ EMA of past squared param updates (<span class="math notranslate nohighlight">\(E[\Delta w^2]_t\)</span>) <span class="math notranslate nohighlight">\(\rightarrow\)</span> No LR decay</p></li>
+<li><p>~~Grad sum~~ EWMA of past squared grads (<span class="math notranslate nohighlight">\(G_t\)</span>) <span class="math notranslate nohighlight">\(\rightarrow\)</span> No infinite growth</p></li>
+<li><p>~~Global LR~~ EWMA of past squared param updates (<span class="math notranslate nohighlight">\(\Delta W_{t}\)</span>) <span class="math notranslate nohighlight">\(\rightarrow\)</span> No LR decay</p></li>
 <li><p>~~Fixed LR~~ Adaptive ratio between RMS of prev param updates &amp; RMS of curr accumulated squared grads (<span class="math notranslate nohighlight">\(\frac{\text{RMS}[\Delta w]_{\text{prev}}}{\text{RMS}[g]_{\text{curr}}}\)</span>)</p></li>
 </ol>
 </li>
@@ -808,7 +852,7 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
 </li>
 <li><p>Hyperparams:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\rho\)</span>: Decay rate for the EMAs.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>: Decay rate for the EWMAs.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\epsilon\)</span>: Small constant (prevent division by 0).</p></li>
 </ul>
 </li>
@@ -816,66 +860,51 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
 <ul>
 <li><p><span class="math notranslate nohighlight">\(g_t\)</span>: Grad <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial w_t}\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\Delta w_t\)</span>: param update at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
-<li><p><span class="math notranslate nohighlight">\(E[g^2]_t\)</span>: EMA of squared grads.</p></li>
-<li><p><span class="math notranslate nohighlight">\(E[\Delta w^2]_t\)</span>: EMA of squared param updates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(G_t\)</span>: EWMA of squared grads.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Delta W_{t}\)</span>: EWMA of squared param updates.</p></li>
 </ul>
 </li>
 </ul>
 <p>Process:</p>
-<ol class="arabic">
-<li><p>Init:</p>
-<ul class="simple">
-<li><p>Accumulated squared gradients: <span class="math notranslate nohighlight">\(E[g^2]_0 = 0\)</span></p></li>
-<li><p>Accumulated squared updates: <span class="math notranslate nohighlight">\(E[\Delta w^2]_0 = 0\)</span></p></li>
-</ul>
-</li>
-<li><p>For each step <span class="math notranslate nohighlight">\(t\)</span>:</p>
-<ol class="arabic">
-<li><p>Accumulate squared grads (EMA):</p>
+<ol class="arabic simple">
+<li><p>Accumulate squared grads (EWMA):</p></li>
+</ol>
 <div class="math notranslate nohighlight">
 \[
-		E[g^2]_t = \rho E[g^2]_{t-1} + (1-\rho) (g_t \odot g_t)
-		\]</div>
-</li>
-<li><p>Calculate param update:</p>
+G_t = \beta G_{t-1} + (1-\beta) (g_t \odot g_t)
+\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Calculate param update:</p></li>
+</ol>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-		\Delta w_t &amp;=-\frac{\sqrt{E[\Delta w^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} \odot g_t \\
-		&amp;=-\frac{\text{RMS}[\Delta w]_{t-1}}{$\text{RMS}[g]_t$}\odot g_t
-		\end{align*}\end{split}\]</div>
-</li>
-<li><p>Accumulate squared param updates (EMA):**</p>
+\Delta w_t &amp;=-\frac{\sqrt{\Delta W_{t-1} + \epsilon}}{\sqrt{G_t + \epsilon}} \odot g_t \\
+&amp;=-\frac{\text{RMS}[\Delta w]_{t-1}}{$\text{RMS}[g]_t$}\odot g_t
+\end{align*}\end{split}\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Accumulate squared param updates (EWMA):**</p></li>
+</ol>
 <div class="math notranslate nohighlight">
 \[
-		E[\Delta w^2]_t = \rho E[\Delta w^2]_{t-1} + (1-\rho) (\Delta w_t \odot \Delta w_t)
-		\]</div>
-</li>
-<li><p>Apply param update:</p>
+\Delta W_{t} = \beta \Delta W_{t-1} + (1-\beta) (\Delta w_t \odot \Delta w_t)
+\]</div>
+<ol class="arabic simple" start="4">
+<li><p>Update param:</p></li>
+</ol>
 <div class="math notranslate nohighlight">
 \[
-		w_{t+1} = w_t + \Delta w_t
-		\]</div>
-</li>
-</ol>
-</li>
-</ol>
+w_{t+1} = w_t + \Delta w_t
+\]</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Q&amp;A</p>
-<p><em>Why RMS?</em></p>
+<p><em>Why RMS ratio?</em></p>
 <ol class="arabic simple">
 <li><p>It’s in the exact <strong>same unit</strong> as the value it applies to.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\frac{\text{RMS}[\Delta w]_{t-1}}{\)</span>\text{RMS}[g]_t<span class="math notranslate nohighlight">\(}\)</span> has units “<span class="math notranslate nohighlight">\(\Delta\)</span>param/grad”.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\frac{\text{RMS}[\Delta w]_{t-1}}{\text{RMS}[g]_t}\)</span> has units “<span class="math notranslate nohighlight">\(\Delta\)</span>param/grad”.</p></li>
 <li><p>Multiply this by grad gives <span class="math notranslate nohighlight">\(\Delta\)</span>param.</p></li>
 </ol>
-<p><em>Why sum?</em></p>
-<ul class="simple">
-<li><p>Memory of how active the param has been throughout the entire training process.</p></li>
-</ul>
 </div>
-</section>
-<section id="rmsprop-root-mean-square-propagation">
-<h2>RMSprop (Root Mean Square Propagation)<a class="headerlink" href="#rmsprop-root-mean-square-propagation" title="Link to this heading">#</a></h2>
 </section>
 <section id="adam-adaptive-moment-estimation">
 <h2>Adam (Adaptive Moment Estimation)<a class="headerlink" href="#adam-adaptive-moment-estimation" title="Link to this heading">#</a></h2>
@@ -899,36 +928,18 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
 </section>
 <section id="hessian-free-optimization">
 <h3>Hessian-Free Optimization<a class="headerlink" href="#hessian-free-optimization" title="Link to this heading">#</a></h3>
-</section>
-</section>
-<section id="evolutionary">
-<h2>Evolutionary<a class="headerlink" href="#evolutionary" title="Link to this heading">#</a></h2>
-<section id="genetic-algorithms">
-<h3>Genetic Algorithms<a class="headerlink" href="#genetic-algorithms" title="Link to this heading">#</a></h3>
-</section>
-<section id="particle-swarm-optimization-pso">
-<h3>Particle Swarm Optimization (PSO)<a class="headerlink" href="#particle-swarm-optimization-pso" title="Link to this heading">#</a></h3>
-</section>
-<section id="differential-evolution-de">
-<h3>Differential Evolution (DE)<a class="headerlink" href="#differential-evolution-de" title="Link to this heading">#</a></h3>
-</section>
-<section id="covariance-matrix-adaptation-evolution-strategy-cma-es">
-<h3>Covariance Matrix Adaptation Evolution Strategy (CMA-ES)<a class="headerlink" href="#covariance-matrix-adaptation-evolution-strategy-cma-es" title="Link to this heading">#</a></h3>
-</section>
-</section>
-<section id="misc">
-<h2>Misc<a class="headerlink" href="#misc" title="Link to this heading">#</a></h2>
-<section id="ftrl-follow-the-regularized-leader">
-<h3>FTRL (Follow The Regularized Leader)<a class="headerlink" href="#ftrl-follow-the-regularized-leader" title="Link to this heading">#</a></h3>
-</section>
-<section id="yogi-optimizer">
-<h3>Yogi Optimizer<a class="headerlink" href="#yogi-optimizer" title="Link to this heading">#</a></h3>
-</section>
-<section id="radam-rectified-adam">
-<h3>RAdam (Rectified Adam)<a class="headerlink" href="#radam-rectified-adam" title="Link to this heading">#</a></h3>
-</section>
-<section id="lookahead-optimizer">
-<h3>Lookahead Optimizer<a class="headerlink" href="#lookahead-optimizer" title="Link to this heading">#</a></h3>
+<!-- 
+## Evolutionary
+### Genetic Algorithms
+### Particle Swarm Optimization (PSO)
+### Differential Evolution (DE)
+### Covariance Matrix Adaptation Evolution Strategy (CMA-ES)
+
+## Misc
+### FTRL (Follow The Regularized Leader)
+### Yogi Optimizer
+### RAdam (Rectified Adam)
+### Lookahead Optimizer -->
 </section>
 </section>
 </section>
@@ -1029,8 +1040,8 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-learning-rate">Adaptive Learning Rate</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nadam-nesterov-accelerated-adaptive-moment-estimation">Nadam (Nesterov-accelerated Adaptive Moment Estimation)</a></li>
@@ -1039,20 +1050,6 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}} v_t
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#second-order">Second-Order</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l-bfgs-limited-memory-broyden-fletcher-goldfarb-shanno">L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hessian-free-optimization">Hessian-Free Optimization</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evolutionary">Evolutionary</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#genetic-algorithms">Genetic Algorithms</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#particle-swarm-optimization-pso">Particle Swarm Optimization (PSO)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#differential-evolution-de">Differential Evolution (DE)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance-matrix-adaptation-evolution-strategy-cma-es">Covariance Matrix Adaptation Evolution Strategy (CMA-ES)</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#misc">Misc</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ftrl-follow-the-regularized-leader">FTRL (Follow The Regularized Leader)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#yogi-optimizer">Yogi Optimizer</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#radam-rectified-adam">RAdam (Rectified Adam)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lookahead-optimizer">Lookahead Optimizer</a></li>
 </ul>
 </li>
 </ul>
