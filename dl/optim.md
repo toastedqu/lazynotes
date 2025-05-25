@@ -15,7 +15,7 @@ kernelspec:
 
 <br/>
 
-# Gradient Descent
+## Gradient Descent
 - **What**: Update the params based on the grad's size and direction.
 	- **Gradient**: First-order derivative of the loss w.r.t. the corresponding param.
 	- **Descent**: Subtract the grad.
@@ -70,7 +70,7 @@ $$
 
 <br/>
 
-# Momentum
+## Momentum
 - **What**: GD + Cache of past movements.
 - **Why**: GD is:
 	- too slow in flat regions.
@@ -111,7 +111,7 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-## Nesterov Accelerated Gradient (NAG)
+### NAG (Nesterov Accelerated Gradient)
 - **What**: Momentum + "Look-ahead"
 - **Why**: Momentum can sometimes jump over the global minimum.
 	- It adds the accumulated momentum, THEN considers curr grad.
@@ -156,8 +156,8 @@ $$
 
 <br/>
 
-# Adaptive Learning Rate
-## Adagrad (Adaptive Gradient)
+## Adaptive LR
+### Adagrad (Adaptive Gradient)
 - **What**: GD + Adaptive learning rate for each param.
 - **Why**: A single, fixed learning rate is problematic:
 	- Diff feature frequencies: Rare/Common features $\rightarrow$ Rarely/Commonly update their corresponding params $\rightarrow$ Need to take larger/smaller steps.
@@ -203,7 +203,7 @@ $$
 - Memory of how active the param has been throughout the entire training process.
 ```
 
-## RMSprop (Root Mean Square Propagation)
+### RMSprop (Root Mean Square Propagation)
 - **What**: Adagrad w EWMA (Exponentially Weighted Moving Average) of squared grads instead of sum.
 - **Why**:
 	- Learning rate decays too much $\leftarrow$ Grad sum grows till training ends.
@@ -250,7 +250,7 @@ $$
 - The older/newer the grad, the less/more influence it has on curr param update.
 ```
 
-## Adadelta
+### Adadelta
 - **What**: RMSprop w/o manually set global learning rate + EWMA on param updates.
 - **Why**:
 	- Performance is highly sensitive to learning rate.
@@ -315,7 +315,7 @@ $$
 
 <br/>
 
-# Adam (Adaptive Moment Estimation)
+## Adam (Adaptive Moment Estimation)
 - **What**: Momentum + RMSprop.
 - **Why**: Combine benefits from Momentum & RMSprop:
 	- **Momentum = 1st moment (mean) of grads**
@@ -382,10 +382,42 @@ $$
 - May still get stuck in local optima.
 ```
 
-## AdamW (Adam with Weight Decay)
-## Nadam (Nesterov-accelerated Adaptive Moment Estimation)
+### AdamW (Adam with Weight Decay)
+- **What**: Adam + Weight Decay.
+- **Why**: L2 regularization.
+	- L2 adds an additional change to the original grad: $\lambda w$.
+	- $\rightarrow$ Designed to decay all weights toward 0, at a rate proportional to their magnitudes, regardless of grad history.
+	- BUT in Adam, weights with large/small historical grads get a small/large learning rate, thus a small/large weight decay.
+	- Adam & L2 conflict by design.
+- **How**: Add an extra weight decay step after Adam.
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $w_t$: Param at step $t$.
+- Hyperparams:
+    - $\lambda$: Decay rate.
+	- $\eta$: Learning rate.
+- Misc:
+	- $\Delta w_t^{\text{Adam}}$: Weight decay via Adam.
+
+Final param update:
+
+$$
+w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
+$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Why not replace Adam?*
+- ONLY applicable when L2 regularization is used (or set $\lambda=0$ for other cases for AdamW).
+```
+
+<!-- ## Nadam (Nesterov-accelerated Adaptive Moment Estimation)
 ## AdaMax
-## AMSGrad
+## AMSGrad -->
 
 <!-- ## Second-Order
 ### L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)
@@ -404,17 +436,153 @@ $$
 ### RAdam (Rectified Adam)
 ### Lookahead Optimizer -->
 
-# Scheduler
-## Basic
-### Step Decay
-### Exponential Decay
-### Polynomial Decay
+# LR Scheduler
+- **What**: Dynamically adjust LR during training.
+- **Why**:
+	- ⬇️LR $\rightarrow$ ⬇️Convergence speed $\rightarrow$ Training takes too long $\rightarrow$ We want fast
+	- ⬆️LR $\rightarrow$ ⬆️Convergence speed $\rightarrow$ Overshoot global minima $\rightarrow$ We want fast initially but slow later
+	- LR Scheduler: How about both?
 
-## Advanced
-### Cyclical Learning Rate (CLR)
-### One Cycle Policy
+## Decay
+- **How**:
+	1. Start with high LR.
+	2. Gradually ⬇️ LR.
+
+### Step Decay
+- **How**:
+	1. Init: LR, Decay rate & Step interval.
+	2. Step function:
+		1. Within each step interval, LR stays the same.
+		2. When jumping to the next interval, LR drops.
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $\eta_t$: LR at step $t$.
+- Hyperparams:
+	- $\eta_0$: Initial LR.
+	- $\gamma$: Decay rate.
+	- $s$: Step interval.
+
+Scheduler:
+
+$$
+\eta_t\leftarrow\eta_0\cdot\gamma^{\lfloor\frac{t}{s}\rfloor}
+$$
+
+e.g., if $s=10$
+- $\eta_5=\eta_0$
+- $\eta_{10}=\eta_0\cdot\gamma$
+- $\eta_{15}=\eta_0\cdot\gamma$
+- $\eta_{20}=\eta_0\cdot\gamma^2$
+- ...
+```
+
+### Exponential Decay
+- **Why**: Step Decay makes abrupt changes
+	- $\rightarrow$ Unstable convergence & potential disruptions in training
+	- $\rightarrow$ Need **smoother transition**
+- **How**:
+	1. Init: LR, Decay rate.
+	2. At each step, multiply curr LR with decay rate.
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $\eta_t$: LR at step $t$.
+- Hyperparams:
+	- $\eta_0$: Initial LR.
+	- $\gamma$: Decay rate.
+
+Scheduler:
+
+$$
+\eta_t\leftarrow\eta_{t-1}\cdot\gamma
+$$
+```
+
+### Polynomial Decay
+- **Why**: Step & Exponential decay can decay FOREVER & have no control over decay shape.
+- **How**:
+	1. Init: Initial LR, **Final LR**, Decay rate, #Decay steps, Power $p$.
+		- $p=1$: Linear decay.
+		- $p>1$: LR ⬇️ fast initially & slow when approaching final LR.
+		- $p<1$ (uncommon): LR ⬇️ slow initially & fast when approaching final LR.
+	2. At each step, compute curr LR.
+	3. If decay process ends, LR stays at final LR.
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $\eta_t$: LR at step $t$.
+- Hyperparams:
+	- $\eta_0$: Initial LR.
+	- $\eta_\text{end}$: Final LR.
+	- $\gamma$: Decay rate.
+	- $p$: Power.
+	- $T$: #Decay steps.
+
+Scheduler:
+
+$$
+\eta_t\leftarrow(\eta_0-\eta_\text{end})\cdot\left(1-\frac{t}{T}\right)^p+\eta_\text{end}
+$$
+```
+
+## Cycle
+- **What**: Cycle the LR between lower & upper bounds.
+- **Why**: Decays are good, BUT they are heavily sensitive to hyperparams.
+	- If LR ⬇️ too slow $\rightarrow$ Overshoot global minima
+	- If LR ⬇️ too fast $\rightarrow$ No chance to explore further regions $\rightarrow$ Stuck in local minima & saddle points
+	- Periodically increasing LR can help escape local minima & saddle points.
+
+### Cyclical LR
+- **How**:
+	1. Init: Min LR, Max LR, Step size for half cycle.
+	2. Choose a cycle policy (See [bckenstler/CLR](https://github.com/bckenstler/CLR)): 
+		- **triangle**: In each cycle:
+			1. LR linearly ⬆️ from min to max over step size.
+			2. LR linearly ⬇️ from max to min over step size.
+		- **triangle2**: Triangle BUT max LR is halved at the each of each cycle.
+		- **exp_range**: Triangle BUT max LR decays exponentially.
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $\eta_t$: LR at step $t$.
+- Hyperparams:
+	- $\eta_{\min}$: Min LR.
+	- $\eta_{\max}$: Max LR.
+	- $s$: Step size for half cycle.
+	- $\gamma$: Decay rate.
+- Misc:
+	- $c=\lfloor 1+\frac{t}{2s} \rfloor$: Cycle number.
+	- $x=\left|\frac{t}{s}-2c+1\right|$: Fractional distance into curr half-cycle.
+
+Scheduler:
+
+$$\begin{align*}
+&\text{triangle:}  &&\eta_t\leftarrow\eta_{\min}+(\eta_{\max}-\eta_{\min})\cdot\max(0,1-x) \\
+&\text{triangle2:} &&\eta_{\max,c}=\frac{\eta_{\max,0}}{2^{c-1}} \\
+&\text{exp range:} &&\eta_{\max,t}=\eta_{\max,0}\cdot\gamma^t \\
+\end{align*}$$
+```
+
 ### Cosine Annealing
-### ReduceLROnPlateau
+
+
+### One Cycle Policy
+- **What**: Use ONLY 1 cycle for LR scheduling throughout training.
+- **Why**: Cyclical LR requires too many hyperparams.
+- **How**:
+	1. Warm-up: S
+
+
+## ReduceLROnPlateau
 
 ## Warmup
 ### Linear Warmup
