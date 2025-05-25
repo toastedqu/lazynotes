@@ -411,39 +411,38 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Parameter Optimization</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nesterov-accelerated-gradient-nag">Nesterov Accelerated Gradient (NAG)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Parameter Optimization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nag-nesterov-accelerated-gradient">NAG (Nesterov Accelerated Gradient)</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-learning-rate">Adaptive Learning Rate</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-lr">Adaptive LR</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nadam-nesterov-accelerated-adaptive-moment-estimation">Nadam (Nesterov-accelerated Adaptive Moment Estimation)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamax">AdaMax</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#amsgrad">AMSGrad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#scheduler">Scheduler</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic">Basic</a><ul class="nav section-nav flex-column">
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#lr-scheduler">LR Scheduler</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decay">Decay</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-decay">Step Decay</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-decay">Exponential Decay</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polynomial-decay">Polynomial Decay</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced">Advanced</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cyclical-learning-rate-clr">Cyclical Learning Rate (CLR)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-cycle-policy">One Cycle Policy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cycle">Cycle</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cyclical-lr">Cyclical LR</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cosine-annealing">Cosine Annealing</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reducelronplateau">ReduceLROnPlateau</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-cycle-policy">One Cycle Policy</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reducelronplateau">ReduceLROnPlateau</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#warmup">Warmup</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-warmup">Linear Warmup</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-warmup">Exponential Warmup</a></li>
@@ -471,9 +470,8 @@ document.write(`
 <li><p><strong>Why</strong>: To best solve the task.</p></li>
 </ul>
 <br/>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="gradient-descent">
-<h1>Gradient Descent<a class="headerlink" href="#gradient-descent" title="Link to this heading">#</a></h1>
+<section id="gradient-descent">
+<h2>Gradient Descent<a class="headerlink" href="#gradient-descent" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Update the params based on the grad’s size and direction.</p>
 <ul>
@@ -557,8 +555,8 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 </div>
 <br/>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="momentum">
-<h1>Momentum<a class="headerlink" href="#momentum" title="Link to this heading">#</a></h1>
+<section id="momentum">
+<h2>Momentum<a class="headerlink" href="#momentum" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: GD + Cache of past movements.</p></li>
 <li><p><strong>Why</strong>: GD is:</p>
@@ -621,8 +619,8 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 &amp;\text{Direct} &amp;&amp;w_t \leftarrow w_{t-1} - v_t 
 \end{align*}\end{split}\]</div>
 </div>
-<section id="nesterov-accelerated-gradient-nag">
-<h2>Nesterov Accelerated Gradient (NAG)<a class="headerlink" href="#nesterov-accelerated-gradient-nag" title="Link to this heading">#</a></h2>
+<section id="nag-nesterov-accelerated-gradient">
+<h3>NAG (Nesterov Accelerated Gradient)<a class="headerlink" href="#nag-nesterov-accelerated-gradient" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Momentum + “Look-ahead”</p></li>
 <li><p><strong>Why</strong>: Momentum can sometimes jump over the global minimum.</p>
@@ -688,10 +686,10 @@ w_t \leftarrow w_{t-1} - \eta v_t
 <br/>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="adaptive-learning-rate">
-<h1>Adaptive Learning Rate<a class="headerlink" href="#adaptive-learning-rate" title="Link to this heading">#</a></h1>
+<section id="adaptive-lr">
+<h2>Adaptive LR<a class="headerlink" href="#adaptive-lr" title="Link to this heading">#</a></h2>
 <section id="adagrad-adaptive-gradient">
-<h2>Adagrad (Adaptive Gradient)<a class="headerlink" href="#adagrad-adaptive-gradient" title="Link to this heading">#</a></h2>
+<h3>Adagrad (Adaptive Gradient)<a class="headerlink" href="#adagrad-adaptive-gradient" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: GD + Adaptive learning rate for each param.</p></li>
 <li><p><strong>Why</strong>: A single, fixed learning rate is problematic:</p>
@@ -763,7 +761,7 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 </div>
 </section>
 <section id="rmsprop-root-mean-square-propagation">
-<h2>RMSprop (Root Mean Square Propagation)<a class="headerlink" href="#rmsprop-root-mean-square-propagation" title="Link to this heading">#</a></h2>
+<h3>RMSprop (Root Mean Square Propagation)<a class="headerlink" href="#rmsprop-root-mean-square-propagation" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Adagrad w EWMA (Exponentially Weighted Moving Average) of squared grads instead of sum.</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -831,7 +829,7 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 </div>
 </section>
 <section id="adadelta">
-<h2>Adadelta<a class="headerlink" href="#adadelta" title="Link to this heading">#</a></h2>
+<h3>Adadelta<a class="headerlink" href="#adadelta" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: RMSprop w/o manually set global learning rate + EWMA on param updates.</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -920,8 +918,8 @@ w_{t+1} = w_t + \Delta w_t
 <br/>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="adam-adaptive-moment-estimation">
-<h1>Adam (Adaptive Moment Estimation)<a class="headerlink" href="#adam-adaptive-moment-estimation" title="Link to this heading">#</a></h1>
+<section id="adam-adaptive-moment-estimation">
+<h2>Adam (Adaptive Moment Estimation)<a class="headerlink" href="#adam-adaptive-moment-estimation" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Momentum + RMSprop.</p></li>
 <li><p><strong>Why</strong>: Combine benefits from Momentum &amp; RMSprop:</p>
@@ -1018,16 +1016,56 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{\hat{G}_t+\epsilon}} \hat{v}_t
 </ul>
 </div>
 <section id="adamw-adam-with-weight-decay">
-<h2>AdamW (Adam with Weight Decay)<a class="headerlink" href="#adamw-adam-with-weight-decay" title="Link to this heading">#</a></h2>
-</section>
-<section id="nadam-nesterov-accelerated-adaptive-moment-estimation">
-<h2>Nadam (Nesterov-accelerated Adaptive Moment Estimation)<a class="headerlink" href="#nadam-nesterov-accelerated-adaptive-moment-estimation" title="Link to this heading">#</a></h2>
-</section>
-<section id="adamax">
-<h2>AdaMax<a class="headerlink" href="#adamax" title="Link to this heading">#</a></h2>
-</section>
-<section id="amsgrad">
-<h2>AMSGrad<a class="headerlink" href="#amsgrad" title="Link to this heading">#</a></h2>
+<h3>AdamW (Adam with Weight Decay)<a class="headerlink" href="#adamw-adam-with-weight-decay" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Adam + Weight Decay.</p></li>
+<li><p><strong>Why</strong>: L2 regularization.</p>
+<ul>
+<li><p>L2 adds an additional change to the original grad: <span class="math notranslate nohighlight">\(\lambda w\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Designed to decay all weights toward 0, at a rate proportional to their magnitudes, regardless of grad history.</p></li>
+<li><p>BUT in Adam, weights with large/small historical grads get a small/large learning rate, thus a small/large weight decay.</p></li>
+<li><p>Adam &amp; L2 conflict by design.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>: Add an extra weight decay step after Adam.</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(w_t\)</span>: Param at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\lambda\)</span>: Decay rate.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta\)</span>: Learning rate.</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\Delta w_t^{\text{Adam}}\)</span>: Weight decay via Adam.</p></li>
+</ul>
+</li>
+</ul>
+<p>Final param update:</p>
+<div class="math notranslate nohighlight">
+\[
+w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Why not replace Adam?</em></p>
+<ul class="simple">
+<li><p>ONLY applicable when L2 regularization is used (or set <span class="math notranslate nohighlight">\(\lambda=0\)</span> for other cases for AdamW).</p></li>
+</ul>
+</div>
+<!-- ## Nadam (Nesterov-accelerated Adaptive Moment Estimation)
+## AdaMax
+## AMSGrad -->
 <!-- ## Second-Order
 ### L-BFGS (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)
 ### Hessian-Free Optimization -->
@@ -1045,34 +1083,244 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{\hat{G}_t+\epsilon}} \hat{v}_t
 ### Lookahead Optimizer -->
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="scheduler">
-<h1>Scheduler<a class="headerlink" href="#scheduler" title="Link to this heading">#</a></h1>
-<section id="basic">
-<h2>Basic<a class="headerlink" href="#basic" title="Link to this heading">#</a></h2>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="lr-scheduler">
+<h1>LR Scheduler<a class="headerlink" href="#lr-scheduler" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><strong>What</strong>: Dynamically adjust LR during training.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>⬇️LR <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬇️Convergence speed <span class="math notranslate nohighlight">\(\rightarrow\)</span> Training takes too long <span class="math notranslate nohighlight">\(\rightarrow\)</span> We want fast</p></li>
+<li><p>⬆️LR <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬆️Convergence speed <span class="math notranslate nohighlight">\(\rightarrow\)</span> Overshoot global minima <span class="math notranslate nohighlight">\(\rightarrow\)</span> We want fast initially but slow later</p></li>
+<li><p>LR Scheduler: How about both?</p></li>
+</ul>
+</li>
+</ul>
+<section id="decay">
+<h2>Decay<a class="headerlink" href="#decay" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Start with high LR.</p></li>
+<li><p>Gradually ⬇️ LR.</p></li>
+</ol>
+</li>
+</ul>
 <section id="step-decay">
 <h3>Step Decay<a class="headerlink" href="#step-decay" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Init: LR, Decay rate &amp; Step interval.</p></li>
+<li><p>Step function:</p>
+<ol class="arabic simple">
+<li><p>Within each step interval, LR stays the same.</p></li>
+<li><p>When jumping to the next interval, LR drops.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_t\)</span>: LR at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_0\)</span>: Initial LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Decay rate.</p></li>
+<li><p><span class="math notranslate nohighlight">\(s\)</span>: Step interval.</p></li>
+</ul>
+</li>
+</ul>
+<p>Scheduler:</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_t\leftarrow\eta_0\cdot\gamma^{\lfloor\frac{t}{s}\rfloor}
+\]</div>
+<p>e.g., if <span class="math notranslate nohighlight">\(s=10\)</span></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\eta_5=\eta_0\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_{10}=\eta_0\cdot\gamma\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_{15}=\eta_0\cdot\gamma\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_{20}=\eta_0\cdot\gamma^2\)</span></p></li>
+<li><p>…</p></li>
+</ul>
+</div>
 </section>
 <section id="exponential-decay">
 <h3>Exponential Decay<a class="headerlink" href="#exponential-decay" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Why</strong>: Step Decay makes abrupt changes</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Unstable convergence &amp; potential disruptions in training</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Need <strong>smoother transition</strong></p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Init: LR, Decay rate.</p></li>
+<li><p>At each step, multiply curr LR with decay rate.</p></li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_t\)</span>: LR at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_0\)</span>: Initial LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Decay rate.</p></li>
+</ul>
+</li>
+</ul>
+<p>Scheduler:</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_t\leftarrow\eta_{t-1}\cdot\gamma
+\]</div>
+</div>
 </section>
 <section id="polynomial-decay">
 <h3>Polynomial Decay<a class="headerlink" href="#polynomial-decay" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Why</strong>: Step &amp; Exponential decay can decay FOREVER &amp; have no control over decay shape.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Init: Initial LR, <strong>Final LR</strong>, Decay rate, #Decay steps, Power <span class="math notranslate nohighlight">\(p\)</span>.</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(p=1\)</span>: Linear decay.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p&gt;1\)</span>: LR ⬇️ fast initially &amp; slow when approaching final LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p&lt;1\)</span> (uncommon): LR ⬇️ slow initially &amp; fast when approaching final LR.</p></li>
+</ul>
+</li>
+<li><p>At each step, compute curr LR.</p></li>
+<li><p>If decay process ends, LR stays at final LR.</p></li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_t\)</span>: LR at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_0\)</span>: Initial LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_\text{end}\)</span>: Final LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Decay rate.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p\)</span>: Power.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>: #Decay steps.</p></li>
+</ul>
+</li>
+</ul>
+<p>Scheduler:</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_t\leftarrow(\eta_0-\eta_\text{end})\cdot\left(1-\frac{t}{T}\right)^p+\eta_\text{end}
+\]</div>
+</div>
 </section>
 </section>
-<section id="advanced">
-<h2>Advanced<a class="headerlink" href="#advanced" title="Link to this heading">#</a></h2>
-<section id="cyclical-learning-rate-clr">
-<h3>Cyclical Learning Rate (CLR)<a class="headerlink" href="#cyclical-learning-rate-clr" title="Link to this heading">#</a></h3>
-</section>
-<section id="one-cycle-policy">
-<h3>One Cycle Policy<a class="headerlink" href="#one-cycle-policy" title="Link to this heading">#</a></h3>
+<section id="cycle">
+<h2>Cycle<a class="headerlink" href="#cycle" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Cycle the LR between lower &amp; upper bounds.</p></li>
+<li><p><strong>Why</strong>: Decays are good, BUT they are heavily sensitive to hyperparams.</p>
+<ul>
+<li><p>If LR ⬇️ too slow <span class="math notranslate nohighlight">\(\rightarrow\)</span> Overshoot global minima</p></li>
+<li><p>If LR ⬇️ too fast <span class="math notranslate nohighlight">\(\rightarrow\)</span> No chance to explore further regions <span class="math notranslate nohighlight">\(\rightarrow\)</span> Stuck in local minima &amp; saddle points</p></li>
+<li><p>Periodically increasing LR can help escape local minima &amp; saddle points.</p></li>
+</ul>
+</li>
+</ul>
+<section id="cyclical-lr">
+<h3>Cyclical LR<a class="headerlink" href="#cyclical-lr" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Init: Min LR, Max LR, Step size for half cycle.</p></li>
+<li><p>Choose a cycle policy (See <a class="reference external" href="https://github.com/bckenstler/CLR">bckenstler/CLR</a>):</p>
+<ul>
+<li><p><strong>triangle</strong>: In each cycle:</p>
+<ol class="arabic simple">
+<li><p>LR linearly ⬆️ from min to max over step size.</p></li>
+<li><p>LR linearly ⬇️ from max to min over step size.</p></li>
+</ol>
+</li>
+<li><p><strong>triangle2</strong>: Triangle BUT max LR is halved at the each of each cycle.</p></li>
+<li><p><strong>exp_range</strong>: Triangle BUT max LR decays exponentially.</p></li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_t\)</span>: LR at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_{\min}\)</span>: Min LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_{\max}\)</span>: Max LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(s\)</span>: Step size for half cycle.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Decay rate.</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(c=\lfloor 1+\frac{t}{2s} \rfloor\)</span>: Cycle number.</p></li>
+<li><p><span class="math notranslate nohighlight">\(x=\left|\frac{t}{s}-2c+1\right|\)</span>: Fractional distance into curr half-cycle.</p></li>
+</ul>
+</li>
+</ul>
+<p>Scheduler:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\text{triangle:}  &amp;&amp;\eta_t\leftarrow\eta_{\min}+(\eta_{\max}-\eta_{\min})\cdot\max(0,1-x) \\
+&amp;\text{triangle2:} &amp;&amp;\eta_{\max,c}=\frac{\eta_{\max,0}}{2^{c-1}} \\
+&amp;\text{exp range:} &amp;&amp;\eta_{\max,t}=\eta_{\max,0}\cdot\gamma^t \\
+\end{align*}\end{split}\]</div>
+</div>
 </section>
 <section id="cosine-annealing">
 <h3>Cosine Annealing<a class="headerlink" href="#cosine-annealing" title="Link to this heading">#</a></h3>
 </section>
-<section id="reducelronplateau">
-<h3>ReduceLROnPlateau<a class="headerlink" href="#reducelronplateau" title="Link to this heading">#</a></h3>
+<section id="one-cycle-policy">
+<h3>One Cycle Policy<a class="headerlink" href="#one-cycle-policy" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Use ONLY 1 cycle for LR scheduling throughout training.</p></li>
+<li><p><strong>Why</strong>: Cyclical LR requires too many hyperparams.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Warm-up: S</p></li>
+</ol>
+</li>
+</ul>
 </section>
+</section>
+<section id="reducelronplateau">
+<h2>ReduceLROnPlateau<a class="headerlink" href="#reducelronplateau" title="Link to this heading">#</a></h2>
 </section>
 <section id="warmup">
 <h2>Warmup<a class="headerlink" href="#warmup" title="Link to this heading">#</a></h2>
@@ -1134,39 +1382,38 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{\hat{G}_t+\epsilon}} \hat{v}_t
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Parameter Optimization</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nesterov-accelerated-gradient-nag">Nesterov Accelerated Gradient (NAG)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Parameter Optimization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nag-nesterov-accelerated-gradient">NAG (Nesterov Accelerated Gradient)</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-learning-rate">Adaptive Learning Rate</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-lr">Adaptive LR</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nadam-nesterov-accelerated-adaptive-moment-estimation">Nadam (Nesterov-accelerated Adaptive Moment Estimation)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamax">AdaMax</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#amsgrad">AMSGrad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#scheduler">Scheduler</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic">Basic</a><ul class="nav section-nav flex-column">
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#lr-scheduler">LR Scheduler</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decay">Decay</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-decay">Step Decay</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-decay">Exponential Decay</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polynomial-decay">Polynomial Decay</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced">Advanced</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cyclical-learning-rate-clr">Cyclical Learning Rate (CLR)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-cycle-policy">One Cycle Policy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cycle">Cycle</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cyclical-lr">Cyclical LR</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cosine-annealing">Cosine Annealing</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reducelronplateau">ReduceLROnPlateau</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-cycle-policy">One Cycle Policy</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reducelronplateau">ReduceLROnPlateau</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#warmup">Warmup</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-warmup">Linear Warmup</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-warmup">Exponential Warmup</a></li>
