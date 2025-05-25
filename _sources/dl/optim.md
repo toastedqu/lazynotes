@@ -436,6 +436,8 @@ $$
 ### RAdam (Rectified Adam)
 ### Lookahead Optimizer -->
 
+<br/><br/>
+
 # LR Scheduler
 - **What**: Dynamically adjust LR during training.
 - **Why**:
@@ -532,6 +534,8 @@ $$
 $$
 ```
 
+<br/>
+
 ## Cycle
 - **What**: Cycle the LR between lower & upper bounds.
 - **Why**: Decays are good, BUT they are heavily sensitive to hyperparams.
@@ -573,16 +577,119 @@ $$\begin{align*}
 ```
 
 ### Cosine Annealing
+- **Why**: Cyclical LR starts with low LR, which slows the initial learning process.
+	- We still want to start fast & also keep the advantage of cycles & smooth curves.
+- **How**:
+	1. Init: Min LR, Max LR, Step size for **full** cycle.
+	2. For each cycle, anneal:
+		1. $t=0\rightarrow\eta_t=\eta_{\max}$
+		2. $t\in(0,S)\rightarrow\eta_t$⬇️ via cosine curve
+		3. $t=S\rightarrow\eta_t=\eta_{\min}$
 
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $\eta_t$: LR at step $t$.
+- Hyperparams:
+	- $\eta_{\min}$: Min LR.
+	- $\eta_{\max}$: Max LR.
+	- $S$: Step size for full cycle.
+
+Scheduler:
+
+$$
+\eta_t = \eta_{\min} + \frac{1}{2} (\eta_{\max} - \eta_{\min}) \left(1 + \cos\left(\frac{t}{S}\pi\right)\right)
+$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*But why cosine?*
+- First, cosine is NOT the only option that works.
+- Cosine is smooth, and its 1st derivative (i.e., sine) is also smooth, and its 2nd derivative (i.e., cosine) is also smooth... $\rightarrow$ Cosine is infinitely smooth.
+	- Smoothness ⬆️ $\rightarrow$ Training stability ⬆️
+- Cosine follows the **slow-fast-slow** decay pattern:
+	- Initial lingering high LR allows for broad exploration.
+	- Rapid drop in LR allows for faster convergence.
+	- Final lingering low LR allows for fine-tuning into a good minimum.
+- Cosine works incredibly well with SGDR because of smoothness & slow-fast-slow.
+
+*What's SGDR (SGD with Warm Restarts)?*
+- The length of each cycle is no longer fixed but progressively longer.
+- $T_i=T_0\times\lambda_\text{mul}^i$, where $\lambda_\text{mul}$ is a factor by which the cycle length is increased after each restart.
+```
 
 ### One Cycle Policy
 - **What**: Use ONLY 1 cycle for LR scheduling throughout training.
-- **Why**: Cyclical LR requires too many hyperparams.
+- **Why**: Super-convergence: training models to high accuracy in ⬇️⬇️ epochs.
 - **How**:
-	1. Warm-up: S
+	1. Warm-up: LR ⬆️ from min to max (e.g., Linear).
+	2. Cool-down: LR ⬇️ from max to min (e.g., Cosine).
+	3. Annihilation: LR ⬇️ below min.
 
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $\eta_t$: LR at step $t$.
+- Hyperparams:
+	- $\eta_{\min}$: Min/Initial LR.
+	- $\eta_{\max}$: Max LR, higher than Cyclical LR.
+	- $\eta_\text{final}$: Final LR, smaller than Cyclical LR.
+	- $T$: #Epochs.
+	- $\%_\text{up}$: Percentage of up iterations.
+	- $\%_\text{anni}$: Percentage of annihilation iterations.
+- Misc:
+	- $T_\text{up}=\lfloor \%_\text{up}\cdot T \rfloor$: #Warm-up iterations.
+	- $T_\text{anni}=\lfloor \%_\text{anni}\cdot T \rfloor$: #Annihilation iterations.
+	- $T_\text{down}=T-T_\text{up}-T_\text{anni}$: #Cool-down iterations.
+
+Scheduler:
+
+$$\begin{align*}
+&\text{Warm-up (Linear):} &&\eta_t = \eta_{\min} + (\eta_{\max} - \eta_{\min}) \frac{t}{T_\text{up}} \\
+&\text{Cool-down (Cosine):} &&\eta_t = \eta_{\min} + \frac{1}{2} (\eta_{\max} - \eta_{\min}) \left(1 + \cos\left(\frac{t-T_\text{up}}{T_\text{down}}\pi\right)\right) \\
+&\text{Annihilation (Cosine):} &&\eta_t = \eta_{final} + \frac{1}{2}(\eta_{min} - \eta_{final}) \left(1 + \cos\left(\frac{t-T_\text{up}-T_\text{down}}{T_{anni}}\pi\right)\right)
+\end{align*}$$
+```
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Why does the OG paper schedule momentum together with LR?*
+- Pure empirical findings:
+	- ⬆️LR $\rightarrow$ ⬇️momentum helps prevent divergence.
+	- ⬇️LR $\rightarrow$ ⬆️momentum helps continue making progress.
+```
+
+<br/>
 
 ## ReduceLROnPlateau
+- **What**: Reduce LR when the model is on a plateau of **performance** (i.e., stuck).
+- **Why**: No scheduler above cares about actual metrics, BUT we do.
+- **How**:
+	1. Init:
+		- Metric (e.g., validation loss).
+		- Improvement: Whether to go up/down on the monitored metric, and how much counts as a significant improvement.
+		- Patience: #Epochs to wait for an improvement in the monitored metric before concluding the training hits a plateau.
+		- Min LR.
+	2. Monitor:
+		- If the metric never improves during patience, LR is reduced by a multiplicative factor ($\eta_\text{new}=\eta_\text{old}\cdot\lambda_\text{mul}$).
+		- Else, recount patience from improvement event.
+
+```{admonition} Q&A
+:class: tip, dropdown
+*Seems promising. Why use other schedulers then?*
+- Proactive vs Reactive:
+	- ReduceLROnPlateau is **reactive**: It only works when a problem occurs.
+	- Other schedulers are **proactive**: They strictly follow a pre-defined schedule regardless of metric performance.
+- Hyperparameter sensitivity:
+	- Other schedulers also suffer from this, BUT ReduceLROnPlateau suffers even more:
+		- ❌Metric? GG.
+		- ❌Improvement? GG.
+		- ❌Patience? GG.
+		- We could waste epochs being stuck without doing anything.
+```
 
 ## Warmup
 ### Linear Warmup

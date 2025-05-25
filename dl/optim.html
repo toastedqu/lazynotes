@@ -1081,6 +1081,7 @@ w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
 ### Yogi Optimizer
 ### RAdam (Rectified Adam)
 ### Lookahead Optimizer -->
+<p><br/><br/></p>
 </section>
 </section>
 </section>
@@ -1235,6 +1236,7 @@ w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
 \eta_t\leftarrow(\eta_0-\eta_\text{end})\cdot\left(1-\frac{t}{T}\right)^p+\eta_\text{end}
 \]</div>
 </div>
+<br/>
 </section>
 </section>
 <section id="cycle">
@@ -1305,22 +1307,185 @@ w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
 </section>
 <section id="cosine-annealing">
 <h3>Cosine Annealing<a class="headerlink" href="#cosine-annealing" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Why</strong>: Cyclical LR starts with low LR, which slows the initial learning process.</p>
+<ul>
+<li><p>We still want to start fast &amp; also keep the advantage of cycles &amp; smooth curves.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Init: Min LR, Max LR, Step size for <strong>full</strong> cycle.</p></li>
+<li><p>For each cycle, anneal:</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\(t=0\rightarrow\eta_t=\eta_{\max}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(t\in(0,S)\rightarrow\eta_t\)</span>⬇️ via cosine curve</p></li>
+<li><p><span class="math notranslate nohighlight">\(t=S\rightarrow\eta_t=\eta_{\min}\)</span></p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_t\)</span>: LR at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_{\min}\)</span>: Min LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_{\max}\)</span>: Max LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(S\)</span>: Step size for full cycle.</p></li>
+</ul>
+</li>
+</ul>
+<p>Scheduler:</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_t = \eta_{\min} + \frac{1}{2} (\eta_{\max} - \eta_{\min}) \left(1 + \cos\left(\frac{t}{S}\pi\right)\right)
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>But why cosine?</em></p>
+<ul class="simple">
+<li><p>First, cosine is NOT the only option that works.</p></li>
+<li><p>Cosine is smooth, and its 1st derivative (i.e., sine) is also smooth, and its 2nd derivative (i.e., cosine) is also smooth… <span class="math notranslate nohighlight">\(\rightarrow\)</span> Cosine is infinitely smooth.</p>
+<ul>
+<li><p>Smoothness ⬆️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Training stability ⬆️</p></li>
+</ul>
+</li>
+<li><p>Cosine follows the <strong>slow-fast-slow</strong> decay pattern:</p>
+<ul>
+<li><p>Initial lingering high LR allows for broad exploration.</p></li>
+<li><p>Rapid drop in LR allows for faster convergence.</p></li>
+<li><p>Final lingering low LR allows for fine-tuning into a good minimum.</p></li>
+</ul>
+</li>
+<li><p>Cosine works incredibly well with SGDR because of smoothness &amp; slow-fast-slow.</p></li>
+</ul>
+<p><em>What’s SGDR (SGD with Warm Restarts)?</em></p>
+<ul class="simple">
+<li><p>The length of each cycle is no longer fixed but progressively longer.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T_i=T_0\times\lambda_\text{mul}^i\)</span>, where <span class="math notranslate nohighlight">\(\lambda_\text{mul}\)</span> is a factor by which the cycle length is increased after each restart.</p></li>
+</ul>
+</div>
 </section>
 <section id="one-cycle-policy">
 <h3>One Cycle Policy<a class="headerlink" href="#one-cycle-policy" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Use ONLY 1 cycle for LR scheduling throughout training.</p></li>
-<li><p><strong>Why</strong>: Cyclical LR requires too many hyperparams.</p></li>
+<li><p><strong>Why</strong>: Super-convergence: training models to high accuracy in ⬇️⬇️ epochs.</p></li>
 <li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
-<li><p>Warm-up: S</p></li>
+<li><p>Warm-up: LR ⬆️ from min to max (e.g., Linear).</p></li>
+<li><p>Cool-down: LR ⬇️ from max to min (e.g., Cosine).</p></li>
+<li><p>Annihilation: LR ⬇️ below min.</p></li>
 </ol>
 </li>
 </ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_t\)</span>: LR at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_{\min}\)</span>: Min/Initial LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_{\max}\)</span>: Max LR, higher than Cyclical LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_\text{final}\)</span>: Final LR, smaller than Cyclical LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>: #Epochs.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\%_\text{up}\)</span>: Percentage of up iterations.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\%_\text{anni}\)</span>: Percentage of annihilation iterations.</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(T_\text{up}=\lfloor \%_\text{up}\cdot T \rfloor\)</span>: #Warm-up iterations.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T_\text{anni}=\lfloor \%_\text{anni}\cdot T \rfloor\)</span>: #Annihilation iterations.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T_\text{down}=T-T_\text{up}-T_\text{anni}\)</span>: #Cool-down iterations.</p></li>
+</ul>
+</li>
+</ul>
+<p>Scheduler:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\text{Warm-up (Linear):} &amp;&amp;\eta_t = \eta_{\min} + (\eta_{\max} - \eta_{\min}) \frac{t}{T_\text{up}} \\
+&amp;\text{Cool-down (Cosine):} &amp;&amp;\eta_t = \eta_{\min} + \frac{1}{2} (\eta_{\max} - \eta_{\min}) \left(1 + \cos\left(\frac{t-T_\text{up}}{T_\text{down}}\pi\right)\right) \\
+&amp;\text{Annihilation (Cosine):} &amp;&amp;\eta_t = \eta_{final} + \frac{1}{2}(\eta_{min} - \eta_{final}) \left(1 + \cos\left(\frac{t-T_\text{up}-T_\text{down}}{T_{anni}}\pi\right)\right)
+\end{align*}\end{split}\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Why does the OG paper schedule momentum together with LR?</em></p>
+<ul class="simple">
+<li><p>Pure empirical findings:</p>
+<ul>
+<li><p>⬆️LR <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬇️momentum helps prevent divergence.</p></li>
+<li><p>⬇️LR <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬆️momentum helps continue making progress.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<br/>
 </section>
 </section>
 <section id="reducelronplateau">
 <h2>ReduceLROnPlateau<a class="headerlink" href="#reducelronplateau" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Reduce LR when the model is on a plateau of <strong>performance</strong> (i.e., stuck).</p></li>
+<li><p><strong>Why</strong>: No scheduler above cares about actual metrics, BUT we do.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Init:</p>
+<ul>
+<li><p>Metric (e.g., validation loss).</p></li>
+<li><p>Improvement: Whether to go up/down on the monitored metric, and how much counts as a significant improvement.</p></li>
+<li><p>Patience: #Epochs to wait for an improvement in the monitored metric before concluding the training hits a plateau.</p></li>
+<li><p>Min LR.</p></li>
+</ul>
+</li>
+<li><p>Monitor:</p>
+<ul>
+<li><p>If the metric never improves during patience, LR is reduced by a multiplicative factor (<span class="math notranslate nohighlight">\(\eta_\text{new}=\eta_\text{old}\cdot\lambda_\text{mul}\)</span>).</p></li>
+<li><p>Else, recount patience from improvement event.</p></li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Seems promising. Why use other schedulers then?</em></p>
+<ul class="simple">
+<li><p>Proactive vs Reactive:</p>
+<ul>
+<li><p>ReduceLROnPlateau is <strong>reactive</strong>: It only works when a problem occurs.</p></li>
+<li><p>Other schedulers are <strong>proactive</strong>: They strictly follow a pre-defined schedule regardless of metric performance.</p></li>
+</ul>
+</li>
+<li><p>Hyperparameter sensitivity:</p>
+<ul>
+<li><p>Other schedulers also suffer from this, BUT ReduceLROnPlateau suffers even more:</p>
+<ul>
+<li><p>❌Metric? GG.</p></li>
+<li><p>❌Improvement? GG.</p></li>
+<li><p>❌Patience? GG.</p></li>
+<li><p>We could waste epochs being stuck without doing anything.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 <section id="warmup">
 <h2>Warmup<a class="headerlink" href="#warmup" title="Link to this heading">#</a></h2>
