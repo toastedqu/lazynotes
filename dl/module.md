@@ -20,8 +20,8 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 
 <br/>
 
-# Basic
-## Linear
+## Basic
+### Linear
 - **What**: Linear transform.
 - **Why**: Simplest way to transform data & learn patterns.
 - **How**: Sum of weighted input features (+ bias).

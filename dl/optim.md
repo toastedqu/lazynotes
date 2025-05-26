@@ -15,7 +15,9 @@ kernelspec:
 
 <br/>
 
-## Gradient Descent
+## Optimizer
+
+### Gradient Descent
 - **What**: Update the params based on the grad's size and direction.
 	- **Gradient**: First-order derivative of the loss w.r.t. the corresponding param.
 	- **Descent**: Subtract the grad.
@@ -70,7 +72,7 @@ $$
 
 <br/>
 
-## Momentum
+### Momentum
 - **What**: GD + Cache of past movements.
 - **Why**: GD is:
 	- too slow in flat regions.
@@ -111,7 +113,7 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-### NAG (Nesterov Accelerated Gradient)
+#### NAG (Nesterov Accelerated Gradient)
 - **What**: Momentum + "Look-ahead"
 - **Why**: Momentum can sometimes jump over the global minimum.
 	- It adds the accumulated momentum, THEN considers curr grad.
@@ -156,8 +158,8 @@ $$
 
 <br/>
 
-## Adaptive LR
-### Adagrad (Adaptive Gradient)
+### Adaptive LR
+#### Adagrad (Adaptive Gradient)
 - **What**: GD + Adaptive learning rate for each param.
 - **Why**: A single, fixed learning rate is problematic:
 	- Diff feature frequencies: Rare/Common features $\rightarrow$ Rarely/Commonly update their corresponding params $\rightarrow$ Need to take larger/smaller steps.
@@ -203,7 +205,7 @@ $$
 - Memory of how active the param has been throughout the entire training process.
 ```
 
-### RMSprop (Root Mean Square Propagation)
+#### RMSprop (Root Mean Square Propagation)
 - **What**: Adagrad w EWMA (Exponentially Weighted Moving Average) of squared grads instead of sum.
 - **Why**:
 	- Learning rate decays too much $\leftarrow$ Grad sum grows till training ends.
@@ -250,7 +252,7 @@ $$
 - The older/newer the grad, the less/more influence it has on curr param update.
 ```
 
-### Adadelta
+#### Adadelta
 - **What**: RMSprop w/o manually set global learning rate + EWMA on param updates.
 - **Why**:
 	- Performance is highly sensitive to learning rate.
@@ -315,7 +317,7 @@ $$
 
 <br/>
 
-## Adam (Adaptive Moment Estimation)
+### Adam (Adaptive Moment Estimation)
 - **What**: Momentum + RMSprop.
 - **Why**: Combine benefits from Momentum & RMSprop:
 	- **Momentum = 1st moment (mean) of grads**
@@ -382,7 +384,7 @@ $$
 - May still get stuck in local optima.
 ```
 
-### AdamW (Adam with Weight Decay)
+#### AdamW (Adam with Weight Decay)
 - **What**: Adam + Weight Decay.
 - **Why**: L2 regularization.
 	- L2 adds an additional change to the original grad: $\lambda w$.
@@ -438,19 +440,19 @@ $$
 
 <br/><br/>
 
-# LR Scheduler
+## LR Scheduler
 - **What**: Dynamically adjust LR during training.
 - **Why**:
 	- ⬇️LR $\rightarrow$ ⬇️Convergence speed $\rightarrow$ Training takes too long $\rightarrow$ We want fast
 	- ⬆️LR $\rightarrow$ ⬆️Convergence speed $\rightarrow$ Overshoot global minima $\rightarrow$ We want fast initially but slow later
 	- LR Scheduler: How about both?
 
-## Decay
+### Decay
 - **How**:
 	1. Start with high LR.
 	2. Gradually ⬇️ LR.
 
-### Step Decay
+#### Step Decay
 - **How**:
 	1. Init: LR, Decay rate & Step interval.
 	2. Step function:
@@ -481,7 +483,7 @@ e.g., if $s=10$
 - ...
 ```
 
-### Exponential Decay
+#### Exponential Decay
 - **Why**: Step Decay makes abrupt changes
 	- $\rightarrow$ Unstable convergence & potential disruptions in training
 	- $\rightarrow$ Need **smoother transition**
@@ -505,7 +507,7 @@ $$
 $$
 ```
 
-### Polynomial Decay
+#### Polynomial Decay
 - **Why**: Step & Exponential decay can decay FOREVER & have no control over decay shape.
 - **How**:
 	1. Init: Initial LR, **Final LR**, Decay rate, #Decay steps, Power $p$.
@@ -536,14 +538,14 @@ $$
 
 <br/>
 
-## Cycle
+### Cycle
 - **What**: Cycle the LR between lower & upper bounds.
 - **Why**: Decays are good, BUT they are heavily sensitive to hyperparams.
 	- If LR ⬇️ too slow $\rightarrow$ Overshoot global minima
 	- If LR ⬇️ too fast $\rightarrow$ No chance to explore further regions $\rightarrow$ Stuck in local minima & saddle points
 	- Periodically increasing LR can help escape local minima & saddle points.
 
-### Cyclical LR
+#### Cyclical LR
 - **How**:
 	1. Init: Min LR, Max LR, Step size for half cycle.
 	2. Choose a cycle policy (See [bckenstler/CLR](https://github.com/bckenstler/CLR)): 
@@ -576,7 +578,7 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-### Cosine Annealing
+#### Cosine Annealing
 - **Why**: Cyclical LR starts with low LR, which slows the initial learning process.
 	- We still want to start fast & also keep the advantage of cycles & smooth curves.
 - **How**:
@@ -620,7 +622,7 @@ $$
 - $T_i=T_0\times\lambda_\text{mul}^i$, where $\lambda_\text{mul}$ is a factor by which the cycle length is increased after each restart.
 ```
 
-### One Cycle Policy
+#### One Cycle Policy
 - **What**: Use ONLY 1 cycle for LR scheduling throughout training.
 - **Why**: Super-convergence: training models to high accuracy in ⬇️⬇️ epochs.
 - **How**:
@@ -664,7 +666,7 @@ $$\begin{align*}
 
 <br/>
 
-## ReduceLROnPlateau
+### ReduceLROnPlateau
 - **What**: Reduce LR when the model is on a plateau of **performance** (i.e., stuck).
 - **Why**: No scheduler above cares about actual metrics, BUT we do.
 - **How**:
