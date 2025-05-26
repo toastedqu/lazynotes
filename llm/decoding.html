@@ -178,21 +178,14 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../dl/module.html">Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../dl/optim.html">Parameter Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dl/loss.html">Loss</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="transformer.html">Transformer</a></li>
-
-
-
-
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Decoding</a></li>
-
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="rlhf.html">RL for LLMs</a></li>
 
 </ul>
@@ -352,18 +345,16 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Decoding</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#penalty">Penalty</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">Greedy Search</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">Beam Search</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling">Sampling</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k">Top-k</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-p-nucleus">Top-p (Nucleus)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#penalty">Penalty</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">Greedy Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">Beam Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling">Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k">Top-k</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-p-nucleus">Top-p (Nucleus)</a></li>
 </ul>
 </li>
 </ul>
-
             </nav>
         </div>
     </div>
@@ -435,9 +426,8 @@ Y_*=\arg\max_YP(Y|X)
 \]</div>
 </div>
 <br/>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="temperature">
-<h1>Temperature<a class="headerlink" href="#temperature" title="Link to this heading">#</a></h1>
+<section id="temperature">
+<h2>Temperature<a class="headerlink" href="#temperature" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Randomness control.</p></li>
 <li><p><strong>Why</strong>: <strong>Boltzmann distribution</strong> from statistical mechanics: <span class="math notranslate nohighlight">\(p_i\propto\exp\left(-\frac{E_i}{kT}\right)\)</span></p>
@@ -470,8 +460,8 @@ Y_*=\arg\max_YP(Y|X)
 </ul>
 <br/>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="penalty">
-<h1>Penalty<a class="headerlink" href="#penalty" title="Link to this heading">#</a></h1>
+<section id="penalty">
+<h2>Penalty<a class="headerlink" href="#penalty" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Penalize the logits of tokens present in current token sequence.</p></li>
 <li><p><strong>Why</strong>: Autoregressive LMs can fall into repetition loops. (Occurs much more often with Greedy/Beam Search)</p>
@@ -532,8 +522,8 @@ Y_*=\arg\max_YP(Y|X)
 </div>
 </details><br/>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="greedy-search">
-<h1>Greedy Search<a class="headerlink" href="#greedy-search" title="Link to this heading">#</a></h1>
+<section id="greedy-search">
+<h2>Greedy Search<a class="headerlink" href="#greedy-search" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Always take the most probable token at each step.</p></li>
 <li><p><strong>Why</strong>: Simplest.</p></li>
@@ -548,8 +538,8 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
 </div>
 <br/>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="beam-search">
-<h1>Beam Search<a class="headerlink" href="#beam-search" title="Link to this heading">#</a></h1>
+<section id="beam-search">
+<h2>Beam Search<a class="headerlink" href="#beam-search" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Iteratively explore &amp; evaluate multiple hypotheses (i.e., beams).</p></li>
 <li><p><strong>Why</strong>: Greedy search focuses on local optima <span class="math notranslate nohighlight">\(\rightarrow\)</span> May not lead to globally optimal sequence.</p></li>
@@ -612,8 +602,8 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
 </div>
 <br/>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="sampling">
-<h1>Sampling<a class="headerlink" href="#sampling" title="Link to this heading">#</a></h1>
+<section id="sampling">
+<h2>Sampling<a class="headerlink" href="#sampling" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Random selection from a set/distribution.</p></li>
 <li><p><strong>Why</strong>: Controlled randomness.</p>
@@ -629,7 +619,7 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
 </li>
 </ul>
 <section id="top-k">
-<h2>Top-k<a class="headerlink" href="#top-k" title="Link to this heading">#</a></h2>
+<h3>Top-k<a class="headerlink" href="#top-k" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Output token <span class="math notranslate nohighlight">\(\sim\)</span> Top-<span class="math notranslate nohighlight">\(k\)</span> most probable tokens.</p></li>
 <li><p><strong>Why</strong>: Temperature sampling <span class="math notranslate nohighlight">\(\rightarrow\)</span> Too much randomness if large temperature <span class="math notranslate nohighlight">\(\rightarrow\)</span> Incoherent sequence</p>
@@ -649,7 +639,7 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
 </ul>
 </section>
 <section id="top-p-nucleus">
-<h2>Top-p (Nucleus)<a class="headerlink" href="#top-p-nucleus" title="Link to this heading">#</a></h2>
+<h3>Top-p (Nucleus)<a class="headerlink" href="#top-p-nucleus" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Output token <span class="math notranslate nohighlight">\(\sim\)</span> Smallest possible set of tokens whose cumulative probability exceeds <span class="math notranslate nohighlight">\(p\)</span>.</p>
 <ul>
@@ -672,6 +662,7 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
 </ol>
 </li>
 </ul>
+</section>
 </section>
 </section>
 
@@ -739,18 +730,16 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Decoding</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#penalty">Penalty</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">Greedy Search</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">Beam Search</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling">Sampling</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k">Top-k</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-p-nucleus">Top-p (Nucleus)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#penalty">Penalty</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">Greedy Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">Beam Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling">Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k">Top-k</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-p-nucleus">Top-p (Nucleus)</a></li>
 </ul>
 </li>
 </ul>
-
   </nav></div>
 
 </div></div>

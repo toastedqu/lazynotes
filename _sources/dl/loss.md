@@ -49,8 +49,8 @@ kernelspec:
 
 <br/>
 
-# Regression
-## MSE
+## Regression
+### MSE
 - **What**: Mean Squared Error.
 - **Why**: Assumption: **Gaussian Distribution**.
 - **How**: Get errors $\rightarrow$ Square errors $\rightarrow$ Aggregate
@@ -110,7 +110,7 @@ $$
 - Scale variant.
 ```
 
-## MAE
+### MAE
 - **What**: Mean Absolute Error.
 - **Why**: Assumption: **Laplace Distribution**.
 - **How**: Get errors $\rightarrow$ Absolute values $\rightarrow$ Aggregate
@@ -171,15 +171,15 @@ $$
 - No closed-form solution.
 ```
 
-## Huber Loss
+### Huber Loss
 
 
-## Quantile Loss
+### Quantile Loss
 
 <br/>
 
-# Classification
-## Cross Entropy
+## Classification
+### Cross Entropy
 - **What**: Entropy of 2 probability distributions (predicted & actual) crossed over each other.
 - **Why**: Assumption: **Categorical Dsitribution** (i.e., the probability of an observation belonging to each class $k$).
 - **How**: Get cross entropy per sample $\rightarrow$ Aggregate
@@ -284,13 +284,13 @@ $$\begin{align*}
 - Scale variant.
 ```
 
-## Hinge
+### Hinge
 
 <br/>
 
-# Ranking
+## Ranking
 
-## Contrastive
+### Contrastive
 - **What**: Create an embedding space where similar embeddings are closer & dissimilar embeddings are farther.
 - **Why**: To learn **similarity**.
 - **How**:
@@ -346,14 +346,14 @@ $$\begin{align*}
 ```
 
 
-## Triplet
+### Triplet
 
 <br/>
 
-# Generative Model
-## Adversarial
+## Generative Model
+### Adversarial
 
-## KL Divergence
+### KL Divergence
 - **What**: Relative entropy (i.e., Cross Entropy - Entropy).
 - **Why**: To force the learned distribution to resemble the target distribution.
 - **How**: 
@@ -369,12 +369,12 @@ $$\begin{align*}
 	- If we use a fixed model $Q$ to approximate 2 different true distributions $P_1$ and $P_2$, then KL Divergence may not necessarily follow the pattern of cross entropy.
 ```
 
-## Wasserstein
+### Wasserstein
 
-<br/>
+<!-- <br/> -->
 
-# Sequence Model
-## CTC
+<!-- ## Sequence Model
+### CTC
 - **What**: Connectionist Temporal Classification.
 
 <br/>
@@ -391,4 +391,4 @@ $$\begin{align*}
 ## YOLO (Composite)
 ## Faster R-CNN (Composite)
 ## Focal (Dense Object Detection)
-## SSD
+## SSD -->

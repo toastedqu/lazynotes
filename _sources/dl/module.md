@@ -20,8 +20,7 @@ Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readabi
 
 <br/>
 
-## Basic
-### Linear
+## Linear
 - **What**: Linear transform.
 - **Why**: Simplest way to transform data & learn patterns.
 - **How**: Sum of weighted input features (+ bias).
@@ -345,7 +344,7 @@ Backward:
 
 <br/>
 
-# Convolution
+## Convolution
 - **What**: Slide a set of filters over input data to extract local features.
 - **Why**: To learn spatial hierarchies of local features.
 - **How**: 
@@ -407,7 +406,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
 - Requires extensive hyperparam tuning.
 ```
 
-## Depthwise Convolution
+### Depthwise Convolution
 - **What**: Apply a single convolutional filter to each input channel independently.
 - **Why**: To learn spatial features within each channel separately, significantly reducing computational cost and model parameters compared to standard convolution.
 - **How**:
@@ -729,19 +728,19 @@ Notations:
 
 <br/>
 
-# Activation
+## Activation
 - **What**: An element-wise non-linear function over a layer's output.
 - **Why**: Non-linearity.
     - w/o it, a full NN is just simple linear regression.
 
-## Binary-like
+### Binary-like
 - **What**: Functions with near-binary outputs.
 - **Why**: Biology - Biological neurons generally:
     - react little to small inputs
     - react rapidly after input stimulus passes a threshold
     - converge to a max as stimulus increases
 
-### Sigmoid
+#### Sigmoid
 - **What**: Sigmoid function.
 - **Why**: Mathematically convenient $\leftarrow$ Smooth gradient.
 
@@ -770,7 +769,7 @@ $$
 -  Non-zero centric bias $\rightarrow$ Non-zero mean activations
 ```
 
-### Tanh
+#### Tanh
 - **What**: Tanh function.
 - **Why**: Mathematically convenient $\leftarrow$ Smooth gradient.
 
@@ -800,7 +799,7 @@ $$
 -  Vanishing gradient.
 ```
 
-## ReLU
+### ReLU
 - **What**: Rectified Linear Unit
 - **Why**:
     - Binary-like activation functions suffered from vanishing gradients.
@@ -1067,7 +1066,7 @@ Cons:
 
 ## Multiclass -->
 
-## Softmax
+### Softmax
 - **What**: Numbers $\rightarrow$ Probabilities
 - **Why**: Multiclass classification.
 - **How**:

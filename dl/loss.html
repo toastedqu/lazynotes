@@ -65,6 +65,8 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Transformer" href="../llm/transformer.html" />
+    <link rel="prev" title="Parameter Optimization" href="optim.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -127,8 +129,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -177,22 +177,15 @@
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="module.html">Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optim.html">Parameter Optimization</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Loss</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../llm/transformer.html">Transformer</a></li>
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="../llm/decoding.html">Decoding</a></li>
-
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="../llm/rlhf.html">RL for LLMs</a></li>
 
 </ul>
@@ -352,49 +345,30 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Loss</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#regression">Regression</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mse">MSE</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mae">MAE</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#huber-loss">Huber Loss</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantile-loss">Quantile Loss</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regression">Regression</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mse">MSE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mae">MAE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#huber-loss">Huber Loss</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quantile-loss">Quantile Loss</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#classification">Classification</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-entropy">Cross Entropy</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hinge">Hinge</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classification">Classification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-entropy">Cross Entropy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hinge">Hinge</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking">Ranking</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contrastive">Contrastive</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#triplet">Triplet</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking">Ranking</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contrastive">Contrastive</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#triplet">Triplet</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#generative-model">Generative Model</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adversarial">Adversarial</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kl-divergence">KL Divergence</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wasserstein">Wasserstein</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#sequence-model">Sequence Model</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ctc">CTC</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#segmentation">Segmentation</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dice">Dice</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jaccard-iou">Jaccard (IoU)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gdl">GDL</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#object-detection">Object Detection</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#yolo-composite">YOLO (Composite)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#faster-r-cnn-composite">Faster R-CNN (Composite)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#focal-dense-object-detection">Focal (Dense Object Detection)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ssd">SSD</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generative-model">Generative Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adversarial">Adversarial</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kl-divergence">KL Divergence</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wasserstein">Wasserstein</a></li>
 </ul>
 </li>
 </ul>
-
             </nav>
         </div>
     </div>
@@ -473,11 +447,10 @@ document.write(`
 </ul>
 </div>
 <br/>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="regression">
-<h1>Regression<a class="headerlink" href="#regression" title="Link to this heading">#</a></h1>
+<section id="regression">
+<h2>Regression<a class="headerlink" href="#regression" title="Link to this heading">#</a></h2>
 <section id="mse">
-<h2>MSE<a class="headerlink" href="#mse" title="Link to this heading">#</a></h2>
+<h3>MSE<a class="headerlink" href="#mse" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Mean Squared Error.</p></li>
 <li><p><strong>Why</strong>: Assumption: <strong>Gaussian Distribution</strong>.</p></li>
@@ -543,7 +516,7 @@ document.write(`
 </div>
 </section>
 <section id="mae">
-<h2>MAE<a class="headerlink" href="#mae" title="Link to this heading">#</a></h2>
+<h3>MAE<a class="headerlink" href="#mae" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Mean Absolute Error.</p></li>
 <li><p><strong>Why</strong>: Assumption: <strong>Laplace Distribution</strong>.</p></li>
@@ -610,17 +583,17 @@ document.write(`
 </div>
 </section>
 <section id="huber-loss">
-<h2>Huber Loss<a class="headerlink" href="#huber-loss" title="Link to this heading">#</a></h2>
+<h3>Huber Loss<a class="headerlink" href="#huber-loss" title="Link to this heading">#</a></h3>
 </section>
 <section id="quantile-loss">
-<h2>Quantile Loss<a class="headerlink" href="#quantile-loss" title="Link to this heading">#</a></h2>
+<h3>Quantile Loss<a class="headerlink" href="#quantile-loss" title="Link to this heading">#</a></h3>
 <br/>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="classification">
-<h1>Classification<a class="headerlink" href="#classification" title="Link to this heading">#</a></h1>
+<section id="classification">
+<h2>Classification<a class="headerlink" href="#classification" title="Link to this heading">#</a></h2>
 <section id="cross-entropy">
-<h2>Cross Entropy<a class="headerlink" href="#cross-entropy" title="Link to this heading">#</a></h2>
+<h3>Cross Entropy<a class="headerlink" href="#cross-entropy" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Entropy of 2 probability distributions (predicted &amp; actual) crossed over each other.</p></li>
 <li><p><strong>Why</strong>: Assumption: <strong>Categorical Dsitribution</strong> (i.e., the probability of an observation belonging to each class <span class="math notranslate nohighlight">\(k\)</span>).</p></li>
@@ -737,14 +710,14 @@ L(f)&amp;=\prod_{i=1}^{m}\prod_{k=1}^{K}\hat{p}_{ik}^{y_{ik}} \\
 </div>
 </section>
 <section id="hinge">
-<h2>Hinge<a class="headerlink" href="#hinge" title="Link to this heading">#</a></h2>
+<h3>Hinge<a class="headerlink" href="#hinge" title="Link to this heading">#</a></h3>
 <br/>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="ranking">
-<h1>Ranking<a class="headerlink" href="#ranking" title="Link to this heading">#</a></h1>
+<section id="ranking">
+<h2>Ranking<a class="headerlink" href="#ranking" title="Link to this heading">#</a></h2>
 <section id="contrastive">
-<h2>Contrastive<a class="headerlink" href="#contrastive" title="Link to this heading">#</a></h2>
+<h3>Contrastive<a class="headerlink" href="#contrastive" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Create an embedding space where similar embeddings are closer &amp; dissimilar embeddings are farther.</p></li>
 <li><p><strong>Why</strong>: To learn <strong>similarity</strong>.</p></li>
@@ -820,17 +793,17 @@ L(f)&amp;=\prod_{i=1}^{m}\prod_{k=1}^{K}\hat{p}_{ik}^{y_{ik}} \\
 </div>
 </section>
 <section id="triplet">
-<h2>Triplet<a class="headerlink" href="#triplet" title="Link to this heading">#</a></h2>
+<h3>Triplet<a class="headerlink" href="#triplet" title="Link to this heading">#</a></h3>
 <br/>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="generative-model">
-<h1>Generative Model<a class="headerlink" href="#generative-model" title="Link to this heading">#</a></h1>
+<section id="generative-model">
+<h2>Generative Model<a class="headerlink" href="#generative-model" title="Link to this heading">#</a></h2>
 <section id="adversarial">
-<h2>Adversarial<a class="headerlink" href="#adversarial" title="Link to this heading">#</a></h2>
+<h3>Adversarial<a class="headerlink" href="#adversarial" title="Link to this heading">#</a></h3>
 </section>
 <section id="kl-divergence">
-<h2>KL Divergence<a class="headerlink" href="#kl-divergence" title="Link to this heading">#</a></h2>
+<h3>KL Divergence<a class="headerlink" href="#kl-divergence" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Relative entropy (i.e., Cross Entropy - Entropy).</p></li>
 <li><p><strong>Why</strong>: To force the learned distribution to resemble the target distribution.</p></li>
@@ -856,49 +829,27 @@ L(f)&amp;=\prod_{i=1}^{m}\prod_{k=1}^{K}\hat{p}_{ik}^{y_{ik}} \\
 </div>
 </section>
 <section id="wasserstein">
-<h2>Wasserstein<a class="headerlink" href="#wasserstein" title="Link to this heading">#</a></h2>
+<h3>Wasserstein<a class="headerlink" href="#wasserstein" title="Link to this heading">#</a></h3>
+<!-- <br/> -->
+<!-- ## Sequence Model
+### CTC
+- **What**: Connectionist Temporal Classification.
+
 <br/>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="sequence-model">
-<h1>Sequence Model<a class="headerlink" href="#sequence-model" title="Link to this heading">#</a></h1>
-<section id="ctc">
-<h2>CTC<a class="headerlink" href="#ctc" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>What</strong>: Connectionist Temporal Classification.</p></li>
-</ul>
+
+# Segmentation
+## Dice
+## Jaccard (IoU)
+## GDL
+- **What**: Generalized Dice Loss.
+
 <br/>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="segmentation">
-<h1>Segmentation<a class="headerlink" href="#segmentation" title="Link to this heading">#</a></h1>
-<section id="dice">
-<h2>Dice<a class="headerlink" href="#dice" title="Link to this heading">#</a></h2>
-</section>
-<section id="jaccard-iou">
-<h2>Jaccard (IoU)<a class="headerlink" href="#jaccard-iou" title="Link to this heading">#</a></h2>
-</section>
-<section id="gdl">
-<h2>GDL<a class="headerlink" href="#gdl" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>What</strong>: Generalized Dice Loss.</p></li>
-</ul>
-<br/>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="object-detection">
-<h1>Object Detection<a class="headerlink" href="#object-detection" title="Link to this heading">#</a></h1>
-<section id="yolo-composite">
-<h2>YOLO (Composite)<a class="headerlink" href="#yolo-composite" title="Link to this heading">#</a></h2>
-</section>
-<section id="faster-r-cnn-composite">
-<h2>Faster R-CNN (Composite)<a class="headerlink" href="#faster-r-cnn-composite" title="Link to this heading">#</a></h2>
-</section>
-<section id="focal-dense-object-detection">
-<h2>Focal (Dense Object Detection)<a class="headerlink" href="#focal-dense-object-detection" title="Link to this heading">#</a></h2>
-</section>
-<section id="ssd">
-<h2>SSD<a class="headerlink" href="#ssd" title="Link to this heading">#</a></h2>
+
+# Object Detection
+## YOLO (Composite)
+## Faster R-CNN (Composite)
+## Focal (Dense Object Detection)
+## SSD --></section>
 </section>
 </section>
 
@@ -932,6 +883,24 @@ L(f)&amp;=\prod_{i=1}^{m}\prod_{k=1}^{K}\hat{p}_{ik}^{y_{ik}} \\
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="optim.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Parameter Optimization</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../llm/transformer.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Transformer</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -948,49 +917,30 @@ L(f)&amp;=\prod_{i=1}^{m}\prod_{k=1}^{K}\hat{p}_{ik}^{y_{ik}} \\
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Loss</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#regression">Regression</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mse">MSE</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mae">MAE</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#huber-loss">Huber Loss</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantile-loss">Quantile Loss</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regression">Regression</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mse">MSE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mae">MAE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#huber-loss">Huber Loss</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quantile-loss">Quantile Loss</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#classification">Classification</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-entropy">Cross Entropy</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hinge">Hinge</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classification">Classification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-entropy">Cross Entropy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hinge">Hinge</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking">Ranking</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contrastive">Contrastive</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#triplet">Triplet</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking">Ranking</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contrastive">Contrastive</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#triplet">Triplet</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#generative-model">Generative Model</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adversarial">Adversarial</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kl-divergence">KL Divergence</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wasserstein">Wasserstein</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#sequence-model">Sequence Model</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ctc">CTC</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#segmentation">Segmentation</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dice">Dice</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jaccard-iou">Jaccard (IoU)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gdl">GDL</a></li>
-</ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#object-detection">Object Detection</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#yolo-composite">YOLO (Composite)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#faster-r-cnn-composite">Faster R-CNN (Composite)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#focal-dense-object-detection">Focal (Dense Object Detection)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ssd">SSD</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generative-model">Generative Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adversarial">Adversarial</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kl-divergence">KL Divergence</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wasserstein">Wasserstein</a></li>
 </ul>
 </li>
 </ul>
-
   </nav></div>
 
 </div></div>

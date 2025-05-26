@@ -65,6 +65,8 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Parameter Optimization" href="optim.html" />
+    <link rel="prev" title="LazyNotes" href="../intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -127,8 +129,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -177,22 +177,15 @@
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optim.html">Parameter Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../llm/transformer.html">Transformer</a></li>
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="../llm/decoding.html">Decoding</a></li>
-
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="../llm/rlhf.html">RL for LLMs</a></li>
 
 </ul>
@@ -352,11 +345,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Module</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic">Basic</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear">Linear</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear">Linear</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dropout">Dropout</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-connection">Residual Connection</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalization">Normalization</a><ul class="nav section-nav flex-column">
@@ -364,27 +353,22 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-normalization">Layer Normalization</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution">Convolution</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#depthwise-convolution">Depthwise Convolution</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution">Convolution</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#depthwise-convolution">Depthwise Convolution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#activation">Activation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-like">Binary-like</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sigmoid">Sigmoid</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tanh">Tanh</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#activation">Activation</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-like">Binary-like</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sigmoid">Sigmoid</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tanh">Tanh</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relu">ReLU</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relu">ReLU</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lrelu">LReLU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
 </ul>
-</li>
-</ul>
-
             </nav>
         </div>
     </div>
@@ -409,10 +393,8 @@ document.write(`
 </ul>
 <p>Let <span class="math notranslate nohighlight">\(g\)</span> denote the gradient <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial y}\)</span> for readability.</p>
 <br/>
-<section id="basic">
-<h2>Basic<a class="headerlink" href="#basic" title="Link to this heading">#</a></h2>
 <section id="linear">
-<h3>Linear<a class="headerlink" href="#linear" title="Link to this heading">#</a></h3>
+<h2>Linear<a class="headerlink" href="#linear" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Linear transform.</p></li>
 <li><p><strong>Why</strong>: Simplest way to transform data &amp; learn patterns.</p></li>
@@ -494,7 +476,6 @@ document.write(`
 </div>
 </div>
 </div>
-</section>
 </section>
 <section id="dropout">
 <h2>Dropout<a class="headerlink" href="#dropout" title="Link to this heading">#</a></h2>
@@ -841,9 +822,8 @@ document.write(`
 <br/>
 </section>
 </section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="convolution">
-<h1>Convolution<a class="headerlink" href="#convolution" title="Link to this heading">#</a></h1>
+<section id="convolution">
+<h2>Convolution<a class="headerlink" href="#convolution" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Slide a set of filters over input data to extract local features.</p></li>
 <li><p><strong>Why</strong>: To learn spatial hierarchies of local features.</p></li>
@@ -921,7 +901,7 @@ W_{out}&amp;=\left\lfloor\frac{W_{in}+2p-f_w}{s}\right\rfloor+1
 </ul>
 </div>
 <section id="depthwise-convolution">
-<h2>Depthwise Convolution<a class="headerlink" href="#depthwise-convolution" title="Link to this heading">#</a></h2>
+<h3>Depthwise Convolution<a class="headerlink" href="#depthwise-convolution" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Apply a single convolutional filter to each input channel independently.</p></li>
 <li><p><strong>Why</strong>: To learn spatial features within each channel separately, significantly reducing computational cost and model parameters compared to standard convolution.</p></li>
@@ -1254,8 +1234,8 @@ Notations:
 <br/>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="activation">
-<h1>Activation<a class="headerlink" href="#activation" title="Link to this heading">#</a></h1>
+<section id="activation">
+<h2>Activation<a class="headerlink" href="#activation" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: An element-wise non-linear function over a layer’s output.</p></li>
 <li><p><strong>Why</strong>: Non-linearity.</p>
@@ -1265,7 +1245,7 @@ Notations:
 </li>
 </ul>
 <section id="binary-like">
-<h2>Binary-like<a class="headerlink" href="#binary-like" title="Link to this heading">#</a></h2>
+<h3>Binary-like<a class="headerlink" href="#binary-like" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Functions with near-binary outputs.</p></li>
 <li><p><strong>Why</strong>: Biology - Biological neurons generally:</p>
@@ -1277,7 +1257,7 @@ Notations:
 </li>
 </ul>
 <section id="sigmoid">
-<h3>Sigmoid<a class="headerlink" href="#sigmoid" title="Link to this heading">#</a></h3>
+<h4>Sigmoid<a class="headerlink" href="#sigmoid" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p><strong>What</strong>: Sigmoid function.</p></li>
 <li><p><strong>Why</strong>: Mathematically convenient <span class="math notranslate nohighlight">\(\leftarrow\)</span> Smooth gradient.</p></li>
@@ -1309,7 +1289,7 @@ y=\sigma(z)=\frac{1}{1+e^{-z}}
 </div>
 </section>
 <section id="tanh">
-<h3>Tanh<a class="headerlink" href="#tanh" title="Link to this heading">#</a></h3>
+<h4>Tanh<a class="headerlink" href="#tanh" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p><strong>What</strong>: Tanh function.</p></li>
 <li><p><strong>Why</strong>: Mathematically convenient <span class="math notranslate nohighlight">\(\leftarrow\)</span> Smooth gradient.</p></li>
@@ -1345,7 +1325,7 @@ y=\tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
 </section>
 </section>
 <section id="relu">
-<h2>ReLU<a class="headerlink" href="#relu" title="Link to this heading">#</a></h2>
+<h3>ReLU<a class="headerlink" href="#relu" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Rectified Linear Unit</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -1392,6 +1372,7 @@ y=\text{ReLU}(z)=\max{(0,z)}
 <li><p>Activation explosion <span class="math notranslate nohighlight">\(\longleftarrow\)</span> <span class="math notranslate nohighlight">\(z\rightarrow\infty\)</span>. (NOTE: NOT A SEVERE DISADVANTAGE SO FAR)</p></li>
 </ul>
 </div>
+</section>
 <section id="lrelu">
 <h3>LReLU<a class="headerlink" href="#lrelu" title="Link to this heading">#</a></h3>
 <ul class="simple">
@@ -1620,9 +1601,8 @@ Cons:
 
 ## Multiclass -->
 </section>
-</section>
 <section id="softmax">
-<h2>Softmax<a class="headerlink" href="#softmax" title="Link to this heading">#</a></h2>
+<h3>Softmax<a class="headerlink" href="#softmax" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Numbers <span class="math notranslate nohighlight">\(\rightarrow\)</span> Probabilities</p></li>
 <li><p><strong>Why</strong>: Multiclass classification.</p></li>
@@ -1667,6 +1647,7 @@ Pros:
 Cons:
 - why not softmax. --></section>
 </section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1698,6 +1679,24 @@ Cons:
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">LazyNotes</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="optim.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Parameter Optimization</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -1714,11 +1713,7 @@ Cons:
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Module</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic">Basic</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear">Linear</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear">Linear</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dropout">Dropout</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-connection">Residual Connection</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalization">Normalization</a><ul class="nav section-nav flex-column">
@@ -1726,27 +1721,22 @@ Cons:
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-normalization">Layer Normalization</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution">Convolution</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#depthwise-convolution">Depthwise Convolution</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution">Convolution</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#depthwise-convolution">Depthwise Convolution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#activation">Activation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-like">Binary-like</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sigmoid">Sigmoid</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tanh">Tanh</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#activation">Activation</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-like">Binary-like</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sigmoid">Sigmoid</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tanh">Tanh</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relu">ReLU</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relu">ReLU</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lrelu">LReLU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
 </ul>
-</li>
-</ul>
-
   </nav></div>
 
 </div></div>

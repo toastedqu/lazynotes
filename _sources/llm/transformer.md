@@ -32,14 +32,14 @@ kernelspec:
 
 <br/>
 
-# Tokenization
+## Tokenization
 - **What**: Sequence $\rightarrow$ Tokens
 - **Why**: Machines can only read numbers.
 - **How**: (tbd)
 
 <br/>
 
-# Token Embedding
+## Token Embedding
 - **What**: Tokens $\rightarrow$ Semantic vectors.
 - **Why**:
 	- Discrete $\rightarrow$ Continuous
@@ -49,14 +49,14 @@ kernelspec:
 
 <br/>
 
-# Positional Encoding
+## Positional Encoding
 - **What**: Semantic vectors + Positional info $\rightarrow$ Position-aware vectors
 - **Why**:
 	- Transformers don't know positions.
 	- BUT positions matter!
 		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
 
-## Sinusoidal PE
+### Sinusoidal PE
 - **What**: Positional info $\rightarrow$ Sine waves
 - **Why**:
 	- Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
@@ -86,15 +86,15 @@ $$\begin{align*}
 - Cannot capture complex, relative, or local positional relationships.
 ```
 
-## RoPE
+### RoPE
 - **What**: Rotation matrix $\times$ Token embeddings $\xrightarrow{\text{encode}}$ Relative Position.
 - **Why**: 
 
 
 <br/>
 
-# Attention
-## Self-Attention
+## Attention
+### Self-Attention
 - **What**: Each element in the sequence pays attention to each other.
 - **Why**: **Long-range dependencies** + **Parallel processing**
 - **How**:
@@ -163,19 +163,20 @@ Notations:
 - $A=\text{softmax}(S)$
 - $Y=AV$
 
-STEP 1 - V:
+Process:
+1. V:
 
 $$
 \frac{\partial L}{\partial V}=A^T\frac{\partial L}{\partial Y}
 $$
 
-STEP 2 - A:
+2. A:
 
 $$
 \frac{\partial L}{\partial A}=\frac{\partial L}{\partial Y}V^T
 $$
 
-STEP 3 - S:
+3. S:
 
 - Recall that for $\mathbf{a}=\text{softmax}(\mathbf{s})$:
 
@@ -193,14 +194,14 @@ STEP 3 - S:
 	&=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}A_{ik}
 	\end{align*}$$
 
-STEP 4 - Q&K:
+4. Q&K:
 
 $$\begin{align*}
 &\frac{\partial L}{\partial Q}=\frac{\partial L}{\partial S}\frac{K}{\sqrt{d_K}} \\
 &\frac{\partial L}{\partial K}=\frac{\partial L}{\partial S}^T\frac{Q}{\sqrt{d_K}}
 \end{align*}$$
 
-STEP 5 - Ws:
+5. Ws:
 
 $$\begin{align*}
 &\frac{\partial L}{\partial W_Q}=X^T\frac{\partial L}{\partial Q}\\
@@ -208,7 +209,7 @@ $$\begin{align*}
 &\frac{\partial L}{\partial W_V}=X^T\frac{\partial L}{\partial V}
 \end{align*}$$
 
-STEP 6 - X:
+6. X:
 
 $$
 \frac{\partial L}{\partial X}=\frac{\partial L}{\partial Q}W_Q^T+\frac{\partial L}{\partial K}W_K^T+\frac{\partial L}{\partial V}W_V^T
@@ -233,7 +234,7 @@ $$
 - Score margins are amplified $\rightarrow$ More attention to relevant elements
 ```
 
-## Masked/Causal Attention
+### Masked/Causal Attention
 - **What**: Self-attention BUT each token can only see its previous tokens (and itself).
 - **Why**: Autoregressive generation.
 - **How**: For each token, mask attention scores of all future tokens to $-\infty$ before softmax.
@@ -265,14 +266,14 @@ $$
 	- ...
 ```
 
-## Cross Attention
+### Cross Attention
 - **What**: Scaled Dot-Product Attention BUT
 	- K&V $\leftarrow$ Source (e.g., Encoder)
 	- Q $\leftarrow$ Current sequence (i.e., Decoder)
 - **Why**: Additional source info may be helpful for predicting next token for current sequence.
 - **How**: See [Self-Attention](#self-attention).
 
-## Multi-Head Attention
+### Multi-Head Attention
 - **What**: Multiple self-attention modules running in parallel.
 - **Why**:
 	- $1$ attention module $\xrightarrow{\text{monitor}}$ $1$ representation subspace
