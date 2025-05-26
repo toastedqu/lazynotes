@@ -53,7 +53,7 @@ $$
 
 <br/>
 
-# Temperature
+## Temperature
 - **What**: Randomness control.
 - **Why**: **Boltzmann distribution** from statistical mechanics: $p_i\propto\exp\left(-\frac{E_i}{kT}\right)$
 	- This describes the probability of a system being in a particular state $i$ given the state's energy $E_i$ and the system's temperature $T$.
@@ -73,7 +73,7 @@ $$
 
 <br/>
 
-# Penalty
+## Penalty
 - **What**: Penalize the logits of tokens present in current token sequence.
 - **Why**: Autoregressive LMs can fall into repetition loops. (Occurs much more often with Greedy/Beam Search)
     - Autoregressive LMs are trained to predicted the most probable next token given current context.
@@ -100,7 +100,7 @@ Notations:
 
 <br/>
 
-# Greedy Search
+## Greedy Search
 - **What**: Always take the most probable token at each step.
 - **Why**: Simplest.
 
@@ -115,7 +115,7 @@ $$
 
 <br/>
 
-# Beam Search
+## Beam Search
 - **What**: Iteratively explore & evaluate multiple hypotheses (i.e., beams). 
 - **Why**: Greedy search focuses on local optima $\rightarrow$ May not lead to globally optimal sequence.
 - **How**:
@@ -159,7 +159,7 @@ Beam Search:
 
 <br/>
 
-# Sampling
+## Sampling
 - **What**: Random selection from a set/distribution.
 - **Why**: Controlled randomness.
 	- Greedy or Beam Search lead to **deterministic** outcomes.
@@ -167,7 +167,7 @@ Beam Search:
 		- Beam: Most probable sequence at the end.
 	- Deterministic outcomes = Generic, repetitive, lacking creativity.
 
-## Top-k
+### Top-k
 - **What**: Output token $\sim$ Top-$k$ most probable tokens.
 - **Why**: Temperature sampling $\rightarrow$ Too much randomness if large temperature $\rightarrow$ Incoherent sequence
 	- Any token may be selected based on its probability, including less probable ones.
@@ -178,7 +178,7 @@ Beam Search:
 	3. Re-normalize probabilities of top $k$ tokens.
 	4. Sample.
 
-## Top-p (Nucleus)
+### Top-p (Nucleus)
 - **What**: Output token $\sim$ Smallest possible set of tokens whose cumulative probability exceeds $p$.
 	- **Nucleus**: the set.
 - **Why**: In Top-k,

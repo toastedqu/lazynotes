@@ -14,9 +14,9 @@ parts:
     # - file: ml/hyperopt
   - caption: Deep Learning
     chapters:
-    # - file: dl/module
+    - file: dl/module
     - file: dl/optim
-    # - file: dl/loss
+    - file: dl/loss
     # - file: dl/train
     # - file: dl/issues
   - caption: LLM
