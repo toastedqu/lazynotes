@@ -3,6 +3,8 @@
 
 format: jb-book
 root: intro
+options:
+  maxdepth: 4
 parts:
   # - caption: Machine Learning
   #   chapters:
