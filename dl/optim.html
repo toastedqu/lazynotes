@@ -352,22 +352,19 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimizer">Optimizer</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nag-nesterov-accelerated-gradient">NAG (Nesterov Accelerated Gradient)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nag-nesterov-accelerated-gradient">NAG (Nesterov Accelerated Gradient)</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-lr">Adaptive LR</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-lr">Adaptive LR</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lr-scheduler">LR Scheduler</a><ul class="nav section-nav flex-column">
@@ -409,11 +406,8 @@ document.write(`
 <li><p><strong>What</strong>: Find the optimal params of the given model for the given task.</p></li>
 <li><p><strong>Why</strong>: To best solve the task.</p></li>
 </ul>
-<br/>
-<section id="optimizer">
-<h2>Optimizer<a class="headerlink" href="#optimizer" title="Link to this heading">#</a></h2>
 <section id="gradient-descent">
-<h3>Gradient Descent<a class="headerlink" href="#gradient-descent" title="Link to this heading">#</a></h3>
+<h2>Gradient Descent<a class="headerlink" href="#gradient-descent" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Update the params based on the grad’s size and direction.</p>
 <ul>
@@ -495,10 +489,9 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial \mathcal{L}(w_t; \mathcal{D}_{\math
 w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 \]</div>
 </div>
-<br/>
 </section>
 <section id="momentum">
-<h3>Momentum<a class="headerlink" href="#momentum" title="Link to this heading">#</a></h3>
+<h2>Momentum<a class="headerlink" href="#momentum" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: GD + Cache of past movements.</p></li>
 <li><p><strong>Why</strong>: GD is:</p>
@@ -562,7 +555,7 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 \end{align*}\end{split}\]</div>
 </div>
 <section id="nag-nesterov-accelerated-gradient">
-<h4>NAG (Nesterov Accelerated Gradient)<a class="headerlink" href="#nag-nesterov-accelerated-gradient" title="Link to this heading">#</a></h4>
+<h3>NAG (Nesterov Accelerated Gradient)<a class="headerlink" href="#nag-nesterov-accelerated-gradient" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Momentum + “Look-ahead”</p></li>
 <li><p><strong>Why</strong>: Momentum can sometimes jump over the global minimum.</p>
@@ -625,13 +618,12 @@ v_t = \beta v_{t-1} + \tilde{g}_t
 w_t \leftarrow w_{t-1} - \eta v_t 
 \]</div>
 </div>
-<br/>
 </section>
 </section>
 <section id="adaptive-lr">
-<h3>Adaptive LR<a class="headerlink" href="#adaptive-lr" title="Link to this heading">#</a></h3>
+<h2>Adaptive LR<a class="headerlink" href="#adaptive-lr" title="Link to this heading">#</a></h2>
 <section id="adagrad-adaptive-gradient">
-<h4>Adagrad (Adaptive Gradient)<a class="headerlink" href="#adagrad-adaptive-gradient" title="Link to this heading">#</a></h4>
+<h3>Adagrad (Adaptive Gradient)<a class="headerlink" href="#adagrad-adaptive-gradient" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: GD + Adaptive learning rate for each param.</p></li>
 <li><p><strong>Why</strong>: A single, fixed learning rate is problematic:</p>
@@ -703,7 +695,7 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 </div>
 </section>
 <section id="rmsprop-root-mean-square-propagation">
-<h4>RMSprop (Root Mean Square Propagation)<a class="headerlink" href="#rmsprop-root-mean-square-propagation" title="Link to this heading">#</a></h4>
+<h3>RMSprop (Root Mean Square Propagation)<a class="headerlink" href="#rmsprop-root-mean-square-propagation" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Adagrad w EWMA (Exponentially Weighted Moving Average) of squared grads instead of sum.</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -771,7 +763,7 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 </div>
 </section>
 <section id="adadelta">
-<h4>Adadelta<a class="headerlink" href="#adadelta" title="Link to this heading">#</a></h4>
+<h3>Adadelta<a class="headerlink" href="#adadelta" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: RMSprop w/o manually set global learning rate + EWMA on param updates.</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -857,11 +849,10 @@ w_{t+1} = w_t + \Delta w_t
 <li><p>Adam is built upon RMSprop &amp; outperforms everything above.</p></li>
 </ul>
 </div>
-<br/>
 </section>
 </section>
 <section id="adam-adaptive-moment-estimation">
-<h3>Adam (Adaptive Moment Estimation)<a class="headerlink" href="#adam-adaptive-moment-estimation" title="Link to this heading">#</a></h3>
+<h2>Adam (Adaptive Moment Estimation)<a class="headerlink" href="#adam-adaptive-moment-estimation" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Momentum + RMSprop.</p></li>
 <li><p><strong>Why</strong>: Combine benefits from Momentum &amp; RMSprop:</p>
@@ -958,7 +949,7 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{\hat{G}_t+\epsilon}} \hat{v}_t
 </ul>
 </div>
 <section id="adamw-adam-with-weight-decay">
-<h4>AdamW (Adam with Weight Decay)<a class="headerlink" href="#adamw-adam-with-weight-decay" title="Link to this heading">#</a></h4>
+<h3>AdamW (Adam with Weight Decay)<a class="headerlink" href="#adamw-adam-with-weight-decay" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Adam + Weight Decay.</p></li>
 <li><p><strong>Why</strong>: L2 regularization.</p>
@@ -1023,8 +1014,7 @@ w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
 ### Yogi Optimizer
 ### RAdam (Rectified Adam)
 ### Lookahead Optimizer -->
-<p><br/><br/></p>
-</section>
+<br/>
 </section>
 </section>
 <section id="lr-scheduler">
@@ -1178,7 +1168,6 @@ w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
 \eta_t\leftarrow(\eta_0-\eta_\text{end})\cdot\left(1-\frac{t}{T}\right)^p+\eta_\text{end}
 \]</div>
 </div>
-<br/>
 </section>
 </section>
 <section id="cycle">
@@ -1508,22 +1497,19 @@ w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimizer">Optimizer</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nag-nesterov-accelerated-gradient">NAG (Nesterov Accelerated Gradient)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum">Momentum</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nag-nesterov-accelerated-gradient">NAG (Nesterov Accelerated Gradient)</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-lr">Adaptive LR</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-lr">Adaptive LR</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adagrad-adaptive-gradient">Adagrad (Adaptive Gradient)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rmsprop-root-mean-square-propagation">RMSprop (Root Mean Square Propagation)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw-adam-with-weight-decay">AdamW (Adam with Weight Decay)</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lr-scheduler">LR Scheduler</a><ul class="nav section-nav flex-column">

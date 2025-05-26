@@ -13,11 +13,7 @@ kernelspec:
 - **What**: Find the optimal params of the given model for the given task.
 - **Why**: To best solve the task.
 
-<br/>
-
-## Optimizer
-
-### Gradient Descent
+## Gradient Descent
 - **What**: Update the params based on the grad's size and direction.
 	- **Gradient**: First-order derivative of the loss w.r.t. the corresponding param.
 	- **Descent**: Subtract the grad.
@@ -70,9 +66,7 @@ w_{t+1} \leftarrow w_t - \eta \frac{\partial L(w_t; \mathcal{D})}{\partial w_t}
 $$
 ```
 
-<br/>
-
-### Momentum
+## Momentum
 - **What**: GD + Cache of past movements.
 - **Why**: GD is:
 	- too slow in flat regions.
@@ -113,7 +107,7 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-#### NAG (Nesterov Accelerated Gradient)
+### NAG (Nesterov Accelerated Gradient)
 - **What**: Momentum + "Look-ahead"
 - **Why**: Momentum can sometimes jump over the global minimum.
 	- It adds the accumulated momentum, THEN considers curr grad.
@@ -156,10 +150,8 @@ w_t \leftarrow w_{t-1} - \eta v_t
 $$
 ```
 
-<br/>
-
-### Adaptive LR
-#### Adagrad (Adaptive Gradient)
+## Adaptive LR
+### Adagrad (Adaptive Gradient)
 - **What**: GD + Adaptive learning rate for each param.
 - **Why**: A single, fixed learning rate is problematic:
 	- Diff feature frequencies: Rare/Common features $\rightarrow$ Rarely/Commonly update their corresponding params $\rightarrow$ Need to take larger/smaller steps.
@@ -205,7 +197,7 @@ $$
 - Memory of how active the param has been throughout the entire training process.
 ```
 
-#### RMSprop (Root Mean Square Propagation)
+### RMSprop (Root Mean Square Propagation)
 - **What**: Adagrad w EWMA (Exponentially Weighted Moving Average) of squared grads instead of sum.
 - **Why**:
 	- Learning rate decays too much $\leftarrow$ Grad sum grows till training ends.
@@ -252,7 +244,7 @@ $$
 - The older/newer the grad, the less/more influence it has on curr param update.
 ```
 
-#### Adadelta
+### Adadelta
 - **What**: RMSprop w/o manually set global learning rate + EWMA on param updates.
 - **Why**:
 	- Performance is highly sensitive to learning rate.
@@ -315,9 +307,7 @@ $$
 - Adam is built upon RMSprop & outperforms everything above.
 ```
 
-<br/>
-
-### Adam (Adaptive Moment Estimation)
+## Adam (Adaptive Moment Estimation)
 - **What**: Momentum + RMSprop.
 - **Why**: Combine benefits from Momentum & RMSprop:
 	- **Momentum = 1st moment (mean) of grads**
@@ -384,7 +374,7 @@ $$
 - May still get stuck in local optima.
 ```
 
-#### AdamW (Adam with Weight Decay)
+### AdamW (Adam with Weight Decay)
 - **What**: Adam + Weight Decay.
 - **Why**: L2 regularization.
 	- L2 adds an additional change to the original grad: $\lambda w$.
@@ -438,7 +428,7 @@ $$
 ### RAdam (Rectified Adam)
 ### Lookahead Optimizer -->
 
-<br/><br/>
+<br/>
 
 ## LR Scheduler
 - **What**: Dynamically adjust LR during training.
@@ -535,8 +525,6 @@ $$
 \eta_t\leftarrow(\eta_0-\eta_\text{end})\cdot\left(1-\frac{t}{T}\right)^p+\eta_\text{end}
 $$
 ```
-
-<br/>
 
 ### Cycle
 - **What**: Cycle the LR between lower & upper bounds.
