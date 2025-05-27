@@ -682,6 +682,54 @@ $$\begin{align*}
 ```
 
 ## Warmup
+- **What**: Start with "small LR $\rightarrow$ large LR".
+- **Why**: Large initial LR can go wrong:
+	- Large batches $\rightarrow$ Accurate initial grads $\xrightarrow{+\text{large LR}}$ Overshooting
+	- Adaptive Optimizers $\rightarrow$ Super noisy average grads due to few samples in history $\xrightarrow{+\text{large LR}}$ Wild fluctiations
+	- Early local minima/saddle points.
+
 ### Linear Warmup
+- **How**:
+	1. Init: initial LR, target LR, #Epochs for warmup.
+	2. For each step, increase initial LR toward target LR by a fixed amount (i.e., linearly).
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $\eta_t$: LR at step $t$.
+- Hyperparams:
+	- $\eta_0$: Initial LR.
+	- $\eta_{\text{tgt}}$: Target LR.
+	- $T$: #Epochs for warmup.
+
+Warmup:
+
+$$
+\eta_t = \eta_0 + (\eta_{\text{tgt}} - \eta_0) \times \frac{t}{T}
+$$
+```
+
 ### Exponential Warmup
-### Gradual Warmup
+- **Why**: Exponential function offers an even gentler start & a faster ramp-up towards the target $\rightarrow$ Amplifies the reasons for using warmups
+	- However, empirically, it's not necessarily better than Linear.
+- **How**:
+	1. Init: initial LR, target LR, #Epochs for warmup.
+	2. For each step, increase initial LR toward target LR at a fixed rate (i.e., exponentially).
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- Params:
+    - $\eta_t$: LR at step $t$.
+- Hyperparams:
+	- $\eta_0$: Initial LR.
+	- $\eta_{\text{tgt}}$: Target LR.
+	- $T$: #Epochs for warmup.
+
+Warmup:
+
+$$
+\eta_t = \eta_0 * \left(\frac{\eta_{\text{tgt}}}{\eta_0}\right)^{\frac{t}{T}}
+$$
+```
