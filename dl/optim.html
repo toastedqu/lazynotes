@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=7997ec40" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -65,8 +65,8 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Transformer" href="../llm/transformer.html" />
-    <link rel="prev" title="LazyNotes" href="../intro.html" />
+    <link rel="next" title="Loss" href="loss.html" />
+    <link rel="prev" title="Module" href="module.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -178,21 +178,14 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="module.html">Module</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Parameter Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../llm/transformer.html">Transformer</a></li>
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="../llm/decoding.html">Decoding</a></li>
-
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="../llm/rlhf.html">RL for LLMs</a></li>
 
 </ul>
@@ -386,7 +379,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#warmup">Warmup</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-warmup">Linear Warmup</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-warmup">Exponential Warmup</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradual-warmup">Gradual Warmup</a></li>
 </ul>
 </li>
 </ul>
@@ -1421,14 +1413,88 @@ w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
 </section>
 <section id="warmup">
 <h2>Warmup<a class="headerlink" href="#warmup" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Start with “small LR <span class="math notranslate nohighlight">\(\rightarrow\)</span> large LR”.</p></li>
+<li><p><strong>Why</strong>: Large initial LR can go wrong:</p>
+<ul>
+<li><p>Large batches <span class="math notranslate nohighlight">\(\rightarrow\)</span> Accurate initial grads <span class="math notranslate nohighlight">\(\xrightarrow{+\text{large LR}}\)</span> Overshooting</p></li>
+<li><p>Adaptive Optimizers <span class="math notranslate nohighlight">\(\rightarrow\)</span> Super noisy average grads due to few samples in history <span class="math notranslate nohighlight">\(\xrightarrow{+\text{large LR}}\)</span> Wild fluctiations</p></li>
+<li><p>Early local minima/saddle points.</p></li>
+</ul>
+</li>
+</ul>
 <section id="linear-warmup">
 <h3>Linear Warmup<a class="headerlink" href="#linear-warmup" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Init: initial LR, target LR, #Epochs for warmup.</p></li>
+<li><p>For each step, increase initial LR toward target LR by a fixed amount (i.e., linearly).</p></li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_t\)</span>: LR at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_0\)</span>: Initial LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_{\text{tgt}}\)</span>: Target LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>: #Epochs for warmup.</p></li>
+</ul>
+</li>
+</ul>
+<p>Warmup:</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_t = \eta_0 + (\eta_{\text{tgt}} - \eta_0) \times \frac{t}{T}
+\]</div>
+</div>
 </section>
 <section id="exponential-warmup">
 <h3>Exponential Warmup<a class="headerlink" href="#exponential-warmup" title="Link to this heading">#</a></h3>
-</section>
-<section id="gradual-warmup">
-<h3>Gradual Warmup<a class="headerlink" href="#gradual-warmup" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Why</strong>: Exponential function offers an even gentler start &amp; a faster ramp-up towards the target <span class="math notranslate nohighlight">\(\rightarrow\)</span> Amplifies the reasons for using warmups</p>
+<ul>
+<li><p>However, empirically, it’s not necessarily better than Linear.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Init: initial LR, target LR, #Epochs for warmup.</p></li>
+<li><p>For each step, increase initial LR toward target LR at a fixed rate (i.e., exponentially).</p></li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_t\)</span>: LR at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\eta_0\)</span>: Initial LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_{\text{tgt}}\)</span>: Target LR.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>: #Epochs for warmup.</p></li>
+</ul>
+</li>
+</ul>
+<p>Warmup:</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_t = \eta_0 * \left(\frac{\eta_{\text{tgt}}}{\eta_0}\right)^{\frac{t}{T}}
+\]</div>
+</div>
 </section>
 </section>
 </section>
@@ -1464,20 +1530,20 @@ w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../intro.html"
+       href="module.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">LazyNotes</p>
+        <p class="prev-next-title">Module</p>
       </div>
     </a>
     <a class="right-next"
-       href="../llm/transformer.html"
+       href="loss.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Transformer</p>
+        <p class="prev-next-title">Loss</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1531,7 +1597,6 @@ w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#warmup">Warmup</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-warmup">Linear Warmup</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-warmup">Exponential Warmup</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradual-warmup">Gradual Warmup</a></li>
 </ul>
 </li>
 </ul>
