@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=7997ec40" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -372,42 +372,34 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="transformer">
 <h1>Transformer<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h1>
-<!-- ```{image} ../../images/transformer.png
-:align: center
-:width: 500px
-``` -->
+<a class="reference internal image-reference" href="../images/transformer.png"><img alt="../images/transformer.png" class="align-center" src="../images/transformer.png" style="width: 500px;" />
+</a>
 <ul class="simple">
 <li><p><strong>What</strong>: <strong>Self-attention</strong> for sequential data.</p></li>
-<li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong></p></li>
-<li><p><strong>How</strong>:</p>
-<ul>
-<li><p>Input:</p>
-<ol class="arabic simple">
-<li><p><strong>Tokenization</strong>: Sequence <span class="math notranslate nohighlight">\(\rightarrow\)</span> Tokens</p></li>
-<li><p><strong>Token Embedding</strong>: Tokens <span class="math notranslate nohighlight">\(\rightarrow\)</span> Semantic vectors</p></li>
-<li><p><strong>Positional Encoding</strong>: Semantic vectors + Positional info <span class="math notranslate nohighlight">\(\rightarrow\)</span> Position-aware vectors</p></li>
-</ol>
-</li>
-<li><p>Attention:</p>
-<ol class="arabic simple">
-<li><p><strong>Encoder</strong>: (Input) Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> (Input) Context-aware vectors</p></li>
-<li><p><strong>Decoder</strong>:</p>
-<ul>
-<li><p><strong>Encoder-Decoder Decoder</strong>: (Input) Context-aware vectors + (Output) Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> (Output) Context-aware vectors</p></li>
-<li><p><strong>Decoder-Only Decoder</strong>: (Input) Position-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> (Input) Masked context-aware vectors</p></li>
+<li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong>.</p></li>
 </ul>
-</li>
-</ol>
-</li>
-<li><p>Output:</p>
-<ol class="arabic simple">
-<li><p><strong>Output Layer</strong>: Masked context-aware vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span></p></li>
-<li><p>(Generation-only) <strong>Decoding</strong>: Token Probabilities <span class="math notranslate nohighlight">\(\rightarrow\)</span> Next token</p></li>
-</ol>
-</li>
-</ul>
-</li>
-</ul>
+<!-- ```{dropdown} Encoder -->
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{c}
+\text{sequence} \\
+\textbf{            }\downarrow\textbf{tokenization} \\
+\text{tokens} (C,)   \\
+\textbf{               }\downarrow\textbf{token embedding} \\
+\end{array}\end{split}\]</div>
+<!-- ``` -->
+<p>Sequence <span class="math notranslate nohighlight">\(\xrightarrow{\textbf{Tokenization}}\)</span> Tokens $<span class="math notranslate nohighlight">\(
+	- Input:
+		1. **Tokenization**: Sequence \)</span>\rightarrow<span class="math notranslate nohighlight">\( Tokens
+		2. **Token Embedding**: Tokens \)</span>\rightarrow<span class="math notranslate nohighlight">\( Semantic vectors
+		3. **Positional Encoding**: Semantic vectors + Positional info \)</span>\rightarrow<span class="math notranslate nohighlight">\( Position-aware vectors
+	- Attention:
+		1. **Encoder**: (Input) Position-aware vectors \)</span>\rightarrow<span class="math notranslate nohighlight">\( (Input) Context-aware vectors
+		2. **Decoder**:
+			- **Encoder-Decoder Decoder**: (Input) Context-aware vectors + (Output) Position-aware vectors \)</span>\rightarrow<span class="math notranslate nohighlight">\( (Output) Context-aware vectors
+			- **Decoder-Only Decoder**: (Input) Position-aware vectors \)</span>\rightarrow<span class="math notranslate nohighlight">\( (Input) Masked context-aware vectors
+	- Output:
+		1. **Output Layer**: Masked context-aware vectors \)</span>\rightarrow<span class="math notranslate nohighlight">\( 
+		2. (Generation-only) **Decoding**: Token Probabilities \)</span>\rightarrow$ Next token</p>
 <br/>
 <section id="tokenization">
 <h2>Tokenization<a class="headerlink" href="#tokenization" title="Link to this heading">#</a></h2>

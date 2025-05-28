@@ -10,13 +10,23 @@ kernelspec:
   name: python3
 ---
 # Transformer
-<!-- ```{image} ../../images/transformer.png
+```{image} ../../images/transformer.png
 :align: center
 :width: 500px
-``` -->
+```
 - **What**: **Self-attention** for sequential data.
-- **Why**: **Long-range dependencies** + **Parallel processing**
-- **How**:
+- **Why**: **Long-range dependencies** + **Parallel processing**.
+
+<!-- ```{dropdown} Encoder -->
+$$\begin{array}{c}
+\text{sequence} \\
+\textbf{            }\downarrow\textbf{tokenization} \\
+\text{tokens} (C,)   \\
+\textbf{               }\downarrow\textbf{token embedding} \\
+\end{array}$$
+<!-- ``` -->
+
+Sequence $\xrightarrow{\textbf{Tokenization}}$ Tokens $$
 	- Input:
 		1. **Tokenization**: Sequence $\rightarrow$ Tokens
 		2. **Token Embedding**: Tokens $\rightarrow$ Semantic vectors
