@@ -65,7 +65,7 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Decoding" href="decoding.html" />
+    <link rel="next" title="RL for LLMs" href="rlhf.html" />
     <link rel="prev" title="Loss" href="../dl/loss.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -186,7 +186,10 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Transformer</a></li>
 
-<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+
+
+
+
 <li class="toctree-l1"><a class="reference internal" href="rlhf.html">RL for LLMs</a></li>
 
 </ul>
@@ -355,11 +358,25 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rope">RoPE</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">Encoder</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#decoding">Decoding</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#penalty">Penalty</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">Greedy Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">Beam Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling">Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k">Top-k</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-p-nucleus">Top-p (Nucleus)</a></li>
 </ul>
 </li>
 </ul>
@@ -485,10 +502,16 @@ document.write(`
 <br/>
 </section>
 </section>
-<section id="attention">
-<h2>Attention<a class="headerlink" href="#attention" title="Link to this heading">#</a></h2>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="attention">
+<h1>Attention<a class="headerlink" href="#attention" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><strong>How</strong>: MHA</p></li>
+</ul>
+<a class="reference internal image-reference" href="../_images/attention.png"><img alt="../_images/attention.png" class="align-center" src="../_images/attention.png" style="width: 400px;" />
+</a>
 <section id="self-attention">
-<h3>Self-Attention<a class="headerlink" href="#self-attention" title="Link to this heading">#</a></h3>
+<h2>Self-Attention<a class="headerlink" href="#self-attention" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Each element in the sequence pays attention to each other.</p></li>
 <li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong></p></li>
@@ -661,7 +684,7 @@ document.write(`
 </div>
 </section>
 <section id="masked-causal-attention">
-<h3>Masked/Causal Attention<a class="headerlink" href="#masked-causal-attention" title="Link to this heading">#</a></h3>
+<h2>Masked/Causal Attention<a class="headerlink" href="#masked-causal-attention" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Self-attention BUT each token can only see its previous tokens (and itself).</p></li>
 <li><p><strong>Why</strong>: Autoregressive generation.</p></li>
@@ -711,7 +734,7 @@ document.write(`
 </div>
 </section>
 <section id="cross-attention">
-<h3>Cross Attention<a class="headerlink" href="#cross-attention" title="Link to this heading">#</a></h3>
+<h2>Cross Attention<a class="headerlink" href="#cross-attention" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Scaled Dot-Product Attention BUT</p>
 <ul>
@@ -724,7 +747,7 @@ document.write(`
 </ul>
 </section>
 <section id="multi-head-attention">
-<h3>Multi-Head Attention<a class="headerlink" href="#multi-head-attention" title="Link to this heading">#</a></h3>
+<h2>Multi-Head Attention<a class="headerlink" href="#multi-head-attention" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Multiple self-attention modules running in parallel.</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -771,6 +794,311 @@ document.write(`
 </ul>
 </div>
 <br/>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="encoder">
+<h1>Encoder<a class="headerlink" href="#encoder" title="Link to this heading">#</a></h1>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="decoder">
+<h1>Decoder<a class="headerlink" href="#decoder" title="Link to this heading">#</a></h1>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="decoding">
+<h1>Decoding<a class="headerlink" href="#decoding" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><strong>What</strong>: Token probabilities <span class="math notranslate nohighlight">\(\rightarrow\)</span> Output token</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>In generation tasks, the transformer model only estimates the probabilities of outputting each token via logits.</p></li>
+<li><p>We need to select which token to output at each step, and we need to find the most probable output sequence given the input sequence.</p></li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(X\)</span>: Input sequence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(Y\)</span>: Output sequence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(y_t\)</span>: Output token at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(Y_{&lt;t}\)</span>: Output sequence up till step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparam:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\tau\)</span>: Temperature.</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{V}\)</span>: Vocab set.</p></li>
+<li><p><span class="math notranslate nohighlight">\(v_i\)</span>: <span class="math notranslate nohighlight">\(i\)</span>th token.</p></li>
+<li><p><span class="math notranslate nohighlight">\(z_{ti}\)</span>: Logit of <span class="math notranslate nohighlight">\(v_i\)</span> at step <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>: Total output sequence length.</p></li>
+</ul>
+</li>
+</ul>
+<p>Procedure:</p>
+<ol class="arabic simple">
+<li><p>Probability of outputting token <span class="math notranslate nohighlight">\(v_i\)</span> at step <span class="math notranslate nohighlight">\(t\)</span>:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+P(y_t=v_i|Y_{&lt;t},X)=\text{softmax}(z_{ti})=\frac{\exp(\frac{z_{ti}}{\tau})}{\sum_{j=1}^{|\mathcal{V}|}\exp(\frac{z_{tj}}{\tau})}
+\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Probability of outputting sequence <span class="math notranslate nohighlight">\(Y\)</span>:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+P(Y|X)=\prod_{t=1}^{T}P(y_t|Y_{&lt;t},X)
+\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Objective - Find the optimal sequence:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+Y_*=\arg\max_YP(Y|X)
+\]</div>
+</div>
+<br/>
+<section id="temperature">
+<h2>Temperature<a class="headerlink" href="#temperature" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Randomness control.</p></li>
+<li><p><strong>Why</strong>: <strong>Boltzmann distribution</strong> from statistical mechanics: <span class="math notranslate nohighlight">\(p_i\propto\exp\left(-\frac{E_i}{kT}\right)\)</span></p>
+<ul>
+<li><p>This describes the probability of a system being in a particular state <span class="math notranslate nohighlight">\(i\)</span> given the state’s energy <span class="math notranslate nohighlight">\(E_i\)</span> and the system’s temperature <span class="math notranslate nohighlight">\(T\)</span>.</p></li>
+<li><p>Temperature <span class="math notranslate nohighlight">\(T\)</span> controls the randomness of physical systems:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>⬆️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Difference in <span class="math notranslate nohighlight">\(p\)</span> between low-energy and high-energy states⬇️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Can’t stick to low-energy states <span class="math notranslate nohighlight">\(\rightarrow\)</span> Randomness⬆️</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>⬇️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Difference in <span class="math notranslate nohighlight">\(p\)</span> between low-energy and high-energy states⬆️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Stick to low-energy states <span class="math notranslate nohighlight">\(\rightarrow\)</span> Randomness⬇️</p></li>
+</ul>
+</li>
+<li><p>Identical problem setting:</p>
+<ul>
+<li><p>States <span class="math notranslate nohighlight">\(\Leftrightarrow\)</span> Tokens</p></li>
+<li><p>Energy <span class="math notranslate nohighlight">\(\Leftrightarrow\)</span> Logits</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>⬆️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Less probable tokens become more probable <span class="math notranslate nohighlight">\(\rightarrow\)</span> Randomness⬆️</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span>⬇️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Less probable tokens become even less probable <span class="math notranslate nohighlight">\(\rightarrow\)</span> Randomness⬇️</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\tau\rightarrow 0\)</span>: More deterministic.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau\rightarrow \infty\)</span>: More random/uniform.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau=1\)</span>: Standard softmax. Probabilities reflect differences in logits.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau&gt;1\)</span>: Generally NOT recommended <span class="math notranslate nohighlight">\(\leftarrow\)</span> Randomness goes BEYOND what the model has learnt.</p></li>
+</ul>
+</li>
+</ul>
+<br/>
+</section>
+<section id="penalty">
+<h2>Penalty<a class="headerlink" href="#penalty" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Penalize the logits of tokens present in current token sequence.</p></li>
+<li><p><strong>Why</strong>: Autoregressive LMs can fall into repetition loops. (Occurs much more often with Greedy/Beam Search)</p>
+<ul>
+<li><p>Autoregressive LMs are trained to predicted the most probable next token given current context.</p></li>
+<li><p>If a particular token/phrase is highly probable given the current context &amp; gets picked, it becomes part of the new context.</p></li>
+<li><p>If the same token/phrase is still the most probable given this new slightly longer context, it’s likely to get picked again.</p></li>
+<li><p>…</p></li>
+<li><p>Infinite “positive” feedback loop.</p></li>
+</ul>
+</li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Table: Penalty Types</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p class="sd-card-text">Type</p></th>
+<th class="head text-left"><p class="sd-card-text">What</p></th>
+<th class="head text-left"><p class="sd-card-text">Math</p></th>
+<th class="head text-left"><p class="sd-card-text">Cons</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text"><strong>Frequency</strong></p></td>
+<td class="text-left"><p class="sd-card-text">Subtraction based on how many times the token occurred in the output sequence</p></td>
+<td class="text-left"><p class="sd-card-text"><span class="math notranslate nohighlight">\(z_{ti} \leftarrow z_{ti}-\alpha n_{v_i}\)</span></p></td>
+<td class="text-left"><p class="sd-card-text">Suppresses important keywords</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text"><strong>Presence</strong></p></td>
+<td class="text-left"><p class="sd-card-text">Subtraction based on the <strong>existence</strong> of the token in the output sequence</p></td>
+<td class="text-left"><p class="sd-card-text"><span class="math notranslate nohighlight">\(z_{ti} \leftarrow z_{ti}-\beta \mathbf{1}_{v_i}[Y_{&lt;t}]\)</span></p></td>
+<td class="text-left"><p class="sd-card-text">Incoherence <span class="math notranslate nohighlight">\(\leftarrow\)</span> Too harsh compared to frequency penalty</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text"><strong>Repetition</strong></p></td>
+<td class="text-left"><p class="sd-card-text">Multiplication based on the <strong>existence</strong> of the token in the <strong>entire sequence</strong></p></td>
+<td class="text-left"><p class="sd-card-text"><span class="math notranslate nohighlight">\(z_{ti} \leftarrow \begin{cases} z_{ti} / \rho &amp; v_i \in [X, Y_{&lt;t}]\ \&amp; \ z_{ti} &gt; 0 \\ z_{ti} \cdot \rho &amp; v_i \in [X, Y_{&lt;t}]\ \&amp; \ z_{ti} &lt; 0 \\ z_{ti} &amp; v_i \notin [X, Y_{&lt;t}] \end{cases}\)</span></p></td>
+<td class="text-left"><p class="sd-card-text">Suppresses references to important keywords in the input</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="sd-card-text">Notations:</p>
+<ul class="simple">
+<li><p class="sd-card-text">Hyperparams:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\alpha\)</span>: Frequency penalty hyperparam.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\beta\)</span>: Presence penalty hyperparam.</p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\rho\)</span>: Repetition penalty hyperparam.</p></li>
+</ul>
+</li>
+<li><p class="sd-card-text">Misc:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(\mathbf{1}_{v_i}[Y_{&lt;t}]\)</span>: 1 if token <span class="math notranslate nohighlight">\(v_i\)</span> is present in <span class="math notranslate nohighlight">\(Y_{&lt;t}\)</span>, else 0.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</details><br/>
+</section>
+<section id="greedy-search">
+<h2>Greedy Search<a class="headerlink" href="#greedy-search" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Always take the most probable token at each step.</p></li>
+<li><p><strong>Why</strong>: Simplest.</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Greedy Search:</p>
+<div class="math notranslate nohighlight">
+\[
+y_t=\arg\max_{v}P(y_t=v|Y_{*,&lt;t},X)
+\]</div>
+</div>
+<br/>
+</section>
+<section id="beam-search">
+<h2>Beam Search<a class="headerlink" href="#beam-search" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Iteratively explore &amp; evaluate multiple hypotheses (i.e., beams).</p></li>
+<li><p><strong>Why</strong>: Greedy search focuses on local optima <span class="math notranslate nohighlight">\(\rightarrow\)</span> May not lead to globally optimal sequence.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Initialize <span class="math notranslate nohighlight">\(k\)</span> beams with top <span class="math notranslate nohighlight">\(k\)</span> most probable tokens.</p></li>
+<li><p>For each step:</p>
+<ol class="arabic simple">
+<li><p>For each beam: Compute probability distribution for next token.</p></li>
+<li><p>Consider all possible next tokens in vocab <span class="math notranslate nohighlight">\(\rightarrow\)</span> Form candidate beams.</p></li>
+<li><p>For each candidate beam: Compute a <strong>score</strong> based on the log probability of the beam sequence.</p></li>
+<li><p>Select top <span class="math notranslate nohighlight">\(k\)</span> beams with the highest scores.</p></li>
+</ol>
+</li>
+<li><p>Stop when</p>
+<ul>
+<li><p>Max length.</p></li>
+<li><p>All <span class="math notranslate nohighlight">\(k\)</span> beams have generated the EOS token.</p></li>
+</ul>
+</li>
+<li><p>Output the beam with the highest score.</p></li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Beam Search:</p>
+<ol class="arabic simple">
+<li><p>At <span class="math notranslate nohighlight">\(t=1\)</span>, select top <span class="math notranslate nohighlight">\(k\)</span> most probable tokens via <span class="math notranslate nohighlight">\(P(y_1|X)\)</span>. Each forms an initial beam <span class="math notranslate nohighlight">\(Y_{1,i}=[y_{1,i}]\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\forall t&gt;1\)</span>:</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\(\forall Y_{t-1,i}=[y_{1,i},\cdots,y_{t-1,i}]\)</span>: Compute <span class="math notranslate nohighlight">\(P(y_t|Y_{t-1,i},X)\)</span>.</p></li>
+<li><p>Consider all <span class="math notranslate nohighlight">\(|\mathcal{V}|\)</span> possible tokens <span class="math notranslate nohighlight">\(\rightarrow\)</span> Form <span class="math notranslate nohighlight">\(k\times|\mathcal{V}|\)</span> candidate beams.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\forall Y_{t,i}=[y_{1,i},\cdots,y_{t,i}]\)</span>: Compute <span class="math notranslate nohighlight">\(S(Y_t)=\log P(Y_t|X)=\sum_{t'=1}^{t}\log P(y_{t'}|Y_{&lt;t'},X)\)</span>.</p></li>
+<li><p>Select top <span class="math notranslate nohighlight">\(k\)</span> beams with the highest scores.</p></li>
+</ol>
+</li>
+<li><p>Termination.</p></li>
+<li><p>Output.</p></li>
+</ol>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>Beam Search naturally favors shorter sequences <span class="math notranslate nohighlight">\(\leftarrow\)</span> Adding more log probabilities reduces the score.</p></li>
+</ul>
+<p><em>Solution?</em></p>
+<ul>
+<li><p><strong>Length normalization</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+	S(Y_t)=\frac{1}{t^\alpha}\sum_{t'=1}^{t}\log P(y_{t'}|Y_{&lt;t'},X)
+	\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\alpha\)</span>: Length normalization hyperparameter.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<br/>
+</section>
+<section id="sampling">
+<h2>Sampling<a class="headerlink" href="#sampling" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Random selection from a set/distribution.</p></li>
+<li><p><strong>Why</strong>: Controlled randomness.</p>
+<ul>
+<li><p>Greedy or Beam Search lead to <strong>deterministic</strong> outcomes.</p>
+<ul>
+<li><p>Greedy: Most probable tokens at each step.</p></li>
+<li><p>Beam: Most probable sequence at the end.</p></li>
+</ul>
+</li>
+<li><p>Deterministic outcomes = Generic, repetitive, lacking creativity.</p></li>
+</ul>
+</li>
+</ul>
+<section id="top-k">
+<h3>Top-k<a class="headerlink" href="#top-k" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Output token <span class="math notranslate nohighlight">\(\sim\)</span> Top-<span class="math notranslate nohighlight">\(k\)</span> most probable tokens.</p></li>
+<li><p><strong>Why</strong>: Temperature sampling <span class="math notranslate nohighlight">\(\rightarrow\)</span> Too much randomness if large temperature <span class="math notranslate nohighlight">\(\rightarrow\)</span> Incoherent sequence</p>
+<ul>
+<li><p>Any token may be selected based on its probability, including less probable ones.</p></li>
+<li><p>We don’t want that, so we limit the vocab options and resample.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Compute probabilities of all tokens in vocab.</p></li>
+<li><p>Select top <span class="math notranslate nohighlight">\(k\)</span> tokens.</p></li>
+<li><p>Re-normalize probabilities of top <span class="math notranslate nohighlight">\(k\)</span> tokens.</p></li>
+<li><p>Sample.</p></li>
+</ol>
+</li>
+</ul>
+</section>
+<section id="top-p-nucleus">
+<h3>Top-p (Nucleus)<a class="headerlink" href="#top-p-nucleus" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Output token <span class="math notranslate nohighlight">\(\sim\)</span> Smallest possible set of tokens whose cumulative probability exceeds <span class="math notranslate nohighlight">\(p\)</span>.</p>
+<ul>
+<li><p><strong>Nucleus</strong>: the set.</p></li>
+</ul>
+</li>
+<li><p><strong>Why</strong>: In Top-k,</p>
+<ul>
+<li><p>If the model is very certain about the next word, large <span class="math notranslate nohighlight">\(k\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> too random.</p></li>
+<li><p>If the model is very uncertain about the next word, small <span class="math notranslate nohighlight">\(k\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> too deterministic.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Compute probabilities of all tokens in vocab.</p></li>
+<li><p>Sort tokens by probability.</p></li>
+<li><p>Form nucleus.</p></li>
+<li><p>Re-normalize probabilities of top <span class="math notranslate nohighlight">\(k\)</span> tokens.</p></li>
+<li><p>Sample.</p></li>
+</ol>
+</li>
+</ul>
 <!-- # Encoder
 - **What**: Sequence -> **Contextual representation**.
 - **Why**: To produce more meaningful representations (context + semantics + position).
@@ -860,11 +1188,11 @@ See [Softmax](../modules/activations.md#softmax) --></section>
       </div>
     </a>
     <a class="right-next"
-       href="decoding.html"
+       href="rlhf.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Decoding</p>
+        <p class="prev-next-title">RL for LLMs</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -893,11 +1221,25 @@ See [Softmax](../modules/activations.md#softmax) --></section>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rope">RoPE</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">Encoder</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#decoding">Decoding</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#penalty">Penalty</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">Greedy Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">Beam Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling">Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k">Top-k</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-p-nucleus">Top-p (Nucleus)</a></li>
 </ul>
 </li>
 </ul>
