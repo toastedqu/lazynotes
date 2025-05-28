@@ -12,13 +12,10 @@ kernelspec:
 # Transformer
 - **What**: **Self-attention** for sequential data.
 - **Why**: **Long-range dependencies** + **Parallel processing**.
-- **How**:
-```{figure} ../images/transformer.png
----
-align: center
-width: 500px
----
-Attention is all you need (2017)
+- **How**: {cite:p}`vaswani2017attention`
+```{image} ../images/transformer/input.png
+:align: center
+:width: 500px
 ```
 
 # Input
