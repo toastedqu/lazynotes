@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 # Transformer
-```{image} ../../images/transformer.png
+```{image} ../images/transformer.png
 :align: center
 :width: 500px
 ```
