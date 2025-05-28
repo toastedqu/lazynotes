@@ -10,37 +10,23 @@ kernelspec:
   name: python3
 ---
 # Transformer
-```{image} ../images/transformer.png
-:align: center
-:width: 500px
-```
 - **What**: **Self-attention** for sequential data.
 - **Why**: **Long-range dependencies** + **Parallel processing**.
+- **How**:
+```{figure} ../images/transformer.png
+---
+align: center
+width: 500px
+---
+Attention is all you need (2017)
+```
 
-<!-- ```{dropdown} Encoder -->
-$$\begin{array}{c}
-\text{sequence} \\
-\textbf{            }\downarrow\textbf{tokenization} \\
-\text{tokens} (C,)   \\
-\textbf{               }\downarrow\textbf{token embedding} \\
-\end{array}$$
-<!-- ``` -->
-
-Sequence $\xrightarrow{\textbf{Tokenization}}$ Tokens $$
-	- Input:
-		1. **Tokenization**: Sequence $\rightarrow$ Tokens
-		2. **Token Embedding**: Tokens $\rightarrow$ Semantic vectors
-		3. **Positional Encoding**: Semantic vectors + Positional info $\rightarrow$ Position-aware vectors
-	- Attention:
-		1. **Encoder**: (Input) Position-aware vectors $\rightarrow$ (Input) Context-aware vectors
-		2. **Decoder**:
-			- **Encoder-Decoder Decoder**: (Input) Context-aware vectors + (Output) Position-aware vectors $\rightarrow$ (Output) Context-aware vectors
-			- **Decoder-Only Decoder**: (Input) Position-aware vectors $\rightarrow$ (Input) Masked context-aware vectors
-	- Output:
-		1. **Output Layer**: Masked context-aware vectors $\rightarrow$ 
-		2. (Generation-only) **Decoding**: Token Probabilities $\rightarrow$ Next token
-
-<br/>
+# Input
+- **How**:
+```{image} ../images/transformer/input.png
+:align: center
+:width: 400px
+```
 
 ## Tokenization
 - **What**: Sequence $\rightarrow$ Tokens
