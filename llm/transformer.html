@@ -381,15 +381,10 @@ document.write(`
 <ul class="simple">
 <li><p><strong>What</strong>: <strong>Self-attention</strong> for sequential data.</p></li>
 <li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong>.</p></li>
-<li><p><strong>How</strong>:</p></li>
+<li><p><strong>How</strong>: <span id="id1">[<a class="reference internal" href="../references.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 2017.">6</a>]</span></p></li>
 </ul>
-<figure class="align-center" id="id3">
-<a class="reference internal image-reference" href="images/transformer.png"><img alt="images/transformer.png" src="images/transformer.png" style="width: 500px;" />
+<a class="reference internal image-reference" href="../_images/input.png"><img alt="../_images/input.png" class="align-center" src="../_images/input.png" style="width: 500px;" />
 </a>
-<figcaption>
-<p><span class="caption-number">Fig. 1 </span><span class="caption-text">Attention is all you need (2017)</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="input">
 <h1>Input<a class="headerlink" href="#input" title="Link to this heading">#</a></h1>
@@ -431,7 +426,7 @@ document.write(`
 <li><p>Transformers don’t know positions.</p></li>
 <li><p>BUT positions matter!</p>
 <ul>
-<li><p>No PE <span class="math notranslate nohighlight">\(\rightarrow\)</span> self-attention scores remain unchanged regardless of token orders <span id="id1">[<a class="reference internal" href="../references.html#id11" title="Kuiyi Wang. Why transformer models need positional encoding. https://wangkuiyi.github.io/positional_encoding.html. [Online; accessed &lt;today&gt;].">7</a>]</span>.</p></li>
+<li><p>No PE <span class="math notranslate nohighlight">\(\rightarrow\)</span> self-attention scores remain unchanged regardless of token orders <span id="id2">[<a class="reference internal" href="../references.html#id11" title="Kuiyi Wang. Why transformer models need positional encoding. https://wangkuiyi.github.io/positional_encoding.html. [Online; accessed &lt;today&gt;].">7</a>]</span>.</p></li>
 </ul>
 </li>
 </ul>
@@ -476,7 +471,7 @@ document.write(`
 <p><em>Cons?</em></p>
 <ul class="simple">
 <li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> No learning of task-specific position patterns.</p></li>
-<li><p>Requires uniform token importance across the sequence. <span id="id2">[<a class="reference internal" href="../references.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 2017.">6</a>]</span></p></li>
+<li><p>Requires uniform token importance across the sequence. <span id="id3">[<a class="reference internal" href="../references.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 2017.">6</a>]</span></p></li>
 <li><p>Cannot capture complex, relative, or local positional relationships.</p></li>
 </ul>
 </div>
