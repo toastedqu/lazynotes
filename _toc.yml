@@ -24,7 +24,6 @@ parts:
     - file: llm/transformer
     # - file: llm/model
     # - file: llm/training
-    - file: llm/decoding
     # - file: llm/peft
     - file: llm/rlhf
     # - file: llm/efficiency
