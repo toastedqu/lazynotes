@@ -351,7 +351,10 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Transformer</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bpe-byte-pair-encoding">BPE (Byte-Pair Encoding)</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
@@ -415,9 +418,31 @@ document.write(`
 <ul class="simple">
 <li><p><strong>What</strong>: Sequence <span class="math notranslate nohighlight">\(\rightarrow\)</span> Tokens</p></li>
 <li><p><strong>Why</strong>: Machines can only read numbers.</p></li>
-<li><p><strong>How</strong>: (tbd)</p></li>
 </ul>
-<br/>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Why subword-level vocab? Why not whole words? Why not characters?</em></p>
+<ul class="simple">
+<li><p>Word-level vocab explode with out-of-vocab words.</p></li>
+<li><p>Char-level vocab misses morphology.</p></li>
+<li><p>Subword offers a fixed-size, open-vocab symbol set which can handle rare words while maintaining morphology.</p></li>
+</ul>
+</div>
+<section id="bpe-byte-pair-encoding">
+<h3>BPE (Byte-Pair Encoding)<a class="headerlink" href="#bpe-byte-pair-encoding" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Start with single characters.</p></li>
+<li><p>Count every pair of adjacent symbols.</p></li>
+<li><p>Merge the most frequent pair into a merged symbol.</p></li>
+<li><p>Replace every occurrence of that pair with the new merged symbol.</p></li>
+<li><p>Update counts.</p></li>
+<li><p>Repeat Step 2-5 till reaching vocab size.</p></li>
+</ol>
+</li>
+</ul>
+</section>
 </section>
 <section id="token-embedding">
 <h2>Token Embedding<a class="headerlink" href="#token-embedding" title="Link to this heading">#</a></h2>
@@ -1214,7 +1239,10 @@ See [Softmax](../modules/activations.md#softmax) --></section>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Transformer</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bpe-byte-pair-encoding">BPE (Byte-Pair Encoding)</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>

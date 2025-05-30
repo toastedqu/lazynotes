@@ -28,9 +28,24 @@ kernelspec:
 ## Tokenization
 - **What**: Sequence $\rightarrow$ Tokens
 - **Why**: Machines can only read numbers.
-- **How**: (tbd)
 
-<br/>
+```{admonition} Q&A
+:class: tip, dropdown
+*Why subword-level vocab? Why not whole words? Why not characters?*
+- Word-level vocab explode with out-of-vocab words.
+- Char-level vocab misses morphology.
+- Subword offers a fixed-size, open-vocab symbol set which can handle rare words while maintaining morphology.
+```
+
+### BPE (Byte-Pair Encoding)
+- **How**:
+	1. Start with single characters.
+	2. Count every pair of adjacent symbols.
+	3. Merge the most frequent pair into a merged symbol.
+	4. Replace every occurrence of that pair with the new merged symbol.
+	5. Update counts.
+	6. Repeat Step 2-5 till reaching vocab size.
+
 
 ## Token Embedding
 - **What**: Tokens $\rightarrow$ Semantic vectors.
