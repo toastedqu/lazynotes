@@ -353,6 +353,7 @@ document.write(`
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bpe-byte-pair-encoding">BPE (Byte-Pair Encoding)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wordpiece">WordPiece</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
@@ -433,12 +434,23 @@ document.write(`
 <ul class="simple">
 <li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
-<li><p>Start with single characters.</p></li>
-<li><p>Count every pair of adjacent symbols.</p></li>
-<li><p>Merge the most frequent pair into a merged symbol.</p></li>
-<li><p>Replace every occurrence of that pair with the new merged symbol.</p></li>
-<li><p>Update counts.</p></li>
-<li><p>Repeat Step 2-5 till reaching vocab size.</p></li>
+<li><p>Start with single characters as tokens.</p></li>
+<li><p>Count every pair of adjacent tokens.</p></li>
+<li><p>Merge the most frequent pair into one token.</p></li>
+<li><p>Repeat Step 2-3 till reaching vocab size.</p></li>
+</ol>
+</li>
+</ul>
+</section>
+<section id="wordpiece">
+<h3>WordPiece<a class="headerlink" href="#wordpiece" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Start with single characters as tokens.</p></li>
+<li><p>Compute corpus likelihood gain for each pair of adjacent tokens.</p></li>
+<li><p>Merge the pair with the highest likelihood gain into one token.</p></li>
+<li><p>Repeat Step 2-3 till reaching vocab size.</p></li>
 </ol>
 </li>
 </ul>
@@ -1241,6 +1253,7 @@ See [Softmax](../modules/activations.md#softmax) --></section>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bpe-byte-pair-encoding">BPE (Byte-Pair Encoding)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wordpiece">WordPiece</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>

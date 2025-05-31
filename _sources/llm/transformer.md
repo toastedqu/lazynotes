@@ -39,13 +39,17 @@ kernelspec:
 
 ### BPE (Byte-Pair Encoding)
 - **How**:
-	1. Start with single characters.
-	2. Count every pair of adjacent symbols.
-	3. Merge the most frequent pair into a merged symbol.
-	4. Replace every occurrence of that pair with the new merged symbol.
-	5. Update counts.
-	6. Repeat Step 2-5 till reaching vocab size.
+	1. Start with single characters as tokens.
+	2. Count every pair of adjacent tokens.
+	3. Merge the most frequent pair into one token.
+	4. Repeat Step 2-3 till reaching vocab size.
 
+### WordPiece
+- **How**:
+	1. Start with single characters as tokens.
+	2. Compute corpus likelihood gain for each pair of adjacent tokens.
+	3. Merge the pair with the highest likelihood gain into one token.
+	4. Repeat Step 2-3 till reaching vocab size.
 
 ## Token Embedding
 - **What**: Tokens $\rightarrow$ Semantic vectors.
