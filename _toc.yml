@@ -22,10 +22,11 @@ parts:
   - caption: LLM
     chapters:
     - file: llm/transformer
-    # - file: llm/model
     # - file: llm/training
+    - file: llm/inference
+    # - file: llm/model
     # - file: llm/peft
-    - file: llm/rlhf
+    # - file: llm/rlhf
     # - file: llm/efficiency
     # - file: llm/scale
   - caption: Math
