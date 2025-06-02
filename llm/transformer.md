@@ -18,12 +18,19 @@ kernelspec:
 :width: 500px
 ```
 
-# Input
-- **How**:
+````{dropdown} Input
 ```{image} ../images/transformer/input.png
 :align: center
 :width: 400px
 ```
+````
+
+````{dropdown} MHA
+```{image} ../images/transformer/attention.png
+:align: center
+:width: 400px
+```
+````
 
 ## Tokenization
 - **What**: Sequence $\rightarrow$ Tokens
@@ -38,18 +45,70 @@ kernelspec:
 ```
 
 ### BPE (Byte-Pair Encoding)
+- **What**: Frequency-based subword tokenization.
 - **How**:
 	1. Start with single characters as tokens.
 	2. Count every pair of adjacent tokens.
-	3. Merge the most frequent pair into one token.
+	3. Merge the **most frequent** pair into one token.
 	4. Repeat Step 2-3 till reaching vocab size.
 
 ### WordPiece
+- **What**: Likelihood-based subword tokenization.
+- **Why**: 
+	- BPE merges by frequency $\rightarrow$ Greedy $\rightarrow$ Doesn't care about the merge's impact on the overall LM probability
+	- WordPiece aims to **maximize corpus likelihood** under a unigram LM over subword tokens.
 - **How**:
 	1. Start with single characters as tokens.
 	2. Compute corpus likelihood gain for each pair of adjacent tokens.
-	3. Merge the pair with the highest likelihood gain into one token.
+	3. Merge the pair with the **highest likelihood gain** into one token.
 	4. Repeat Step 2-3 till reaching vocab size.
+
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- IO:
+	- $w_i$: $i$th word (i.e., space-separated tokens) in training corpus.
+	- $t_{i,j}$: $j$th subtoken in word $w_i$.
+- Hyperparams:
+	- $M$: #words in training corpus.
+	- $m_{w_i}$: #subtokens in word $w_i$.
+- Params:
+	- $\mathcal{V}$: Vocab of subword tokens.
+- Misc:
+	- $L(\mathcal{V})$: Corpus likelihood given curr vocab.
+	- $a,b$: 2 selected tokens.
+	- $c$: New token if merging $ab$.
+
+Objective: Maximize Corpus Likelihood
+
+$$
+L(\mathcal{V})=\prod_{i=1}^{M}P(w_i|\mathcal{V})=\prod_{i=1}^{M}\prod_{j=1}^{m_{w_i}}t_{i,j}
+$$
+
+Likelihood: #Counts of curr token over #Counts of all tokens in corpus from vocab:
+
+$$
+P(a)=\frac{\# a}{\sum_{b\in\mathcal{V}}\# b}
+$$
+
+Merging $a$&$b$ into $c$:
+
+$$\begin{align*}
+\# c\leftarrow \# c + \# ab \\
+\# a\leftarrow \# a - \# ab	\\
+\# b\leftarrow \# b - \# ab
+\end{align*}$$
+
+Likelihood Gain:
+
+$$
+\Delta(a,b)=\sum_{ab}\left[\log P_\mathrm{postmerge}(c)-\log P(a)-\log P(b)\right]
+$$
+```
+
+<!-- ### Unigram -->
+
+<br/>
 
 ## Token Embedding
 - **What**: Tokens $\rightarrow$ Semantic vectors.
@@ -77,17 +136,19 @@ kernelspec:
 
 ```{admonition} Math
 :class: note, dropdown
+Notations:
+- IO:
+	- $pos\in\mathbb{R}$: Input token position.
+- Hyperparams:
+	- $i$: Embedding dimension index.
+	- $d_{\text{model}}$: Embedding dimension.
+
 Sinusoidal PE:
 
 $$\begin{align*}
 &PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
 &PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
 \end{align*}$$
-- Input:
-	- $pos\in\mathbb{R}$: Token position.
-- Hyperparams:
-	- $i$: Embedding dimension index.
-	- $d_{\text{model}}$: Embedding dimension.
 ```
 
 ```{admonition} Q&A
@@ -105,14 +166,11 @@ $$\begin{align*}
 
 <br/>
 
-# Attention
+## Attention
 - **How**: MHA
-```{image} ../images/transformer/attention.png
-:align: center
-:width: 400px
-```
 
-## Self-Attention
+
+### Self-Attention
 - **What**: Each element in the sequence pays attention to each other.
 - **Why**: **Long-range dependencies** + **Parallel processing**
 - **How**:
@@ -125,7 +183,7 @@ $$\begin{align*}
 		2. $\rightarrow$ Attention weights
 		3. $\rightarrow$ Weighted sum of T's Value (i.e., T's contextual representation)
 
-```{dropdown} ELI5
+<!-- ```{dropdown} ELI5
 You are in a top AI conference.
 
 Each guy is an element.
@@ -147,7 +205,7 @@ You see topics that you are obsessed with. You ask the guys a billion follow-up 
 The conference ends.
 
 You have learnt something about everything, but not everything weighs the same in your heart.
-```
+``` -->
 
 ```{admonition} Math
 :class: note, dropdown
@@ -252,7 +310,7 @@ $$
 - Score margins are amplified $\rightarrow$ More attention to relevant elements
 ```
 
-## Masked/Causal Attention
+### Masked/Causal Attention
 - **What**: Self-attention BUT each token can only see its previous tokens (and itself).
 - **Why**: Autoregressive generation.
 - **How**: For each token, mask attention scores of all future tokens to $-\infty$ before softmax.
@@ -284,14 +342,14 @@ $$
 	- ...
 ```
 
-## Cross Attention
+### Cross Attention
 - **What**: Scaled Dot-Product Attention BUT
 	- K&V $\leftarrow$ Source (e.g., Encoder)
-	- Q $\leftarrow$ Current sequence (i.e., Decoder)
-- **Why**: Additional source info may be helpful for predicting next token for current sequence.
-- **How**: See [Self-Attention](#self-attention).
+	- Q $\leftarrow$ Curr sequence (i.e., Decoder)
+- **Why**: Additional source info may be helpful for predicting next token for curr sequence.
+- **How**: See [Self-Attention](#self-attention) but $K&V$ are from Encoder.
 
-## Multi-Head Attention
+### Multi-Head Attention
 - **What**: Multiple self-attention modules running in parallel.
 - **Why**:
 	- $1$ attention module $\xrightarrow{\text{monitor}}$ $1$ representation subspace
@@ -322,11 +380,11 @@ $$
 - Redundancy $\leftarrow$ some heads may learn similar patterns
 ```
 
-<br/>
+<!-- <br/>
 
 # Encoder
 
-# Decoder
+# Decoder -->
 
 
 
