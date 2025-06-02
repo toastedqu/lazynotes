@@ -7,10 +7,10 @@ Each concept is structured as follows:
     - **Why**: Problem/Motivation.
     - **How**: Functionality.
 - Optional:
-    - Analogy
     - Math
     - Derivation
     - Q&A
+    - ...
 
 Common notations include (section-specific notations take priority):
 - $ a $: scalar / variable

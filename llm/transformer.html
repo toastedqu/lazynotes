@@ -32,10 +32,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=7997ec40" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -185,11 +185,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Transformer</a></li>
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rlhf.html">RL for LLMs</a></li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
 <ul class="nav bd-sidenav">
@@ -199,6 +197,8 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dsa.html">Coding</a></li>
+
 </ul>
 
     </div>
@@ -347,8 +347,6 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Transformer</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bpe-byte-pair-encoding">BPE (Byte-Pair Encoding)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wordpiece">WordPiece</a></li>
@@ -360,19 +358,14 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rope">RoPE</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">Encoder</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
-</ul>
-
             </nav>
         </div>
     </div>
@@ -392,15 +385,19 @@ document.write(`
 </ul>
 <a class="reference internal image-reference" href="../_images/transformer.png"><img alt="../_images/transformer.png" class="align-center" src="../_images/transformer.png" style="width: 500px;" />
 </a>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="input">
-<h1>Input<a class="headerlink" href="#input" title="Link to this heading">#</a></h1>
-<ul class="simple">
-<li><p><strong>How</strong>:</p></li>
-</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Input</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <a class="reference internal image-reference" href="../_images/input.png"><img alt="../_images/input.png" class="align-center" src="../_images/input.png" style="width: 400px;" />
 </a>
-<section id="tokenization">
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">MHA</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<a class="reference internal image-reference" href="../_images/attention.png"><img alt="../_images/attention.png" class="align-center" src="../_images/attention.png" style="width: 400px;" />
+</a>
+</div>
+</details><section id="tokenization">
 <h2>Tokenization<a class="headerlink" href="#tokenization" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Sequence <span class="math notranslate nohighlight">\(\rightarrow\)</span> Tokens</p></li>
@@ -418,11 +415,12 @@ document.write(`
 <section id="bpe-byte-pair-encoding">
 <h3>BPE (Byte-Pair Encoding)<a class="headerlink" href="#bpe-byte-pair-encoding" title="Link to this heading">#</a></h3>
 <ul class="simple">
+<li><p><strong>What</strong>: Frequency-based subword tokenization.</p></li>
 <li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
 <li><p>Start with single characters as tokens.</p></li>
 <li><p>Count every pair of adjacent tokens.</p></li>
-<li><p>Merge the most frequent pair into one token.</p></li>
+<li><p>Merge the <strong>most frequent</strong> pair into one token.</p></li>
 <li><p>Repeat Step 2-3 till reaching vocab size.</p></li>
 </ol>
 </li>
@@ -431,15 +429,76 @@ document.write(`
 <section id="wordpiece">
 <h3>WordPiece<a class="headerlink" href="#wordpiece" title="Link to this heading">#</a></h3>
 <ul class="simple">
+<li><p><strong>What</strong>: Likelihood-based subword tokenization.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>BPE merges by frequency <span class="math notranslate nohighlight">\(\rightarrow\)</span> Greedy <span class="math notranslate nohighlight">\(\rightarrow\)</span> Doesn’t care about the merge’s impact on the overall LM probability</p></li>
+<li><p>WordPiece aims to <strong>maximize corpus likelihood</strong> under a unigram LM over subword tokens.</p></li>
+</ul>
+</li>
 <li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
 <li><p>Start with single characters as tokens.</p></li>
 <li><p>Compute corpus likelihood gain for each pair of adjacent tokens.</p></li>
-<li><p>Merge the pair with the highest likelihood gain into one token.</p></li>
+<li><p>Merge the pair with the <strong>highest likelihood gain</strong> into one token.</p></li>
 <li><p>Repeat Step 2-3 till reaching vocab size.</p></li>
 </ol>
 </li>
 </ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(w_i\)</span>: <span class="math notranslate nohighlight">\(i\)</span>th word (i.e., space-separated tokens) in training corpus.</p></li>
+<li><p><span class="math notranslate nohighlight">\(t_{i,j}\)</span>: <span class="math notranslate nohighlight">\(j\)</span>th subtoken in word <span class="math notranslate nohighlight">\(w_i\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(M\)</span>: #words in training corpus.</p></li>
+<li><p><span class="math notranslate nohighlight">\(m_{w_i}\)</span>: #subtokens in word <span class="math notranslate nohighlight">\(w_i\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{V}\)</span>: Vocab of subword tokens.</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(L(\mathcal{V})\)</span>: Corpus likelihood given curr vocab.</p></li>
+<li><p><span class="math notranslate nohighlight">\(a,b\)</span>: 2 selected tokens.</p></li>
+<li><p><span class="math notranslate nohighlight">\(c\)</span>: New token if merging <span class="math notranslate nohighlight">\(ab\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<p>Objective: Maximize Corpus Likelihood</p>
+<div class="math notranslate nohighlight">
+\[
+L(\mathcal{V})=\prod_{i=1}^{M}P(w_i|\mathcal{V})=\prod_{i=1}^{M}\prod_{j=1}^{m_{w_i}}t_{i,j}
+\]</div>
+<p>Likelihood: #Counts of curr token over #Counts of all tokens in corpus from vocab:</p>
+<div class="math notranslate nohighlight">
+\[
+P(a)=\frac{\# a}{\sum_{b\in\mathcal{V}}\# b}
+\]</div>
+<p>Merging <span class="math notranslate nohighlight">\(a\)</span>&amp;<span class="math notranslate nohighlight">\(b\)</span> into <span class="math notranslate nohighlight">\(c\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\# c\leftarrow \# c + \# ab \\
+\# a\leftarrow \# a - \# ab	\\
+\# b\leftarrow \# b - \# ab
+\end{align*}\end{split}\]</div>
+<p>Likelihood Gain:</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta(a,b)=\sum_{ab}\left[\log P_\mathrm{postmerge}(c)-\log P(a)-\log P(b)\right]
+\]</div>
+</div>
+<!-- ### Unigram -->
+<br/>
 </section>
 </section>
 <section id="token-embedding">
@@ -486,16 +545,11 @@ document.write(`
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<p>Sinusoidal PE:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-&amp;PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
-&amp;PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
-\end{align*}\end{split}\]</div>
+<p>Notations:</p>
 <ul class="simple">
-<li><p>Input:</p>
+<li><p>IO:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(pos\in\mathbb{R}\)</span>: Token position.</p></li>
+<li><p><span class="math notranslate nohighlight">\(pos\in\mathbb{R}\)</span>: Input token position.</p></li>
 </ul>
 </li>
 <li><p>Hyperparams:</p>
@@ -505,6 +559,12 @@ document.write(`
 </ul>
 </li>
 </ul>
+<p>Sinusoidal PE:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
+&amp;PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
+\end{align*}\end{split}\]</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Q&amp;A</p>
@@ -525,16 +585,13 @@ document.write(`
 <br/>
 </section>
 </section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="attention">
-<h1>Attention<a class="headerlink" href="#attention" title="Link to this heading">#</a></h1>
+<section id="attention">
+<h2>Attention<a class="headerlink" href="#attention" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>How</strong>: MHA</p></li>
 </ul>
-<a class="reference internal image-reference" href="../_images/attention.png"><img alt="../_images/attention.png" class="align-center" src="../_images/attention.png" style="width: 400px;" />
-</a>
 <section id="self-attention">
-<h2>Self-Attention<a class="headerlink" href="#self-attention" title="Link to this heading">#</a></h2>
+<h3>Self-Attention<a class="headerlink" href="#self-attention" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Each element in the sequence pays attention to each other.</p></li>
 <li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong></p></li>
@@ -557,22 +614,30 @@ document.write(`
 </ol>
 </li>
 </ul>
-<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
-<summary class="sd-summary-title sd-card-header">
-<span class="sd-summary-text">ELI5</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
-<p class="sd-card-text">You are in a top AI conference.</p>
-<p class="sd-card-text">Each guy is an element.</p>
-<p class="sd-card-text">You have some dumb question in mind. (Q)</p>
-<p class="sd-card-text">Each guy has their badges and posters with titles and metadata. (K)</p>
-<p class="sd-card-text">Each guy knows the details of their projects. (V)</p>
-<p class="sd-card-text">You walk around &amp; check out the whole venue.</p>
-<p class="sd-card-text">You see topics that you don’t really care. You skim &amp; skip.</p>
-<p class="sd-card-text">You see topics that are related to your question. You talk to the guys to learn more.</p>
-<p class="sd-card-text">You see topics that you are obsessed with. You ask the guys a billion follow-up questions and memorize every single technical detail of their Github implementation.</p>
-<p class="sd-card-text">The conference ends.</p>
-<p class="sd-card-text">You have learnt something about everything, but not everything weighs the same in your heart.</p>
-</div>
-</details><div class="note dropdown admonition">
+<!-- ```{dropdown} ELI5
+You are in a top AI conference.
+
+Each guy is an element.
+
+You have some dumb question in mind. (Q)
+
+Each guy has their badges and posters with titles and metadata. (K)
+
+Each guy knows the details of their projects. (V)
+
+You walk around & check out the whole venue.
+
+You see topics that you don't really care. You skim & skip.
+
+You see topics that are related to your question. You talk to the guys to learn more.
+
+You see topics that you are obsessed with. You ask the guys a billion follow-up questions and memorize every single technical detail of their Github implementation.
+
+The conference ends.
+
+You have learnt something about everything, but not everything weighs the same in your heart.
+``` -->
+<div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
 <p>Scaled Dot-Product Attention:</p>
 <div class="math notranslate nohighlight">
@@ -707,7 +772,7 @@ document.write(`
 </div>
 </section>
 <section id="masked-causal-attention">
-<h2>Masked/Causal Attention<a class="headerlink" href="#masked-causal-attention" title="Link to this heading">#</a></h2>
+<h3>Masked/Causal Attention<a class="headerlink" href="#masked-causal-attention" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Self-attention BUT each token can only see its previous tokens (and itself).</p></li>
 <li><p><strong>Why</strong>: Autoregressive generation.</p></li>
@@ -757,20 +822,20 @@ document.write(`
 </div>
 </section>
 <section id="cross-attention">
-<h2>Cross Attention<a class="headerlink" href="#cross-attention" title="Link to this heading">#</a></h2>
+<h3>Cross Attention<a class="headerlink" href="#cross-attention" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Scaled Dot-Product Attention BUT</p>
 <ul>
 <li><p>K&amp;V <span class="math notranslate nohighlight">\(\leftarrow\)</span> Source (e.g., Encoder)</p></li>
-<li><p>Q <span class="math notranslate nohighlight">\(\leftarrow\)</span> Current sequence (i.e., Decoder)</p></li>
+<li><p>Q <span class="math notranslate nohighlight">\(\leftarrow\)</span> Curr sequence (i.e., Decoder)</p></li>
 </ul>
 </li>
-<li><p><strong>Why</strong>: Additional source info may be helpful for predicting next token for current sequence.</p></li>
-<li><p><strong>How</strong>: See <a class="reference internal" href="#self-attention"><span class="xref myst">Self-Attention</span></a>.</p></li>
+<li><p><strong>Why</strong>: Additional source info may be helpful for predicting next token for curr sequence.</p></li>
+<li><p><strong>How</strong>: See <a class="reference internal" href="#self-attention"><span class="xref myst">Self-Attention</span></a> but <span class="math notranslate nohighlight">\(K&amp;V\)</span> are from Encoder.</p></li>
 </ul>
 </section>
 <section id="multi-head-attention">
-<h2>Multi-Head Attention<a class="headerlink" href="#multi-head-attention" title="Link to this heading">#</a></h2>
+<h3>Multi-Head Attention<a class="headerlink" href="#multi-head-attention" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>What</strong>: Multiple self-attention modules running in parallel.</p></li>
 <li><p><strong>Why</strong>:</p>
@@ -816,14 +881,11 @@ document.write(`
 <li><p>Redundancy <span class="math notranslate nohighlight">\(\leftarrow\)</span> some heads may learn similar patterns</p></li>
 </ul>
 </div>
-<br/>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="encoder">
-<h1>Encoder<a class="headerlink" href="#encoder" title="Link to this heading">#</a></h1>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="decoder">
-<h1>Decoder<a class="headerlink" href="#decoder" title="Link to this heading">#</a></h1>
+<!-- <br/>
+
+# Encoder
+
+# Decoder -->
 <!-- # Encoder
 - **What**: Sequence -> **Contextual representation**.
 - **Why**: To produce more meaningful representations (context + semantics + position).
@@ -870,6 +932,8 @@ See [Linear](../modules/basics.md#linear)
 
 ## Softmax
 See [Softmax](../modules/activations.md#softmax) --></section>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -935,8 +999,6 @@ See [Softmax](../modules/activations.md#softmax) --></section>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Transformer</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bpe-byte-pair-encoding">BPE (Byte-Pair Encoding)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wordpiece">WordPiece</a></li>
@@ -948,19 +1010,14 @@ See [Softmax](../modules/activations.md#softmax) --></section>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rope">RoPE</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-attention">Cross Attention</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">Encoder</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
-</ul>
-
   </nav></div>
 
 </div></div>
