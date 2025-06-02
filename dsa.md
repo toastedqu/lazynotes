@@ -201,7 +201,7 @@ def binary_search(nums) -> int:
 
 **How**: depends on the question tbh.
 
-```{image} ../images/dsa/merge_interval.jpg
+```{image} images/dsa/merge_interval.jpg
 :align: center
 :width: 500px
 ```
