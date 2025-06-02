@@ -201,9 +201,10 @@ def binary_search(nums) -> int:
 
 **How**: depends on the question tbh.
 
-<center>
-<img src="../images/dsa/merge_interval.jpg" width=50%/>
-</center>
+```{image} ../images/dsa/merge_interval.jpg
+:align: center
+:width: 500px
+```
 
 **Tips**:
 - There are only 2 conditions for 2 intervals to overlap: **front.start <= back.end** AND **back.start <= front.end**.
