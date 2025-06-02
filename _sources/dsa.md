@@ -202,7 +202,7 @@ def binary_search(nums) -> int:
 **How**: depends on the question tbh.
 
 <center>
-<img src="/images/dsa/merge_interval.jpg" width=50%/>
+<img src="../images/dsa/merge_interval.jpg" width=50%/>
 </center>
 
 **Tips**:
