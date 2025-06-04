@@ -33,8 +33,5 @@ html:
   home_page_in_navbar: false
 
 sphinx:
-  config:
-    html_theme_options:
-      body_max_width: none
   extra_extensions:
   - sphinx_inline_tabs
