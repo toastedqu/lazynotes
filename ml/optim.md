@@ -9,24 +9,68 @@ kernelspec:
   language: python
   name: python3
 ---
-# Hyperparameter Optimization
+# Optimization
+- **What**: Adjust a model's params and/or hyperparams to achieve the best performance according to some criterion (i.e., Machine Learning!)
+- **Why**: **ML = Function Approximation**.
+	- There is an underlying function which maps features to targets, but we don't know what it is.
+	- Optimization aims to approximate this function as accurately as possible.
 
-# Search
-## Grid Search
-## Random Search
+This page covers methods for params AND hyperparams (because at the end of the day it's just optimization, duh?)
 
-# Sequential Model (SMBO)
-## GP–Based Bayesian Optimization
-## Tree‑Structured Parzen Estimator (TPE)
-## Sequential Model-based Algorithm Configuration (SMAC)
-## Bayesian Neural Network Surrogates
-## Multi‑objective SMBO
-## Constrained SMBO
-## BOHB (Bayesian Optimization with Hyperband)
-## FABOLAS (Fast Bayesian Optimization of Machine Learning Hyperparameters on Large Datasets)
+This page ONLY covers methods applicable to multiple models and/or objectives. For specific optimization methods, please refer to their corresponding model page.
 
-# Evolution
-## Genetic Algorithms (GA)
+This page does NOT cover [Gradient Descent & family](../dl/optim.md).
+
+## Second-Order
+### Newton's Method
+### BFGS (Broyden–Fletcher–Goldfarb–Shanno)
+### L-BFGS (Limited-Memory BFGS)
+### DFP (Davidon–Fletcher–Powell)
+
+
+## EM (Expectation-Maximization)
+- **What**: Compute ML/MAP estimates with **unobserved latent variables** and/or **missing data**.
+- **Why**:
+	- If data were fully observed, then ML/MAP estimates would be easy to compute.
+	- If we observe the latent vars, we observe the full data.
+	- BUT, direct MLE/MAP is hard $\leftarrow$ Sum/Integrate over all hidden configs $\leftarrow$ Bayes' Theorem
+	- $\rightarrow$ Iteratively observe & optimize.
+- **How**: Iterate between Expectation & Maximization.
+	- **Expectation**: Given curr params, estimate latent vars.
+	- **Maximization**: Given curr data, optimize params to maximize data prob.
+
+```{admonition} Math
+:class: note, dropdown
+Notation:
+- IO:
+	- $X={\mathbf{x}_1,\cdots,\mathbf{x}_m}$: Observed data.
+- Params:
+	- $\bm{\theta}$: Model params.
+- Misc:
+	- $\mathbf{z}_i\in\mathcal{Z}$: Latent variable for sample $i$.
+	- $q_i(\mathbf{z}_i)$: Prob distribution of $z_i$.
+
+Goal: Maximize (log) likelihood of observed data:
+
+$$
+L(\theta)=\log P(X|\theta)=\sum_{i=1}^{m}\log\left[\sum_{\mathbf{z}_i\in\mathcal{Z}}q_i(\mathbf{z}_i)\frac{p(\mathbf{x}_i,\mathbf{z}_i|\bm{\theta})}{}\right]
+$$
+```
+
+## Search
+### Grid Search
+### Random Search
+
+## SMBO (Sequential Model-Based Optimization)
+### GP–Based Bayesian Optimization
+### TPE (Tree‑structured Parzen Estimator)
+### SMAC (Sequential Model-based Algorithm Configuration)
+### Multi‑objective SMBO
+### Constrained SMBO
+### BOHB (Bayesian Optimization with Hyperband)
+
+## Evolution
+### GA (Genetic Algorithms)
 - **What**: Population-based metaheuristic inspired by **natural selection**.
 - **Why**: In the following scenarios, it's hard to estimate value functions BUT easy to optimize policies alone:
 	- Partially observable environments.
@@ -103,19 +147,6 @@ Procedure:
    $$
 ```
 
-## Genetic Programming (GP)
-## Covariance Matrix Adaptation Evolution Strategy (CMA‑ES)
-## Differential Evolution (DE)
-## Particle Swarm Optimization (PSO)
-## Population‑Based Training (PBT)
-
-# Gradient
-## Hypergradient Descent
-## Implicit Differentiation (Reverse‑Mode)
-## Differentiable Architecture Search (DARTS‑style)
-
-<!-- # Multi‑Fidelity & Bandit‑Based Methods
-4.1. Successive Halving
-4.2. Hyperband
-4.3. Asynchronous Successive Halving (ASHA)
-4.4. Population‑Based Bandits -->
+### GP (Genetic Programming)
+### CMA‑ES (Covariance Matrix Adaptation Evolution Strategy)
+### DE (Differential Evolution)

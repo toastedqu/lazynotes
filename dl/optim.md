@@ -9,9 +9,8 @@ kernelspec:
   language: python
   name: python3
 ---
-# Parameter Optimization
-- **What**: Find the optimal params of the given model for the given task.
-- **Why**: To best solve the task.
+# Parameter Optimization for Neural Networks
+This page ONLY covers Gradient Descent & family because it is most widely used for optimizing NNs.
 
 ## Gradient Descent
 - **What**: Update the params based on the grad's size and direction.

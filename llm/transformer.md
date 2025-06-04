@@ -121,14 +121,14 @@ $$
 <br/>
 
 ## Positional Encoding
-- **What**: Semantic vectors + Positional info $\rightarrow$ Position-aware vectors
+- **What**: Semantic vectors + Positional vectors $\rightarrow$ Position-aware vectors
 - **Why**:
 	- Transformers don't know positions.
 	- BUT positions matter!
 		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
 
 ### Sinusoidal PE
-- **What**: Positional info $\rightarrow$ Sine waves
+- **What**: Positional vectors $\rightarrow$ Sine waves
 - **Why**:
 	- Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
 	- No params $\rightarrow$ Low computational cost
@@ -159,16 +159,15 @@ $$\begin{align*}
 - Cannot capture complex, relative, or local positional relationships.
 ```
 
-### RoPE
+### RoPE (Rotary Postion Embedding)
 - **What**: Rotation matrix $\times$ Token embeddings $\xrightarrow{\text{encode}}$ Relative Position.
-- **Why**: 
+- **Why**:
+	- Cons of Absolute PE: Cannot generalize to unseen sequence length.
 
 
 <br/>
 
 ## Attention
-- **How**: MHA
-
 
 ### Self-Attention
 - **What**: Each element in the sequence pays attention to each other.
