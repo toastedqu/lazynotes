@@ -3443,5 +3443,5 @@ html .sd-tab-set>label:hover {
 }
 
 .bd-sidebar-primary {
-  width: 20%;
+  flex-basis: 15%;
 }
