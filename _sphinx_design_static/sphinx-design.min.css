@@ -3441,3 +3441,8 @@ html .sd-tab-set>label:hover {
 .bd-page-width {
   max-width: 100%;
 }
+
+:root{
+  /* default desktop width … make it match the 15 rem secondary sidebar */
+  --pst-sidebar-primary-width: 15rem;
+}
