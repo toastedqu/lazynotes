@@ -3442,6 +3442,22 @@ html .sd-tab-set>label:hover {
   max-width: 100%;
 }
 
-.bd-sidebar-primary {
-  flex-basis: 15%;
+/* --- shrink the primary/left sidebar --- */
+:root{
+  /* default desktop width … make it match the 15 rem secondary sidebar */
+  --pst-sidebar-primary-width: 15rem;
+}
+
+/* optional: make it a little slimmer on medium screens */
+@media (max-width: 1280px){
+  :root{
+    --pst-sidebar-primary-width: 12rem;
+  }
+}
+
+/* optional: if you also want to shrink the *mobile* slide-in drawer */
+@media (max-width: 960px){
+  :root{
+    --pst-sidebar-primary-width: 11rem;
+  }
 }
