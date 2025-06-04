@@ -35,7 +35,6 @@ html:
 sphinx:
   config:
     html_theme_options:
-      navigation_depth: 4
-      collapse_navigation: False 
+      body_max_width: none
   extra_extensions:
   - sphinx_inline_tabs
