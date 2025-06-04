@@ -34,4 +34,4 @@ html:
 
 sphinx:
   extra_extensions:
-  - sphinx_inline_tabs
+    - sphinx_inline_tabs
