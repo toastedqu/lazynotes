@@ -2,13 +2,13 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="../" >
+<html lang="en" data-content_root="../../" >
 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Issues &#8212; LazyNotes</title>
+    <title>Positional Encoding &#8212; LazyNotes</title>
   
   
   
@@ -18,53 +18,53 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'dl/issues';</script>
-    <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <script>DOCUMENTATION_OPTIONS.pagename = 'llm/transformer/pe';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -96,7 +96,7 @@
     <div class="search-button__overlay"></div>
     <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
-      action="../search.html"
+      action="../../search.html"
       method="get">
   <i class="fa-solid fa-magnifying-glass"></i>
   <input type="search"
@@ -147,7 +147,7 @@
     
   
 
-<a class="navbar-brand logo" href="../intro.html">
+<a class="navbar-brand logo" href="../../intro.html">
   
   
   
@@ -158,8 +158,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="LazyNotes - Home"/>
-    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="LazyNotes - Home"/>`);</script>
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="LazyNotes - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="LazyNotes - Home"/>`);</script>
   
   
 </a></div>
@@ -178,26 +178,26 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="module.html">Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="optim.html">Parameter Optimization for Neural Networks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dl/module.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dl/optim.html">Parameter Optimization for Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dl/loss.html">Loss</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../llm/transformer.html">Transformer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../llm/inference.html">Inference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../llm/rlhf.html">RL for LLMs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transformer.html">Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rlhf.html">RL for LLMs</a></li>
 
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../math/info.html">Information Theory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../math/info.html">Information Theory</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dsa.html">Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dsa.html">Coding</a></li>
 
 </ul>
 
@@ -270,7 +270,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fdl/issues.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fllm/transformer/pe.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -300,7 +300,7 @@
       
       
       
-      <li><a href="../_sources/dl/issues.md" target="_blank"
+      <li><a href="../../_sources/llm/transformer/pe.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -384,7 +384,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Issues</h1>
+    <h1>Positional Encoding</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -394,14 +394,9 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Issues</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covariate-shift">Covariate Shift</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rope-rotary-postion-embedding">RoPE (Rotary Postion Embedding)</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#overfitting">Overfitting</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#vanishing-exploding-gradient">Vanishing/Exploding Gradient</a></li>
-</ul>
-
             </nav>
         </div>
     </div>
@@ -412,100 +407,77 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="issues">
-<h1>Issues<a class="headerlink" href="#issues" title="Link to this heading">#</a></h1>
-<p>This page lists the common issues in deep learning in Alphabetic order.</p>
-<section id="covariate-shift">
-<h2>Covariate Shift<a class="headerlink" href="#covariate-shift" title="Link to this heading">#</a></h2>
+  <section class="tex2jax_ignore mathjax_ignore" id="positional-encoding">
+<h1>Positional Encoding<a class="headerlink" href="#positional-encoding" title="Link to this heading">#</a></h1>
 <ul class="simple">
-<li><p><strong>What</strong>: A learned function suddenly sees its input data distribution change, while the conditional distribution of labels given data is presumed unchanged.</p>
-<ul>
-<li><p>Dataset Covariate Shift: Training <span class="math notranslate nohighlight">\(\leftrightarrow\)</span> Inference.</p></li>
-<li><p>Internal Covariate Shift: Layer <span class="math notranslate nohighlight">\(\leftrightarrow\)</span> Layer.</p></li>
-</ul>
-</li>
+<li><p><strong>What</strong>: Semantic vectors + Positional vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Position-aware vectors</p></li>
 <li><p><strong>Why</strong>:</p>
 <ul>
-<li><p>Dataset: Difference between training &amp; inference data.</p></li>
-<li><p>Internal:</p>
-<ol class="arabic simple">
-<li><p>The weights of earlier layer keep changing.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Later layers must re-adapt to each moving distribution</p></li>
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> BUT the underlying mapping is unchanged</p></li>
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬇️Training stability</p></li>
-</ol>
-</li>
-</ul>
-</li>
-<li><p><strong>How to mitigate</strong>:</p>
+<li><p>Transformers don’t know positions.</p></li>
+<li><p>BUT positions matter!</p>
 <ul>
-<li><p>BatchNorm: Re-center &amp; Re-scale each layer’s output channel to <span class="math notranslate nohighlight">\(N(0,1)\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> Steady distribution <span class="math notranslate nohighlight">\(\rightarrow\)</span> Steady training</p>
-<ul>
-<li><p>BUT less effective than LayerNorm <span class="math notranslate nohighlight">\(\leftarrow\)</span> The normalization is independent between channels.</p></li>
-</ul>
-</li>
-<li><p>LayerNorm: Re-center &amp; Re-scale each layer’s outputs to <span class="math notranslate nohighlight">\(N(0,1)\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> Steady distribution <span class="math notranslate nohighlight">\(\rightarrow\)</span> Steady training</p></li>
-<li><p>Proper weight initialization (e.g., Xavier, He, etc.) <span class="math notranslate nohighlight">\(\rightarrow\)</span> Stable gradients</p></li>
-<li><p>Smaller learning rates <span class="math notranslate nohighlight">\(\rightarrow\)</span> Reduce the magnitude of param updates</p>
-<ul>
-<li><p>BUT slower convergence.</p></li>
-</ul>
-</li>
-<li><p>Adaptive learning rates (e.g., Adam) <span class="math notranslate nohighlight">\(\rightarrow\)</span> dynamically control the magnitude of param updates.</p></li>
+<li><p>No PE <span class="math notranslate nohighlight">\(\rightarrow\)</span> self-attention scores remain unchanged regardless of token orders <span id="id1">[<a class="reference internal" href="../../references.html#id11" title="Kuiyi Wang. Why transformer models need positional encoding. https://wangkuiyi.github.io/positional_encoding.html. [Online; accessed &lt;today&gt;].">7</a>]</span>.</p></li>
 </ul>
 </li>
 </ul>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="overfitting">
-<h1>Overfitting<a class="headerlink" href="#overfitting" title="Link to this heading">#</a></h1>
+</li>
+</ul>
+<section id="sinusoidal-pe">
+<h2>Sinusoidal PE<a class="headerlink" href="#sinusoidal-pe" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>What</strong>: The model performs well on the training data but badly on the test/unseen data.</p></li>
-<li><p><strong>Cause</strong>: Too high model complexity relative to training data size.</p></li>
-<li><p><strong>Consequence</strong>: Poor generalization.</p></li>
-<li><p><strong>How to mitigate</strong>:</p>
+<li><p><strong>What</strong>: Positional vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Sine waves</p></li>
+<li><p><strong>Why</strong>:</p>
 <ul>
-<li><p>Parameter regularization (L1/L2) <span class="math notranslate nohighlight">\(\rightarrow\)</span> reduce the magnitude of params.</p></li>
-<li><p>Dropout <span class="math notranslate nohighlight">\(\rightarrow\)</span> reduce dependency on certain neurons <span class="math notranslate nohighlight">\(\rightarrow\)</span> promote learning of robust features.</p></li>
-<li><p>Data augmentation <span class="math notranslate nohighlight">\(\rightarrow\)</span> broaden training data distribution.</p></li>
-<li><p>Early stopping <span class="math notranslate nohighlight">\(\rightarrow\)</span> halt training before validation performance drops.</p></li>
-<li><p>Cross validation <span class="math notranslate nohighlight">\(\rightarrow\)</span> ensure consistent model performance across different data splits.</p></li>
-<li><p>Reduce model complexity <span class="math notranslate nohighlight">\(\rightarrow\)</span> a simpler model is less likely to capture too many details in the training data.</p></li>
+<li><p>Continuous &amp; multi-scale <span class="math notranslate nohighlight">\(\rightarrow\)</span> Generalize to sequences of arbitrary lengths</p></li>
+<li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> Low computational cost</p></li>
+<li><p>Empirically performed as well as learned PE</p></li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(pos\in\mathbb{R}\)</span>: Input token position.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(i\)</span>: Embedding dimension index.</p></li>
+<li><p><span class="math notranslate nohighlight">\(d_{\text{model}}\)</span>: Embedding dimension.</p></li>
+</ul>
+</li>
+</ul>
+<p>Sinusoidal PE:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
+&amp;PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
+\end{align*}\end{split}\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> No learning of task-specific position patterns.</p></li>
+<li><p>Requires uniform token importance across the sequence. <span id="id2">[<a class="reference internal" href="../../references.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 2017.">6</a>]</span></p></li>
+<li><p>Cannot capture complex, relative, or local positional relationships.</p></li>
+</ul>
+</div>
+</section>
+<section id="rope-rotary-postion-embedding">
+<h2>RoPE (Rotary Postion Embedding)<a class="headerlink" href="#rope-rotary-postion-embedding" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Rotation matrix <span class="math notranslate nohighlight">\(\times\)</span> Token embeddings <span class="math notranslate nohighlight">\(\xrightarrow{\text{encode}}\)</span> Relative Position.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Cons of Absolute PE: Cannot generalize to unseen sequence length.</p></li>
 </ul>
 </li>
 </ul>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="vanishing-exploding-gradient">
-<h1>Vanishing/Exploding Gradient<a class="headerlink" href="#vanishing-exploding-gradient" title="Link to this heading">#</a></h1>
-<ul class="simple">
-<li><p><strong>What</strong>:</p>
-<ul>
-<li><p><strong>Vanishing gradients</strong>: The gradients become smaller and smaller during backprop. They have almost no effect to the front layers.</p></li>
-<li><p><strong>Exploding gradients</strong>: The gradients become larger and larger during backprop. They change the weights of the front layers too much.</p></li>
-</ul>
-</li>
-<li><p><strong>Cause</strong>:</p>
-<ul>
-<li><p>Too many layers.</p></li>
-<li><p>Too small/large gradient on certain layers (e.g., Sigmoid, Tanh, extremely large weight initialization, etc.) <span class="math notranslate nohighlight">\(\rightarrow\)</span> propagates via chain rule.</p></li>
-</ul>
-</li>
-<li><p><strong>Consequence</strong>:</p>
-<ul>
-<li><p><strong>Vanishing gradients</strong>: Slows &amp; potentially stops the learning process for the front layers.</p></li>
-<li><p><strong>Exploding gradients</strong>: Harder convergence &amp; Training instability.</p></li>
-</ul>
-</li>
-<li><p><strong>How to mitigate</strong>:</p>
-<ul>
-<li><p>Proper activation functions (e.g., ReLU and variants) <span class="math notranslate nohighlight">\(\rightarrow\)</span> low likelihood of tiny gradients.</p></li>
-<li><p>Proper weight initialization (e.g., Xavier, He, etc.) <span class="math notranslate nohighlight">\(\rightarrow\)</span> maintain stable gradients.</p></li>
-<li><p>Batch Normalization <span class="math notranslate nohighlight">\(\rightarrow\)</span></p></li>
-<li><p>Residual connection.</p></li>
-<li><p>Gradient clipping.</p></li>
-</ul>
-</li>
-</ul>
 </section>
 
     <script type="text/x-thebe-config">
@@ -521,7 +493,7 @@ document.write(`
         },
         kernelOptions: {
             name: "python3",
-            path: "./dl"
+            path: "./llm/transformer"
         },
         predefinedOutput: true
     }
@@ -554,14 +526,9 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Issues</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covariate-shift">Covariate Shift</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rope-rotary-postion-embedding">RoPE (Rotary Postion Embedding)</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#overfitting">Overfitting</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#vanishing-exploding-gradient">Vanishing/Exploding Gradient</a></li>
-</ul>
-
   </nav></div>
 
 </div></div>
@@ -609,8 +576,8 @@ By Renyi Qu
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>

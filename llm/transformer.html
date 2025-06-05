@@ -394,17 +394,9 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bpe-byte-pair-encoding">BPE (Byte-Pair Encoding)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wordpiece">WordPiece</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rope-rotary-postion-embedding">RoPE (Rotary Postion Embedding)</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
@@ -412,6 +404,10 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">Encoder</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output">Output</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
             </nav>
         </div>
@@ -426,25 +422,47 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="transformer">
 <h1>Transformer<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h1>
 <ul class="simple">
-<li><p><strong>What</strong>: <strong>Self-attention</strong> for sequential data.</p></li>
+<li><p><strong>What</strong>: <strong>Self-attention</strong> for modeling relationships between all tokens in input sequence.</p></li>
 <li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong>.</p></li>
 <li><p><strong>How</strong>: <span id="id1">[<a class="reference internal" href="../references.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 2017.">6</a>]</span></p></li>
 </ul>
-<a class="reference internal image-reference" href="../_images/transformer.png"><img alt="../_images/transformer.png" class="align-center" src="../_images/transformer.png" style="width: 500px;" />
-</a>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
-<span class="sd-summary-text">Input</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
-<a class="reference internal image-reference" href="../_images/input.png"><img alt="../_images/input.png" class="align-center" src="../_images/input.png" style="width: 400px;" />
-</a>
+<span class="sd-summary-text">Notations</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<ul class="simple">
+<li><p class="sd-card-text">IO:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(T=(t_1,\cdots,t_m)\)</span>: Input token sequence (after tokenization)</p></li>
+</ul>
+</li>
+<li><p class="sd-card-text">Params:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(W\)</span>: Trainable params.</p></li>
+</ul>
+</li>
+<li><p class="sd-card-text">Hyperparams:</p>
+<ul>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(m\)</span>: #Tokens.</p></li>
+</ul>
+</li>
+</ul>
 </div>
-</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
-<summary class="sd-summary-title sd-card-header">
-<span class="sd-summary-text">MHA</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
-<a class="reference internal image-reference" href="../_images/attention.png"><img alt="../_images/attention.png" class="align-center" src="../_images/attention.png" style="width: 400px;" />
+</details><a class="reference internal image-reference" href="../_images/transformer.png"><img alt="../_images/transformer.png" class="align-center" src="../_images/transformer.png" style="width: 500px;" />
 </a>
-</div>
-</details><section id="tokenization">
+<!-- ````{dropdown} Input
+```{image} ../images/transformer/input.png
+:align: center
+:width: 400px
+```
+````
+
+````{dropdown} MHA
+```{image} ../images/transformer/attention.png
+:align: center
+:width: 400px
+```
+```` -->
+<section id="tokenization">
 <h2>Tokenization<a class="headerlink" href="#tokenization" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Sequence <span class="math notranslate nohighlight">\(\rightarrow\)</span> Tokens</p></li>
@@ -459,94 +477,7 @@ document.write(`
 <li><p>Subword offers a fixed-size, open-vocab symbol set which can handle rare words while maintaining morphology.</p></li>
 </ul>
 </div>
-<section id="bpe-byte-pair-encoding">
-<h3>BPE (Byte-Pair Encoding)<a class="headerlink" href="#bpe-byte-pair-encoding" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>What</strong>: Frequency-based subword tokenization.</p></li>
-<li><p><strong>How</strong>:</p>
-<ol class="arabic simple">
-<li><p>Start with single characters as tokens.</p></li>
-<li><p>Count every pair of adjacent tokens.</p></li>
-<li><p>Merge the <strong>most frequent</strong> pair into one token.</p></li>
-<li><p>Repeat Step 2-3 till reaching vocab size.</p></li>
-</ol>
-</li>
-</ul>
-</section>
-<section id="wordpiece">
-<h3>WordPiece<a class="headerlink" href="#wordpiece" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>What</strong>: Likelihood-based subword tokenization.</p></li>
-<li><p><strong>Why</strong>:</p>
-<ul>
-<li><p>BPE merges by frequency <span class="math notranslate nohighlight">\(\rightarrow\)</span> Greedy <span class="math notranslate nohighlight">\(\rightarrow\)</span> Doesn’t care about the merge’s impact on the overall LM probability</p></li>
-<li><p>WordPiece aims to <strong>maximize corpus likelihood</strong> under a unigram LM over subword tokens.</p></li>
-</ul>
-</li>
-<li><p><strong>How</strong>:</p>
-<ol class="arabic simple">
-<li><p>Start with single characters as tokens.</p></li>
-<li><p>Compute corpus likelihood gain for each pair of adjacent tokens.</p></li>
-<li><p>Merge the pair with the <strong>highest likelihood gain</strong> into one token.</p></li>
-<li><p>Repeat Step 2-3 till reaching vocab size.</p></li>
-</ol>
-</li>
-</ul>
-<div class="note dropdown admonition">
-<p class="admonition-title">Math</p>
-<p>Notations:</p>
-<ul class="simple">
-<li><p>IO:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(w_i\)</span>: <span class="math notranslate nohighlight">\(i\)</span>th word (i.e., space-separated tokens) in training corpus.</p></li>
-<li><p><span class="math notranslate nohighlight">\(t_{i,j}\)</span>: <span class="math notranslate nohighlight">\(j\)</span>th subtoken in word <span class="math notranslate nohighlight">\(w_i\)</span>.</p></li>
-</ul>
-</li>
-<li><p>Hyperparams:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(M\)</span>: #words in training corpus.</p></li>
-<li><p><span class="math notranslate nohighlight">\(m_{w_i}\)</span>: #subtokens in word <span class="math notranslate nohighlight">\(w_i\)</span>.</p></li>
-</ul>
-</li>
-<li><p>Params:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathcal{V}\)</span>: Vocab of subword tokens.</p></li>
-</ul>
-</li>
-<li><p>Misc:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(L(\mathcal{V})\)</span>: Corpus likelihood given curr vocab.</p></li>
-<li><p><span class="math notranslate nohighlight">\(a,b\)</span>: 2 selected tokens.</p></li>
-<li><p><span class="math notranslate nohighlight">\(c\)</span>: New token if merging <span class="math notranslate nohighlight">\(ab\)</span>.</p></li>
-</ul>
-</li>
-</ul>
-<p>Objective: Maximize Corpus Likelihood</p>
-<div class="math notranslate nohighlight">
-\[
-L(\mathcal{V})=\prod_{i=1}^{M}P(w_i|\mathcal{V})=\prod_{i=1}^{M}\prod_{j=1}^{m_{w_i}}t_{i,j}
-\]</div>
-<p>Likelihood: #Counts of curr token over #Counts of all tokens in corpus from vocab:</p>
-<div class="math notranslate nohighlight">
-\[
-P(a)=\frac{\# a}{\sum_{b\in\mathcal{V}}\# b}
-\]</div>
-<p>Merging <span class="math notranslate nohighlight">\(a\)</span>&amp;<span class="math notranslate nohighlight">\(b\)</span> into <span class="math notranslate nohighlight">\(c\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-\# c\leftarrow \# c + \# ab \\
-\# a\leftarrow \# a - \# ab	\\
-\# b\leftarrow \# b - \# ab
-\end{align*}\end{split}\]</div>
-<p>Likelihood Gain:</p>
-<div class="math notranslate nohighlight">
-\[
-\Delta(a,b)=\sum_{ab}\left[\log P_\mathrm{postmerge}(c)-\log P(a)-\log P(b)\right]
-\]</div>
-</div>
-<!-- ### Unigram -->
 <br/>
-</section>
 </section>
 <section id="token-embedding">
 <h2>Token Embedding<a class="headerlink" href="#token-embedding" title="Link to this heading">#</a></h2>
@@ -554,41 +485,12 @@ P(a)=\frac{\# a}{\sum_{b\in\mathcal{V}}\# b}
 <li><p><strong>What</strong>: Tokens <span class="math notranslate nohighlight">\(\rightarrow\)</span> Semantic vectors.</p></li>
 <li><p><strong>Why</strong>:</p>
 <ul>
-<li><p>Discrete <span class="math notranslate nohighlight">\(\rightarrow\)</span> Continuous</p></li>
-<li><p>Vocab index <span class="math notranslate nohighlight">\(\rightarrow\)</span> Semantic meaning</p></li>
+<li><p>Discrete tokens <span class="math notranslate nohighlight">\(\xrightarrow{\text{map to}}\)</span> Continuous vectors</p></li>
+<li><p>Vocab index <span class="math notranslate nohighlight">\(\xrightarrow{\text{map to}}\)</span> Semantic meaning</p></li>
 <li><p>Vocab size <span class="math notranslate nohighlight">\(\xrightarrow{\text{reduced to}}\)</span> hidden size</p></li>
 </ul>
 </li>
-<li><p><strong>How</strong>: Look-up table / <a class="reference internal" href="#../basics.md#linear"><span class="xref myst">Linear</span></a>.</p></li>
-</ul>
-<br/>
-</section>
-<section id="positional-encoding">
-<h2>Positional Encoding<a class="headerlink" href="#positional-encoding" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>What</strong>: Semantic vectors + Positional vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Position-aware vectors</p></li>
-<li><p><strong>Why</strong>:</p>
-<ul>
-<li><p>Transformers don’t know positions.</p></li>
-<li><p>BUT positions matter!</p>
-<ul>
-<li><p>No PE <span class="math notranslate nohighlight">\(\rightarrow\)</span> self-attention scores remain unchanged regardless of token orders <span id="id2">[<a class="reference internal" href="../references.html#id11" title="Kuiyi Wang. Why transformer models need positional encoding. https://wangkuiyi.github.io/positional_encoding.html. [Online; accessed &lt;today&gt;].">7</a>]</span>.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<section id="sinusoidal-pe">
-<h3>Sinusoidal PE<a class="headerlink" href="#sinusoidal-pe" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>What</strong>: Positional vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Sine waves</p></li>
-<li><p><strong>Why</strong>:</p>
-<ul>
-<li><p>Continuous &amp; multi-scale <span class="math notranslate nohighlight">\(\rightarrow\)</span> Generalize to sequences of arbitrary lengths</p></li>
-<li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> Low computational cost</p></li>
-<li><p>Empirically performed as well as learned PE</p></li>
-</ul>
-</li>
+<li><p><strong>How</strong>: <a class="reference internal" href="../dl/module.html#linear"><span class="std std-ref">Linear</span></a>.</p></li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
@@ -596,135 +498,144 @@ P(a)=\frac{\# a}{\sum_{b\in\mathcal{V}}\# b}
 <ul class="simple">
 <li><p>IO:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(pos\in\mathbb{R}\)</span>: Input token position.</p></li>
-</ul>
-</li>
-<li><p>Hyperparams:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(i\)</span>: Embedding dimension index.</p></li>
-<li><p><span class="math notranslate nohighlight">\(d_{\text{model}}\)</span>: Embedding dimension.</p></li>
-</ul>
-</li>
-</ul>
-<p>Sinusoidal PE:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-&amp;PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
-&amp;PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
-\end{align*}\end{split}\]</div>
-</div>
-<div class="tip dropdown admonition">
-<p class="admonition-title">Q&amp;A</p>
-<p><em>Cons?</em></p>
-<ul class="simple">
-<li><p>No params <span class="math notranslate nohighlight">\(\rightarrow\)</span> No learning of task-specific position patterns.</p></li>
-<li><p>Requires uniform token importance across the sequence. <span id="id3">[<a class="reference internal" href="../references.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 2017.">6</a>]</span></p></li>
-<li><p>Cannot capture complex, relative, or local positional relationships.</p></li>
-</ul>
-</div>
-</section>
-<section id="rope-rotary-postion-embedding">
-<h3>RoPE (Rotary Postion Embedding)<a class="headerlink" href="#rope-rotary-postion-embedding" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>What</strong>: Rotation matrix <span class="math notranslate nohighlight">\(\times\)</span> Token embeddings <span class="math notranslate nohighlight">\(\xrightarrow{\text{encode}}\)</span> Relative Position.</p></li>
-<li><p><strong>Why</strong>:</p>
-<ul>
-<li><p>Cons of Absolute PE: Cannot generalize to unseen sequence length.</p></li>
-</ul>
-</li>
-</ul>
-<br/>
-</section>
-</section>
-<section id="attention">
-<h2>Attention<a class="headerlink" href="#attention" title="Link to this heading">#</a></h2>
-<section id="self-attention">
-<h3>Self-Attention<a class="headerlink" href="#self-attention" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>What</strong>: Each element in the sequence pays attention to each other.</p></li>
-<li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong></p></li>
-<li><p><strong>How</strong>:</p>
-<ol class="arabic simple">
-<li><p>All elements <span class="math notranslate nohighlight">\(\rightarrow\)</span> QKV</p>
-<ul>
-<li><p>Q: What are you looking for?</p></li>
-<li><p>K: What are your keywords for search?</p></li>
-<li><p>V: What info do you have?</p></li>
-</ul>
-</li>
-<li><p>For each token T:</p>
-<ol class="arabic simple">
-<li><p>T’s Query &amp; All Keys <span class="math notranslate nohighlight">\(\rightarrow\)</span> Relevance scores</p></li>
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Attention weights</p></li>
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Weighted sum of T’s Value (i.e., T’s contextual representation)</p></li>
-</ol>
-</li>
-</ol>
-</li>
-</ul>
-<!-- ```{dropdown} ELI5
-You are in a top AI conference.
-
-Each guy is an element.
-
-You have some dumb question in mind. (Q)
-
-Each guy has their badges and posters with titles and metadata. (K)
-
-Each guy knows the details of their projects. (V)
-
-You walk around & check out the whole venue.
-
-You see topics that you don't really care. You skim & skip.
-
-You see topics that are related to your question. You talk to the guys to learn more.
-
-You see topics that you are obsessed with. You ask the guys a billion follow-up questions and memorize every single technical detail of their Github implementation.
-
-The conference ends.
-
-You have learnt something about everything, but not everything weighs the same in your heart.
-``` -->
-<div class="note dropdown admonition">
-<p class="admonition-title">Math</p>
-<p>Scaled Dot-Product Attention:</p>
-<div class="math notranslate nohighlight">
-\[
-\text{Attention}(Q,K,V)=\text{softmax}\left(\frac{QK^T}{\sqrt{d_K}}\right)V
-\]</div>
-<ul class="simple">
-<li><p>Input:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(X\in\mathbb{R}^{m\times n}\)</span>: Input sequence</p></li>
+<li><p><span class="math notranslate nohighlight">\(T=(t_1,\cdots,t_m)\)</span>: Input token sequence (after tokenization).</p></li>
+<li><p><span class="math notranslate nohighlight">\(X\in\mathbb{R}^{m\times d_{\text{model}}}\)</span>: Output semantic vectors.</p></li>
 </ul>
 </li>
 <li><p>Params:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(W_Q\in\mathbb{R}^{n\times d_K}\)</span>: Weight matrix for Q.</p></li>
-<li><p><span class="math notranslate nohighlight">\(W_K\in\mathbb{R}^{n\times d_K}\)</span>: Weight matrix for K.</p></li>
-<li><p><span class="math notranslate nohighlight">\(W_V\in\mathbb{R}^{n\times d_V}\)</span>: Weight matrix for V.</p></li>
+<li><p><span class="math notranslate nohighlight">\(E\in\mathbb{R}^{V\times d_{\text{model}}}\)</span>: Embedding matrix/look-up table.</p></li>
 </ul>
 </li>
 <li><p>Hyperparams:</p>
 <ul>
 <li><p><span class="math notranslate nohighlight">\(m\)</span>: #Tokens.</p></li>
-<li><p><span class="math notranslate nohighlight">\(n\)</span>: Hidden size of input sequence.</p></li>
-<li><p><span class="math notranslate nohighlight">\(d_K\)</span>: Hidden size of Q &amp; K.</p>
+<li><p><span class="math notranslate nohighlight">\(d_{\text{model}}\)</span>: Embedding dim for the model.</p></li>
+<li><p><span class="math notranslate nohighlight">\(V\)</span>: Vocab size.</p></li>
+</ul>
+</li>
+</ul>
+<p>Token Embedding:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+X=\begin{bmatrix}
+E_{t_1} \\
+\vdots \\
+E_{t_m}
+\end{bmatrix}
+\end{split}\]</div>
+</div>
+<br/>
+</section>
+<section id="positional-encoding">
+<h2>Positional Encoding<a class="headerlink" href="#positional-encoding" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Semantic vectors + Positional vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Position-aware vectors</p></li>
+<li><p><strong>Why</strong>: Transformers don’t know positions due to parallelism, BUT positions matter.</p>
 <ul>
-<li><p>Q &amp; K share the same hidden size for matrix multiplication.</p></li>
+<li><p>No PE <span class="math notranslate nohighlight">\(\rightarrow\)</span> Self-attention scores remain unchanged regardless of token orders</p></li>
 </ul>
 </li>
-<li><p><span class="math notranslate nohighlight">\(d_V\)</span>: Hidden size of V.</p></li>
+<li><p><strong>How</strong>: Add positional vectors onto semantic vectors.</p></li>
 </ul>
-</li>
-<li><p>Intermediate values:</p>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(Q=XW_Q\in\mathbb{R}^{m\times d_K}\)</span>: Q vectors for all elems.</p></li>
-<li><p><span class="math notranslate nohighlight">\(K=XW_K\in\mathbb{R}^{m\times d_K}\)</span>: K vectors for all elems.</p></li>
-<li><p><span class="math notranslate nohighlight">\(V=XW_V\in\mathbb{R}^{m\times d_V}\)</span>: V vectors for all elems.</p></li>
+<li><p><span class="math notranslate nohighlight">\(X\in\mathbb{R}^{m\times d_{\text{model}}}\)</span>: Input/Output semantic vectors.</p></li>
+</ul>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(P\in\mathbb{R}^{m\times d_{\text{model}}}\)</span>: Positional embedding vectors.</p></li>
 </ul>
 </li>
 </ul>
+<p>Positional Encoding:</p>
+<div class="math notranslate nohighlight">
+\[
+X\leftarrow X+P
+\]</div>
+</div>
+<br/>
+</section>
+<section id="attention">
+<h2>Attention<a class="headerlink" href="#attention" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Different weights for different parts.</p>
+<ul>
+<li><p>Focus on important parts &amp; Diffuse on trivial parts.</p></li>
+</ul>
+</li>
+<li><p><strong>Why</strong>: Enable models to dynamically align &amp; retrieve most relevant parts of input sequence when generating each output token.</p></li>
+</ul>
+<section id="self-attention">
+<h3>Self-Attention<a class="headerlink" href="#self-attention" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Each token in the sequence pays attention to all other tokens in the same sequence, to produce <strong>context-aware representations</strong>.</p></li>
+<li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong></p></li>
+<li><p><strong>How</strong>: Information Retrieval.</p>
+<ol class="arabic simple">
+<li><p>All tokens <span class="math notranslate nohighlight">\(\xrightarrow{\text{convert to}}\)</span> <span class="math notranslate nohighlight">\(Q\)</span>,<span class="math notranslate nohighlight">\(K\)</span>,<span class="math notranslate nohighlight">\(V\)</span></p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(Q\)</span>: What are you looking for?</p></li>
+<li><p><span class="math notranslate nohighlight">\(K\)</span>: What are the keywords for identification?</p></li>
+<li><p><span class="math notranslate nohighlight">\(V\)</span>: What is the content?</p></li>
+</ul>
+</li>
+<li><p>For each token <span class="math notranslate nohighlight">\(t\)</span>:</p>
+<ol class="arabic simple">
+<li><p>Multiply its query &amp; all tokens’ keys <span class="math notranslate nohighlight">\(\rightarrow\)</span> Relevance scores</p></li>
+<li><p>Scale &amp; Softmax the scores <span class="math notranslate nohighlight">\(\rightarrow\)</span> Attention weights</p></li>
+<li><p>Weighted sum of all tokens’ values <span class="math notranslate nohighlight">\(\rightarrow\)</span> <span class="math notranslate nohighlight">\(t\)</span>’s contextual representation</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>Input:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(X\in\mathbb{R}^{m\times d_{\text{model}}}\)</span>: Input sequence</p></li>
+</ul>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(W_Q\in\mathbb{R}^{d_{\text{model}}\times d_K}\)</span>: Weight matrix for Q.</p></li>
+<li><p><span class="math notranslate nohighlight">\(W_K\in\mathbb{R}^{d_{\text{model}}\times d_K}\)</span>: Weight matrix for K.</p></li>
+<li><p><span class="math notranslate nohighlight">\(W_V\in\mathbb{R}^{d_{\text{model}}\times d_V}\)</span>: Weight matrix for V.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(m\)</span>: #Tokens.</p></li>
+<li><p><span class="math notranslate nohighlight">\(d_{\text{model}}\)</span>: Embedding dim of input sequence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(d_K\)</span>: Embedding dim of Q &amp; K.</p>
+<ul>
+<li><p>Q &amp; K share the same embedding dim for matrix multiplication.</p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(d_V\)</span>: Embedding dim of V (practically the same as <span class="math notranslate nohighlight">\(d_K\)</span>).</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(Q=XW_Q\in\mathbb{R}^{m\times d_K}\)</span>: Q vectors for all tokens.</p></li>
+<li><p><span class="math notranslate nohighlight">\(K=XW_K\in\mathbb{R}^{m\times d_K}\)</span>: K vectors for all tokens.</p></li>
+<li><p><span class="math notranslate nohighlight">\(V=XW_V\in\mathbb{R}^{m\times d_V}\)</span>: V vectors for all tokens.</p></li>
+</ul>
+</li>
+</ul>
+<p>Scaled Dot-Product Attention:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Attention}(Q,K,V)=\text{softmax}\left(\frac{QK^T}{\sqrt{d_K}}\right)V
+\]</div>
 </div>
 <div class="important dropdown admonition">
 <p class="admonition-title">Derivation (Backprop)</p>
@@ -740,14 +651,14 @@ You have learnt something about everything, but not everything weighs the same i
 </ol>
 <div class="math notranslate nohighlight">
 \[
-\frac{\partial L}{\partial V}=A^T\frac{\partial L}{\partial Y}
+\frac{\partial\mathcal{L}}{\partial V}=A^T\frac{\partial\mathcal{L}}{\partial Y}
 \]</div>
 <ol class="arabic simple" start="2">
 <li><p>A:</p></li>
 </ol>
 <div class="math notranslate nohighlight">
 \[
-\frac{\partial L}{\partial A}=\frac{\partial L}{\partial Y}V^T
+\frac{\partial\mathcal{L}}{\partial A}=\frac{\partial\mathcal{L}}{\partial Y}V^T
 \]</div>
 <ol class="arabic simple" start="3">
 <li><p>S:</p></li>
@@ -763,9 +674,9 @@ You have learnt something about everything, but not everything weighs the same i
 <li><p>For each row <span class="math notranslate nohighlight">\(i\)</span> of <span class="math notranslate nohighlight">\(S\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-	\frac{\partial L}{\partial S_{ij}}&amp;=\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}\frac{\partial A_{ik}}{\partial S_{ij}} \\
-	&amp;=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k\neq j}\frac{\partial L}{\partial A_{ik}}A_{ik} \\
-	&amp;=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}A_{ik}
+	\frac{\partial\mathcal{L}}{\partial S_{ij}}&amp;=\sum_{k=1}^{m}\frac{\partial\mathcal{L}}{\partial A_{ik}}\frac{\partial A_{ik}}{\partial S_{ij}} \\
+	&amp;=\frac{\partial\mathcal{L}}{\partial A_{ij}}A_{ij}-A_{ij}\frac{\partial\mathcal{L}}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k\neq j}\frac{\partial\mathcal{L}}{\partial A_{ik}}A_{ik} \\
+	&amp;=\frac{\partial\mathcal{L}}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k=1}^{m}\frac{\partial\mathcal{L}}{\partial A_{ik}}A_{ik}
 	\end{align*}\end{split}\]</div>
 </li>
 </ul>
@@ -774,24 +685,24 @@ You have learnt something about everything, but not everything weighs the same i
 </ol>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-&amp;\frac{\partial L}{\partial Q}=\frac{\partial L}{\partial S}\frac{K}{\sqrt{d_K}} \\
-&amp;\frac{\partial L}{\partial K}=\frac{\partial L}{\partial S}^T\frac{Q}{\sqrt{d_K}}
+&amp;\frac{\partial\mathcal{L}}{\partial Q}=\frac{\partial\mathcal{L}}{\partial S}\frac{K}{\sqrt{d_K}} \\
+&amp;\frac{\partial\mathcal{L}}{\partial K}=\frac{\partial\mathcal{L}}{\partial S}^T\frac{Q}{\sqrt{d_K}}
 \end{align*}\end{split}\]</div>
 <ol class="arabic simple" start="5">
 <li><p>Ws:</p></li>
 </ol>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-&amp;\frac{\partial L}{\partial W_Q}=X^T\frac{\partial L}{\partial Q}\\
-&amp;\frac{\partial L}{\partial W_K}=X^T\frac{\partial L}{\partial K}\\
-&amp;\frac{\partial L}{\partial W_V}=X^T\frac{\partial L}{\partial V}
+&amp;\frac{\partial\mathcal{L}}{\partial W_Q}=X^T\frac{\partial\mathcal{L}}{\partial Q}\\
+&amp;\frac{\partial\mathcal{L}}{\partial W_K}=X^T\frac{\partial\mathcal{L}}{\partial K}\\
+&amp;\frac{\partial\mathcal{L}}{\partial W_V}=X^T\frac{\partial\mathcal{L}}{\partial V}
 \end{align*}\end{split}\]</div>
 <ol class="arabic simple" start="6">
 <li><p>X:</p></li>
 </ol>
 <div class="math notranslate nohighlight">
 \[
-\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Q}W_Q^T+\frac{\partial L}{\partial K}W_K^T+\frac{\partial L}{\partial V}W_V^T
+\frac{\partial\mathcal{L}}{\partial X}=\frac{\partial\mathcal{L}}{\partial Q}W_Q^T+\frac{\partial\mathcal{L}}{\partial K}W_K^T+\frac{\partial\mathcal{L}}{\partial V}W_V^T
 \]</div>
 </div>
 <div class="tip dropdown admonition">
@@ -851,8 +762,8 @@ You have learnt something about everything, but not everything weighs the same i
 <ul class="simple">
 <li><p>Only applicable in decoder.</p>
 <ul>
-<li><p>Main goal of encoder: convert sequence into a meaningful representation.</p></li>
-<li><p>Main goal of decoder: predict next token.</p></li>
+<li><p>Encoder’s goal: Convert sequence into a meaningful representation.</p></li>
+<li><p>Decoder’s goal: predict next token.</p></li>
 </ul>
 </li>
 </ul>
@@ -888,24 +799,26 @@ You have learnt something about everything, but not everything weighs the same i
 <li><p><strong>What</strong>: Multiple self-attention modules running in parallel.</p></li>
 <li><p><strong>Why</strong>:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(1\)</span> attention module <span class="math notranslate nohighlight">\(\xrightarrow{\text{monitor}}\)</span> <span class="math notranslate nohighlight">\(1\)</span> representation subspace</p></li>
+<li><p>1 attention module <span class="math notranslate nohighlight">\(\xrightarrow{\text{monitor}}\)</span> 1 representation subspace</p></li>
 <li><p>Language is complex: morphology, syntax, semantics, context, …</p></li>
 <li><p><span class="math notranslate nohighlight">\(h\)</span> attention modules <span class="math notranslate nohighlight">\(\xrightarrow{\text{monitor}}\)</span> <span class="math notranslate nohighlight">\(h\)</span> representation subspaces</p></li>
 </ul>
 </li>
-<li><p><strong>How</strong>: Each head <span class="math notranslate nohighlight">\(\xrightarrow{\text{self-attention}}\)</span> Each output <span class="math notranslate nohighlight">\(\xrightarrow{\text{concatenate}}\)</span> All outputs <span class="math notranslate nohighlight">\(\xrightarrow{\text{linear transform}}\)</span> Final output</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Each head takes the input token sequence and generates an output via self-attention.</p></li>
+<li><p>Concatenate all outputs.</p></li>
+<li><p>Linear transform to match embedding dim.</p></li>
+</ol>
+</li>
 </ul>
 <div class="note dropdown admonition">
 <p class="admonition-title">Math</p>
-<p>MHA:</p>
-<div class="math notranslate nohighlight">
-\[
-\text{MultiHead}(Q,K,V)=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W_O
-\]</div>
+<p>Notations:</p>
 <ul class="simple">
 <li><p>Params:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(W_O\)</span>: Weight matrix to transform concatenated head outputs.</p></li>
+<li><p><span class="math notranslate nohighlight">\(W_O\in\mathbb{R}^{(h\cdot d_v)\times d_{\text{model}}}\)</span>: Weight matrix to transform concatenated head outputs.</p></li>
 </ul>
 </li>
 <li><p>Hyperparams:</p>
@@ -915,10 +828,15 @@ You have learnt something about everything, but not everything weighs the same i
 </li>
 <li><p>Intermediate values:</p>
 <ul>
-<li><p><span class="math notranslate nohighlight">\(\text{head}_i\in\mathbb{R}^{m\times d_V}\)</span>: Weighted representation of input sequence from the <span class="math notranslate nohighlight">\(i\)</span>th head.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{head}_i\in\mathbb{R}^{m\times d_V}\)</span>: Weighted contextual representation of input sequence from head <span class="math notranslate nohighlight">\(i\)</span>.</p></li>
 </ul>
 </li>
 </ul>
+<p>MHA:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{MultiHead}(Q,K,V)=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W_O
+\]</div>
 </div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Q&amp;A</p>
@@ -926,60 +844,117 @@ You have learnt something about everything, but not everything weighs the same i
 <ul class="simple">
 <li><p>⬆️ Computational cost</p></li>
 <li><p>⬇️ Interpretability</p></li>
-<li><p>Redundancy <span class="math notranslate nohighlight">\(\leftarrow\)</span> some heads may learn similar patterns</p></li>
+<li><p>Redundancy <span class="math notranslate nohighlight">\(\leftarrow\)</span> Some heads may learn similar patterns</p></li>
 </ul>
 </div>
-<!-- <br/>
-
-# Encoder
-
-# Decoder -->
-<!-- # Encoder
-- **What**: Sequence -> **Contextual representation**.
-- **Why**: To produce more meaningful representations (context + semantics + position).
-- **How**:
-	1. [Multi-Head Attention](#multi-head-attention): Applies attention across all tokens.
-	2. [Residual Connection](#residual-connection): Adds contextual info to the original input, to **prevent info loss** and **make gradients smooth**.
-	3. [Layer Normalization](#layer-normalization): Enhances training stability & speed.
-	4. [Feed-Forward Network](#feed-forward-network): Refines the representation & Captures additional complex patterns.
-- **Where**: Inference models (e.g., BERT family).
-
-## Multi-Head Attention
-
-## Scale Dot-Product Attention
-```{image} ../../images/scaled_dot_product_attention.png
-:align: center
-:width: 250px
-```
-
-## Residual Connection
-
-## Layer Normalization
-
-## Feed-Forward Network
-
-# Decoder
-- **What**: Encoded representation -> **Sequence**.
-- **Why**: To produce context-aware outputs via encoder's info & previously generated tokens.
-- **How**:
-	1. [Masked Multi-Head Attention](#masked-multi-head-attention): Attends ONLY to past tokens in the target sequence, ensuring autoregressive output.
-	2. [Encoder-Decoder Cross-Attention](#encoder-decoder-cross-attention): Integrates input sequence context into output generation.
-	3. [Residual Connection](#residual-connection): Adds contextual info to the original input, to **prevent info loss** and **make gradients smooth**.
-	4. [Layer Normalization](#layer-normalization): Enhances training stability & speed.
-	5. [Feed-Forward Network](#feed-forward-network): Refines the representation & Captures additional complex patterns.
-- **Where**: Generative models (e.g., GPT family)
-
-## Masked Multi-Head Attention
-
-## Encoder-Decoder Cross-Attention
-
-# Output
-
-## Linear
-See [Linear](../modules/basics.md#linear)
-
-## Softmax
-See [Softmax](../modules/activations.md#softmax) --></section>
+<br>
+</section>
+</section>
+<section id="encoder">
+<h2>Encoder<a class="headerlink" href="#encoder" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>:</p>
+<ol class="arabic simple">
+<li><p>MHA + Residual Connection + LayerNorm</p></li>
+<li><p>Position-wise FFN + Residual Connection + LayerNorm</p></li>
+</ol>
+</li>
+<li><p><strong>Why</strong>: MHA merely forms a softmax-weighted linear blend of other tokens’ value vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Where is non-liearity &amp; info complexity?</p>
+<ul>
+<li><p><strong>Non-linearity</strong>: Two-layer FFN with ReLU in between.</p></li>
+<li><p><strong>Info complexity</strong>: Each token gets its own info processing stage: “Diffuse <span class="math notranslate nohighlight">\(\rightarrow\)</span> Activate <span class="math notranslate nohighlight">\(\rightarrow\)</span> Compress”.</p>
+<ul>
+<li><p>A mere weighted sum of value vectors <span class="math notranslate nohighlight">\(\rightarrow\)</span> Higher-order feature mixes.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>MHA</strong>: Immediately establish global context from input sequence BEFORE per-token processing.</p>
+<ol class="arabic simple">
+<li><p><strong>Residual Connection</strong>: Preserve the original signal &amp; Ensure training stability for deep stacks.</p></li>
+<li><p><strong>LayerNorm</strong>: Re-center &amp; Rescale outputs to curb <a class="reference internal" href="../dl/issues.html#internal-covariate-shift"><span class="std std-ref">covariate shift</span></a>.</p></li>
+</ol>
+</li>
+<li><p><strong>Position-wise FFN</strong>: Apply FFN independently <strong>to each token vector</strong> <span class="math notranslate nohighlight">\(\rightarrow\)</span> Transform features within each position’s channel dimension, w/o exchanging info across positions.</p>
+<ol class="arabic simple">
+<li><p><strong>Residual Connection</strong>: Preserve the original signal &amp; Ensure training stability for deep stacks.</p></li>
+<li><p><strong>LayerNorm</strong>: Re-center &amp; Rescale outputs to curb <a class="reference internal" href="../dl/issues.html#internal-covariate-shift"><span class="std std-ref">covariate shift</span></a>.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R^{d_{\text{model}}}}\)</span>: Input token vector.</p></li>
+</ul>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(W_1\in\mathbb{R}^{d_{\text{model}}\times d_{\text{FFN}}}, \mathbf{b}_1\in\mathbb{R}^{d_{\text{FFN}}}\)</span>: Diffuse weights &amp; biases.</p></li>
+<li><p><span class="math notranslate nohighlight">\(W_2\in\mathbb{R}^{d_{\text{FFN}}\times d_{\text{model}}}, \mathbf{b}_2\in\mathbb{R}^{d_{\text{model}}}\)</span>: Compress weights &amp; biases.</p></li>
+</ul>
+</li>
+</ul>
+<p>Position-wise FFN:</p>
+<div class="math notranslate nohighlight">
+\[
+FFN(\mathbf{x})=\max(0,\mathbf{x}W_1+\mathbf{b}_1)W_2+\mathbf{b}_2
+\]</div>
+</div>
+</section>
+<section id="decoder">
+<h2>Decoder<a class="headerlink" href="#decoder" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>:</p>
+<ol class="arabic simple">
+<li><p>Masked MHA + Residual Connection + LayerNorm</p></li>
+<li><p>(Optional) Cross MHA + Residual Connection + LayerNorm</p></li>
+<li><p>Position-wise FFN + Residual Connection + LayerNorm</p></li>
+</ol>
+</li>
+<li><p><strong>Why</strong>: See <a class="reference internal" href="#maskedcausal-attention"><span class="xref myst">Masked MHA</span></a>, <a class="reference internal" href="#cross-attention"><span class="xref myst">Cross MHA</span></a> and <a class="reference internal" href="#encoder"><span class="xref myst">Position-wise FFN</span></a>.</p>
+<ul>
+<li><p>BUT why cross after mask?</p>
+<ul>
+<li><p>The goal of decoder is Next Token Prediction.</p></li>
+<li><p>In order to predict anything, we need the context first.</p></li>
+<li><p>Masked MHA provides AR context for the target token.</p></li>
+<li><p>THEN, we can add supplementary info from Cross MHA.</p></li>
+<li><p>THEN, we do per-token processing.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="output">
+<h2>Output<a class="headerlink" href="#output" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Embeddings <span class="math notranslate nohighlight">\(\rightarrow\)</span> Token probability distribution.</p></li>
+<li><p><strong>Why</strong>: Next Token Prediction.</p></li>
+<li><p><strong>How</strong>: Linear + Softmax.</p>
+<ul>
+<li><p><strong>Linear</strong>: Shape conversion: Embedding dim <span class="math notranslate nohighlight">\(\rightarrow\)</span> Vocab size.</p></li>
+<li><p><strong>Softmax</strong>: Logits <span class="math notranslate nohighlight">\(\rightarrow\)</span> Probs</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://jalammar.github.io/illustrated-transformer/">Jay Alammar’s Illustrated Transformer</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/pdf/1706.03762">The OG transformer paper</a></p></li>
+<li><p><a class="reference external" href="https://huggingface.co/learn/llm-course/chapter1/1?fw=pt">HF’s LLM course</a></p></li>
+<li><p><a class="reference external" href="https://wangkuiyi.github.io/positional_encoding.html">Yi Wang’s Positional Encoding</a></p></li>
+</ul>
 </section>
 </section>
 
@@ -1047,17 +1022,9 @@ See [Softmax](../modules/activations.md#softmax) --></section>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bpe-byte-pair-encoding">BPE (Byte-Pair Encoding)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wordpiece">WordPiece</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rope-rotary-postion-embedding">RoPE (Rotary Postion Embedding)</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-attention">Masked/Causal Attention</a></li>
@@ -1065,6 +1032,10 @@ See [Softmax](../modules/activations.md#softmax) --></section>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">Encoder</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output">Output</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>
 
