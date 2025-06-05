@@ -12,15 +12,24 @@ kernelspec:
 # Issues
 This page lists the common issues in deep learning in Alphabetic order.
 
-# Internal Covariate Shift
-- **What**: During training, the distribution of inputs to each layer changes. Each layer has to continuously adapt to a new distribution.
-- **Cause**: During training, the params of all preceding layers change, causing changes in their outputs.
-- **Consequence**: Harder convergence & Training instability.
-- **Mitigation**:
-	- Batch normalization $\rightarrow$ stabilize input distribution.
-	- Proper weight initialization (e.g., Xavier, He, etc.) $\rightarrow$ maintain stable gradients.
-	- Smaller learning rates $\rightarrow$ reduce the magnitude of param updates.
-		- Cons: slower convergence.
+## Covariate Shift
+- **What**: A learned function suddenly sees its input data distribution change, while the conditional distribution of labels given data is presumed unchanged.
+    - Dataset Covariate Shift: Training $\leftrightarrow$ Inference.
+    - Internal Covariate Shift: Layer $\leftrightarrow$ Layer.
+- **Why**:
+    - Dataset: Difference between training & inference data.
+    - Internal:
+        1. The weights of earlier layer keep changing.
+        2. $\rightarrow$ Later layers must re-adapt to each moving distribution
+        3. $\rightarrow$ BUT the underlying mapping is unchanged
+        4. $\rightarrow$ ⬇️Training stability
+- **How to mitigate**:
+	- BatchNorm: Re-center & Re-scale each layer's output channel to $N(0,1)$ $\rightarrow$ Steady distribution $\rightarrow$ Steady training
+        - BUT less effective than LayerNorm $\leftarrow$ The normalization is independent between channels.
+    - LayerNorm: Re-center & Re-scale each layer's outputs to $N(0,1)$ $\rightarrow$ Steady distribution $\rightarrow$ Steady training
+	- Proper weight initialization (e.g., Xavier, He, etc.) $\rightarrow$ Stable gradients
+	- Smaller learning rates $\rightarrow$ Reduce the magnitude of param updates
+		- BUT slower convergence.
 	- Adaptive learning rates (e.g., Adam) $\rightarrow$ dynamically control the magnitude of param updates.
 
 # Overfitting

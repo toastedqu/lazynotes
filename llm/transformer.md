@@ -10,15 +10,26 @@ kernelspec:
   name: python3
 ---
 # Transformer
-- **What**: **Self-attention** for sequential data.
+- **What**: **Self-attention** for modeling relationships between all tokens in input sequence.
 - **Why**: **Long-range dependencies** + **Parallel processing**.
 - **How**: {cite:p}`vaswani2017attention`
+
+```{dropdown} Notations
+- IO:
+    - $T=(t_1,\cdots,t_m)$: Input token sequence (after tokenization)
+- Params:
+    - $W$: Trainable params.
+- Hyperparams:
+    - $m$: #Tokens.
+```
+
 ```{image} ../images/transformer/transformer.png
 :align: center
 :width: 500px
 ```
 
-````{dropdown} Input
+
+<!-- ````{dropdown} Input
 ```{image} ../images/transformer/input.png
 :align: center
 :width: 400px
@@ -30,7 +41,7 @@ kernelspec:
 :align: center
 :width: 400px
 ```
-````
+```` -->
 
 ## Tokenization
 - **What**: Sequence $\rightarrow$ Tokens
@@ -44,191 +55,108 @@ kernelspec:
 - Subword offers a fixed-size, open-vocab symbol set which can handle rare words while maintaining morphology.
 ```
 
-### BPE (Byte-Pair Encoding)
-- **What**: Frequency-based subword tokenization.
-- **How**:
-	1. Start with single characters as tokens.
-	2. Count every pair of adjacent tokens.
-	3. Merge the **most frequent** pair into one token.
-	4. Repeat Step 2-3 till reaching vocab size.
+<br/>
 
-### WordPiece
-- **What**: Likelihood-based subword tokenization.
+## Token Embedding
+- **What**: Tokens $\rightarrow$ Semantic vectors.
 - **Why**: 
-	- BPE merges by frequency $\rightarrow$ Greedy $\rightarrow$ Doesn't care about the merge's impact on the overall LM probability
-	- WordPiece aims to **maximize corpus likelihood** under a unigram LM over subword tokens.
-- **How**:
-	1. Start with single characters as tokens.
-	2. Compute corpus likelihood gain for each pair of adjacent tokens.
-	3. Merge the pair with the **highest likelihood gain** into one token.
-	4. Repeat Step 2-3 till reaching vocab size.
+	- Discrete tokens $\xrightarrow{\text{map to}}$ Continuous vectors
+	- Vocab index $\xrightarrow{\text{map to}}$ Semantic meaning
+	- Vocab size $\xrightarrow{\text{reduced to}}$ hidden size
+- **How**: [Linear](../dl/module.md#linear).
 
 ```{admonition} Math
 :class: note, dropdown
 Notations:
 - IO:
-	- $w_i$: $i$th word (i.e., space-separated tokens) in training corpus.
-	- $t_{i,j}$: $j$th subtoken in word $w_i$.
-- Hyperparams:
-	- $M$: #words in training corpus.
-	- $m_{w_i}$: #subtokens in word $w_i$.
+	- $T=(t_1,\cdots,t_m)$: Input token sequence (after tokenization).
+    - $X\in\mathbb{R}^{m\times d_{\text{model}}}$: Output semantic vectors.
 - Params:
-	- $\mathcal{V}$: Vocab of subword tokens.
-- Misc:
-	- $L(\mathcal{V})$: Corpus likelihood given curr vocab.
-	- $a,b$: 2 selected tokens.
-	- $c$: New token if merging $ab$.
+    - $E\in\mathbb{R}^{V\times d_{\text{model}}}$: Embedding matrix/look-up table.
+- Hyperparams:
+    - $m$: #Tokens.
+    - $d_{\text{model}}$: Embedding dim for the model.
+    - $V$: Vocab size.
 
-Objective: Maximize Corpus Likelihood
-
-$$
-L(\mathcal{V})=\prod_{i=1}^{M}P(w_i|\mathcal{V})=\prod_{i=1}^{M}\prod_{j=1}^{m_{w_i}}t_{i,j}
-$$
-
-Likelihood: #Counts of curr token over #Counts of all tokens in corpus from vocab:
+Token Embedding:
 
 $$
-P(a)=\frac{\# a}{\sum_{b\in\mathcal{V}}\# b}
-$$
-
-Merging $a$&$b$ into $c$:
-
-$$\begin{align*}
-\# c\leftarrow \# c + \# ab \\
-\# a\leftarrow \# a - \# ab	\\
-\# b\leftarrow \# b - \# ab
-\end{align*}$$
-
-Likelihood Gain:
-
-$$
-\Delta(a,b)=\sum_{ab}\left[\log P_\mathrm{postmerge}(c)-\log P(a)-\log P(b)\right]
+X=\begin{bmatrix}
+E_{t_1} \\
+\vdots \\
+E_{t_m}
+\end{bmatrix}
 $$
 ```
-
-<!-- ### Unigram -->
-
-<br/>
-
-## Token Embedding
-- **What**: Tokens $\rightarrow$ Semantic vectors.
-- **Why**:
-	- Discrete $\rightarrow$ Continuous
-	- Vocab index $\rightarrow$ Semantic meaning
-	- Vocab size $\xrightarrow{\text{reduced to}}$ hidden size
-- **How**: Look-up table / [Linear](../basics.md#linear).
 
 <br/>
 
 ## Positional Encoding
 - **What**: Semantic vectors + Positional vectors $\rightarrow$ Position-aware vectors
-- **Why**:
-	- Transformers don't know positions.
-	- BUT positions matter!
-		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
-
-### Sinusoidal PE
-- **What**: Positional vectors $\rightarrow$ Sine waves
-- **Why**:
-	- Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
-	- No params $\rightarrow$ Low computational cost
-	- Empirically performed as well as learned PE
+- **Why**: Transformers don't know positions due to parallelism, BUT positions matter.
+    - No PE $\rightarrow$ Self-attention scores remain unchanged regardless of token orders
+- **How**: Add positional vectors onto semantic vectors.
 
 ```{admonition} Math
 :class: note, dropdown
 Notations:
 - IO:
-	- $pos\in\mathbb{R}$: Input token position.
-- Hyperparams:
-	- $i$: Embedding dimension index.
-	- $d_{\text{model}}$: Embedding dimension.
+    - $X\in\mathbb{R}^{m\times d_{\text{model}}}$: Input/Output semantic vectors.
+- Params:
+    - $P\in\mathbb{R}^{m\times d_{\text{model}}}$: Positional embedding vectors.
 
-Sinusoidal PE:
+Positional Encoding:
 
-$$\begin{align*}
-&PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
-&PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
-\end{align*}$$
+$$
+X\leftarrow X+P
+$$
 ```
-
-```{admonition} Q&A
-:class: tip, dropdown
-*Cons?*
-- No params $\rightarrow$ No learning of task-specific position patterns.
-- Requires uniform token importance across the sequence. {cite:p}`vaswani2017attention`
-- Cannot capture complex, relative, or local positional relationships.
-```
-
-### RoPE (Rotary Postion Embedding)
-- **What**: Rotation matrix $\times$ Token embeddings $\xrightarrow{\text{encode}}$ Relative Position.
-- **Why**:
-	- Cons of Absolute PE: Cannot generalize to unseen sequence length.
-
 
 <br/>
 
 ## Attention
+- **What**: Different weights for different parts.
+    - Focus on important parts & Diffuse on trivial parts.
+- **Why**: Enable models to dynamically align & retrieve most relevant parts of input sequence when generating each output token.
 
 ### Self-Attention
-- **What**: Each element in the sequence pays attention to each other.
+- **What**: Each token in the sequence pays attention to all other tokens in the same sequence, to produce **context-aware representations**.
 - **Why**: **Long-range dependencies** + **Parallel processing**
-- **How**:
-	1. All elements $\rightarrow$ QKV
-		- Q: What are you looking for?
-		- K: What are your keywords for search?
-		- V: What info do you have?
-	2. For each token T:
-		1. T's Query & All Keys $\rightarrow$ Relevance scores
-		2. $\rightarrow$ Attention weights
-		3. $\rightarrow$ Weighted sum of T's Value (i.e., T's contextual representation)
-
-<!-- ```{dropdown} ELI5
-You are in a top AI conference.
-
-Each guy is an element.
-
-You have some dumb question in mind. (Q)
-
-Each guy has their badges and posters with titles and metadata. (K)
-
-Each guy knows the details of their projects. (V)
-
-You walk around & check out the whole venue.
-
-You see topics that you don't really care. You skim & skip.
-
-You see topics that are related to your question. You talk to the guys to learn more.
-
-You see topics that you are obsessed with. You ask the guys a billion follow-up questions and memorize every single technical detail of their Github implementation.
-
-The conference ends.
-
-You have learnt something about everything, but not everything weighs the same in your heart.
-``` -->
+- **How**: Information Retrieval.
+	1. All tokens $\xrightarrow{\text{convert to}}$ $Q$,$K$,$V$
+		- $Q$: What are you looking for?
+		- $K$: What are the keywords for identification?
+		- $V$: What is the content?
+	2. For each token $t$:
+        1. Multiply its query & all tokens' keys $\rightarrow$ Relevance scores
+		2. Scale & Softmax the scores $\rightarrow$ Attention weights
+		3. Weighted sum of all tokens' values $\rightarrow$ $t$'s contextual representation
 
 ```{admonition} Math
 :class: note, dropdown
+Notations:
+- Input:
+	- $X\in\mathbb{R}^{m\times d_{\text{model}}}$: Input sequence
+- Params:
+	- $W_Q\in\mathbb{R}^{d_{\text{model}}\times d_K}$: Weight matrix for Q.
+	- $W_K\in\mathbb{R}^{d_{\text{model}}\times d_K}$: Weight matrix for K.
+	- $W_V\in\mathbb{R}^{d_{\text{model}}\times d_V}$: Weight matrix for V.
+- Hyperparams:
+	- $m$: #Tokens.
+	- $d_{\text{model}}$: Embedding dim of input sequence.
+	- $d_K$: Embedding dim of Q & K.
+		- Q & K share the same embedding dim for matrix multiplication.
+	- $d_V$: Embedding dim of V (practically the same as $d_K$).
+- Misc:
+	- $Q=XW_Q\in\mathbb{R}^{m\times d_K}$: Q vectors for all tokens.
+	- $K=XW_K\in\mathbb{R}^{m\times d_K}$: K vectors for all tokens.
+	- $V=XW_V\in\mathbb{R}^{m\times d_V}$: V vectors for all tokens.
+
 Scaled Dot-Product Attention:
 
 $$
 \text{Attention}(Q,K,V)=\text{softmax}\left(\frac{QK^T}{\sqrt{d_K}}\right)V
 $$
-- Input:
-	- $X\in\mathbb{R}^{m\times n}$: Input sequence
-- Params:
-	- $W_Q\in\mathbb{R}^{n\times d_K}$: Weight matrix for Q.
-	- $W_K\in\mathbb{R}^{n\times d_K}$: Weight matrix for K.
-	- $W_V\in\mathbb{R}^{n\times d_V}$: Weight matrix for V.
-- Hyperparams:
-	- $m$: #Tokens.
-	- $n$: Hidden size of input sequence.
-	- $d_K$: Hidden size of Q & K.
-		- Q & K share the same hidden size for matrix multiplication.
-	- $d_V$: Hidden size of V.
-- Intermediate values:
-	- $Q=XW_Q\in\mathbb{R}^{m\times d_K}$: Q vectors for all elems.
-	- $K=XW_K\in\mathbb{R}^{m\times d_K}$: K vectors for all elems.
-	- $V=XW_V\in\mathbb{R}^{m\times d_V}$: V vectors for all elems.
 ```
 
 ```{admonition} Derivation (Backprop)
@@ -242,13 +170,13 @@ Process:
 1. V:
 
 $$
-\frac{\partial L}{\partial V}=A^T\frac{\partial L}{\partial Y}
+\frac{\partial\mathcal{L}}{\partial V}=A^T\frac{\partial\mathcal{L}}{\partial Y}
 $$
 
 2. A:
 
 $$
-\frac{\partial L}{\partial A}=\frac{\partial L}{\partial Y}V^T
+\frac{\partial\mathcal{L}}{\partial A}=\frac{\partial\mathcal{L}}{\partial Y}V^T
 $$
 
 3. S:
@@ -264,30 +192,30 @@ $$
 - For each row $i$ of $S$:
 
 	$$\begin{align*}
-	\frac{\partial L}{\partial S_{ij}}&=\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}\frac{\partial A_{ik}}{\partial S_{ij}} \\
-	&=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k\neq j}\frac{\partial L}{\partial A_{ik}}A_{ik} \\
-	&=\frac{\partial L}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k=1}^{m}\frac{\partial L}{\partial A_{ik}}A_{ik}
+	\frac{\partial\mathcal{L}}{\partial S_{ij}}&=\sum_{k=1}^{m}\frac{\partial\mathcal{L}}{\partial A_{ik}}\frac{\partial A_{ik}}{\partial S_{ij}} \\
+	&=\frac{\partial\mathcal{L}}{\partial A_{ij}}A_{ij}-A_{ij}\frac{\partial\mathcal{L}}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k\neq j}\frac{\partial\mathcal{L}}{\partial A_{ik}}A_{ik} \\
+	&=\frac{\partial\mathcal{L}}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k=1}^{m}\frac{\partial\mathcal{L}}{\partial A_{ik}}A_{ik}
 	\end{align*}$$
 
 4. Q&K:
 
 $$\begin{align*}
-&\frac{\partial L}{\partial Q}=\frac{\partial L}{\partial S}\frac{K}{\sqrt{d_K}} \\
-&\frac{\partial L}{\partial K}=\frac{\partial L}{\partial S}^T\frac{Q}{\sqrt{d_K}}
+&\frac{\partial\mathcal{L}}{\partial Q}=\frac{\partial\mathcal{L}}{\partial S}\frac{K}{\sqrt{d_K}} \\
+&\frac{\partial\mathcal{L}}{\partial K}=\frac{\partial\mathcal{L}}{\partial S}^T\frac{Q}{\sqrt{d_K}}
 \end{align*}$$
 
 5. Ws:
 
 $$\begin{align*}
-&\frac{\partial L}{\partial W_Q}=X^T\frac{\partial L}{\partial Q}\\
-&\frac{\partial L}{\partial W_K}=X^T\frac{\partial L}{\partial K}\\
-&\frac{\partial L}{\partial W_V}=X^T\frac{\partial L}{\partial V}
+&\frac{\partial\mathcal{L}}{\partial W_Q}=X^T\frac{\partial\mathcal{L}}{\partial Q}\\
+&\frac{\partial\mathcal{L}}{\partial W_K}=X^T\frac{\partial\mathcal{L}}{\partial K}\\
+&\frac{\partial\mathcal{L}}{\partial W_V}=X^T\frac{\partial\mathcal{L}}{\partial V}
 \end{align*}$$
 
 6. X:
 
 $$
-\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Q}W_Q^T+\frac{\partial L}{\partial K}W_K^T+\frac{\partial L}{\partial V}W_V^T
+\frac{\partial\mathcal{L}}{\partial X}=\frac{\partial\mathcal{L}}{\partial Q}W_Q^T+\frac{\partial\mathcal{L}}{\partial K}W_K^T+\frac{\partial\mathcal{L}}{\partial V}W_V^T
 $$
 ```
 
@@ -330,8 +258,8 @@ $$
 :class: tip, dropdown
 *Conditions?*
 - Only applicable in decoder.
-	- Main goal of encoder: convert sequence into a meaningful representation.
-	- Main goal of decoder: predict next token.
+	- Encoder's goal: Convert sequence into a meaningful representation.
+	- Decoder's goal: predict next token.
 
 *Cons?*
 - Unidirectional context.
@@ -351,24 +279,29 @@ $$
 ### Multi-Head Attention
 - **What**: Multiple self-attention modules running in parallel.
 - **Why**:
-	- $1$ attention module $\xrightarrow{\text{monitor}}$ $1$ representation subspace
+	- 1 attention module $\xrightarrow{\text{monitor}}$ 1 representation subspace
 	- Language is complex: morphology, syntax, semantics, context, ...
 	- $h$ attention modules $\xrightarrow{\text{monitor}}$ $h$ representation subspaces
-- **How**: Each head $\xrightarrow{\text{self-attention}}$ Each output $\xrightarrow{\text{concatenate}}$ All outputs $\xrightarrow{\text{linear transform}}$ Final output
+- **How**:
+    1. Each head takes the input token sequence and generates an output via self-attention.
+    2. Concatenate all outputs.
+    3. Linear transform to match embedding dim.
 
 ```{admonition} Math
 :class: note, dropdown
+Notations:
+- Params:
+	- $W_O\in\mathbb{R}^{(h\cdot d_v)\times d_{\text{model}}}$: Weight matrix to transform concatenated head outputs.
+- Hyperparams:
+	- $h$: #Heads.
+- Intermediate values:
+	- $\text{head}_i\in\mathbb{R}^{m\times d_V}$: Weighted contextual representation of input sequence from head $i$.
+
 MHA:
 
 $$
 \text{MultiHead}(Q,K,V)=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W_O
 $$
-- Params:
-	- $W_O$: Weight matrix to transform concatenated head outputs.
-- Hyperparams:
-	- $h$: #Heads.
-- Intermediate values:
-	- $\text{head}_i\in\mathbb{R}^{m\times d_V}$: Weighted representation of input sequence from the $i$th head.
 ```
 
 ```{admonition} Q&A
@@ -376,60 +309,65 @@ $$
 *Cons?*
 - ⬆️ Computational cost
 - ⬇️ Interpretability
-- Redundancy $\leftarrow$ some heads may learn similar patterns
+- Redundancy $\leftarrow$ Some heads may learn similar patterns
 ```
 
-<!-- <br/>
+<br>
 
-# Encoder
-
-# Decoder -->
-
-
-
-<!-- # Encoder
-- **What**: Sequence -> **Contextual representation**.
-- **Why**: To produce more meaningful representations (context + semantics + position).
+## Encoder
+- **What**:
+    1. MHA + Residual Connection + LayerNorm
+    2. Position-wise FFN + Residual Connection + LayerNorm
+- **Why**: MHA merely forms a softmax-weighted linear blend of other tokens' value vectors $\rightarrow$ Where is non-liearity & info complexity?
+    - **Non-linearity**: Two-layer FFN with ReLU in between.
+    - **Info complexity**: Each token gets its own info processing stage: "Diffuse $\rightarrow$ Activate $\rightarrow$ Compress".
+        - A mere weighted sum of value vectors $\rightarrow$ Higher-order feature mixes.
 - **How**:
-	1. [Multi-Head Attention](#multi-head-attention): Applies attention across all tokens.
-	2. [Residual Connection](#residual-connection): Adds contextual info to the original input, to **prevent info loss** and **make gradients smooth**.
-	3. [Layer Normalization](#layer-normalization): Enhances training stability & speed.
-	4. [Feed-Forward Network](#feed-forward-network): Refines the representation & Captures additional complex patterns.
-- **Where**: Inference models (e.g., BERT family).
+    1. **MHA**: Immediately establish global context from input sequence BEFORE per-token processing.
+        1. **Residual Connection**: Preserve the original signal & Ensure training stability for deep stacks.
+        2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#internal-covariate-shift).
+    2. **Position-wise FFN**: Apply FFN independently **to each token vector** $\rightarrow$ Transform features within each position's channel dimension, w/o exchanging info across positions.
+        1. **Residual Connection**: Preserve the original signal & Ensure training stability for deep stacks.
+        2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#internal-covariate-shift).
 
-## Multi-Head Attention
+```{admonition} Math
+:class: note, dropdown
+Notations:
+- IO:
+    - $\mathbf{x}\in\mathbb{R^{d_{\text{model}}}}$: Input token vector.
+- Params:
+    - $W_1\in\mathbb{R}^{d_{\text{model}}\times d_{\text{FFN}}}, \mathbf{b}_1\in\mathbb{R}^{d_{\text{FFN}}}$: Diffuse weights & biases.
+    - $W_2\in\mathbb{R}^{d_{\text{FFN}}\times d_{\text{model}}}, \mathbf{b}_2\in\mathbb{R}^{d_{\text{model}}}$: Compress weights & biases.
 
-## Scale Dot-Product Attention
-```{image} ../../images/scaled_dot_product_attention.png
-:align: center
-:width: 250px
+Position-wise FFN:
+
+$$
+FFN(\mathbf{x})=\max(0,\mathbf{x}W_1+\mathbf{b}_1)W_2+\mathbf{b}_2
+$$
 ```
 
-## Residual Connection
+## Decoder
+- **What**:
+    1. Masked MHA + Residual Connection + LayerNorm
+    2. (Optional) Cross MHA + Residual Connection + LayerNorm
+    3. Position-wise FFN + Residual Connection + LayerNorm
+- **Why**: See [Masked MHA](#maskedcausal-attention), [Cross MHA](#cross-attention) and [Position-wise FFN](#encoder).
+    - BUT why cross after mask?
+        - The goal of decoder is Next Token Prediction.
+        - In order to predict anything, we need the context first.
+        - Masked MHA provides AR context for the target token.
+        - THEN, we can add supplementary info from Cross MHA.
+        - THEN, we do per-token processing.
 
-## Layer Normalization
+## Output
+- **What**: Embeddings $\rightarrow$ Token probability distribution.
+- **Why**: Next Token Prediction.
+- **How**: Linear + Softmax.
+    - **Linear**: Shape conversion: Embedding dim $\rightarrow$ Vocab size.
+    - **Softmax**: Logits $\rightarrow$ Probs
 
-## Feed-Forward Network
-
-# Decoder
-- **What**: Encoded representation -> **Sequence**.
-- **Why**: To produce context-aware outputs via encoder's info & previously generated tokens.
-- **How**:
-	1. [Masked Multi-Head Attention](#masked-multi-head-attention): Attends ONLY to past tokens in the target sequence, ensuring autoregressive output.
-	2. [Encoder-Decoder Cross-Attention](#encoder-decoder-cross-attention): Integrates input sequence context into output generation.
-	3. [Residual Connection](#residual-connection): Adds contextual info to the original input, to **prevent info loss** and **make gradients smooth**.
-	4. [Layer Normalization](#layer-normalization): Enhances training stability & speed.
-	5. [Feed-Forward Network](#feed-forward-network): Refines the representation & Captures additional complex patterns.
-- **Where**: Generative models (e.g., GPT family)
-
-## Masked Multi-Head Attention
-
-## Encoder-Decoder Cross-Attention
-
-# Output
-
-## Linear
-See [Linear](../modules/basics.md#linear)
-
-## Softmax
-See [Softmax](../modules/activations.md#softmax) -->
+## References
+- [Jay Alammar's Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/)
+- [The OG transformer paper](https://arxiv.org/pdf/1706.03762)
+- [HF's LLM course](https://huggingface.co/learn/llm-course/chapter1/1?fw=pt)
+- [Yi Wang's Positional Encoding](https://wangkuiyi.github.io/positional_encoding.html)
