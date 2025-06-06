@@ -9,10 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Inference
-This page focuses on inference for decoder models.
-
-## Decoding
+# Decoding
 - **What**: Token probabilities $\rightarrow$ Output token
 - **Why**:
 	- In generation tasks, the transformer model only estimates the probabilities of outputting each token via logits.
@@ -54,7 +51,7 @@ Y_*=\arg\max_YP(Y|X)
 $$
 ```
 
-### Temperature
+## Temperature
 - **What**: Randomness control.
 - **Why**: **Boltzmann distribution** from statistical mechanics: $p_i\propto\exp\left(-\frac{E_i}{kT}\right)$
 	- This describes the probability of a system being in a particular state $i$ given the state's energy $E_i$ and the system's temperature $T$.
@@ -72,7 +69,7 @@ $$
 	- $\tau=1$: Standard softmax. Probabilities reflect differences in logits.
 	- $\tau>1$: Generally NOT recommended $\leftarrow$ Randomness goes BEYOND what the model has learnt.
 
-### Penalty
+## Penalty
 - **What**: Penalize the logits of tokens present in current token sequence.
 - **Why**: Autoregressive LMs can fall into repetition loops. (Occurs much more often with Greedy/Beam Search)
     - Autoregressive LMs are trained to predicted the most probable next token given current context.
@@ -97,7 +94,7 @@ Notations:
 	- $\mathbf{1}_{v_i}[Y_{<t}]$: 1 if token $v_i$ is present in $Y_{<t}$, else 0.
 ```
 
-### Greedy Search
+## Greedy Search
 - **What**: Always take the most probable token at each step.
 - **Why**: Simplest.
 
@@ -110,7 +107,7 @@ y_t=\arg\max_{v}P(y_t=v|Y_{*,<t},X)
 $$
 ```
 
-### Beam Search
+## Beam Search
 - **What**: Iteratively explore & evaluate multiple hypotheses (i.e., beams). 
 - **Why**: Greedy search focuses on local optima $\rightarrow$ May not lead to globally optimal sequence.
 - **How**:
@@ -152,7 +149,7 @@ Beam Search:
 	- $\alpha$: Length normalization hyperparameter.
 ```
 
-### Sampling
+## Sampling
 - **What**: Random selection from a set/distribution.
 - **Why**: Controlled randomness.
 	- Greedy or Beam Search lead to **deterministic** outcomes.
@@ -160,7 +157,7 @@ Beam Search:
 		- Beam: Most probable sequence at the end.
 	- Deterministic outcomes = Generic, repetitive, lacking creativity.
 
-#### Top-k
+### Top-k
 - **What**: Output token $\sim$ Top-$k$ most probable tokens.
 - **Why**: Temperature sampling $\rightarrow$ Too much randomness if large temperature $\rightarrow$ Incoherent sequence
 	- Any token may be selected based on its probability, including less probable ones.
@@ -171,7 +168,7 @@ Beam Search:
 	3. Re-normalize probabilities of top $k$ tokens.
 	4. Sample.
 
-#### Top-p (Nucleus)
+### Top-p (Nucleus)
 - **What**: Output token $\sim$ Smallest possible set of tokens whose cumulative probability exceeds $p$.
 	- **Nucleus**: the set.
 - **Why**: In Top-k,
@@ -183,31 +180,3 @@ Beam Search:
 	3. Form nucleus.
 	4. Re-normalize probabilities of top $k$ tokens.
 	5. Sample.
-
-<br/>
-
-## KV Cache
-- **What**: Cache the $K$ & $V$ vectors for previous tokens.
-- **Why**: They don't change during inference.
-    1. ONLY the last hidden state is used to predict next token.
-    2. What's the last hidden state?
-        - Recall attention formula: $\mathrm{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$.
-        - $Q$: Query vector for LAST token.
-        - $K$: Key vectors for ALL tokens.
-        - $V$: Value vectors for ALL tokens.
-    3. The causal masking in transformer decoders prevents later tokens from affecting earlier tokens.
-    4. $\rightarrow$ At each autoregressive step, $K$ & $V$ of input tokens never change.
-    5. $\xrightarrow{\text{cache}}$ Avoid recomputation.
-- **How**: Cache.
-
-```{admonition} Q&A
-:class: tip, dropdown
-*Pro Tip:* The query vectors for previous tokens are NEVER needed during inference.
-
-*If it's so good, any cons?*
-- ⬆️Memory cost: $O(m\cdot h\cdot d_k\cdot \#\mathrm{layers})$
-
-*When should you turn it off?*
-- Very short prompts: Recomputation is cheaper than caching.
-- Parallelism & Hardware Acceleration: Caching adds an ALL-layer ALL-head copy for each step for each GPU.
-```

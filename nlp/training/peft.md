@@ -15,7 +15,7 @@ kernelspec:
 
 ## LoRA (Low-Rank Adaptation)
 - **What**: Train **low-rank** matrices to adapt to downstream tasks.
-- **Why**: #params ⇓ $\rightarrow$ Finetuning efficiency ⇑.
+- **Why**: #params ⬇️ $\rightarrow$ Finetuning efficiency ⬆️.
 - **How**: Inject low-rank matrices into the weights of specific layers, w/o modifying the original weights directly.
 
 ```{admonition} Math

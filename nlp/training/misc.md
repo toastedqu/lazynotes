@@ -9,8 +9,10 @@ kernelspec:
   language: python
   name: python3
 ---
-# Efficiency
-# Knowledge Distillation
+# Misc
+This page collects miscellaneous techniques in LLM training.
+
+## Knowledge Distillation
 - **What**: Large, pre-trained **teacher** model $\xrightarrow{\text{transfer knowledge}}$ Small **student** model
     - Teacher & Student are trained on the same data.
     - Teacher sees true labels (i.e., **hard targets**).

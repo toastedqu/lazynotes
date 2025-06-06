@@ -19,16 +19,22 @@ parts:
     - file: dl/loss
     # - file: dl/train
     # - file: dl/issues
-  - caption: LLM
+  - caption: NLP
     chapters:
-    - file: llm/transformer
-    # - file: llm/training
-    - file: llm/inference
-    # - file: llm/model
-    # - file: llm/peft
-    - file: llm/rlhf
-    # - file: llm/efficiency
-    # - file: llm/scale
+    - file: nlp/transformer/transformer
+      sections:
+      - file: nlp/transformer/tokenizer
+      - file: nlp/transformer/pe
+    - file: nlp/models
+    - file: nlp/training/training
+      sections:
+      - file: nlp/training/peft
+      - file: nlp/training/rlhf
+      - file: nlp/training/misc
+    - file: nlp/inference/inference
+      sections:
+      - file: nlp/inference/decoding
+      - file: nlp/inference/misc
   - caption: Math
     chapters:
     - file: math/info

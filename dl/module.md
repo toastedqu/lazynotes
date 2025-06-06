@@ -18,6 +18,7 @@ kernelspec:
 
 Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readability.
 
+This page does NOT cover transformer.
 <br/>
 
 ## Linear
