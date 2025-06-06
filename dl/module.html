@@ -182,12 +182,26 @@
 <li class="toctree-l1"><a class="reference internal" href="optim.html">Parameter Optimization for Neural Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">NLP</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../llm/transformer.html">Transformer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../llm/inference.html">Inference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../llm/rlhf.html">RL for LLMs</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../nlp/transformer/transformer.html">Transformer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../nlp/transformer/tokenizer.html">Tokenization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nlp/transformer/pe.html">Positional Encoding</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../nlp/models.html">Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../nlp/training/training.html">Training</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../nlp/training/peft.html">PEFT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nlp/training/rlhf.html">RL for LLMs</a></li>
 
+<li class="toctree-l2"><a class="reference internal" href="../nlp/training/misc.html">Misc</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../nlp/inference/inference.html">Inference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../nlp/inference/decoding.html">Decoding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nlp/inference/misc.html">Misc</a></li>
+</ul>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
 <ul class="nav bd-sidenav">
@@ -441,7 +455,8 @@ document.write(`
 </li>
 </ul>
 <p>Let <span class="math notranslate nohighlight">\(g\)</span> denote the gradient <span class="math notranslate nohighlight">\(\frac{\partial\mathcal{L}}{\partial y}\)</span> for readability.</p>
-<br/>
+<p>This page does NOT cover transformer.
+<br/></p>
 <section id="linear">
 <h2>Linear<a class="headerlink" href="#linear" title="Link to this heading">#</a></h2>
 <ul class="simple">

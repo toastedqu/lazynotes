@@ -1,0 +1,1129 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>RL for LLMs &#8212; LazyNotes</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nlp/training/rlhf';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Misc" href="misc.html" />
+    <link rel="prev" title="PEFT" href="peft.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="LazyNotes - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="LazyNotes - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../dl/module.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dl/optim.html">Parameter Optimization for Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dl/loss.html">Loss</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">NLP</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../transformer/transformer.html">Transformer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/tokenizer.html">Tokenization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/pe.html">Positional Encoding</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="training.html">Training</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="peft.html">PEFT</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">RL for LLMs</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="misc.html">Misc</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../inference/inference.html">Inference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../inference/decoding.html">Decoding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../inference/misc.html">Misc</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../math/info.html">Information Theory</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dsa.html">Coding</a></li>
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fnlp/training/rlhf.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nlp/training/rlhf.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>RL for LLMs</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">RL for LLMs</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rl">RL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#llm-alignment">LLM Alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rl-for-llm-alignment">RL for LLM Alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rlhf-instructgpt">RLHF (InstructGPT)</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-optimization">Policy Optimization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo">PPO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpo">DPO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grpo">GRPO</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="rl-for-llms">
+<h1>RL for LLMs<a class="headerlink" href="#rl-for-llms" title="Link to this heading">#</a></h1>
+<section id="rl">
+<h2>RL<a class="headerlink" href="#rl" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Agent <span class="math notranslate nohighlight">\(\overset{\text{action}}{\underset{\text{reward}}{\rightleftarrows}}\)</span> Environment</p></li>
+<li><p><strong>Why</strong>: For decision-making where actions have delayed consequence in dynamic, sequential tasks.</p>
+<ul>
+<li><p>In contrast, Supervised Learning teaches “correct answers” for static tasks.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ul>
+<li><p><strong>Objective</strong>: Cumulative Reward <span class="math notranslate nohighlight">\(\xleftarrow{\text{maximize}}\)</span> Optimal Policy</p></li>
+<li><p><strong>Process</strong>: Repeat: <span class="math notranslate nohighlight">\(s_t\)</span> <span class="math notranslate nohighlight">\(\xrightarrow{a_t}\)</span> <span class="math notranslate nohighlight">\(s_{t+1}\)</span> <span class="math notranslate nohighlight">\(\xrightarrow{\text{get}}\)</span> <span class="math notranslate nohighlight">\(r_t\)</span> <span class="math notranslate nohighlight">\(\xrightarrow{\text{update}}\)</span> <span class="math notranslate nohighlight">\(\pi\)</span></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="llm-alignment">
+<h2>LLM Alignment<a class="headerlink" href="#llm-alignment" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: LLM <span class="math notranslate nohighlight">\(\xrightarrow{\text{match}}\)</span> human preferences <span id="id1">[<a class="reference internal" href="../../references.html#id2" title="Zhichao Wang, Bin Bi, Shiva Kumar Pentyala, Kiran Ramnath, Sougata Chaudhuri, Shubham Mehrotra, Xiang-Bo Mao, Sitaram Asur, and others. A comprehensive survey of llm alignment techniques: rlhf, rlaif, ppo, dpo and more. arXiv preprint arXiv:2407.16216, 2024.">9</a>]</span></p></li>
+<li><p><strong>Why</strong>: ⬇️Undesired, sometimes harmful responses.</p></li>
+<li><p><strong>How</strong>: Humans <span class="math notranslate nohighlight">\(\xrightarrow{\text{collect}}\)</span> Feedback <span class="math notranslate nohighlight">\(\xrightarrow{\text{train}}\)</span> Pretrained LLM</p></li>
+</ul>
+</section>
+<section id="rl-for-llm-alignment">
+<h2>RL for LLM Alignment<a class="headerlink" href="#rl-for-llm-alignment" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Frame LLM Alignment as an RL problem <span id="id2">[<a class="reference internal" href="../../references.html#id5" title="Shuhe Wang, Shengyu Zhang, Jie Zhang, Runyi Hu, Xiaoya Li, Tianwei Zhang, Jiwei Li, Fei Wu, Guoyin Wang, and Eduard Hovy. Reinforcement learning enhanced llms: a survey. arXiv preprint arXiv:2412.10400, 2024.">8</a>]</span>:</p>
+<ul>
+<li><p><strong>Agent</strong>: LLM.</p></li>
+<li><p><strong>State</strong>: Input token sequence.</p></li>
+<li><p><strong>Action</strong>: Next-token prediction.</p></li>
+<li><p><strong>Next State</strong>: Input token sequence + Predicted next token.</p></li>
+<li><p><strong>Reward</strong>: Reward.</p>
+<ul>
+<li><p>Determined by an external reward model OR preference labels.</p></li>
+<li><p>Typically computed after a full token sequence is generated.</p></li>
+</ul>
+</li>
+<li><p><strong>Policy</strong>: LLM weights.</p>
+<ul>
+<li><p>Dictates how LLM predicts next token given input token sequence.</p></li>
+<li><p>Initial policy <span class="math notranslate nohighlight">\(\leftarrow\)</span> Pretraining (&amp; SFT).</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Why</strong>: Human values are dynamic, subjective, and constantly evolving. There isn’t always one “correct answer” for IRL scenarios, so SFT falls short.</p></li>
+<li><p><strong>How</strong>:</p>
+<ul>
+<li><p><strong>Process</strong>: Feedback <span class="math notranslate nohighlight">\(\xrightarrow{\text{train}}\)</span> RM <span class="math notranslate nohighlight">\(\xrightarrow{\text{train}}\)</span> Policy</p></li>
+<li><p><strong>Key factors</strong>:</p>
+<ul>
+<li><p>Feedback Data.</p></li>
+<li><p>Reward Model.</p></li>
+<li><p>Policy Optimization.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Table 1: Feedback Data</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p class="sd-card-text">Subcategory</p></th>
+<th class="head"><p class="sd-card-text">Type</p></th>
+<th class="head"><p class="sd-card-text">Description</p></th>
+<th class="head"><p class="sd-card-text">Pros</p></th>
+<th class="head"><p class="sd-card-text">Cons</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p class="sd-card-text"><strong>Label</strong></p></td>
+<td><p class="sd-card-text"><strong>Preference</strong></p></td>
+<td><p class="sd-card-text">Rating on a scale (<span class="math notranslate nohighlight">\(y_w&gt;y_l\)</span>)</p></td>
+<td><p class="sd-card-text">Captures nuance</p></td>
+<td><p class="sd-card-text">Hard to collect</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"></p></td>
+<td><p class="sd-card-text"><strong>Binary</strong></p></td>
+<td><p class="sd-card-text">Thumbs up &amp; down (<span class="math notranslate nohighlight">\(y^+\ \&amp;\ y^-\)</span>)</p></td>
+<td><p class="sd-card-text">Easy to collect</p></td>
+<td><p class="sd-card-text">Less informative (no middle ground)</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><strong>Style</strong></p></td>
+<td><p class="sd-card-text"><strong>Pairwise</strong></p></td>
+<td><p class="sd-card-text">Compare 2 responses</p></td>
+<td><p class="sd-card-text">Easy to interpret</p></td>
+<td><p class="sd-card-text">Slow for large datasets (have to create pairs for all responses)</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"></p></td>
+<td><p class="sd-card-text"><strong>Listwise</strong></p></td>
+<td><p class="sd-card-text">Rank multiple responses at once</p></td>
+<td><p class="sd-card-text">More informative, Fast</p></td>
+<td><p class="sd-card-text">Hard to interpret</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><strong>Source</strong></p></td>
+<td><p class="sd-card-text"><strong>Human</strong></p></td>
+<td><p class="sd-card-text">Feedback from human evaluators</p></td>
+<td><p class="sd-card-text">Represents actual human values</p></td>
+<td><p class="sd-card-text">Expensive, slow, inconsistent due to subjectivity</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"></p></td>
+<td><p class="sd-card-text"><strong>AI</strong></p></td>
+<td><p class="sd-card-text">Feedback generated by AI models</p></td>
+<td><p class="sd-card-text">Cheap, fast, scalable</p></td>
+<td><p class="sd-card-text">Does not necessarily represent human values (risk of unsafe responses)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Table 2: Reward Model</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p class="sd-card-text">Subcategory</p></th>
+<th class="head"><p class="sd-card-text">Type</p></th>
+<th class="head"><p class="sd-card-text">Description</p></th>
+<th class="head"><p class="sd-card-text">Pros</p></th>
+<th class="head"><p class="sd-card-text">Cons</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p class="sd-card-text"><strong>Form</strong></p></td>
+<td><p class="sd-card-text"><strong>Explicit</strong></p></td>
+<td><p class="sd-card-text">An external model, typically from SFT of a pretrained LLM</p></td>
+<td><p class="sd-card-text">Interpretable &amp; Scalable</p></td>
+<td><p class="sd-card-text">High computational cost</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"></p></td>
+<td><p class="sd-card-text"><strong>Implicit</strong></p></td>
+<td><p class="sd-card-text">No external model (e.g., DPO)</p></td>
+<td><p class="sd-card-text">Low computational cost, No reward overfitting</p></td>
+<td><p class="sd-card-text">Less control</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><strong>Style</strong></p></td>
+<td><p class="sd-card-text"><strong>Pointwise</strong></p></td>
+<td><p class="sd-card-text">Outputs a reward score <span class="math notranslate nohighlight">\(r(x,y)\)</span> given an input-output pair</p></td>
+<td><p class="sd-card-text">Simple &amp; Interpretable</p></td>
+<td><p class="sd-card-text">Ignores relative preferences</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"></p></td>
+<td><p class="sd-card-text"><strong>Preferencewise</strong></p></td>
+<td><p class="sd-card-text">Outputs probability of desired response being preferred over undesired response:<br><span class="math notranslate nohighlight">\(P(y_w&gt;y_l|x)=\sigma(r(x,y_w)-r(x,y_l))\)</span></p></td>
+<td><p class="sd-card-text">Provides comparisons</p></td>
+<td><p class="sd-card-text">No pairwise preferences, Sensitive to human label inconsistencies</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><strong>Level</strong></p></td>
+<td><p class="sd-card-text"><strong>Token-level</strong></p></td>
+<td><p class="sd-card-text">Reward is given per token/action</p></td>
+<td><p class="sd-card-text">Fine-grained feedback</p></td>
+<td><p class="sd-card-text">High computational cost, Noisy rewards</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"></p></td>
+<td><p class="sd-card-text"><strong>Response-level</strong></p></td>
+<td><p class="sd-card-text">Reward is given per response (most commonly used)</p></td>
+<td><p class="sd-card-text">Simple</p></td>
+<td><p class="sd-card-text">Coarse feedback</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><strong>Source</strong></p></td>
+<td><p class="sd-card-text"><strong>Positive</strong></p></td>
+<td><p class="sd-card-text">Humans label both desired and undesired responses</p></td>
+<td><p class="sd-card-text">More control</p></td>
+<td><p class="sd-card-text">Expensive &amp; Time-consuming</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"></p></td>
+<td><p class="sd-card-text"><strong>Negative</strong></p></td>
+<td><p class="sd-card-text">Humans label undesired responses, LLMs generate desired responses</p></td>
+<td><p class="sd-card-text">Cheap &amp; Scalable</p></td>
+<td><p class="sd-card-text">Less control</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details></section>
+<section id="rlhf-instructgpt">
+<h2>RLHF (InstructGPT)<a class="headerlink" href="#rlhf-instructgpt" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Name</strong>: Reinforcement Learning from Human Feedback <span id="id3">[<a class="reference internal" href="../../references.html#id3" title="Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, and others. Training language models to follow instructions with human feedback. Advances in neural information processing systems, 35:27730–27744, 2022.">2</a>]</span></p></li>
+<li><p><strong>What</strong>: RLHF + PPO/PPO-ptx.</p></li>
+<li><p><strong>Why</strong>: LLM <span class="math notranslate nohighlight">\(\xrightarrow{\text{match}}\)</span> human preferences</p></li>
+<li><p><strong>How</strong>:</p>
+<ul>
+<li><p><strong>Data</strong>: Pairwise + Human.</p></li>
+<li><p><strong>RM</strong>: Explicit + Pointwise.</p></li>
+<li><p><strong>PO</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>PPO</strong>: Max Reward + <strong>Min Deviation</strong></p>
+<ul>
+<li><p>Deviation Minimization: Aligned policy <span class="math notranslate nohighlight">\(\Leftrightarrow\)</span> Initial policy <span class="math notranslate nohighlight">\(\leftarrow\)</span> Trust Region Constraint</p>
+<ul>
+<li><p><em>Why?</em> To keep what works while aiming at what we want, via minimal changes. Drastic changes could make it forget what worked.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>PPO-ptx</strong>: Max Reward + Min Deviation + <strong>Min Alignment Tax</strong></p>
+<ul>
+<li><p>Alignment Tax Minimization: ❌Degradation of Pre/SFT task performance.</p></li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>RM:</p>
+<ul>
+<li><p>Reward Estimation (<strong>Bradley-Terry Model</strong>):</p>
+<div class="math notranslate nohighlight">
+\[
+    p^*(y_w\succ y_l|x)=\frac{\exp{r^*(x,y_w)}}{\exp{r^*(x,y_w)}+\exp{r^*(x,y_l)}}
+    \]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(x\)</span>: Input token sequence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(y_w\)</span>: Desired (W) output token sequence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(y_l\)</span>: Undesired (L) output token sequence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(r^*(x,y)\)</span>: Latent reward function for input <span class="math notranslate nohighlight">\(x\)</span> and output <span class="math notranslate nohighlight">\(y\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p^*(y_w\succ y_l|x)\)</span>: Probability that humans prefer <span class="math notranslate nohighlight">\(y_w\)</span> over <span class="math notranslate nohighlight">\(y_l\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Objective:</p>
+<div class="math notranslate nohighlight">
+\[
+    L_\text{RM}(r_\phi)=-\frac{1}{\binom{K}{2}}\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\right]
+    \]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(r_\phi(x,y)\)</span>: Reward model for input <span class="math notranslate nohighlight">\(x\)</span> and output <span class="math notranslate nohighlight">\(y\)</span>, parameterized by <span class="math notranslate nohighlight">\(\phi\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\binom{K}{2}=\frac{K(K-1)}{2}\)</span>: #Comparisons for each prompt shown to each labeler.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{D}\)</span>: RL Dataset.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\)</span>: Sigmoid function <span class="math notranslate nohighlight">\(\rightarrow\)</span> Bradley-Terry model.</p></li>
+</ul>
+</li>
+</ul>
+<hr class="docutils" />
+<p>PO:</p>
+<ul>
+<li><p>PPO:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    L_\text{PPO}(\pi_\theta)&amp;=\mathbb{E}_{x\sim\mathcal{D}}[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\text{KL}\left[\pi_\theta(y|x)||\pi_\text{ref}(y|x)\right]] \\
+    &amp;=\mathbb{E}_{x\sim\mathcal{D}}\left[\mathbb{E}_{y\sim\pi_\theta(y|x)}r_\phi(x,y)-\beta\mathbb{E}_{y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]\right] \\
+    &amp;=\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]
+    \end{align*}\end{split}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\pi_\theta(y|x)\)</span>: Curr policy, which gives the probability of generating <span class="math notranslate nohighlight">\(y\)</span> given <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_\text{ref}(y|x)\)</span>: Reference policy (initial policy of pretrained LLM).</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>: KL divergence penalty coefficient.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{KL}[\pi_\theta||\pi_\text{ref}]\)</span>: Per-token KL divergence.</p></li>
+</ul>
+</li>
+<li><p>PPO-ptx:</p>
+<div class="math notranslate nohighlight">
+\[
+    L_\text{PPO-ptx}(\pi_\theta)=\mathbb{E}_{x\sim\mathcal{D},y\sim\pi_\theta(y|x)}\left[r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right]+\gamma\mathbb{E}_{x\sim\mathcal{D}_\text{pretrain}}[\log\pi_\theta(x)]
+    \]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Pretrain loss coefficient.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{D}_\text{pretrain}\)</span>: Pretraining dataset.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<p><br><br></p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="policy-optimization">
+<h1>Policy Optimization<a class="headerlink" href="#policy-optimization" title="Link to this heading">#</a></h1>
+<section id="ppo">
+<h2>PPO<a class="headerlink" href="#ppo" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><strong>Name</strong>: Proximal Policy Optimization <span id="id4">[<a class="reference internal" href="../../references.html#id6" title="John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. Proximal policy optimization algorithms. 2017. URL: https://arxiv.org/abs/1707.06347, arXiv:1707.06347.">4</a>]</span></p></li>
+<li><p><strong>What</strong>: Policy gradient, but <strong>proximal</strong> (close) to current policy.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ol class="arabic simple">
+<li><p>Stable gradients.</p></li>
+<li><p>No optimal KL penalty coefficient for <strong>TRPO</strong> to work well.</p></li>
+</ol>
+</li>
+<li><p><strong>How</strong>: TRPO + <strong>Better Penalty</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Clipped Surrogate Objective</strong>: Trap the probability ratio in a range.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{penalize}}\)</span> deviation from current policy</p></li>
+</ul>
+</li>
+<li><p><strong>Adaptive KL coefficient</strong>: Adapt the coefficient to match a target KL divergence value per update.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{minimize}}\)</span> hyperparam tuning impact</p></li>
+</ul>
+</li>
+</ol>
+<ul class="simple">
+<li><p>(Empirically, 1&gt;2)</p></li>
+<li><p>(Empirically by Anthropic, ❌1&amp;2, ✅<span class="math notranslate nohighlight">\(\beta=0.001\)</span>) <span id="id5">[<a class="reference internal" href="../../references.html#id4" title="Yuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma, Dawn Drain, Stanislav Fort, Deep Ganguli, Tom Henighan, Nicholas Joseph, Saurav Kadavath, Jackson Kernion, Tom Conerly, Sheer El-Showk, Nelson Elhage, Zac Hatfield-Dodds, Danny Hernandez, Tristan Hume, Scott Johnston, Shauna Kravec, Liane Lovitt, Neel Nanda, Catherine Olsson, Dario Amodei, Tom Brown, Jack Clark, Sam McCandlish, Chris Olah, Ben Mann, and Jared Kaplan. Training a helpful and harmless assistant with reinforcement learning from human feedback. 2022. URL: https://arxiv.org/abs/2204.05862, arXiv:2204.05862.">1</a>]</span></p></li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>TRPO (quick recap):</p>
+<ul>
+<li><p><strong>Probability Ratio</strong>: How much more/less likely to take the given action under new policy vs old policy.</p>
+<div class="math notranslate nohighlight">
+\[
+    \rho_t(\theta)=\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_\text{old}}(a_t|s_t)}
+    \]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\theta\)</span>: Policy parameter(s).</p></li>
+<li><p><span class="math notranslate nohighlight">\(t\)</span>: Curr time step.</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_t\)</span>: Curr action.</p></li>
+<li><p><span class="math notranslate nohighlight">\(s_t\)</span>: Curr state.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_\theta\)</span>: New policy.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_{\theta_\text{old}}\)</span>: Old policy.</p></li>
+</ul>
+</li>
+<li><p><strong>Advantage Estimate</strong>: (roughly) How much better/worse of the given action compared to baseline.</p>
+<div class="math notranslate nohighlight">
+\[
+    \hat{A}_t=\sum_{l=0}^{T-t-1}(\gamma\lambda)^l\left[r_{t+l}+\gamma V(s_{t+l+1})-V(s_{t+l})\right]
+    \]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(T\)</span>: Total time steps.</p></li>
+<li><p><span class="math notranslate nohighlight">\(l\)</span>: Time step increment.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Discount factor for future rewards.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\lambda\in[0,1]\)</span>: Bias-variance tradeoff coefficient.</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\lambda=0\)</span>: One-step TD <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬆️Bias, ⬇️Variance</p></li>
+<li><p><span class="math notranslate nohighlight">\(\lambda=1\)</span>: Full Monte Carlo return <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬇️Bias, ⬆️Variance</p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(r_t\)</span>: Curr reward.</p></li>
+<li><p><span class="math notranslate nohighlight">\(V(s)\)</span>: Value function at state <span class="math notranslate nohighlight">\(s\)</span>.</p></li>
+</ul>
+</li>
+<li><p><strong>KL Divergence</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+    \text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]=\mathbb{E}_{a_t\in\mathcal{A}_t}\left[\log\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_\text{old}}(a_t|s_t)}\right]
+    \]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{A}_t\)</span>: Curr action space.</p></li>
+</ul>
+</li>
+<li><p>Objective:</p>
+<div class="math notranslate nohighlight">
+\[
+    L_\text{TRPO}=\hat{\mathbb{E}}_t\left[\rho_t(\theta)\hat{A}_t-\beta\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
+    \]</div>
+</li>
+</ul>
+<hr class="docutils" />
+<p>PPO:</p>
+<ul>
+<li><p><strong>Clipped Surrogate Objective</strong>:</p>
+<ul>
+<li><p>Clip Function:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+        \text{clip}(x, a, b)=\begin{cases}
+        a &amp; \text{if } x\leq a \\
+        x &amp; \text{if } x\in(a,b) \\
+        b &amp; \text{if } x\geq b
+        \end{cases}
+        \end{split}\]</div>
+</li>
+<li><p>Objective:</p>
+<div class="math notranslate nohighlight">
+\[
+        L_\text{CLIP}(\theta)=\hat{\mathbb{E}}_t\left[\min\left(\rho_t(\theta)\hat{A}_t, \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\right)\right]
+        \]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\epsilon\)</span>: Tiny value to control ratio change.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Adaptive KL Penalty Coefficient</strong>:</p>
+<ul>
+<li><p>For each policy update:</p>
+<ol class="arabic">
+<li><p>Optimize TRPO objective.</p></li>
+<li><p>Compute <strong>divergence</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+            d=\hat{\mathbb{E}_t}\left[\text{KL}[\pi_\theta(\cdot|s_t)||\pi_{\theta_\text{old}}(\cdot|s_t)]\right]
+            \]</div>
+</li>
+<li><p>Update <span class="math notranslate nohighlight">\(\beta\)</span> via case switch:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+            &amp;d&lt;d_\text{tar} /1.5 &amp;\Longrightarrow\ &amp;\beta\leftarrow\beta/2 \\
+            &amp;d&gt;d_\text{tar}\cdot 1.5 &amp;\Longrightarrow\ &amp;\beta\leftarrow\beta\cdot 2
+            \end{align*}\end{split}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(d_\text{tar}\)</span>: Target divergence.</p></li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="dpo">
+<h2>DPO<a class="headerlink" href="#dpo" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Name</strong>: Direct Preference Optimization <span id="id6">[<a class="reference internal" href="../../references.html#id8" title="Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea Finn. Direct preference optimization: your language model is secretly a reward model. Advances in Neural Information Processing Systems, 36:53728–53741, 2023.">3</a>]</span></p></li>
+<li><p><strong>What</strong>: ❌RM <span class="math notranslate nohighlight">\(\rightarrow\)</span> LM=RM <span class="math notranslate nohighlight">\(\rightarrow\)</span> ✅Classification</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p><em>Why do we need it?</em></p>
+<ul>
+<li><p>RLHF is unstable <span class="math notranslate nohighlight">\(\leftarrow\)</span> RM underfitting/overfitting</p></li>
+<li><p>PPO is expensive <span class="math notranslate nohighlight">\(\leftarrow\)</span> Extra RM, Hyperparameter tuning, On-policy sampling, etc.</p></li>
+</ul>
+</li>
+<li><p><em>Why does it even work?</em></p>
+<ol class="arabic simple">
+<li><p>PPO’s KL-constrained reward maximization objective actually has a <strong>closed-form solution</strong>.</p></li>
+<li><p>The solution actually satisfies <strong>Bradley-Terry model</strong> (or other pairwise preference models).</p></li>
+<li><p>The model provides the <strong>probability of human preference data in terms of the optimal policy</strong> (❌RM).</p></li>
+<li><p>Yo, probability of data? <span class="math notranslate nohighlight">\(\rightarrow\)</span> MLE <span class="math notranslate nohighlight">\(\rightarrow\)</span> BCE</p></li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p><strong>How</strong>: Get data <span class="math notranslate nohighlight">\(\rightarrow\)</span> Train LM to minimize BCE</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Optimal Policy:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\pi^*(y|x)=&amp;\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)\text{, where} \\
+&amp;r(x,y)=r_\phi(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)} \\
+&amp;Z(x)=\sum_y\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right) \\
+\end{align*}\end{split}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(r(x,y)\)</span>: The reward function that gets maximized in PPO.</p></li>
+<li><p><span class="math notranslate nohighlight">\(Z(x)\)</span>: Partition function, used for</p>
+<ul>
+<li><p>normalization of optimal policy to a valid probability distribution.</p></li>
+<li><p>dirty tricks in Derivation.</p></li>
+</ul>
+</li>
+</ul>
+<p>Reward Function reparameterized:</p>
+<div class="math notranslate nohighlight">
+\[
+r^*(x,y)=\beta\log\frac{\pi^*(y|x)}{\pi_\text{ref}(y|x)}+\beta\log Z(x)
+\]</div>
+<p>Bradley-Terry Model reparameterized:</p>
+<div class="math notranslate nohighlight">
+\[
+p^*(y_w\succ y_l|x)=\frac{1}{1+\exp\left(\beta\log\frac{\pi^*(y_l|x)}{\pi_\text{ref}(y_l|x)}-\beta\log\frac{\pi^*(y_w|x)}{\pi_\text{ref}(y_w|x)}\right)}
+\]</div>
+<p>Objective (BCE):</p>
+<div class="math notranslate nohighlight">
+\[
+L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(\beta\log\frac{\pi^*(y_l|x)}{\pi_\text{ref}(y_l|x)}-\beta\log\frac{\pi^*(y_w|x)}{\pi_\text{ref}(y_w|x)}\right)\right]
+\]</div>
+<p>Gradient:</p>
+<div class="math notranslate nohighlight">
+\[
+\nabla_\theta L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\beta\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left\{\sigma\left(\hat{r}_\theta(x,y_l)-\hat{r}_\theta(x,y_w)\right)\left[\nabla_\theta\log\pi_\theta(y_w|x)-\nabla_\theta\log\pi_\theta(y_l|x)\right]\right\}
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\hat{r}_\theta(x,y)=\beta\log\frac{\pi^*(y|x)}{\pi_\text{ref}(y|x)}\)</span>: Implicit reward model via LM.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{r}_\theta(x,y_l)-\hat{r}_\theta(x,y_w)\)</span>: Higher update when reward estimate is wrong (<span class="math notranslate nohighlight">\(y_l\succ y_w\)</span>).</p></li>
+<li><p><span class="math notranslate nohighlight">\(\log\pi_\theta(y|x)\)</span>: Log likelihood of <span class="math notranslate nohighlight">\(y|x\)</span> <span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬆️<span class="math notranslate nohighlight">\(y_w\)</span>, ⬇️<span class="math notranslate nohighlight">\(y_l\)</span>.</p></li>
+</ul>
+</div>
+<div class="important dropdown admonition">
+<p class="admonition-title">Derivation: PPO -&gt; BCE</p>
+<ol class="arabic">
+<li><p>Solve PPO for arbitrary reward function <span class="math notranslate nohighlight">\(r(x,y)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    &amp;\max_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[r(x,y)-\beta\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}\right] \\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}-\frac{1}{\beta}r(x,y)\right]\\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_\text{ref}(y|x)}+\log Z(x)-\frac{1}{\beta}r(x,y)-\log Z(x)\right] \\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_\text{ref}(y|x)}-\log\exp\left(\frac{1}{\beta}r(x,y)\right)-\log Z(x)\right]\\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}, y\sim\pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)}-\log Z(x)\right]\\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}\left\{\left[\sum_y\pi_\theta(y|x)\log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)}\right]-\log Z(x)\right\}\\
+    &amp;=\min_{\pi_\theta}\mathbb{E}_{x\sim\mathcal{D}}\left\{\text{KL}\left[\pi_\theta(y|x)||\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)\right]\right\}\\
+    \end{align*}\end{split}\]</div>
+<p>The minimal value of KL divergence is 0, where left = right. Thus,</p>
+<div class="math notranslate nohighlight">
+\[
+    \pi^*(y|x)=\frac{1}{Z(x)}\pi_\text{ref}(y|x)\exp\left(\frac{1}{\beta}r(x,y)\right)
+    \]</div>
+<p>This is a valid probability distribution because <span class="math notranslate nohighlight">\(\forall y: \pi^*(y|x)\geq0\)</span> and <span class="math notranslate nohighlight">\(\sum_y\pi^*(y|x)=1\)</span>.</p>
+</li>
+<li><p>Derive <span class="math notranslate nohighlight">\(r(x,y)\)</span> from the equation above.</p></li>
+<li><p>Reformat Bradley-Terry Model to sigmoid function.</p></li>
+<li><p>Formulate MLE, switch to BCE, calculate gradient via sigmoid derivative tricks.</p></li>
+</ol>
+</div>
+</section>
+<section id="grpo">
+<h2>GRPO<a class="headerlink" href="#grpo" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Name</strong>: Group Relative Policy Optimization <span id="id7">[<a class="reference internal" href="../../references.html#id9" title="Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, YK Li, Y Wu, and others. Deepseekmath: pushing the limits of mathematical reasoning in open language models. arXiv preprint arXiv:2402.03300, 2024.">5</a>]</span></p></li>
+<li><p><strong>What</strong>: ❌Value Function <span class="math notranslate nohighlight">\(\rightarrow\)</span> ✅Average of multisampling from reference policy = baseline for Advantage Estimation.</p></li>
+<li><p><strong>Why</strong>: PPO objective <span class="math notranslate nohighlight">\(\xleftarrow{\text{compute}}\)</span> Advantage <span class="math notranslate nohighlight">\(\xleftarrow{\text{compute}}\)</span> Extra value model (i.e., critic)</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬆️<strong>Computational cost</strong></p>
+<ul>
+<li><p>Value models can be as large as reward models.</p></li>
+<li><p>e.g., OG RLHF/PPO initialized a 6B value function from a 6B RM <span id="id8">[<a class="reference internal" href="../../references.html#id3" title="Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, and others. Training language models to follow instructions with human feedback. Advances in neural information processing systems, 35:27730–27744, 2022.">2</a>]</span>.</p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> ⬇️<strong>Value model accuracy</strong></p>
+<ul>
+<li><p>Value model is supposed to be accurate at each token.</p></li>
+<li><p>BUT reward score is only computed at the last token.</p></li>
+<li><p>SO there’s no reward signal for intermediate tokens.</p></li>
+<li><p>SO value model has to guess the final reward based on incomplete information.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> High variance + Training instability.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ul>
+<li><p><strong>Outcome Supervision</strong>: For each input,</p>
+<ol class="arabic simple">
+<li><p>Group of outputs <span class="math notranslate nohighlight">\(\xleftarrow{\text{sample}}\)</span> reference policy</p></li>
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{RM on }\textbf{full sequence}}\)</span> Rewards</p></li>
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{normalize}}\)</span> Normalized rewards</p></li>
+<li><p>For <strong>all tokens</strong>, Advantages = Normalized rewards</p></li>
+<li><p>Optimize.</p></li>
+</ol>
+</li>
+<li><p><strong>Process Supervision</strong>: For each input,</p>
+<ol class="arabic simple">
+<li><p>Group of outputs <span class="math notranslate nohighlight">\(\xleftarrow{\text{sample}}\)</span> reference policy</p></li>
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{RM on }\textbf{each step}}\)</span> Rewards</p></li>
+<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{normalize}\textbf{ across all dims}}\)</span> Normalized rewards</p></li>
+<li><p>For <strong>each token</strong>, Advantage = <span class="math notranslate nohighlight">\(\sum\)</span> Normalized rewards after it.</p></li>
+<li><p>Optimize.</p></li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./nlp/training"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="peft.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">PEFT</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="misc.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Misc</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">RL for LLMs</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rl">RL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#llm-alignment">LLM Alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rl-for-llm-alignment">RL for LLM Alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rlhf-instructgpt">RLHF (InstructGPT)</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-optimization">Policy Optimization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo">PPO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpo">DPO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grpo">GRPO</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Renyi Qu
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

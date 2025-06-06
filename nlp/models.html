@@ -1,0 +1,906 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Models &#8212; LazyNotes</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nlp/models';</script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Training" href="training/training.html" />
+    <link rel="prev" title="Positional Encoding" href="transformer/pe.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="LazyNotes - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="LazyNotes - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../dl/module.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dl/optim.html">Parameter Optimization for Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dl/loss.html">Loss</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">NLP</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="transformer/transformer.html">Transformer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="transformer/tokenizer.html">Tokenization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transformer/pe.html">Positional Encoding</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="training/training.html">Training</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="training/peft.html">PEFT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training/rlhf.html">RL for LLMs</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="training/misc.html">Misc</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="inference/inference.html">Inference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="inference/decoding.html">Decoding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference/misc.html">Misc</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../math/info.html">Information Theory</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dsa.html">Coding</a></li>
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fnlp/models.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/nlp/models.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Models</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-only">Encoder-only</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bert-bidirectional-encoder-representations-from-transformers">BERT (Bidirectional Encoder Representations from Transformers)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roberta-robustly-optimized-bert-pretraining-approach">RoBERTa (Robustly Optimized BERT Pretraining Approach)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder-only">Decoder-only</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-generative-pretrained-transformer">GPT (Generative Pretrained Transformer)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-2">GPT-2</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-3">GPT-3</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-3-5-chatgpt-better-instructgpt">GPT-3.5 (ChatGPT / Better InstructGPT)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-4">GPT-4</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="models">
+<h1>Models<a class="headerlink" href="#models" title="Link to this heading">#</a></h1>
+<p>This page covers the prevalent Encoder-only, Decoder-only, and Encoder-decoder transformer models.</p>
+<p>This page does NOT cover contemporary LLM for now.</p>
+<section id="encoder-only">
+<h2>Encoder-only<a class="headerlink" href="#encoder-only" title="Link to this heading">#</a></h2>
+<section id="bert-bidirectional-encoder-representations-from-transformers">
+<h3>BERT (Bidirectional Encoder Representations from Transformers)<a class="headerlink" href="#bert-bidirectional-encoder-representations-from-transformers" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Bidirectional, Encoder-only Transformer model pretrained on MLM &amp; NSP objectives.</p>
+<ul>
+<li><p><strong>MLM (Masked Language Modeling)</strong>: Learn to fill in the blank.</p></li>
+<li><p><strong>NSP (Next Sentence Prediction)</strong>: Learn to predict whether Sentence B is the next sentence of Sentence A.</p></li>
+</ul>
+</li>
+<li><p><strong>Why</strong>: To enable truly bidirectional context understanding.</p>
+<ul>
+<li><p>A transformer model with decoder relies on causal masking for token prediction <span class="math notranslate nohighlight">\(\rightarrow\)</span> Unidirectional understanding.</p></li>
+<li><p>BERT replaces causal masking with random masking to force model to predict missing words.</p></li>
+</ul>
+</li>
+<li><p><strong>How (Pretraining)</strong>:</p>
+<ol class="arabic simple">
+<li><p>Data Processing:</p>
+<ol class="arabic simple">
+<li><p>Collect corpora. Split corpora into sentence pairs.</p></li>
+<li><p>Tokenize each sentence with <a class="reference internal" href="#tokenizer.md#wordpiece"><span class="xref myst">WordPiece</span></a>.</p></li>
+<li><p>Add special tokens.</p>
+<ul>
+<li><p>“[CLS]”: Classification token. Added at the beginning.</p></li>
+<li><p>“[SEP]”: Separation token. Added between &amp; after sentences.</p></li>
+</ul>
+</li>
+<li><p>For each sentence pair,</p>
+<ul>
+<li><p>50% chance keep it unchanged <span class="math notranslate nohighlight">\(\rightarrow\)</span> Positive</p></li>
+<li><p>50% chance replace Sentence B with a random sentence <span class="math notranslate nohighlight">\(\rightarrow\)</span> Negative.</p></li>
+</ul>
+</li>
+<li><p>Randomly select 15% of all input tokens for MLM:</p>
+<ul>
+<li><p>80% of them get replaced with “[MASK]”.</p></li>
+<li><p>10% of them get replaced with a random token.</p></li>
+<li><p>10% of them are unchanged.</p></li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>Pretraining:</p>
+<ol class="arabic simple">
+<li><p>Compute &amp; Add Token embeddings, Segment embeddings, and Position embeddings.</p>
+<ul>
+<li><p><strong>Token embeddings</strong>: Trainable “token ID <span class="math notranslate nohighlight">\(\rightarrow\)</span> embedding” look-up table/matrix.</p></li>
+<li><p><strong>Segment embeddings</strong>: Trainable “segment ID <span class="math notranslate nohighlight">\(\rightarrow\)</span> embedding” look-up table/matrix, to distinguish the two sentences.</p></li>
+<li><p><strong>Positional embeddings</strong>: Trainable “position index <span class="math notranslate nohighlight">\(\rightarrow embedding\)</span>” look-up table/matrix.</p></li>
+</ul>
+</li>
+<li><p>BERT forward pass.</p></li>
+<li><p><strong>MLM</strong>: For each masked position, use Linear + Softmax to convert BERT output to token probability distribution.</p>
+<ul>
+<li><p>Linear: Weights = Transpose of Token embeddings matrix.</p></li>
+</ul>
+</li>
+<li><p><strong>NSP</strong>: For the [CLS] position, use Linear + Softmax to convert BERT output to label probability distribution.</p>
+<ul>
+<li><p>Linear: Shape transform from hidden dim to two logits.</p></li>
+</ul>
+</li>
+<li><p>Compute &amp; Add Cross-Entropy losses from MLM &amp; NSP. Backprop &amp; Update.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(t_i\)</span>: The true token at masked index <span class="math notranslate nohighlight">\(i\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(y\)</span>: 1 if Sentence B truly follows Sentence A, else 0.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{M}\)</span>: Set of masked indices.</p></li>
+<li><p><span class="math notranslate nohighlight">\(V\)</span>: Vocab size.</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\hat{p}_i(t_i)\)</span>: Probability of the true token <span class="math notranslate nohighlight">\(t_i\)</span> at masked index <span class="math notranslate nohighlight">\(i\)</span> being selected by the model.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{q}\)</span>: Probability of Sentence B being predicted as the next sentence of Sentence A.</p></li>
+</ul>
+</li>
+</ul>
+<p>Loss:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\text{Total}: &amp;&amp;\mathcal{L}=\mathcal{L}_{\text{MLM}}+\mathcal{L}_{\text{NSP}} \\
+&amp;\text{MLM}:   &amp;&amp;\mathcal{L}_{\text{MLM}}=-\frac{1}{|\mathcal{M}|}\sum_{i\in\mathcal{M}}\log \hat{p}_i(t_i) \\
+&amp;\text{NSP}:   &amp;&amp;\mathcal{L}_{\text{NSP}}=-\left[y\log\hat{q}+(1-y)\log(1-\hat{q})\right]
+\end{align*}\end{split}\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Why select 15% tokens for MLM? Why not more?</em></p>
+<ul class="simple">
+<li><p>We want to provide enough context for BERT to learn rich representations <span class="math notranslate nohighlight">\(\rightarrow\)</span> Masking too many = Insufficient context</p></li>
+<li><p>We also want to create a sufficiently challenging classification task <span class="math notranslate nohighlight">\(\rightarrow\)</span> Masking too few = Insufficient learning signal</p></li>
+<li><p>15% = A perfect balance.</p></li>
+</ul>
+<p><em>Why the 80-10-10 separation? Why not just mask all of them as [MASK]?</em></p>
+<ul class="simple">
+<li><p>80% [MASK]: Make BERT learn to predict missing words using surrounding context.</p></li>
+<li><p>10% random token: Prevent BERT from overfitting to the [MASK] token as a missing word <span class="math notranslate nohighlight">\(\rightarrow\)</span> This is STILL treated as a prediction target.</p></li>
+<li><p>10% unchanged token: Reduce discrepancy between pretraining &amp; finetuning/inference.</p>
+<ul>
+<li><p>Pretraining: [MASK] tokens exist.</p></li>
+<li><p>Finetuning/Inference: [MASK] tokens do not exist.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="roberta-robustly-optimized-bert-pretraining-approach">
+<h3>RoBERTa (Robustly Optimized BERT Pretraining Approach)<a class="headerlink" href="#roberta-robustly-optimized-bert-pretraining-approach" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: BERT but more robust.</p></li>
+<li><p><strong>Why</strong>: To improve BERT’s robustness.</p>
+<ul>
+<li><p><strong>Robustness</strong>: The ability to maintain reliable performance with noisy inputs.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ul>
+<li><p>Pretrained on much larger corpora (10x).</p></li>
+<li><p>Use <strong>BPE</strong>.</p></li>
+<li><p><strong>No NSP</strong>. ONLY MLM.</p></li>
+<li><p><strong>Dynamic Masking</strong>: Create a new masking pattern every time a sequence is fed to RoBERTa <span class="math notranslate nohighlight">\(\rightarrow\)</span> Empirically better than static masking.</p></li>
+<li><p>Training configs:</p>
+<ul>
+<li><p>Batch size ⬆️⬆️.</p></li>
+<li><p>#Training steps ⬆️.</p></li>
+<li><p>Max LR ⬆️.</p></li>
+<li><p>Warmup length ⬆️.</p></li>
+<li><p><strong>Sequence length scheduling</strong>: Alternate between short (128 tokens) &amp; full-length (512 tokens) sequences in a single training run.</p>
+<ul>
+<li><p>BERT sticks to 512 tokens.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Why no NSP?</em></p>
+<ul class="simple">
+<li><p>Empirically, NSP provides negligible benefits.</p></li>
+<li><p>So why waste computational resources on it?</p></li>
+</ul>
+<p><em>Why dynamic masking?</em></p>
+<ul class="simple">
+<li><p>To prevent overfitting to a fixed mask pattern.</p></li>
+</ul>
+<p><em>Why the training config changes?</em></p>
+<ul class="simple">
+<li><p>Batch size: More stable gradient estimates &amp; Better computational resources.</p></li>
+<li><p>#Training steps: Larger corpora requires more data iterations.</p></li>
+<li><p>Max LR: Accelerate convergence when paired with larger batches.</p></li>
+<li><p>Warmup length: Prevent sudden large updates at the start of training, to accompany larger batch size and larger max LR.</p></li>
+</ul>
+<p><em>Why BPE instead of WordPiece?</em></p>
+<ul class="simple">
+<li><p>BPE can break ANY unseen character down into a sequence of bytes, all of which are in its vocab.</p></li>
+<li><p>WordPiece resorts to “[UNK]” when facing a new Unicode character.</p></li>
+</ul>
+</div>
+<!-- ### DeBERTa (Decoding-enhanced BERT with disentangled attention)
+- **What**: BERT -->
+</section>
+</section>
+<section id="decoder-only">
+<h2>Decoder-only<a class="headerlink" href="#decoder-only" title="Link to this heading">#</a></h2>
+<section id="gpt-generative-pretrained-transformer">
+<h3>GPT (Generative Pretrained Transformer)<a class="headerlink" href="#gpt-generative-pretrained-transformer" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Decoder block stack.</p>
+<ul>
+<li><p>ONLY masked attention.</p></li>
+<li><p>Learned PE instead of Sinusoidal PE.</p></li>
+</ul>
+</li>
+<li><p><strong>Why</strong>: For arbitrary-length text generation with unsupervised pretraining.</p></li>
+<li><p><strong>How (Pretraining)</strong>:</p>
+<ol class="arabic simple">
+<li><p>Data Processing:</p>
+<ol class="arabic simple">
+<li><p>Collect corpora.</p></li>
+<li><p>Tokenize each sentence with <a class="reference internal" href="#tokenizer.md#bpe-byte-pair-encoding"><span class="xref myst">BPE</span></a>.</p></li>
+<li><p>Form input-target pairs <span class="math notranslate nohighlight">\(\leftarrow\)</span> Shift each token sequence right by 1 token.</p></li>
+</ol>
+</li>
+<li><p>Pretraining:</p>
+<ol class="arabic simple">
+<li><p>Compute &amp; Add Token embeddings and Position embeddings.</p>
+<ul>
+<li><p><strong>Token embeddings</strong>: Trainable “token ID <span class="math notranslate nohighlight">\(\rightarrow\)</span> embedding” look-up table/matrix.</p></li>
+<li><p><strong>Positional embeddings</strong>: Trainable “position index <span class="math notranslate nohighlight">\(\rightarrow embedding\)</span>” look-up table/matrix.</p></li>
+</ul>
+</li>
+<li><p>GPT forward pass.</p></li>
+<li><p>Next Token Prediction: Compute Cross-Entropy loss between predicted and true next tokens.</p></li>
+<li><p>Backprop &amp; Update.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(t_i\)</span>: The true token at position <span class="math notranslate nohighlight">\(i\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(m\)</span>: #Tokens.</p></li>
+</ul>
+</li>
+<li><p>Misc:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\hat{p}_i(t_i)\)</span>: Probability of the true token <span class="math notranslate nohighlight">\(t_i\)</span> being generated at position <span class="math notranslate nohighlight">\(i\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<p>Loss:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{L}=-\frac{1}{m}\sum_{i=1}^{m}\log \hat{p}_i(t_i)
+\]</div>
+</div>
+</section>
+<section id="gpt-2">
+<h3>GPT-2<a class="headerlink" href="#gpt-2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: GPT but larger &amp; better, with <strong>zero-shot</strong> capability.</p></li>
+<li><p><strong>Why</strong>: OpenAI bet on the scaling law.</p></li>
+<li><p><strong>How (improvement)</strong>:</p>
+<ul>
+<li><p>Larger &amp; Better:</p>
+<ul>
+<li><p>Model size: 117M <span class="math notranslate nohighlight">\(\rightarrow\)</span> 1.5B</p></li>
+<li><p>Training data: 8x</p></li>
+<li><p>#Blocks (i.e., Depth): 12 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 48</p></li>
+<li><p>Hidden dim (i.e., Width): 768 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 1600</p></li>
+<li><p>Context window: 512 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 1024</p></li>
+<li><p>Vocab size: 40478 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 50257</p></li>
+<li><p>Batch size: 64 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 512</p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#inference.md#top-p-nucleus"><span class="xref myst">Nucleus sampling</span></a>.</p></li>
+<li><p>Zero-shot prompting.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="gpt-3">
+<h3>GPT-3<a class="headerlink" href="#gpt-3" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: GPT-2 but larger &amp; better, with <strong>few-shot</strong> capability.</p></li>
+<li><p><strong>Why</strong>: OpenAI bet on the scaling law.</p></li>
+<li><p><strong>How (improvement)</strong>:</p>
+<ul>
+<li><p>Larger &amp; Better:</p>
+<ul>
+<li><p>Model size: 1.5B <span class="math notranslate nohighlight">\(\rightarrow\)</span> 175B</p></li>
+<li><p>Training data: 15x</p></li>
+<li><p>#Blocks (i.e., Depth): 48 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 96</p></li>
+<li><p>Hidden dim (i.e., Width): 1600 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 12288</p></li>
+<li><p>Context window: 1024 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 2048</p></li>
+</ul>
+</li>
+<li><p>Few-shot prompting.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="gpt-3-5-chatgpt-better-instructgpt">
+<h3>GPT-3.5 (ChatGPT / Better InstructGPT)<a class="headerlink" href="#gpt-3-5-chatgpt-better-instructgpt" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Enhanced GPT-3 as a dialogue system.</p></li>
+<li><p><strong>Why</strong>: OpenAI bet on niche methods - instruction-following, multi-step reasoning, and RLHF.</p></li>
+<li><p><strong>How (improvement)</strong>:</p>
+<ul>
+<li><p>Larger &amp; Better:</p>
+<ul>
+<li><p>Training data: Basically all texts on the internet till 2022.</p></li>
+<li><p>Context window: 2048 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 4096.</p></li>
+</ul>
+</li>
+<li><p>Instruction tuning: Finetune the model on specific types of system and user prompts to mimic dialogue system behavior.</p></li>
+<li><p>Multi-step reasoning.</p></li>
+<li><p><a class="reference internal" href="#rlhf.md"><span class="xref myst">RLHF</span></a>.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="gpt-4">
+<h3>GPT-4<a class="headerlink" href="#gpt-4" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: ChatGPT but can read image inputs &amp; better in NLP tasks.</p></li>
+<li><p><strong>Why</strong>: OpenAI bet on multi-modality.</p></li>
+<li><p><strong>How</strong>: They became ClosedAI. We don’t know anymore.</p></li>
+</ul>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://arxiv.org/pdf/1810.04805">BERT</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/pdf/1907.11692">RoBERTa</a></p></li>
+<li><p><a class="reference external" href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">GPT</a></p></li>
+<li><p><a class="reference external" href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">GPT-2</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/pdf/2005.14165">GPT-3</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/pdf/2203.02155">GPT-3.5</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/pdf/2303.08774">GPT-4</a></p></li>
+</ul>
+<!-- ## Encoder-Decoder
+### T5 --></section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./nlp"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="transformer/pe.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Positional Encoding</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="training/training.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Training</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-only">Encoder-only</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bert-bidirectional-encoder-representations-from-transformers">BERT (Bidirectional Encoder Representations from Transformers)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roberta-robustly-optimized-bert-pretraining-approach">RoBERTa (Robustly Optimized BERT Pretraining Approach)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder-only">Decoder-only</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-generative-pretrained-transformer">GPT (Generative Pretrained Transformer)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-2">GPT-2</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-3">GPT-3</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-3-5-chatgpt-better-instructgpt">GPT-3.5 (ChatGPT / Better InstructGPT)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-4">GPT-4</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Renyi Qu
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
