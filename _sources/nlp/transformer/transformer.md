@@ -14,7 +14,7 @@ kernelspec:
 - **Why**: **Long-range dependencies** + **Parallel processing**.
 - **How**: {cite:p}`vaswani2017attention`
 
-```{image} ../images/transformer/transformer.png
+```{image} ../../images/transformer/transformer.png
 :align: center
 :width: 500px
 ```
