@@ -14,15 +14,6 @@ kernelspec:
 - **Why**: **Long-range dependencies** + **Parallel processing**.
 - **How**: {cite:p}`vaswani2017attention`
 
-```{dropdown} Notations
-- IO:
-    - $T=(t_1,\cdots,t_m)$: Input token sequence (after tokenization)
-- Params:
-    - $W$: Trainable params.
-- Hyperparams:
-    - $m$: #Tokens.
-```
-
 ```{image} ../images/transformer/transformer.png
 :align: center
 :width: 500px
@@ -274,7 +265,7 @@ $$
 	- K&V $\leftarrow$ Source (e.g., Encoder)
 	- Q $\leftarrow$ Curr sequence (i.e., Decoder)
 - **Why**: Additional source info may be helpful for predicting next token for curr sequence.
-- **How**: See [Self-Attention](#self-attention) but $K&V$ are from Encoder.
+- **How**: See [Self-Attention](#self-attention) but $K \& V$ are from Encoder.
 
 ### Multi-Head Attention
 - **What**: Multiple self-attention modules running in parallel.
