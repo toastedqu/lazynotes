@@ -26,7 +26,7 @@ kernelspec:
 			- Chunks are passed to their immediate neighbors & combined, till every process has the final, identical results.
 			- Then averaged.
 		3. Each copy uses the averaged grad to update its local model's weights.
-	5. 
+			- Since all copy weights are the same initially, they remain the same after each identical update.
 
 ## FSDP (Fully Sharded Data Parallel)
 - **What**: Shard model params, grads, and optimizer states across multi processes (GPUs), each taking a unique mini-batch of data.
