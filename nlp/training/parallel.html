@@ -426,6 +426,31 @@ document.write(`
 <ul class="simple">
 <li><p><strong>What</strong>: Copy a model across multi processes (GPUs), each taking a unique mini-batch of data.</p></li>
 <li><p><strong>Why</strong>: Faster than FSDP, used when the model can easily fit in each GPU’s memory.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Each process hosts a copy of the model.</p></li>
+<li><p>A distributed sampler ensures each process receives a non-overlapping portion of the input data.</p></li>
+<li><p>Forward: Each copy processes its mini-batch to compute the loss.</p></li>
+<li><p>Backward:</p>
+<ol class="arabic simple">
+<li><p>Each copy computes its own grads.</p></li>
+<li><p>The grads are sychronized &amp; averaged across all processes via a ring all-reduce algorithm.</p>
+<ul>
+<li><p>Processes are arranged in a logical ring.</p></li>
+<li><p>Grads on each process are split into chunks.</p></li>
+<li><p>Chunks are passed to their immediate neighbors &amp; combined, till every process has the final, identical results.</p></li>
+<li><p>Then averaged.</p></li>
+</ul>
+</li>
+<li><p>Each copy uses the averaged grad to update its local model’s weights.</p>
+<ul>
+<li><p>Since all copy weights are the same initially, they remain the same after each identical update.</p></li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
 </ul>
 </section>
 <section id="fsdp-fully-sharded-data-parallel">
