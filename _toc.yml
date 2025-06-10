@@ -31,6 +31,7 @@ parts:
       - file: nlp/training/peft
       - file: nlp/training/rlhf
       - file: nlp/training/misc
+      - file: nlp/training/parallel
     - file: nlp/inference/inference
       sections:
       - file: nlp/inference/decoding
