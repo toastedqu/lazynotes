@@ -48,4 +48,3 @@ kernelspec:
 		4. Move onto the next layer.
 		5. Repeat Step 2.1 - 2.4 till loss is computed.
 	3. Backward: Repeat Forward but for grads.
-
