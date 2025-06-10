@@ -421,14 +421,45 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="distributed-training">
 <h1>Distributed Training<a class="headerlink" href="#distributed-training" title="Link to this heading">#</a></h1>
-<section id="ddp-distributed-data-parallel">
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Table: DDP vs FSDP</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p class="sd-card-text">Category</p></th>
+<th class="head"><p class="sd-card-text">DDP</p></th>
+<th class="head"><p class="sd-card-text">FSDP</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text">Memory</p></td>
+<td><p class="sd-card-text">⬆️</p></td>
+<td><p class="sd-card-text">⬇️</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text">Time</p></td>
+<td><p class="sd-card-text">⬆️ on small/medium models</p></td>
+<td><p class="sd-card-text">⬆️ on large models<br>when memory savings permit larger batch sizes</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text">Scalability</p></td>
+<td><p class="sd-card-text">#GPUs</p></td>
+<td><p class="sd-card-text">#Params per GPU</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text">Debugging</p></td>
+<td><p class="sd-card-text">Single-GPU semantics</p></td>
+<td><p class="sd-card-text">Extra metadata and indirection layers</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details><section id="ddp-distributed-data-parallel">
 <h2>DDP (Distributed Data Parallel)<a class="headerlink" href="#ddp-distributed-data-parallel" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>What</strong>: Copy a model across multi processes (GPUs), each taking a unique mini-batch of data.</p></li>
 <li><p><strong>Why</strong>: Faster than FSDP, used when the model can easily fit in each GPU’s memory.</p></li>
 <li><p><strong>How</strong>:</p>
 <ol class="arabic simple">
-<li><p>Each process hosts a copy of the model.</p></li>
+<li><p>Each process holds a copy of the model.</p></li>
 <li><p>A distributed sampler ensures each process receives a non-overlapping portion of the input data.</p></li>
 <li><p>Forward: Each copy processes its mini-batch to compute the loss.</p></li>
 <li><p>Backward:</p>
@@ -458,6 +489,21 @@ document.write(`
 <ul class="simple">
 <li><p><strong>What</strong>: Shard model params, grads, and optimizer states across multi processes (GPUs), each taking a unique mini-batch of data.</p></li>
 <li><p><strong>Why</strong>: More flexible than DDP, used when the model cannot fit in each GPU’s memory.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Each process holds an even shard of each param tensor and the metadata needed to reassemble full tensors.</p></li>
+<li><p>Forward:</p>
+<ol class="arabic simple">
+<li><p>Before each layer’s forward pass, every process completes an all-gather (i.e., each process temporarily holds a full copy of that layer’s params).</p></li>
+<li><p>Each copy processes its mini-batch.</p></li>
+<li><p>As soon as the process finishes, discard the full params and ONLY keep the original shards. GPU memory drops back to the sharded footprint.</p></li>
+<li><p>Move onto the next layer.</p></li>
+<li><p>Repeat Step 2.1 - 2.4 till loss is computed.</p></li>
+</ol>
+</li>
+<li><p>Backward: Repeat Forward but for grads.</p></li>
+</ol>
+</li>
 </ul>
 </section>
 </section>
