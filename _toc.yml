@@ -17,6 +17,7 @@ parts:
     - file: dl/module
     - file: dl/optim
     - file: dl/loss
+    - file: dl/quant
     # - file: dl/train
     # - file: dl/issues
   - caption: NLP
