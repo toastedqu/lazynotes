@@ -289,7 +289,6 @@ $$\begin{align*}
 <br/>
 
 ## Ranking
-
 ### Contrastive
 - **What**: Create an embedding space where similar embeddings are closer & dissimilar embeddings are farther.
 - **Why**: To learn **similarity**.
