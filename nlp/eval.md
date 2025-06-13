@@ -15,7 +15,8 @@ This page lists common eval metrics for NLP tasks.
 ## NLG (Lexical)
 The common cons of all lexical metrics is **a lack of semantic understanding**. This won't be mentioned individually.
 
-### BLEU (Bilingual Evaluation Understudy)
+### BLEU
+- **Name**: Bilingual Evaluation Understudy.
 - **What**: N-gram overlap measure between candidate sentence and one/more reference sentences.
 - **Why**: Simple, efficient, language-agnostic for MT.
 - **How**: Geometric Average of Clipped N-gram Precisions $\times$ Brevity Penalty.
@@ -76,6 +77,11 @@ $$
 - Ignore word importance $\rightarrow$ Useless but frequent words can boost BLEU score
 - Ignore n-gram order $\rightarrow$ You can switch the n-grams and still get the same BLEU score
 ```
+
+### ROUGE
+- **Name**: Recall-Oriented Understudy for Gisting Evaluation
+- **What**: 
+
 
 ## NLG (Semantic)
 
