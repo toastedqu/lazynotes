@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview &#8212; LazyNotes</title>
+    <title>Evaluation &#8212; LazyNotes</title>
   
   
   
@@ -61,10 +61,12 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'ml/intro';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nlp/eval';</script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Information Theory" href="../math/info.html" />
+    <link rel="prev" title="Misc" href="inference/misc.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -127,8 +129,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -184,27 +184,27 @@
 <li class="toctree-l1"><a class="reference internal" href="../dl/quant.html">Precision &amp; Quantization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">NLP</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../nlp/transformer/transformer.html">Transformer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../nlp/transformer/tokenizer.html">Tokenization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../nlp/transformer/pe.html">Positional Encoding</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="transformer/transformer.html">Transformer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="transformer/tokenizer.html">Tokenization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transformer/pe.html">Positional Encoding</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="../nlp/models.html">Models</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../nlp/training/training.html">Training</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../nlp/training/peft.html">PEFT</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../nlp/training/rlhf.html">RL for LLMs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="training/training.html">Training</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="training/peft.html">PEFT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training/rlhf.html">RL for LLMs</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../nlp/training/misc.html">Misc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../nlp/training/parallel.html">Distributed Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training/misc.html">Misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training/parallel.html">Distributed Training</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../nlp/inference/inference.html">Inference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../nlp/inference/decoding.html">Decoding</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../nlp/inference/misc.html">Misc</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="inference/inference.html">Inference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="inference/decoding.html">Decoding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference/misc.html">Misc</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="../nlp/eval.html">Evaluation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Evaluation</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Math</span></p>
 <ul class="nav bd-sidenav">
@@ -287,7 +287,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fml/intro.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fnlp/eval.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -317,7 +317,7 @@
       
       
       
-      <li><a href="../_sources/ml/intro.md" target="_blank"
+      <li><a href="../_sources/nlp/eval.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -401,7 +401,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Overview</h1>
+    <h1>Evaluation</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -411,11 +411,17 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling">Modeling</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production">Production</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-a-b-testing">Online A/B Testing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nlg-lexical">NLG (Lexical)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bleu">BLEU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rouge">ROUGE</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nlg-semantic">NLG (Semantic)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fuzzy-string-matching">Fuzzy String Matching</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ir">IR</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"></a></li>
 </ul>
 </li>
 </ul>
@@ -429,172 +435,115 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h1>
-<p>An AI project consists of 4 parts:</p>
-<img alt="../_images/ml_system_design_flow.png" class="align-center" src="../_images/ml_system_design_flow.png" />
-<section id="problem">
-<h2>Problem<a class="headerlink" href="#problem" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Overview</strong>: Define the problem, the goal, and the expected inputs &amp; outputs.</p></li>
-<li><p><strong>Scope</strong>: Identify constraints.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="evaluation">
+<h1>Evaluation<a class="headerlink" href="#evaluation" title="Link to this heading">#</a></h1>
+<p>This page lists common eval metrics for NLP tasks.</p>
+<section id="nlg-lexical">
+<h2>NLG (Lexical)<a class="headerlink" href="#nlg-lexical" title="Link to this heading">#</a></h2>
+<p>The common cons of all lexical metrics is <strong>a lack of semantic understanding</strong>. This won’t be mentioned individually.</p>
+<section id="bleu">
+<h3>BLEU<a class="headerlink" href="#bleu" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Data</strong>:</p>
+<li><p><strong>Name</strong>: Bilingual Evaluation Understudy.</p></li>
+<li><p><strong>What</strong>: N-gram overlap measure between candidate sentence and one/more reference sentences.</p></li>
+<li><p><strong>Why</strong>: Simple, efficient, language-agnostic for MT.</p></li>
+<li><p><strong>How</strong>: Geometric Average of Clipped N-gram Precisions <span class="math notranslate nohighlight">\(\times\)</span> Brevity Penalty.</p>
 <ul>
-<li><p><strong>Size</strong>: #samples, #features, etc.</p></li>
-<li><p><strong>Features</strong>: content, context, user, etc.</p></li>
-<li><p><strong>Targets</strong>: Explicit (direct), implicit (indirect).</p></li>
-</ul>
-</li>
-<li><p><strong>Model constraints</strong>:</p>
+<li><p><strong>N-gram Precision</strong>: <span class="math notranslate nohighlight">\(\frac{\#\text{correct predicted n-grams}}{\#\text{total predicted n-grams}}\)</span>.</p></li>
+<li><p><strong>Clipped</strong>: Limit the count for each correct n-gram to its max count in any reference sentence.</p>
 <ul>
-<li><p>Priority: Performance / Quality</p></li>
-<li><p>Type: Single general / Multiple specific</p></li>
-<li><p>Interpretability</p></li>
-<li><p>Retrainability</p></li>
-<li><p>…</p></li>
-</ul>
-</li>
-<li><p><strong>Resource constraints</strong>:</p>
+<li><p><em>Any reference sentence?</em></p>
 <ul>
-<li><p>Time: Training, inference, project duration, etc.</p></li>
-<li><p>Computation: Training, inference, local/cloud, etc.</p></li>
+<li><p>There are many ways to express the same sentence.</p></li>
+<li><p>It’s normal to have multiple ref sentences to capture variations of one cand sentence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Compare cand sentence with each ref sentence. If the n-gram matches any ref sentence, it’s correct.</p></li>
+</ul>
+</li>
+<li><p><em>Max count in any reference sentence?</em></p>
+<ul>
+<li><p>It’s very easy to cheat precision by <strong>repetition</strong> of correct words.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Restrain it in the scope of ref sentence instead.</p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><strong>Evaluation</strong>: Define success measurement.</p>
+<li><p><strong>Geometric Average</strong>: Of all n-grams up to the specified n.</p></li>
+<li><p><strong>Brevity Penality</strong>: Penalize overly short sentences.</p>
+<ul>
+<li><p><em>Why?</em></p>
+<ul>
+<li><p>It’s very easy to cheat precision with super short sentences <span class="math notranslate nohighlight">\(\leftarrow\)</span> The occurrence ratio of correct words in short cand sentences is higher</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
 <ul class="simple">
-<li><p><strong>Automatic metrics</strong>:</p>
+<li><p><span class="math notranslate nohighlight">\(c\)</span>: Candidate length (i.e., #words in cand).</p></li>
+<li><p><span class="math notranslate nohighlight">\(r_i\)</span>: Reference length (i.e., #words in ref).</p></li>
+<li><p><span class="math notranslate nohighlight">\(r=\arg\min_{r_i}|r_i-c|\)</span>: Effective reference length (i.e., Reference length with the smallest absolute difference from cand)</p>
 <ul>
-<li><p>Offline: MSE, P/R/F1, etc.</p></li>
-<li><p>Online: Usage time, usage frequency, click rate, etc.</p></li>
+<li><p>Choose the shorter one if tied.</p></li>
 </ul>
 </li>
-<li><p><strong>Human metrics</strong>: User interaction, recent reports, company intention for users, personalization, etc.</p></li>
 </ul>
-</li>
-</ol>
+<p>Clipped N-gram Precision:</p>
+<div class="math notranslate nohighlight">
+\[
+p_n=\frac{\max_{\text{ref}}(\#_{\text{ref}}\text{correct predicted n-grams})}{\#_{\text{cand}}\text{total predicted n-grams}}
+\]</div>
+<p>Geometric Average of Clipped N-gram Precisions:</p>
+<div class="math notranslate nohighlight">
+\[
+\bar{p}_N=\prod_{n=1}^Np_n^{\frac{1}{N}}
+\]</div>
+<p>Brevity Penalty:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+BP=\begin{cases}
+1 &amp; \text{if }c&gt;r \\
+e^{\frac{1-r}{c}} &amp; \text{if }c\leq r
+\end{cases}
+\end{split}\]</div>
+<p>BLEU:</p>
+<div class="math notranslate nohighlight">
+\[
+BLEU_N=BP\times \bar{p}_N
+\]</div>
+</div>
+<div class="tip dropdown admonition">
+<p class="admonition-title">Q&amp;A</p>
+<p><em>Cons?</em></p>
+<ul class="simple">
+<li><p>Exact word matches <span class="math notranslate nohighlight">\(\rightarrow\)</span> No word variations</p></li>
+<li><p>Ignore word importance <span class="math notranslate nohighlight">\(\rightarrow\)</span> Useless but frequent words can boost BLEU score</p></li>
+<li><p>Ignore n-gram order <span class="math notranslate nohighlight">\(\rightarrow\)</span> You can switch the n-grams and still get the same BLEU score</p></li>
+</ul>
+</div>
 </section>
-<section id="data">
-<h2>Data<a class="headerlink" href="#data" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Data Collection/Availability</strong></p>
+<section id="rouge">
+<h3>ROUGE<a class="headerlink" href="#rouge" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Status</strong>: Available/unavailable, quantity, etc.</p></li>
-<li><p><strong>Annotation</strong>: Quality, cost, resolving disagreements, feasibility of auto-annotation, etc.</p></li>
-<li><p><strong>Privacy</strong>: User data accessibility, methods, online/periodic data use, anonymity, etc.</p></li>
-<li><p><strong>Logistics</strong>: Storage location, structure, biases, etc.</p></li>
+<li><p><strong>Name</strong>: Recall-Oriented Understudy for Gisting Evaluation</p></li>
+<li><p><strong>What</strong>:</p></li>
 </ul>
-</li>
-<li><p><strong>Data Processing</strong></p></li>
-<li><p><strong>Feature Engineering</strong></p></li>
-</ol>
 </section>
-<section id="modeling">
-<h2>Modeling<a class="headerlink" href="#modeling" title="Link to this heading">#</a></h2>
-<p>For each model, specify:</p>
-<ul class="simple">
-<li><p>Why: Motivation</p></li>
-<li><p>What: Functionality</p></li>
-<li><p>How: Objective and optimization</p></li>
-<li><p>Pros &amp; Cons</p></li>
-</ul>
-<p>Procedure:</p>
-<ol class="arabic simple">
-<li><p>Baseline: Stats (mean, median, mode), random benchmarks, etc.</p></li>
-<li><p>Easy model</p></li>
-<li><p>Hard model</p></li>
-<li><p>Experiment, evaluation &amp; ablation study</p></li>
-</ol>
 </section>
-<section id="production">
-<h2>Production<a class="headerlink" href="#production" title="Link to this heading">#</a></h2>
-<p>Performance can degrade in production due to:</p>
-<ul class="simple">
-<li><p><strong>Data Drift</strong>: Production data <span class="math notranslate nohighlight">\(\neq\)</span> training data.</p></li>
-<li><p><strong>Feature Drift</strong>: Changes in features or feature transformations.</p></li>
-<li><p><strong>Concept Drift</strong>: Changes in the relationship between features &amp; target variables, especially in a dynamic environment.</p></li>
-<li><p><strong>Data Quality</strong>: Missing values, outliers, noise, etc.</p></li>
-<li><p><strong>Model Versioning</strong>: R&amp;D models <span class="math notranslate nohighlight">\(\neq\)</span> deployed models.</p></li>
-<li><p><strong>Scaling &amp; Latency</strong>: Handling large data volumes and fast response times.</p></li>
-<li><p><strong>Ethics</strong>: Adversarial attacks, privacy concerns, regulatory compliance, interpretability, etc.</p></li>
-<li><p><strong>Others</strong>: Random errors (e.g., network issues).</p></li>
-</ul>
-<p>Consider these factors for production:</p>
-<ol class="arabic simple">
-<li><p><strong>Inference location</strong>:</p>
-<ul class="simple">
-<li><p><strong>Local</strong>: High memory/storage usage, low latency.</p></li>
-<li><p><strong>Server</strong>: Low memory/storage usage, high latency, privacy concerns.</p></li>
-</ul>
-</li>
-<li><p><strong>Feature serving</strong>:</p>
-<ul class="simple">
-<li><p><strong>Batch</strong>: Handled offline, served online with periodic data generation/collection.</p></li>
-<li><p><strong>Real-time</strong>: Handled &amp; served online at request time, prioritize scalability &amp; latency, use feature stores and caching.</p></li>
-</ul>
-</li>
-<li><p><strong>Performance Monitoring</strong>: Errors, latency, biases, data drift, CPU load, memory usage, retrain frequency, etc.</p></li>
-</ol>
-<section id="online-a-b-testing">
-<h3>Online A/B Testing<a class="headerlink" href="#online-a-b-testing" title="Link to this heading">#</a></h3>
-<ol class="arabic simple">
-<li><p><strong>Define Objective</strong>: Improve click-through rates, increase sign-up rates, etc.</p>
-<ul class="simple">
-<li><p><strong>Significance level</strong> <span class="math notranslate nohighlight">\((\alpha)\)</span>: Threshold for statistical significance.</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\alpha=P(FP)\)</span> (i.e., Type I error): Probability of rejecting a true <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
-<li><p>Common values: 0.05, 0.01.</p></li>
-<li><p>Lower <span class="math notranslate nohighlight">\(\alpha\)</span> makes difference detection harder.</p></li>
-</ul>
-</li>
-<li><p><strong>Power</strong> <span class="math notranslate nohighlight">\((1-\beta)\)</span>: Probability of rejecting a false <span class="math notranslate nohighlight">\(H_0\)</span>.</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\beta=P(FN)\)</span> (i.e., Type II error): Probability of not rejecting a false <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
-<li><p>Common value: 80%.</p></li>
-<li><p>Higher power requires larger sample size.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Create Variations</strong>: Generate versions to test (e.g., button designs: blue round (<strong>control</strong>) vs green square (<strong>treatment</strong>)).</p></li>
-<li><p><strong>Calculate Traffic</strong>: Calculate required sample size per variation:
-$<span class="math notranslate nohighlight">\(
-m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times p(1-p)
-\)</span>$</p>
-<ul class="simple">
-<li><p><strong>Baseline conversion rate</strong> (<span class="math notranslate nohighlight">\(p\)</span>): Event occurrence rate in control.</p></li>
-<li><p><strong>Minimum Detectable Effect</strong> (<span class="math notranslate nohighlight">\(\text{MDE}\)</span>): Smallest detectable difference.</p>
-<ul>
-<li><p>e.g., For <span class="math notranslate nohighlight">\(p\)</span>=10% and desired 2% improvement, <span class="math notranslate nohighlight">\(\text{MDE}\)</span>=20%.</p></li>
-<li><p>Ensure both groups are statistically similar.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Splitting</strong>: Randomly assign users to control and treatment.</p>
-<ul class="simple">
-<li><p><strong>User-level</strong>: Users consistently see the same variation.</p>
-<ul>
-<li><p>Pros: Useful for long-term impact, reduces bias.</p></li>
-</ul>
-</li>
-<li><p><strong>Request-level</strong>: Randomly determine variation per user request.</p>
-<ul>
-<li><p>Pros: Useful for short-term impact, captures immediate or session-specific impact of the tested variations.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Measurement &amp; Analysis</strong>:</p>
-<ol class="arabic simple">
-<li><p>Track user interactions &amp; conversions for both groups.</p></li>
-<li><p>Compare performance using statistical analysis.</p></li>
-<li><p>Determine if differences are statistically significant.</p></li>
-</ol>
-</li>
-</ol>
+<section id="nlg-semantic">
+<h2>NLG (Semantic)<a class="headerlink" href="#nlg-semantic" title="Link to this heading">#</a></h2>
+<section id="fuzzy-string-matching">
+<h3>Fuzzy String Matching<a class="headerlink" href="#fuzzy-string-matching" title="Link to this heading">#</a></h3>
+</section>
+</section>
+<section id="ir">
+<h2>IR<a class="headerlink" href="#ir" title="Link to this heading">#</a></h2>
+<section id="id1">
+<h3><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 </section>
 </section>
 </section>
@@ -612,7 +561,7 @@ m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times 
         },
         kernelOptions: {
             name: "python3",
-            path: "./ml"
+            path: "./nlp"
         },
         predefinedOutput: true
     }
@@ -629,6 +578,24 @@ m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times 
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="inference/misc.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Misc</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../math/info.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Information Theory</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -645,11 +612,17 @@ m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times 
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling">Modeling</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production">Production</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-a-b-testing">Online A/B Testing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nlg-lexical">NLG (Lexical)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bleu">BLEU</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rouge">ROUGE</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nlg-semantic">NLG (Semantic)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fuzzy-string-matching">Fuzzy String Matching</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ir">IR</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"></a></li>
 </ul>
 </li>
 </ul>

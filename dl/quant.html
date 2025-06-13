@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview &#8212; LazyNotes</title>
+    <title>Precision &amp; Quantization &#8212; LazyNotes</title>
   
   
   
@@ -61,10 +61,12 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'ml/intro';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'dl/quant';</script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Transformer" href="../nlp/transformer/transformer.html" />
+    <link rel="prev" title="Loss" href="loss.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -127,8 +129,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -177,11 +177,11 @@
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../dl/module.html">Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dl/optim.html">Parameter Optimization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dl/loss.html">Loss</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dl/quant.html">Precision &amp; Quantization</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="module.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optim.html">Parameter Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Precision &amp; Quantization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">NLP</span></p>
 <ul class="nav bd-sidenav">
@@ -287,7 +287,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fml/intro.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fdl/quant.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -317,7 +317,7 @@
       
       
       
-      <li><a href="../_sources/ml/intro.md" target="_blank"
+      <li><a href="../_sources/dl/quant.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -401,7 +401,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Overview</h1>
+    <h1>Precision & Quantization</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -411,13 +411,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling">Modeling</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production">Production</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-a-b-testing">Online A/B Testing</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precision">Precision</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantization">Quantization</a></li>
 </ul>
             </nav>
         </div>
@@ -429,173 +424,207 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h1>
-<p>An AI project consists of 4 parts:</p>
-<img alt="../_images/ml_system_design_flow.png" class="align-center" src="../_images/ml_system_design_flow.png" />
-<section id="problem">
-<h2>Problem<a class="headerlink" href="#problem" title="Link to this heading">#</a></h2>
+  <section class="tex2jax_ignore mathjax_ignore" id="precision-quantization">
+<h1>Precision &amp; Quantization<a class="headerlink" href="#precision-quantization" title="Link to this heading">#</a></h1>
+<section id="precision">
+<h2>Precision<a class="headerlink" href="#precision" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Numerical format + Bit-width.</p>
+<ul>
+<li><p><strong>Bit-width</strong>: #Bits to encode each numerical value in memory.</p></li>
+</ul>
+</li>
+<li><p><strong>Why</strong>:</p>
 <ol class="arabic simple">
-<li><p><strong>Overview</strong>: Define the problem, the goal, and the expected inputs &amp; outputs.</p></li>
-<li><p><strong>Scope</strong>: Identify constraints.</p>
-<ul class="simple">
-<li><p><strong>Data</strong>:</p>
-<ul>
-<li><p><strong>Size</strong>: #samples, #features, etc.</p></li>
-<li><p><strong>Features</strong>: content, context, user, etc.</p></li>
-<li><p><strong>Targets</strong>: Explicit (direct), implicit (indirect).</p></li>
-</ul>
-</li>
-<li><p><strong>Model constraints</strong>:</p>
-<ul>
-<li><p>Priority: Performance / Quality</p></li>
-<li><p>Type: Single general / Multiple specific</p></li>
-<li><p>Interpretability</p></li>
-<li><p>Retrainability</p></li>
-<li><p>…</p></li>
-</ul>
-</li>
-<li><p><strong>Resource constraints</strong>:</p>
-<ul>
-<li><p>Time: Training, inference, project duration, etc.</p></li>
-<li><p>Computation: Training, inference, local/cloud, etc.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Evaluation</strong>: Define success measurement.</p>
-<ul class="simple">
-<li><p><strong>Automatic metrics</strong>:</p>
-<ul>
-<li><p>Offline: MSE, P/R/F1, etc.</p></li>
-<li><p>Online: Usage time, usage frequency, click rate, etc.</p></li>
-</ul>
-</li>
-<li><p><strong>Human metrics</strong>: User interaction, recent reports, company intention for users, personalization, etc.</p></li>
-</ul>
-</li>
-</ol>
-</section>
-<section id="data">
-<h2>Data<a class="headerlink" href="#data" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Data Collection/Availability</strong></p>
-<ul class="simple">
-<li><p><strong>Status</strong>: Available/unavailable, quantity, etc.</p></li>
-<li><p><strong>Annotation</strong>: Quality, cost, resolving disagreements, feasibility of auto-annotation, etc.</p></li>
-<li><p><strong>Privacy</strong>: User data accessibility, methods, online/periodic data use, anonymity, etc.</p></li>
-<li><p><strong>Logistics</strong>: Storage location, structure, biases, etc.</p></li>
-</ul>
-</li>
-<li><p><strong>Data Processing</strong></p></li>
-<li><p><strong>Feature Engineering</strong></p></li>
-</ol>
-</section>
-<section id="modeling">
-<h2>Modeling<a class="headerlink" href="#modeling" title="Link to this heading">#</a></h2>
-<p>For each model, specify:</p>
-<ul class="simple">
-<li><p>Why: Motivation</p></li>
-<li><p>What: Functionality</p></li>
-<li><p>How: Objective and optimization</p></li>
-<li><p>Pros &amp; Cons</p></li>
-</ul>
-<p>Procedure:</p>
-<ol class="arabic simple">
-<li><p>Baseline: Stats (mean, median, mode), random benchmarks, etc.</p></li>
-<li><p>Easy model</p></li>
-<li><p>Hard model</p></li>
-<li><p>Experiment, evaluation &amp; ablation study</p></li>
-</ol>
-</section>
-<section id="production">
-<h2>Production<a class="headerlink" href="#production" title="Link to this heading">#</a></h2>
-<p>Performance can degrade in production due to:</p>
-<ul class="simple">
-<li><p><strong>Data Drift</strong>: Production data <span class="math notranslate nohighlight">\(\neq\)</span> training data.</p></li>
-<li><p><strong>Feature Drift</strong>: Changes in features or feature transformations.</p></li>
-<li><p><strong>Concept Drift</strong>: Changes in the relationship between features &amp; target variables, especially in a dynamic environment.</p></li>
-<li><p><strong>Data Quality</strong>: Missing values, outliers, noise, etc.</p></li>
-<li><p><strong>Model Versioning</strong>: R&amp;D models <span class="math notranslate nohighlight">\(\neq\)</span> deployed models.</p></li>
-<li><p><strong>Scaling &amp; Latency</strong>: Handling large data volumes and fast response times.</p></li>
-<li><p><strong>Ethics</strong>: Adversarial attacks, privacy concerns, regulatory compliance, interpretability, etc.</p></li>
-<li><p><strong>Others</strong>: Random errors (e.g., network issues).</p></li>
-</ul>
-<p>Consider these factors for production:</p>
-<ol class="arabic simple">
-<li><p><strong>Inference location</strong>:</p>
-<ul class="simple">
-<li><p><strong>Local</strong>: High memory/storage usage, low latency.</p></li>
-<li><p><strong>Server</strong>: Low memory/storage usage, high latency, privacy concerns.</p></li>
-</ul>
-</li>
-<li><p><strong>Feature serving</strong>:</p>
-<ul class="simple">
-<li><p><strong>Batch</strong>: Handled offline, served online with periodic data generation/collection.</p></li>
-<li><p><strong>Real-time</strong>: Handled &amp; served online at request time, prioritize scalability &amp; latency, use feature stores and caching.</p></li>
-</ul>
-</li>
-<li><p><strong>Performance Monitoring</strong>: Errors, latency, biases, data drift, CPU load, memory usage, retrain frequency, etc.</p></li>
-</ol>
-<section id="online-a-b-testing">
-<h3>Online A/B Testing<a class="headerlink" href="#online-a-b-testing" title="Link to this heading">#</a></h3>
-<ol class="arabic simple">
-<li><p><strong>Define Objective</strong>: Improve click-through rates, increase sign-up rates, etc.</p>
-<ul class="simple">
-<li><p><strong>Significance level</strong> <span class="math notranslate nohighlight">\((\alpha)\)</span>: Threshold for statistical significance.</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\alpha=P(FP)\)</span> (i.e., Type I error): Probability of rejecting a true <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
-<li><p>Common values: 0.05, 0.01.</p></li>
-<li><p>Lower <span class="math notranslate nohighlight">\(\alpha\)</span> makes difference detection harder.</p></li>
-</ul>
-</li>
-<li><p><strong>Power</strong> <span class="math notranslate nohighlight">\((1-\beta)\)</span>: Probability of rejecting a false <span class="math notranslate nohighlight">\(H_0\)</span>.</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\beta=P(FN)\)</span> (i.e., Type II error): Probability of not rejecting a false <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
-<li><p>Common value: 80%.</p></li>
-<li><p>Higher power requires larger sample size.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Create Variations</strong>: Generate versions to test (e.g., button designs: blue round (<strong>control</strong>) vs green square (<strong>treatment</strong>)).</p></li>
-<li><p><strong>Calculate Traffic</strong>: Calculate required sample size per variation:
-$<span class="math notranslate nohighlight">\(
-m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times p(1-p)
-\)</span>$</p>
-<ul class="simple">
-<li><p><strong>Baseline conversion rate</strong> (<span class="math notranslate nohighlight">\(p\)</span>): Event occurrence rate in control.</p></li>
-<li><p><strong>Minimum Detectable Effect</strong> (<span class="math notranslate nohighlight">\(\text{MDE}\)</span>): Smallest detectable difference.</p>
-<ul>
-<li><p>e.g., For <span class="math notranslate nohighlight">\(p\)</span>=10% and desired 2% improvement, <span class="math notranslate nohighlight">\(\text{MDE}\)</span>=20%.</p></li>
-<li><p>Ensure both groups are statistically similar.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Splitting</strong>: Randomly assign users to control and treatment.</p>
-<ul class="simple">
-<li><p><strong>User-level</strong>: Users consistently see the same variation.</p>
-<ul>
-<li><p>Pros: Useful for long-term impact, reduces bias.</p></li>
-</ul>
-</li>
-<li><p><strong>Request-level</strong>: Randomly determine variation per user request.</p>
-<ul>
-<li><p>Pros: Useful for short-term impact, captures immediate or session-specific impact of the tested variations.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Measurement &amp; Analysis</strong>:</p>
-<ol class="arabic simple">
-<li><p>Track user interactions &amp; conversions for both groups.</p></li>
-<li><p>Compare performance using statistical analysis.</p></li>
-<li><p>Determine if differences are statistically significant.</p></li>
+<li><p>It affects params, activations, and grads</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> It affects memory cost, time cost, model quality, training stabiity</p></li>
 </ol>
 </li>
+<li><p><strong>How (Bit-width)</strong>: 3 components:</p>
+<ul>
+<li><p><strong>Sign</strong>: 0 = +; 1 = -</p></li>
+<li><p><strong>Exponent</strong>:</p>
+<ul>
+<li><p>Theory: <strong>Actual exponent</strong> <span class="math notranslate nohighlight">\(n\)</span> in scientific notation <span class="math notranslate nohighlight">\(a \times 2^n\)</span>.</p></li>
+<li><p>Practice:</p>
+<ol class="arabic simple">
+<li><p>Use a given <strong>#exponent bits</strong> <span class="math notranslate nohighlight">\(k\)</span> to calculate <strong>bias</strong> <span class="math notranslate nohighlight">\(2^{k-1}-1\)</span>.</p></li>
+<li><p><strong>Stored exponent</strong> <span class="math notranslate nohighlight">\(\leftarrow\)</span> <strong>Actual exponent</strong> + <strong>Bias</strong>.</p></li>
 </ol>
-</section>
+</li>
+</ul>
+</li>
+<li><p><strong>Mantissa/Fraction</strong>:</p>
+<ul>
+<li><p>Theory: <span class="math notranslate nohighlight">\(a\)</span> in scientific notation <span class="math notranslate nohighlight">\(a \times 2^n\)</span>.</p></li>
+<li><p>Practice:</p>
+<ol class="arabic simple">
+<li><p>The first non-zero digit is always immediately to the left of the decimal point.</p></li>
+<li><p>The only possible non-zero binary digit is 1.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Every base number starts with 1.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> We don’t need to store it. We ONLY need to store the <strong>fraction</strong>.</p></li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Representation Formula:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{value} = (-1)^{\text{sign}}1.\text{fraction}\times 2^{\text{actual\_exponent}}
+\]</div>
+<br/>
+<p>Value range:</p>
+<ol class="arabic simple">
+<li><p>Exponent range:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+E_{\text{min}}&amp;=1-\text{bias}=-(2^{k-1}-2) \\
+E_{\text{max}}&amp;=(2^{k}-2)-\text{bias}=2^{k-1}-1
+\end{align*}\end{split}\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Binary dynamic range:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\text{Min positive}&amp;=+1\times2^{E_{\text{min}}} \\
+\text{Max positive}&amp;=(2-2^{-k_{\text{mantissa}}})\times2^{E_{\text{max}}}
+\end{align*}\end{split}\]</div>
+<br/>
+<p>Example: 2.5 in FP16</p>
+<ol class="arabic simple">
+<li><p>Write in normalized binary scientific notation</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+2.5_{10}\rightarrow 10.1_2\rightarrow 1.01_2\times 2^1
+\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Obtain Sign bit:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+1.01_2 &gt; 0 \rightarrow \text{Sign bit: }0
+\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Obtain Exponent bits:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+&amp;\text{\#Exponent Bits:} &amp;&amp; k=5             \\
+&amp;\text{Bias:}            &amp;&amp; 2^{k-1}-1=15    \\
+&amp;\text{Actual Exponent:} &amp;&amp; 1               \\
+&amp;\text{Exponent Bit:}    &amp;&amp; 1+15=16_{10}=10000_2
+\end{align*}\end{split}\]</div>
+<ol class="arabic simple" start="4">
+<li><p>Obtain Mantissa bits:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\text{Fraction: }.01 \rightarrow \text{Mantissa bits (10 bits): }0100000000
+\]</div>
+<ol class="arabic simple" start="5">
+<li><p>Concatenate all bits (sign + exponent + mantissa):</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+0\ \ 10000\ \ 0100000000
+\]</div>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Table 1: Precision Comparison</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p class="sd-card-text">Format</p></th>
+<th class="head text-center"><p class="sd-card-text">Bits</p></th>
+<th class="head text-center"><p class="sd-card-text">Exponent bits</p></th>
+<th class="head text-center"><p class="sd-card-text">Mantissa bits</p></th>
+<th class="head text-center"><p class="sd-card-text">Dynamic Range</p></th>
+<th class="head text-center"><p class="sd-card-text">Decimal Precision</p></th>
+<th class="head text-center"><p class="sd-card-text">Memory per value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text"><strong>FP32</strong></p></td>
+<td class="text-center"><p class="sd-card-text">32</p></td>
+<td class="text-center"><p class="sd-card-text">8</p></td>
+<td class="text-center"><p class="sd-card-text">23</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(\approx[1e^{-38}, 1e^{38}]\)</span></p></td>
+<td class="text-center"><p class="sd-card-text">~7 digits</p></td>
+<td class="text-center"><p class="sd-card-text">4 bytes</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text"><strong>FP16</strong></p></td>
+<td class="text-center"><p class="sd-card-text">16</p></td>
+<td class="text-center"><p class="sd-card-text">5</p></td>
+<td class="text-center"><p class="sd-card-text">10</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(\approx[6e^{-5}, 6e^{4}]\)</span></p></td>
+<td class="text-center"><p class="sd-card-text">~3–4 digits</p></td>
+<td class="text-center"><p class="sd-card-text">2 bytes</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text"><strong>BF16</strong></p></td>
+<td class="text-center"><p class="sd-card-text">16</p></td>
+<td class="text-center"><p class="sd-card-text">8</p></td>
+<td class="text-center"><p class="sd-card-text">7</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(\approx[1e^{-38}, 1e^{38}]\)</span></p></td>
+<td class="text-center"><p class="sd-card-text">~3 digits</p></td>
+<td class="text-center"><p class="sd-card-text">2 bytes</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text"><strong>INT8</strong></p></td>
+<td class="text-center"><p class="sd-card-text">8</p></td>
+<td class="text-center"><p class="sd-card-text">–</p></td>
+<td class="text-center"><p class="sd-card-text">–</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(=[–128,127]\)</span></p></td>
+<td class="text-center"><p class="sd-card-text">~2–3 digits</p></td>
+<td class="text-center"><p class="sd-card-text">1 byte</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Table 2: Precision Usage</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p class="sd-card-text">Format</p></th>
+<th class="head text-left"><p class="sd-card-text">Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text"><strong>FP32</strong></p></td>
+<td class="text-left"><p class="sd-card-text">Gold-standard baseline for training &amp; inference.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text"><strong>FP16</strong></p></td>
+<td class="text-left"><p class="sd-card-text">Mixed-precision training &amp; GPU inference.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text"><strong>BF16</strong></p></td>
+<td class="text-left"><p class="sd-card-text">Mixed-precision training &amp; CPU/GPU inference.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text"><strong>INT8</strong></p></td>
+<td class="text-left"><p class="sd-card-text">Quantized inference with extreme memory limits.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details></section>
+<section id="quantization">
+<h2>Quantization<a class="headerlink" href="#quantization" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: High precision <span class="math notranslate nohighlight">\(\rightarrow\)</span> Low precision</p></li>
+<li><p><strong>Why</strong>: ⬇️Computational cost (time &amp; memory)</p>
+<ul>
+<li><p>BUT it risks model quality &amp; training stability.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p></li>
+</ul>
 </section>
 </section>
 
@@ -612,7 +641,7 @@ m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times 
         },
         kernelOptions: {
             name: "python3",
-            path: "./ml"
+            path: "./dl"
         },
         predefinedOutput: true
     }
@@ -629,6 +658,24 @@ m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times 
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="loss.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Loss</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../nlp/transformer/transformer.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Transformer</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -645,13 +692,8 @@ m=2\times\left(\frac{Z_{\frac{\alpha}{2}}+Z_{\beta}}{\text{MDE}}\right)^2\times 
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling">Modeling</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production">Production</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-a-b-testing">Online A/B Testing</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precision">Precision</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantization">Quantization</a></li>
 </ul>
   </nav></div>
 
