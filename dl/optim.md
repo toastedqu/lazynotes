@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Parameter Optimization
+# Optimization (Parameter)
 This page ONLY covers Gradient Descent & family because it is most widely used for optimizing NNs.
 
 ## Gradient Descent
