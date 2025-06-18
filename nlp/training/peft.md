@@ -56,6 +56,10 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 - ONLY applicable to linear transformation.
 - ONLY great performance with pretrained models $\rightarrow$ Lower performance relative to full finetuning
 - High sensitivity to hyperparameters.
+
+*Where do I apply LoRA?*
+- OG paper: Attention weights ONLY $\rightarrow$ Simplicity & Param Efficiency
+	- $\leftarrow$ Empirical performance
 ```
 
 ## QLoRA (LoRA for Quantized LLMs)
