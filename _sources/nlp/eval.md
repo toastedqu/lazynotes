@@ -79,8 +79,8 @@ $$
 ```
 
 ### ROUGE
-- **Name**: Recall-Oriented Understudy for Gisting Evaluation
-- **What**: 
+- **Name**: Recall-Oriented Understudy for Gisting Evaluation.
+- **What**: Recall-based N-gram overlap measure.
 
 
 ## NLG (Semantic)
