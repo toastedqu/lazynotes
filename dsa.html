@@ -214,7 +214,6 @@
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Coding</a></li>
-
 </ul>
 
     </div>
@@ -410,14 +409,13 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Coding</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion">Discussion</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-structure">Data Structure</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implement-test">Implement &amp; Test</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interview">Interview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion">Discussion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-structure">Data Structure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implement-test">Implement &amp; Test</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ds-a">DS/A</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#array">Array</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-pointer">Two Pointer</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#left-right">Left &amp; Right</a></li>
@@ -455,9 +453,6 @@ document.write(`
 </ul>
 </li>
 </ul>
-</li>
-</ul>
-
             </nav>
         </div>
     </div>
@@ -470,8 +465,10 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="coding">
 <h1>Coding<a class="headerlink" href="#coding" title="Link to this heading">#</a></h1>
+<section id="interview">
+<h2>Interview<a class="headerlink" href="#interview" title="Link to this heading">#</a></h2>
 <section id="problem">
-<h2>Problem<a class="headerlink" href="#problem" title="Link to this heading">#</a></h2>
+<h3>Problem<a class="headerlink" href="#problem" title="Link to this heading">#</a></h3>
 <p>ALWAYS understand the problem first!</p>
 <ul class="simple">
 <li><p>What are some naive examples?</p></li>
@@ -503,7 +500,7 @@ document.write(`
 </ul>
 </section>
 <section id="discussion">
-<h2>Discussion<a class="headerlink" href="#discussion" title="Link to this heading">#</a></h2>
+<h3>Discussion<a class="headerlink" href="#discussion" title="Link to this heading">#</a></h3>
 <p><strong>COMMUNICATE</strong> with your interviewer!</p>
 <ul class="simple">
 <li><p>Do NOT code.</p></li>
@@ -521,7 +518,7 @@ document.write(`
 </ul>
 </section>
 <section id="data-structure">
-<h2>Data Structure<a class="headerlink" href="#data-structure" title="Link to this heading">#</a></h2>
+<h3>Data Structure<a class="headerlink" href="#data-structure" title="Link to this heading">#</a></h3>
 <p>Identify useful DSs.</p>
 <ul class="simple">
 <li><p><strong>Storage</strong>:</p>
@@ -550,7 +547,7 @@ document.write(`
 <center>Use <strong>HashMap</strong> when in doubt.</center>
 </section>
 <section id="implement-test">
-<h2>Implement &amp; Test<a class="headerlink" href="#implement-test" title="Link to this heading">#</a></h2>
+<h3>Implement &amp; Test<a class="headerlink" href="#implement-test" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Walk through your code on your own.</p></li>
 <li><p>Modify unusual parts.</p></li>
@@ -564,8 +561,6 @@ document.write(`
 <p> </p>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="ds-a">
-<h1>DS/A<a class="headerlink" href="#ds-a" title="Link to this heading">#</a></h1>
 <section id="array">
 <h2>Array<a class="headerlink" href="#array" title="Link to this heading">#</a></h2>
 <section id="two-pointer">
@@ -1076,107 +1071,237 @@ def reverseList(self, head):
 </section>
 <section id="graph">
 <h2>Graph<a class="headerlink" href="#graph" title="Link to this heading">#</a></h2>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Table: Data Structures</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>Algorithm</p></th>
-<th class="head"><p>Time</p></th>
-<th class="head"><p>DS needed</p></th>
+<tr class="row-odd"><th class="head text-left"><p class="sd-card-text">Representation</p></th>
+<th class="head text-left"><p class="sd-card-text">Typical Form</p></th>
+<th class="head text-left"><p class="sd-card-text">Add Edge <code class="docutils literal notranslate"><span class="pre">u\rightarrow</span> <span class="pre">v</span></code></p></th>
+<th class="head text-left"><p class="sd-card-text">Use Cases</p></th>
+<th class="head text-center"><p class="sd-card-text">Space</p></th>
+<th class="head text-center"><p class="sd-card-text">Edge-existence lookup</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>DFS</p></td>
-<td><p>O(n)</p></td>
-<td><p>set (and stack if iteration)</p></td>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text">Adjacency List</p></td>
+<td class="text-left"><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">graph</span> <span class="pre">=</span> <span class="pre">defaultdict(list)</span></code></p></td>
+<td class="text-left"><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">graph[u].append(v)</span></code></p></td>
+<td class="text-left"><p class="sd-card-text">Sparse graphs<br>Traversal (BFS/DFS)</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(V+E)\)</span></p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(\deg^+)\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p>BFS</p></td>
-<td><p>O(n)</p></td>
-<td><p>set, queue</p></td>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text">Adjacency Matrix</p></td>
+<td class="text-left"><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">graph</span> <span class="pre">=</span> <span class="pre">[[0]*n</span> <span class="pre">for</span> <span class="pre">_</span> <span class="pre">in</span> <span class="pre">range(n)]</span></code></p></td>
+<td class="text-left"><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">graph[u][v]</span> <span class="pre">=</span> <span class="pre">1</span></code></p></td>
+<td class="text-left"><p class="sd-card-text">Dense graphs<br>Fast edge check (e.g., Floyd-Warshall)</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(V^2)\)</span></p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(1)\)</span></p></td>
 </tr>
-<tr class="row-even"><td><p>Union-Find</p></td>
-<td><p>O(nlogn)</p></td>
-<td><p>array, tree</p></td>
-</tr>
-<tr class="row-odd"><td><p>Topological Sort</p></td>
-<td><p>O(n)</p></td>
-<td><p>array, set, queue</p></td>
-</tr>
-<tr class="row-even"><td><p>Dijkstra’s Shortest Path</p></td>
-<td><p>O(ElogV)</p></td>
-<td><p>set, heap</p></td>
-</tr>
-<tr class="row-odd"><td><p>Prim’s MST</p></td>
-<td><p>O(V<span class="math notranslate nohighlight">\( ^2 \)</span>logV)</p></td>
-<td><p>set, heap</p></td>
-</tr>
-<tr class="row-even"><td><p>Kruskal’s MST</p></td>
-<td><p>O(ElogE)</p></td>
-<td><p>array, tree</p></td>
-</tr>
-<tr class="row-odd"><td><p>Floyd Warshall</p></td>
-<td><p>O(n<span class="math notranslate nohighlight">\( ^3 \)</span>)</p></td>
-<td><p>matrix</p></td>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text">Edge List</p></td>
+<td class="text-left"><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">graph=[]</span></code></p></td>
+<td class="text-left"><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">graph.append((u,v))</span></code></p></td>
+<td class="text-left"><p class="sd-card-text">Low memory<br>Edge streaming (e.g., Kruskal’s MST)</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(E)\)</span></p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(E)\)</span></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<section id="id1">
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Table: Algorithms</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p class="sd-card-text">Algorithm</p></th>
+<th class="head text-left"><p class="sd-card-text">Description</p></th>
+<th class="head text-left"><p class="sd-card-text">Use Cases</p></th>
+<th class="head text-left"><p class="sd-card-text">DS</p></th>
+<th class="head text-center"><p class="sd-card-text">Time</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text">DFS</p></td>
+<td class="text-left"><p class="sd-card-text">Explore each path till end before backtracking.</p></td>
+<td class="text-left"><p class="sd-card-text">Detect cycles<br>Connected components</p></td>
+<td class="text-left"><p class="sd-card-text">stack, set</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(V)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text">BFS</p></td>
+<td class="text-left"><p class="sd-card-text">Explore all nodes level-by-level.</p></td>
+<td class="text-left"><p class="sd-card-text">Shortest path in unweighted graphs<br>Level-order traversal<br>Flood-fill</p></td>
+<td class="text-left"><p class="sd-card-text">queue, set</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(V)\)</span></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text">Union-Find</p></td>
+<td class="text-left"><p class="sd-card-text">Maintain disjoint sets that can be quickly united and queried to track connectivity.</p></td>
+<td class="text-left"><p class="sd-card-text">Connectivity queries<br>Kruskal’s MST<br>Detect cycles in undirected graphs</p></td>
+<td class="text-left"><p class="sd-card-text">tree, array</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(V \log V)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text">Topological Sort</p></td>
+<td class="text-left"><p class="sd-card-text">Sort <strong>DAG</strong> (Directed Acyclic Graphs) so that each directed edge points from an earlier to a later node.</p></td>
+<td class="text-left"><p class="sd-card-text">Task scheduling<br>Build/Compile order<br>Course prerequisites</p></td>
+<td class="text-left"><p class="sd-card-text">queue, array, set</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(V)\)</span></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text">Dijkstra’s Shortest Path</p></td>
+<td class="text-left"><p class="sd-card-text">Find shortest paths from src to all other nodes when edges have non-negative weights.</p></td>
+<td class="text-left"><p class="sd-card-text">GPS/Routing<br>Network latency</p></td>
+<td class="text-left"><p class="sd-card-text">min-heap, set</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(E \log V)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text">Floyd-Warshall</p></td>
+<td class="text-left"><p class="sd-card-text">Find shortest paths between each node pair via DP over all intermediate nodes.</p></td>
+<td class="text-left"><p class="sd-card-text">All-pairs shortest paths in dense graphs<br>Transitive closure<br>Small-n routing tables</p></td>
+<td class="text-left"><p class="sd-card-text">matrix</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(V^3)\)</span></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p class="sd-card-text">Prim’s MST</p></td>
+<td class="text-left"><p class="sd-card-text">Get MST by repeatedly adding the lightest edge that connects the tree to a new node.</p></td>
+<td class="text-left"><p class="sd-card-text">MST with a start node<br>Build min-cost infrastructure networks<br>Circuit design layout</p></td>
+<td class="text-left"><p class="sd-card-text">min-heap, set</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(V^2 \log V)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p class="sd-card-text">Kruskal’s MST</p></td>
+<td class="text-left"><p class="sd-card-text">Get MST by adding edges in increasing weight order while skipping those that form cycles.</p></td>
+<td class="text-left"><p class="sd-card-text">MST with nothing<br>When #edges ≫ #nodes<br>Cluster analysis (single-link)</p></td>
+<td class="text-left"><p class="sd-card-text">tree, array</p></td>
+<td class="text-center"><p class="sd-card-text"><span class="math notranslate nohighlight">\(O(E \log E)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details><section id="id1">
 <h3>DFS<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="o">...</span>
+<ul class="simple">
+<li><p>Graph: Adjacency list</p></li>
+<li><p>Init:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
+</ul>
+</li>
+<li><p>Procedure:</p>
+<ul>
+<li><p>Repeat till end:</p>
+<ol class="arabic simple">
+<li><p>Start at a node &amp; Mark it visited.</p></li>
+<li><p>Action.</p></li>
+<li><p>Recurse/Stack an unvisited neighbor.</p></li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>   <span class="c1"># adjacency list placeholder</span>
 <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">dfs_recursive</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-    <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dfs_recursive</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
     <span class="c1">####### ACTION HERE ######</span>
     <span class="c1">####### ACTION ENDS ######</span>
-    <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">root</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
-            <span class="n">dfs</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+            <span class="n">dfs_recursive</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">dfs_iterative</span><span class="p">():</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>                   <span class="c1">## make sure every node gets a chance (some nodes aren&#39;t connected)</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span> <span class="k">continue</span>     <span class="c1">## prevent cycle</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">([</span><span class="n">key</span><span class="p">])</span>
-        <span class="k">while</span> <span class="n">s</span><span class="p">:</span>
-            <span class="n">n</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-            <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="c1">####### ACTION HERE ######</span>
-            <span class="c1">####### ACTION ENDS ######</span>
-            <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
-                    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dfs_iterative</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([</span><span class="n">root</span><span class="p">])</span>
+    <span class="k">while</span> <span class="n">s</span><span class="p">:</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="c1">####### ACTION HERE ######</span>
+        <span class="c1">####### ACTION ENDS ######</span>
+        <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">root</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>  <span class="c1"># reverse for natural order (optional)</span>
+            <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">dfs_all_nodes</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">root</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="id2">
 <h3>BFS<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="o">...</span>
+<ul class="simple">
+<li><p>Graph: Adjacency list</p></li>
+<li><p>Init:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
+</ul>
+</li>
+<li><p>Procedure:</p>
+<ol class="arabic simple">
+<li><p>Enqueue root.</p></li>
+<li><p>Repeat:</p>
+<ol class="arabic simple">
+<li><p>Dequeue a node &amp; Mark it visited.</p></li>
+<li><p>Action.</p></li>
+<li><p>Enqueue all unvisited neighbors.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>   <span class="c1"># adjacency list placeholder</span>
 <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">bfs</span><span class="p">():</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>                   <span class="c1">## make sure every node gets a chance (some nodes aren&#39;t connected)</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span> <span class="k">continue</span>     <span class="c1">## prevent cycle</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">([</span><span class="n">key</span><span class="p">])</span>
-        <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
-            <span class="n">n</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
-            <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="c1">####### ACTION HERE ######</span>
-            <span class="c1">####### ACTION ENDS ######</span>
-            <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
-                    <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bfs_iterative</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([</span><span class="n">root</span><span class="p">])</span>
+    <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="c1">####### ACTION HERE ######</span>
+        <span class="c1">####### ACTION ENDS ######</span>
+        <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">bfs_all_nodes</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">root</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="n">bfs</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="union-find">
 <h3>Union-Find<a class="headerlink" href="#union-find" title="Link to this heading">#</a></h3>
-<p><strong>Where</strong>: connected components in undirected graphs</p>
-<p><strong>Tips</strong>: Don’t forget to UPDATE PARENTS.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+<ul class="simple">
+<li><p>Graph: Edge list</p></li>
+<li><p>Init:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">parent</span></code>: array</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code>: array</p></li>
+</ul>
+</li>
+<li><p>Procedure:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">find(x)</span></code>:</p>
+<ol class="arabic simple">
+<li><p>Recursively find root once.</p></li>
+<li><p>On the way back, rewire each visited node to point straight to the root (i.e., Path Compression) <span class="math notranslate nohighlight">\(\rightarrow\)</span> Flatten the tree.</p></li>
+</ol>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">union(x,y)</span></code>:</p>
+<ol class="arabic simple">
+<li><p>Find both roots.</p></li>
+<li><p>Union the roots by rank.</p></li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">]</span>  <span class="c1"># edge list placeholder</span>
+<span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
 <span class="n">rank</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    If not root, keep finding the root of the curr parent and set it as the new parent.</span>
+<span class="sd">    If not root, keep finding root of curr parent &amp; set it as new parent.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="n">x</span><span class="p">:</span>
         <span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
@@ -1184,12 +1309,12 @@ def reverseList(self, head):
 
 <span class="k">def</span><span class="w"> </span><span class="nf">union</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    If same parent, then they are in the same set already.</span>
+<span class="sd">    If same parent, they are in the same set already.</span>
 <span class="sd">    If diff parents,</span>
 <span class="sd">        higher rank will be the parent.</span>
 <span class="sd">        if same rank, add one below the other.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">rx</span><span class="p">,</span><span class="n">ry</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">rx</span> <span class="o">==</span> <span class="n">ry</span><span class="p">:</span> <span class="k">return</span>
     <span class="k">if</span> <span class="n">rank</span><span class="p">[</span><span class="n">rx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">rank</span><span class="p">[</span><span class="n">ry</span><span class="p">]:</span>
         <span class="n">parent</span><span class="p">[</span><span class="n">ry</span><span class="p">]</span> <span class="o">=</span> <span class="n">rx</span>
@@ -1198,6 +1323,10 @@ def reverseList(self, head):
         <span class="k">if</span> <span class="n">rank</span><span class="p">[</span><span class="n">rx</span><span class="p">]</span> <span class="o">==</span> <span class="n">rank</span><span class="p">[</span><span class="n">ry</span><span class="p">]:</span>
             <span class="n">rank</span><span class="p">[</span><span class="n">ry</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
+<span class="c1"># union all edges</span>
+<span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>
+    <span class="n">union</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
 <span class="c1">## update parents once again</span>
 <span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">find</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
 </pre></div>
@@ -1205,38 +1334,53 @@ def reverseList(self, head):
 </section>
 <section id="topological-sort">
 <h3>Topological Sort<a class="headerlink" href="#topological-sort" title="Link to this heading">#</a></h3>
-<p><strong>Where</strong>: directed acyclic graphs</p>
-<p><strong>Tips</strong>:</p>
+<ul class="simple">
+<li><p>Graph: Adjacency list</p></li>
+<li><p>Init:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">indegree</span></code>: array</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">queue</span></code>: queue</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
+</ul>
+</li>
+<li><p>Procedure:</p>
 <ol class="arabic simple">
-<li><p>Init <strong>graph</strong> &amp; <strong>indegree</strong>.</p></li>
-<li><p>Init <strong>queue</strong> with 0-indegree nodes.</p></li>
-<li><p>Loop q by updating &amp; appending neighbors of 0-indegree.</p></li>
+<li><p>Compute in-degree.</p></li>
+<li><p>Enqueue nodes with 0 in-degree.</p></li>
+<li><p>Repeat till empty:</p>
+<ol class="arabic simple">
+<li><p>Dequeue &amp; Action.</p></li>
+<li><p>Decrement neighbors’ in-degree.</p></li>
+<li><p>Enqueue neighbors with 0 in-degree.</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">topologicalSort</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+</li>
+</ol>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>   <span class="c1"># adjacency list placeholder</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">topologicalSort</span><span class="p">():</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
     <span class="n">indegree</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
     <span class="n">q</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">()</span>
     <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-    <span class="c1">## if graph is not usable, reformat it</span>
-    <span class="o">...</span>
-
-    <span class="c1">## compute indegree</span>
+    <span class="c1"># compute indegree</span>
     <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">vs</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vs</span><span class="p">:</span>
             <span class="n">indegree</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
     
-    <span class="c1">## get 0-indegree nodes</span>
+    <span class="c1"># enqueue 0-indegree nodes</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">indegree</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-    <span class="c1">## loop queue</span>
+    <span class="c1"># loop queue</span>
     <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="c1">####### ACTION HERE ######</span>
         <span class="c1">####### ACTION ENDS ######</span>
-        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
             <span class="n">indegree</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">indegree</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1248,87 +1392,182 @@ def reverseList(self, head):
 </section>
 <section id="dijkstra-s-shortest-path">
 <h3>Dijkstra’s Shortest Path<a class="headerlink" href="#dijkstra-s-shortest-path" title="Link to this heading">#</a></h3>
-<p><strong>Where</strong>: find shortest path from one node to all other nodes</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">dijkstra</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
-    <span class="n">heap</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="n">start</span><span class="p">)]</span>
+<ul class="simple">
+<li><p>Graph: Adjacency list with edge weights</p></li>
+<li><p>Init:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">heap</span></code>: list[(weight, node)]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
+</ul>
+</li>
+<li><p>Procedure:</p>
+<ol class="arabic simple">
+<li><p>Enheap (0, start).</p></li>
+<li><p>Repeat till empty:</p>
+<ol class="arabic simple">
+<li><p>Pop node with shortest edge &amp; Mark it visited.</p></li>
+<li><p>If found end node, return path.</p></li>
+<li><p>Push all unvisited neighbors with updated path weights.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>   <span class="c1"># adjacency list placeholder</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">dijkstra</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="n">heap</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">start</span><span class="p">)]</span>
     <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-    <span class="c1">## true Dijkstra</span>
+    <span class="c1"># dijkstra</span>
     <span class="k">while</span> <span class="n">heap</span><span class="p">:</span>
-        <span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">n</span><span class="p">)</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>         <span class="c1">## get node &amp; path</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">end</span><span class="p">:</span> <span class="k">return</span> <span class="n">p</span>               <span class="c1">## return path when found</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span> <span class="k">continue</span>           <span class="c1">## prevent cycle</span>
-        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>                      <span class="c1">## prevent cycle</span>
-        <span class="k">for</span> <span class="n">v</span><span class="p">,</span><span class="n">w</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>                <span class="c1">## check neighbor</span>
-            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">heap</span><span class="p">,(</span><span class="n">p</span><span class="o">+</span><span class="n">w</span><span class="p">,</span><span class="n">v</span><span class="p">))</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="p">(</span><span class="n">path_w</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>    <span class="c1"># get node &amp; path</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="o">==</span> <span class="n">end</span><span class="p">:</span> <span class="k">return</span> <span class="n">path_w</span>           <span class="c1"># return path if found</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">neighbor</span><span class="p">,</span> <span class="n">edge_w</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>    <span class="c1"># check neighbor</span>
+            <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="p">(</span><span class="n">path_w</span> <span class="o">+</span> <span class="n">edge_w</span><span class="p">,</span> <span class="n">neighbor</span><span class="p">))</span>
+
+    <span class="k">return</span>
 </pre></div>
 </div>
 </section>
 <section id="floyd-warshall">
 <h3>Floyd Warshall<a class="headerlink" href="#floyd-warshall" title="Link to this heading">#</a></h3>
-<p><strong>Where</strong>: find shortest path from all nodes to all other nodes</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">floyd_warshall</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
-    <span class="c1">## init</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
-    <span class="n">dist</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)]</span><span class="o">*</span><span class="n">N</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+<ul class="simple">
+<li><p>Graph: Adjacency matrix</p></li>
+<li><p>Init:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">dist</span></code>: list[list] (= graph edge weights)</p></li>
+</ul>
+</li>
+<li><p>Procedure: DP</p>
+<ul>
+<li><p>Loop intermediate, start, end nodes:</p>
+<ul>
+<li><p>Update dist mat with triangle rule.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>   <span class="c1"># adjacency matrix placeholder</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">floyd_warshall</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)]</span><span class="o">*</span><span class="n">n</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
     
-    <span class="c1">## set it identical as graph</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-            <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="c1">## assume graph is 2d matrix</span>
+    <span class="c1"># set dist mat identical as graph mat</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
     
-    <span class="c1">## true Floyd Warshall</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>          <span class="c1">## intermediate node</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>      <span class="c1">## start node</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>  <span class="c1">## end node</span>
-                <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">+</span><span class="n">dist</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>  <span class="c1">## the triangle rule</span>
-    
+    <span class="c1"># floyd warshall</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>          <span class="c1"># intermediate node</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>      <span class="c1"># start node</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>  <span class="c1"># end node</span>
+                <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">+</span><span class="n">dist</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>  <span class="c1"># triangle rule</span>
+
     <span class="k">return</span> <span class="n">dist</span>
 </pre></div>
 </div>
 </section>
 <section id="prim-s-mst">
 <h3>Prim’s MST<a class="headerlink" href="#prim-s-mst" title="Link to this heading">#</a></h3>
-<p><strong>Where</strong>: find MST with given node</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">primsMST</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+<ul class="simple">
+<li><p>Graph: Adjacency list with edge weights.</p></li>
+<li><p>Init:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">heap</span></code>: list[(weight, node)]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
+</ul>
+</li>
+<li><p>Procedure:</p>
+<ol class="arabic simple">
+<li><p>Start with a node.</p></li>
+<li><p>Repeat till all nodes included:</p>
+<ol class="arabic simple">
+<li><p>Pop node with shortest edge &amp; Mark it visited.</p></li>
+<li><p>Action.</p></li>
+<li><p>Push all unvisited neighbors.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>   <span class="c1"># adjacency list placeholder</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">primsMST</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
     <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="n">heap</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)]</span> <span class="c1">## (edge,node)</span>
+    <span class="n">heap</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">start</span><span class="p">)]</span>                             <span class="c1"># (edge, start node)</span>
 
-    <span class="c1">## true Prim</span>
-    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">visited</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>                <span class="c1">## #edges should not exceed #nodes</span>
-        <span class="n">e</span><span class="p">,</span><span class="n">n</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>                   <span class="c1">## get node &amp; edge</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span> <span class="k">continue</span>                   <span class="c1">## prevent cycle</span>
-        <span class="n">ans</span> <span class="o">+=</span> <span class="n">e</span>                                    <span class="c1">## add edge to ans</span>
-        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>                           <span class="c1">## prevent cycle</span>
-        <span class="k">for</span> <span class="n">new_e</span><span class="p">,</span><span class="n">new_n</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>                <span class="c1">## check neighbor</span>
-            <span class="k">if</span> <span class="n">new_n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
-                <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="p">[</span><span class="n">new_e</span><span class="p">,</span><span class="n">new_n</span><span class="p">])</span>
+    <span class="c1">## prim</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">visited</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>            <span class="c1"># #edges should not exceed #nodes</span>
+        <span class="n">edge</span><span class="p">,</span> <span class="n">node</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>        <span class="c1"># get node w shortest edge</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>                       <span class="c1"># prevent cycle</span>
+        <span class="n">ans</span> <span class="o">+=</span> <span class="n">edge</span>                             <span class="c1"># add edge to ans</span>
+
+        <span class="k">for</span> <span class="n">new_edge</span><span class="p">,</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>  <span class="c1"># check neighbor</span>
+            <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="p">[</span><span class="n">new_edge</span><span class="p">,</span> <span class="n">neighbor</span><span class="p">])</span>
+
     <span class="k">return</span> <span class="n">ans</span>
 </pre></div>
 </div>
 </section>
 <section id="kruskal-s-mst">
 <h3>Kruskal’s MST<a class="headerlink" href="#kruskal-s-mst" title="Link to this heading">#</a></h3>
-<p><strong>Where</strong>: find MST with nothing</p>
+<ul class="simple">
+<li><p>Graph: Edge list</p></li>
+<li><p>Init:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">parent</span></code>: array</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code>: array</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">i</span></code>: int (index for sorted edges in graph)</p></li>
+</ul>
+</li>
+<li><p>Procedure:</p>
+<ol class="arabic simple">
+<li><p>Sort edges by weight.</p></li>
+<li><p>Repeat till V-1 edges are chosen:</p>
+<ol class="arabic simple">
+<li><p>Get curr edge &amp; nodes.</p></li>
+<li><p>Union-Find on two nodes:</p>
+<ol class="arabic simple">
+<li><p>Find both parents.</p></li>
+<li><p>If two parents in diff sets:</p>
+<ol class="arabic simple">
+<li><p>Add edge to MST.</p></li>
+<li><p>Union both nodes.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>Next index.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">KruskalMST</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
     <span class="n">MST</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
     <span class="n">rank</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>   <span class="c1">## index for sorted edges in graph</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>   <span class="c1"># index for sorted edges in graph</span>
     
-    <span class="c1">## sort graph by edge weight</span>
-    <span class="n">graph</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># sort graph by edge weight</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
   
-    <span class="c1">## true Kruskal</span>
-    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">MST</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>  <span class="c1">## #edges should not exceed #nodes</span>
-        <span class="n">u</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">v</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>            <span class="c1">## get nodes &amp; edge</span>
-        <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="n">find</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>       <span class="c1">## get parents</span>
-        <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">y</span><span class="p">:</span>                  <span class="c1">## prevent cycle</span>
-            <span class="n">MST</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">u</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">v</span><span class="p">])</span>     <span class="c1">## append to MST</span>
-            <span class="n">union</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>              <span class="c1">## now they are connected</span>
-        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>                      <span class="c1">## on to the next edge in graph</span>
+    <span class="c1"># kruskal</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">MST</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>  <span class="c1"># #edges should not exceed #nodes</span>
+        <span class="n">u</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">v</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>            <span class="c1"># get nodes &amp; edge</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">find</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>     <span class="c1"># get parents</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">y</span><span class="p">:</span>                  <span class="c1"># prevent cycle</span>
+            <span class="n">MST</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">u</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">v</span><span class="p">])</span>     <span class="c1"># append to MST</span>
+            <span class="n">union</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>             <span class="c1"># now they are connected</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>                      <span class="c1"># on to the next edge in graph</span>
 </pre></div>
 </div>
 </section>
@@ -1390,14 +1629,13 @@ def reverseList(self, head):
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Coding</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion">Discussion</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-structure">Data Structure</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implement-test">Implement &amp; Test</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interview">Interview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion">Discussion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-structure">Data Structure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implement-test">Implement &amp; Test</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ds-a">DS/A</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#array">Array</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-pointer">Two Pointer</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#left-right">Left &amp; Right</a></li>
@@ -1435,9 +1673,6 @@ def reverseList(self, head):
 </ul>
 </li>
 </ul>
-</li>
-</ul>
-
   </nav></div>
 
 </div></div>

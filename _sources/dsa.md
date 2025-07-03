@@ -10,7 +10,8 @@ kernelspec:
   name: python3
 ---
 # Coding
-## Problem
+## Interview
+### Problem
 ALWAYS understand the problem first!
 - What are some naive examples?
 - What data structure(s)?
@@ -32,7 +33,7 @@ ASK clarification questions!
 - What are the **edge cases**?
 - Draw **specific, large, mediocre EXAMPLE PAIRS** (pos & neg) to confirm understanding with the interviewer.
 
-## Discussion
+### Discussion
 **COMMUNICATE** with your interviewer!
 - Do NOT code.
 - State **Brute-Force** & its time & space complexity.
@@ -46,7 +47,7 @@ When stuck,
 - Solve **subproblems**.
 - Try different DS/As.
 
-## Data Structure
+### Data Structure
 Identify useful DSs.
 - **Storage**:
     - **Array**: Stores index-specific values.
@@ -65,7 +66,7 @@ For any question,
 
 <center>Use <strong>HashMap</strong> when in doubt.</center>
 
-## Implement & Test
+### Implement & Test
 - Walk through your code on your own.
 - Modify unusual parts.
 - Check null nodes.
@@ -77,7 +78,6 @@ For any question,
 
 &nbsp;
 
-# DS/A
 ## Array
 ### Two Pointer
 #### Left & Right
@@ -422,80 +422,119 @@ class MedianFinder:
 
 
 ## Graph
-| Algorithm                | Time         | DS needed                    |
-|--------------------------|--------------|------------------------------|
-| DFS                      | O(n)         | set (and stack if iteration) |
-| BFS                      | O(n)         | set, queue                   |
-| Union-Find               | O(nlogn)     | array, tree                  |
-| Topological Sort         | O(n)         | array, set, queue            |
-| Dijkstra's Shortest Path | O(ElogV)     | set, heap                    |
-| Prim's MST               | O(V$ ^2 $logV) | set, heap                    |
-| Kruskal's MST            | O(ElogE)     | array, tree                  |
-| Floyd Warshall           | O(n$ ^3 $)     | matrix                       |
+```{dropdown} Table: Data Structures
+| Representation | Typical Form | Add Edge `u\rightarrow v` | Use Cases | Space | Edge-existence lookup |
+|:---------------|:-------------|:--------------------------|:----------|:-----:|:---------------------:|
+| Adjacency List | `graph = defaultdict(list)` |  `graph[u].append(v)` | Sparse graphs<br>Traversal (BFS/DFS) | $O(V+E)$ | $O(\deg^+)$ |
+| Adjacency Matrix | `graph = [[0]*n for _ in range(n)]` | `graph[u][v] = 1` | Dense graphs<br>Fast edge check (e.g., Floyd-Warshall) | $O(V^2)$ | $O(1)$ |
+| Edge List | `graph=[]` | `graph.append((u,v))` | Low memory<br>Edge streaming (e.g., Kruskal's MST) | $O(E)$ | $O(E)$ |
+```
+
+```{dropdown} Table: Algorithms
+| Algorithm                | Description                                                                                                   | Use Cases                                                                            | DS              |     Time        |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------- | :-------------- | :-------------: |
+| DFS                      | Explore each path till end before backtracking.                                                           | Detect cycles<br>Connected components                                                | stack, set      |     $O(V)$      |
+| BFS                      | Explore all nodes level-by-level.                                                                             | Shortest path in unweighted graphs<br>Level-order traversal<br>Flood-fill            | queue, set      |     $O(V)$      |
+| Union-Find               | Maintain disjoint sets that can be quickly united and queried to track connectivity.                          | Connectivity queries<br>Kruskal’s MST<br>Detect cycles in undirected graphs          | tree, array     |  $O(V \log V)$  |
+| Topological Sort         | Sort **DAG** (Directed Acyclic Graphs) so that each directed edge points from an earlier to a later node.   | Task scheduling<br>Build/Compile order<br>Course prerequisites                       | queue, array, set |     $O(V)$      |
+| Dijkstra’s Shortest Path | Find shortest paths from src to all other nodes when edges have non-negative weights.                      | GPS/Routing<br>Network latency                                                       | min-heap, set   |  $O(E \log V)$  |
+| Floyd-Warshall           | Find shortest paths between each node pair via DP over all intermediate nodes.                           | All-pairs shortest paths in dense graphs<br>Transitive closure<br>Small-n routing tables | matrix          |    $O(V^3)$     |
+| Prim’s MST               | Get MST by repeatedly adding the lightest edge that connects the tree to a new node.                        | MST with a start node<br>Build min-cost infrastructure networks<br>Circuit design layout                      | min-heap, set   | $O(V^2 \log V)$ |
+| Kruskal’s MST            | Get MST by adding edges in increasing weight order while skipping those that form cycles.                     | MST with nothing<br>When #edges ≫ #nodes<br>Cluster analysis (single-link)                          | tree, array     |  $O(E \log E)$  |
+```
 
 ### DFS
+- Graph: Adjacency list
+- Init:
+    - `visited`: set
+- Procedure:
+    - Repeat till end:
+        1. Start at a node & Mark it visited.
+        2. Action.
+        3. Recurse/Stack an unvisited neighbor.
+
 ```python
-graph = ...
+graph = defaultdict(list)   # adjacency list placeholder
 visited = set()
 
-def dfs_recursive(n):
-    visited.add(n)
+def dfs_recursive(root):
+    visited.add(root)
     ####### ACTION HERE ######
     ####### ACTION ENDS ######
-    for neighbor in graph[n]:
+    for neighbor in graph[root]:
         if neighbor not in visited:
-            dfs(neighbor)
+            dfs_recursive(neighbor)
 
-def dfs_iterative():
-    for key in graph:                   ## make sure every node gets a chance (some nodes aren't connected)
-        if key in visited: continue     ## prevent cycle
-        s = collections.deque([key])
-        while s:
-            n = s.pop()
-            visited.add(n)
-            ####### ACTION HERE ######
-            ####### ACTION ENDS ######
-            for neighbor in graph[n]:
-                if neighbor not in visited:
-                    s.append(neighbor)
+def dfs_iterative(root):
+    s = deque([root])
+    while s:
+        node = s.pop()
+        visited.add(node)
+        ####### ACTION HERE ######
+        ####### ACTION ENDS ######
+        for neighbor in graph[root][::-1]:  # reverse for natural order (optional)
+            if neighbor not in visited:
+                s.append(neighbor)
+
+def dfs_all_nodes():
+    for root in graph:
+        if root not in visited:
+            dfs(root)
 ```
-
-
 
 ### BFS
+- Graph: Adjacency list
+- Init:
+    - `visited`: set
+- Procedure:
+    1. Enqueue root.
+    2. Repeat:
+        1. Dequeue a node & Mark it visited.
+        2. Action.
+        3. Enqueue all unvisited neighbors.
+
 ```python
-graph = ...
+graph = defaultdict(list)   # adjacency list placeholder
 visited = set()
 
-def bfs():
-    for key in graph:                   ## make sure every node gets a chance (some nodes aren't connected)
-        if key in visited: continue     ## prevent cycle
-        q = collections.deque([key])
-        while q:
-            n = q.popleft()
-            visited.add(key)
-            ####### ACTION HERE ######
-            ####### ACTION ENDS ######
-            for neighbor in graph[n]:
-                if neighbor not in visited:
-                    q.append(neighbor)
+def bfs_iterative(root):
+    q = deque([root])
+    while q:
+        node = q.popleft()
+        visited.add(node)
+        ####### ACTION HERE ######
+        ####### ACTION ENDS ######
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                q.append(neighbor)
+
+def bfs_all_nodes():
+    for root in graph:
+        if root not in visited:
+            bfs(root)
 ```
 
-
-
 ### Union-Find
-
-**Where**: connected components in undirected graphs
-
-**Tips**: Don't forget to UPDATE PARENTS.
+- Graph: Edge list
+- Init:
+    - `parent`: array
+    - `rank`: array
+- Procedure:
+    - `find(x)`:
+        1. Recursively find root once.
+        2. On the way back, rewire each visited node to point straight to the root (i.e., Path Compression) $\rightarrow$ Flatten the tree.
+    - `union(x,y)`:
+        1. Find both roots.
+        2. Union the roots by rank.
 
 ```python
+graph = [(u,v) for (u,v) in edges]  # edge list placeholder
 parent = [i for i in range(n)]
 rank = [1 for _ in range(n)]
 
 def find(x):
     """
-    If not root, keep finding the root of the curr parent and set it as the new parent.
+    If not root, keep finding root of curr parent & set it as new parent.
     """
     if parent[x] != x:
         parent[x] = find(parent[x])
@@ -503,12 +542,12 @@ def find(x):
 
 def union(x,y):
     """
-    If same parent, then they are in the same set already.
+    If same parent, they are in the same set already.
     If diff parents,
         higher rank will be the parent.
         if same rank, add one below the other.
     """
-    rx,ry = find(x),find(y)
+    rx, ry = find(x), find(y)
     if rx == ry: return
     if rank[rx] > rank[ry]:
         parent[ry] = rx
@@ -517,47 +556,53 @@ def union(x,y):
         if rank[rx] == rank[ry]:
             rank[ry] += 1
 
+# union all edges
+for u, v in graph:
+    union(u, v)
+
 ## update parents once again
 parent = [find(i) for i in range(n)]
 ```
 
-
-
 ### Topological Sort
-
-**Where**: directed acyclic graphs
-
-**Tips**:
-1. Init **graph** & **indegree**.
-2. Init **queue** with 0-indegree nodes.
-3. Loop q by updating & appending neighbors of 0-indegree.
+- Graph: Adjacency list
+- Init:
+    - `indegree`: array
+    - `queue`: queue
+    - `visited`: set
+- Procedure:
+    1. Compute in-degree.
+    2. Enqueue nodes with 0 in-degree.
+    3. Repeat till empty:
+        1. Dequeue & Action.
+        2. Decrement neighbors' in-degree.
+        3. Enqueue neighbors with 0 in-degree.
 
 ```python
-def topologicalSort(graph):
+graph = defaultdict(list)   # adjacency list placeholder
+
+def topologicalSort():
     n = len(graph)
     indegree = [0]*n
     q = collections.deque()
     visited = set()
 
-    ## if graph is not usable, reformat it
-    ...
-
-    ## compute indegree
+    # compute indegree
     for _,vs in graph.items():
         for v in vs:
             indegree[v] += 1
     
-    ## get 0-indegree nodes
+    # enqueue 0-indegree nodes
     for i in range(n):
         if indegree[i] == 0:
             q.append(i)
 
-    ## loop queue
+    # loop queue
     while q:
         node = q.popleft()
+        visited.add(node)
         ####### ACTION HERE ######
         ####### ACTION ENDS ######
-        visited.add(node)
         for neighbor in graph[n]:
             indegree[neighbor] -= 1
             if indegree[neighbor] == 0:
@@ -566,96 +611,133 @@ def topologicalSort(graph):
     return
 ```
 
-
-
 ### Dijkstra's Shortest Path
-**Where**: find shortest path from one node to all other nodes
+- Graph: Adjacency list with edge weights
+- Init:
+    - `heap`: list[(weight, node)]
+    - `visited`: set
+- Procedure:
+    1. Enheap (0, start).
+    2. Repeat till empty:
+        1. Pop node with shortest edge & Mark it visited.
+        2. If found end node, return path.
+        3. Push all unvisited neighbors with updated path weights.
 
 ```python
-def dijkstra(graph,start,end):
-    heap = [(0,start)]
+graph = defaultdict(list)   # adjacency list placeholder
+
+def dijkstra(graph, start, end):
+    heap = [(0, start)]
     visited = set()
 
-    ## true Dijkstra
+    # dijkstra
     while heap:
-        (p,n) = heapq.heappop(heap)         ## get node & path
-        if n == end: return p               ## return path when found
-        if n in visited: continue           ## prevent cycle
-        visited.add(n)                      ## prevent cycle
-        for v,w in graph[n]:                ## check neighbor
-            heapq.heappush(heap,(p+w,v))
-    return -1
+        (path_w, node) = heapq.heappop(heap)    # get node & path
+        if node == end: return path_w           # return path if found
+        visited.add(node)
+
+        for neighbor, edge_w in graph[node]:    # check neighbor
+            if neighbor not in visited:
+                heapq.heappush(heap, (path_w + edge_w, neighbor))
+
+    return
 ```
 
-
-
 ### Floyd Warshall
-**Where**: find shortest path from all nodes to all other nodes
+- Graph: Adjacency matrix
+- Init:
+    - `dist`: list[list] (= graph edge weights)
+- Procedure: DP
+    - Loop intermediate, start, end nodes:
+        - Update dist mat with triangle rule.
 
 ```python
+graph = [[0]*n for _ in range(n)]   # adjacency matrix placeholder
+
 def floyd_warshall(graph):
-    ## init
-    N = len(graph)
-    dist = [[float("inf")]*N for _ in range(N)]
+    n = len(graph)
+    dist = [[float("inf")]*n for _ in range(n)]
     
-    ## set it identical as graph
-    for i in range(N):
-        for j in range(N):
-            dist[i][j] = graph[i][j] ## assume graph is 2d matrix
+    # set dist mat identical as graph mat
+    for i in range(n):
+        for j in range(n):
+            dist[i][j] = graph[i][j]
     
-    ## true Floyd Warshall
-    for k in range(N):          ## intermediate node
-        for i in range(N):      ## start node
-            for j in range(N):  ## end node
-                dist[i][j] = min(dist[i][j], dist[i][k]+dist[k][j])  ## the triangle rule
-    
+    # floyd warshall
+    for k in range(n):          # intermediate node
+        for i in range(n):      # start node
+            for j in range(n):  # end node
+                dist[i][j] = min(dist[i][j], dist[i][k]+dist[k][j])  # triangle rule
+
     return dist
 ```
 
-
-
 ### Prim's MST
-**Where**: find MST with given node
+- Graph: Adjacency list with edge weights.
+- Init:
+    - `heap`: list[(weight, node)]
+    - `visited`: set
+- Procedure:
+    1. Start with a node.
+    2. Repeat till all nodes included:
+        1. Pop node with shortest edge & Mark it visited.
+        2. Action.
+        3. Push all unvisited neighbors.
 
 ```python
-def primsMST(graph):
+graph = defaultdict(list)   # adjacency list placeholder
+
+def primsMST(graph, start):
     ans = 0
     visited = set()
-    heap = [(0,0)] ## (edge,node)
+    heap = [(0, start)]                             # (edge, start node)
 
-    ## true Prim
-    while len(visited) < len(graph):                ## #edges should not exceed #nodes
-        e,n = heapq.heappop(heap)                   ## get node & edge
-        if n in visited: continue                   ## prevent cycle
-        ans += e                                    ## add edge to ans
-        visited.add(node)                           ## prevent cycle
-        for new_e,new_n in graph[n]:                ## check neighbor
-            if new_n not in visited:
-                heapq.heappush(heap, [new_e,new_n])
+    ## prim
+    while len(visited) < len(graph):            # #edges should not exceed #nodes
+        edge, node = heapq.heappop(heap)        # get node w shortest edge
+        visited.add(node)                       # prevent cycle
+        ans += edge                             # add edge to ans
+
+        for new_edge, neighbor in graph[node]:  # check neighbor
+            if neighbor not in visited:
+                heapq.heappush(heap, [new_edge, neighbor])
+
     return ans
 ```
 
-
-
 ### Kruskal's MST
-**Where**: find MST with nothing
+- Graph: Edge list
+- Init:
+    - `parent`: array
+    - `rank`: array
+    - `i`: int (index for sorted edges in graph)
+- Procedure:
+    1. Sort edges by weight.
+    2. Repeat till V-1 edges are chosen:
+        1. Get curr edge & nodes.
+        2. Union-Find on two nodes:
+            1. Find both parents.
+            2. If two parents in diff sets:
+                1. Add edge to MST.
+                2. Union both nodes.
+        3. Next index.
 
 ```python
 def KruskalMST(graph):
     MST = []
     parent = [i for i in range(n)]
     rank = [1 for _ in range(n)]
-    i = 0   ## index for sorted edges in graph
+    i = 0   # index for sorted edges in graph
     
-    ## sort graph by edge weight
-    graph = sorted(graph, key=lambda x:x[1])
+    # sort graph by edge weight
+    graph = sorted(graph, key=lambda x: x[1])
   
-    ## true Kruskal
-    while len(MST) < len(graph)-1:  ## #edges should not exceed #nodes
-        u,w,v = graph[i]            ## get nodes & edge
-        x,y = find(u),find(v)       ## get parents
-        if x != y:                  ## prevent cycle
-            MST.append([u,w,v])     ## append to MST
-            union(x,y)              ## now they are connected
-        i += 1                      ## on to the next edge in graph
+    # kruskal
+    while len(MST) < len(graph)-1:  # #edges should not exceed #nodes
+        u,w,v = graph[i]            # get nodes & edge
+        x, y = find(u), find(v)     # get parents
+        if x != y:                  # prevent cycle
+            MST.append([u,w,v])     # append to MST
+            union(x, y)             # now they are connected
+        i += 1                      # on to the next edge in graph
 ```
