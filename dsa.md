@@ -611,6 +611,15 @@ def topologicalSort():
     return
 ```
 
+| Question | Solution |
+|:---------|:---------|
+| [207. Course Schedule](https://leetcode.com/problems/course-schedule/description/) | TopoSort. |
+| [210. Course Schedule II](https://leetcode.com/problems/course-schedule-ii/description/) | TopoSort + Cache. |
+| [2050. Parallel Courses III](https://leetcode.com/problems/parallel-courses-iii/description/) | **Hint: Max Time == Time for the last course.**<br>When adding next course, update its total time with the total time for curr course. |
+| [310. Minimum Height Trees](https://leetcode.com/problems/minimum-height-trees/description/) | **Hint: Leaves have only 1 edge.**<br>1. Init graph as List[Set].<br>2. Init indegree/leaves with nodes of only 1 edge.<br>3. While more than 2 nodes: continuously prune leaves & update new leaves with nodes of only 1 edge.<br>4. Remaining leaves are roots. |
+| [542. 01 Matrix](https://leetcode.com/problems/01-matrix/description/) | **Hint: 0 cells have 0 distance.**<br>1. Append all 0 cells to queue AND mark non-0 cells as -1 (unprocessed).<br>2. Loop queue: Skip processed, unprocessed should be processed + 1 (starting 0, then 1, then 2, ...) |
+
+
 ### Dijkstra's Shortest Path
 - Graph: Adjacency list with edge weights
 - Init:
