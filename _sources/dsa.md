@@ -114,21 +114,21 @@ For any question,
     2. Dynamically update cache to track condition. If condition is met again, stop `slow`.
 ```python
 def sliding_window(args):
-    ## Step 1: init
-    s = 0                               ## slow pointer
-    cache = collections.Counter(nums)   ## cache
+    # Step 1: init
+    s = 0                               # slow pointer
+    cache = collections.Counter(nums)   # cache
 
-    ## Step 2: iterate
-    for f in range(len(nums)):          ## fast pointer
-        ## Step 2.1 expand
+    # Step 2: iterate
+    for f in range(len(nums)):          # fast pointer
+        # Step 2.1 expand
         cache[f] -= 1
 
-        ## Step 2.2 shrink
-        while condition(f):             ## condition state
+        # Step 2.2 shrink
+        while condition(f):             # condition state
             cache[s] += 1
             s += 1
 
-    ## Step 3: return whatever the question asks for
+    # Step 3: return whatever the question asks for
     return cache[-1]
 ```
 
@@ -160,13 +160,13 @@ Credits to [zhijun_liao](https://leetcode.com/problems/find-k-th-smallest-pair-d
 ```python
 ## Find First True (i.e., assume `lefts=False, rights=True`)
 while l < r:
-    if condition: r = mid   ## If True, ans is on the left (inclusive), so we go left.
-    else: l = mid+1         ## If False, ans is on the right, so we go right.
+    if condition: r = mid   # If True, ans is on the left (inclusive), so we go left.
+    else: l = mid+1         # If False, ans is on the right, so we go right.
 
 ## Find Last True (i.e., assume `lefts=True, rights=False`)
 while l < r:
-    if condition: l = mid   ## If True, answer is on the right (inclusive), so we go right.
-    else: r = mid-1         ## If not, answer is on the left, so we go left.
+    if condition: l = mid   # If True, answer is on the right (inclusive), so we go right.
+    else: r = mid-1         # If not, answer is on the left, so we go left.
 ```
 These 2 templates are easily interchangeable by swapping the condition, so we end up with 1 universal template:
 ```python
@@ -174,7 +174,7 @@ def binary_search(nums) -> int:
     def condition(mid) -> bool:
         pass
 
-    l,r = 0,len(nums)-1     ## NOTE: Pay attention to edge cases. Sometimes we need to change this boundary.
+    l,r = 0,len(nums)-1     # NOTE: Pay attention to edge cases. Sometimes we need to change this boundary.
     while l < r:
         mid = l+(r-l)//2
         if condition(mid): r = mid
@@ -234,15 +234,15 @@ def binary_search(nums) -> int:
 
 ```python
 def DP(args):
-    ## Step 1: Init
-    dp = [0]*(n+1)          ## DP table
-    dp[0] = 1               ## base case
+    # Step 1: Init
+    dp = [0]*(n+1)          # DP table
+    dp[0] = 1               # base case
 
-    ## Step 2: Iterate
+    # Step 2: Iterate
     for i in range(1, n+1):
-        dp[i] = dp[i-1]+1   ## state transition
+        dp[i] = dp[i-1]+1   # state transition
 
-    ## Step 3: Return end case
+    # Step 3: Return end case
     return dp[n]
 ```
 | Question | Solution |
@@ -308,12 +308,12 @@ def reverseList(self, head):
 ## 739. Daily Temperatures
 def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
     ans = [0]*len(temperatures)
-    s = []  ## store indices of monotonically decreasing temps
+    s = []  # store indices of monotonically decreasing temps
     for i,t in enumerate(temperatures):
-        while s and temperatures[s[-1]] < t:  ## if a higher temp is met
-            ans[s[-1]] = i-s[-1]              ## update ans
-            s.pop()                           ## pop till no higher temp
-        s.append(i)                           ## append unanswered index to stack
+        while s and temperatures[s[-1]] < t:  # if a higher temp is met
+            ans[s[-1]] = i-s[-1]              # update ans
+            s.pop()                           # pop till no higher temp
+        s.append(i)                           # append unanswered index to stack
     return ans
 ```
 
@@ -328,8 +328,8 @@ def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
 def dfs_pre(node):
     if is_end_case(): return True
     if break_condition(): return False
-    ####### ACTION HERE ######
-    ####### ACTION ENDS ######
+    ###### ACTION HERE ######
+    ###### ACTION ENDS ######
     dfs_pre(node.left)
     dfs_pre(node.right)
 
@@ -337,8 +337,8 @@ def dfs_in(node):
     if is_end_case(): return True
     if break_condition(): return False
     dfs_in(node.left)
-    ####### ACTION HERE ######
-    ####### ACTION ENDS ######
+    ###### ACTION HERE ######
+    ###### ACTION ENDS ######
     dfs_in(node.right)
 
 def dfs_post(node):
@@ -346,8 +346,8 @@ def dfs_post(node):
     if break_condition(): return False
     dfs_post(node.left)
     dfs_post(node.right)
-    ####### ACTION HERE ######
-    ####### ACTION ENDS ######
+    ###### ACTION HERE ######
+    ###### ACTION ENDS ######
 ```
 
 **Tips**: 
@@ -370,56 +370,56 @@ def bfs(node):
     q = collections.deque([node])
     while q:
         node = q.popleft()
-        ####### ACTION HERE ######
-        ####### ACTION ENDS ######
+        ###### ACTION HERE ######
+        ###### ACTION ENDS ######
         if node.left:  q.append(node.left)
         if node.right: q.append(node.right)
 ```
 
-
-
 ## Heap
-**Where**: get min/max fast
+- **Where**: Get min/max fast.
+
 | Action | Time |
-|------|----|
-| top()  | O(1) |
-| insert()  | O(logn) |
-| remove()  | O(logn) |
-| heapify() | O(n) |
+|:-------|:--:|
+| access  | $O(1)$ |
+| insert  | $O(\log n)$ |
+| remove  | $O(\log n)$ |
+| heapify | $O(n)$ |
 
 ### Two Heap
-**Where**: scheduling, median, any problem that involves both min and max somehow.
-
-**Tips**:
-- Set up 2 heaps:
-    - small: max heap (i.e., negative min heap)
-    - large: min heap
-- Use their length as storage condition
-- Do NOT pop when looking up items. Use index (0 for root).
+- **Where**: Problems involving both min and max (e.g., Scheduling, Median, etc.).
+- **Tips**:
+    - Set up 2 heaps:
+        - **small**: max heap (i.e., negative min heap)
+        - **large**: min heap
+    - Use their length as storage condition
+    - Do NOT pop when looking up items. Use index (0 for root).
 
 ```python
-## 295. Find Median from Data Stream
+# 295. Find Median from Data Stream
 class MedianFinder:
     def __init__(self):
-        self.small = [] ## heap for the smaller half (negative so that min heap works)
-        self.large = [] ## heap for the larger half
+        self.small = [] # heap for the smaller half (negative so that min heap works)
+        self.large = [] # heap for the larger half
 
-    def addNum(self, num: int) -> None: ## O(logn)
-        ## It doesn't really matter which one has one more value than the other. But be consistent during interview.
-        ## In this case, we allow "small" to store one more value than "large" when #nums is odd.
-        if len(self.small)==len(self.large):                                 ## if #nums is now even
-            heapq.heappush(self.small, -heapq.heappushpop(self.large, num))  ## push new num to "large", pop the smallest from "large", put it in "small"
+    def addNum(self, num: int) -> None: # O(logn)
+        # It doesn't really matter which one has one more value than the other.
+        # In this case, we allow "small" to store one more value than "large" when #nums is odd.
+        if len(self.small)==len(self.large):                                 # if #nums is now even
+            heapq.heappush(self.small, -heapq.heappushpop(self.large, num))  # push new num to "large", pop the smallest from "large", put it in "small"
         else:
-            heapq.heappush(self.large, -heapq.heappushpop(self.small, -num)) ## push new num to "small", pop the largest from "small", put it in "large"
+            heapq.heappush(self.large, -heapq.heappushpop(self.small, -num)) # push new num to "small", pop the largest from "small", put it in "large"
 
-    def findMedian(self) -> float:      ## O(1)
+    def findMedian(self) -> float:      # O(1)
         if len(self.small)==len(self.large):        
             return (self.large[0]-self.small[0])/2
         else:
             return -self.small[0]
 ```
 
-
+| Question | Solution |
+|:---------|:---------|
+| [295. Find Median from Data Stream](https://leetcode.com/problems/find-median-from-data-stream/) | Init large & small (negative) lists. Be consistent with length control.<br>If same length, push new num to large, pop smallest from large, move to small.<br>If diff length (small > large), push new num to small, pop largest from small, move to large.<br>Roots of small & large lead to median. |
 
 ## Graph
 ```{dropdown} Table: Data Structures
@@ -444,10 +444,10 @@ class MedianFinder:
 ```
 
 ### DFS
-- Graph: Adjacency list
-- Init:
+- **Graph**: Adjacency list
+- **Init**:
     - `visited`: set
-- Procedure:
+- **Procedure**:
     - Repeat till end:
         1. Start at a node & Mark it visited.
         2. Action.
@@ -459,8 +459,8 @@ visited = set()
 
 def dfs_recursive(root):
     visited.add(root)
-    ####### ACTION HERE ######
-    ####### ACTION ENDS ######
+    ###### ACTION HERE ######
+    ###### ACTION ENDS ######
     for neighbor in graph[root]:
         if neighbor not in visited:
             dfs_recursive(neighbor)
@@ -470,8 +470,8 @@ def dfs_iterative(root):
     while s:
         node = s.pop()
         visited.add(node)
-        ####### ACTION HERE ######
-        ####### ACTION ENDS ######
+        ###### ACTION HERE ######
+        ###### ACTION ENDS ######
         for neighbor in graph[root][::-1]:  # reverse for natural order (optional)
             if neighbor not in visited:
                 s.append(neighbor)
@@ -483,10 +483,10 @@ def dfs_all_nodes():
 ```
 
 ### BFS
-- Graph: Adjacency list
-- Init:
+- **Graph**: Adjacency list
+- **Init**:
     - `visited`: set
-- Procedure:
+- **Procedure**:
     1. Enqueue root.
     2. Repeat:
         1. Dequeue a node & Mark it visited.
@@ -502,8 +502,8 @@ def bfs_iterative(root):
     while q:
         node = q.popleft()
         visited.add(node)
-        ####### ACTION HERE ######
-        ####### ACTION ENDS ######
+        ###### ACTION HERE ######
+        ###### ACTION ENDS ######
         for neighbor in graph[node]:
             if neighbor not in visited:
                 q.append(neighbor)
@@ -515,11 +515,11 @@ def bfs_all_nodes():
 ```
 
 ### Union-Find
-- Graph: Edge list
-- Init:
+- **Graph**: Edge list
+- **Init**:
     - `parent`: array
     - `rank`: array
-- Procedure:
+- **Procedure**:
     - `find(x)`:
         1. Recursively find root once.
         2. On the way back, rewire each visited node to point straight to the root (i.e., Path Compression) $\rightarrow$ Flatten the tree.
@@ -564,13 +564,18 @@ for u, v in graph:
 parent = [find(i) for i in range(n)]
 ```
 
+| Question | Solution |
+|:---------|:---------|
+| [323. Number of Connected Components in an Undirected Graph](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/) | Loop edges, union nodes. |
+| [721. Accounts Merge](https://leetcode.com/problems/accounts-merge/) | Loop emails, union accounts.<br>No need for union by rank. |
+
 ### Topological Sort
-- Graph: Adjacency list
-- Init:
+- **Graph**: Adjacency list
+- **Init**:
     - `indegree`: array
     - `queue`: queue
     - `visited`: set
-- Procedure:
+- **Procedure**:
     1. Compute in-degree.
     2. Enqueue nodes with 0 in-degree.
     3. Repeat till empty:
@@ -601,8 +606,8 @@ def topologicalSort():
     while q:
         node = q.popleft()
         visited.add(node)
-        ####### ACTION HERE ######
-        ####### ACTION ENDS ######
+        ###### ACTION HERE ######
+        ###### ACTION ENDS ######
         for neighbor in graph[n]:
             indegree[neighbor] -= 1
             if indegree[neighbor] == 0:
@@ -611,12 +616,21 @@ def topologicalSort():
     return
 ```
 
+| Question | Solution |
+|:---------|:---------|
+| [207. Course Schedule](https://leetcode.com/problems/course-schedule/description/) | TopoSort. |
+| [210. Course Schedule II](https://leetcode.com/problems/course-schedule-ii/description/) | TopoSort + Cache. |
+| [2050. Parallel Courses III](https://leetcode.com/problems/parallel-courses-iii/description/) | **Hint: Max Time == Time for the last course.**<br>When adding next course, update its total time with the total time for curr course. |
+| [310. Minimum Height Trees](https://leetcode.com/problems/minimum-height-trees/description/) | **Hint: Leaves have only 1 edge.**<br>1. Init graph as List[Set].<br>2. Init indegree/leaves with nodes of only 1 edge.<br>3. While more than 2 nodes: continuously prune leaves & update new leaves with nodes of only 1 edge.<br>4. Remaining leaves are roots. |
+| [542. 01 Matrix](https://leetcode.com/problems/01-matrix/description/) | **Hint: 0 cells have 0 distance.**<br>1. Append all 0 cells to queue AND mark non-0 cells as -1 (unprocessed).<br>2. Loop queue: Skip processed, unprocessed should be processed + 1 (starting 0, then 1, then 2, ...) |
+
+
 ### Dijkstra's Shortest Path
-- Graph: Adjacency list with edge weights
-- Init:
+- **Graph**: Adjacency list with edge weights
+- **Init**:
     - `heap`: list[(weight, node)]
     - `visited`: set
-- Procedure:
+- **Procedure**:
     1. Enheap (0, start).
     2. Repeat till empty:
         1. Pop node with shortest edge & Mark it visited.
@@ -644,10 +658,10 @@ def dijkstra(graph, start, end):
 ```
 
 ### Floyd Warshall
-- Graph: Adjacency matrix
-- Init:
+- **Graph**: Adjacency matrix
+- **Init**:
     - `dist`: list[list] (= graph edge weights)
-- Procedure: DP
+- **Procedure**: DP
     - Loop intermediate, start, end nodes:
         - Update dist mat with triangle rule.
 
@@ -673,11 +687,11 @@ def floyd_warshall(graph):
 ```
 
 ### Prim's MST
-- Graph: Adjacency list with edge weights.
-- Init:
+- **Graph**: Adjacency list with edge weights.
+- **Init**:
     - `heap`: list[(weight, node)]
     - `visited`: set
-- Procedure:
+- **Procedure**:
     1. Start with a node.
     2. Repeat till all nodes included:
         1. Pop node with shortest edge & Mark it visited.
@@ -692,7 +706,7 @@ def primsMST(graph, start):
     visited = set()
     heap = [(0, start)]                             # (edge, start node)
 
-    ## prim
+    # prim
     while len(visited) < len(graph):            # #edges should not exceed #nodes
         edge, node = heapq.heappop(heap)        # get node w shortest edge
         visited.add(node)                       # prevent cycle
@@ -706,12 +720,12 @@ def primsMST(graph, start):
 ```
 
 ### Kruskal's MST
-- Graph: Edge list
-- Init:
+- **Graph**: Edge list
+- **Init**:
     - `parent`: array
     - `rank`: array
     - `i`: int (index for sorted edges in graph)
-- Procedure:
+- **Procedure**:
     1. Sort edges by weight.
     2. Repeat till V-1 edges are chosen:
         1. Get curr edge & nodes.

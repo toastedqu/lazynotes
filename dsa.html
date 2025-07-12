@@ -626,21 +626,21 @@ document.write(`
 </li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sliding_window</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="c1">## Step 1: init</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>                               <span class="c1">## slow pointer</span>
-    <span class="n">cache</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>   <span class="c1">## cache</span>
+    <span class="c1"># Step 1: init</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>                               <span class="c1"># slow pointer</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>   <span class="c1"># cache</span>
 
-    <span class="c1">## Step 2: iterate</span>
-    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)):</span>          <span class="c1">## fast pointer</span>
-        <span class="c1">## Step 2.1 expand</span>
+    <span class="c1"># Step 2: iterate</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)):</span>          <span class="c1"># fast pointer</span>
+        <span class="c1"># Step 2.1 expand</span>
         <span class="n">cache</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
 
-        <span class="c1">## Step 2.2 shrink</span>
-        <span class="k">while</span> <span class="n">condition</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>             <span class="c1">## condition state</span>
+        <span class="c1"># Step 2.2 shrink</span>
+        <span class="k">while</span> <span class="n">condition</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>             <span class="c1"># condition state</span>
             <span class="n">cache</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">s</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="c1">## Step 3: return whatever the question asks for</span>
+    <span class="c1"># Step 3: return whatever the question asks for</span>
     <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -698,13 +698,13 @@ document.write(`
 <p><strong>How</strong>: There are 2 cases to consider. (originally 4, but I think 2 are sufficient for explanation.)</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">## Find First True (i.e., assume `lefts=False, rights=True`)</span>
 <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">condition</span><span class="p">:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span>   <span class="c1">## If True, ans is on the left (inclusive), so we go left.</span>
-    <span class="k">else</span><span class="p">:</span> <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span>         <span class="c1">## If False, ans is on the right, so we go right.</span>
+    <span class="k">if</span> <span class="n">condition</span><span class="p">:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span>   <span class="c1"># If True, ans is on the left (inclusive), so we go left.</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span>         <span class="c1"># If False, ans is on the right, so we go right.</span>
 
 <span class="c1">## Find Last True (i.e., assume `lefts=True, rights=False`)</span>
 <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">condition</span><span class="p">:</span> <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span>   <span class="c1">## If True, answer is on the right (inclusive), so we go right.</span>
-    <span class="k">else</span><span class="p">:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span><span class="o">-</span><span class="mi">1</span>         <span class="c1">## If not, answer is on the left, so we go left.</span>
+    <span class="k">if</span> <span class="n">condition</span><span class="p">:</span> <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span>   <span class="c1"># If True, answer is on the right (inclusive), so we go right.</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span><span class="o">-</span><span class="mi">1</span>         <span class="c1"># If not, answer is on the left, so we go left.</span>
 </pre></div>
 </div>
 <p>These 2 templates are easily interchangeable by swapping the condition, so we end up with 1 universal template:</p>
@@ -712,7 +712,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">condition</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">pass</span>
 
-    <span class="n">l</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>     <span class="c1">## NOTE: Pay attention to edge cases. Sometimes we need to change this boundary.</span>
+    <span class="n">l</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>     <span class="c1"># NOTE: Pay attention to edge cases. Sometimes we need to change this boundary.</span>
     <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">:</span>
         <span class="n">mid</span> <span class="o">=</span> <span class="n">l</span><span class="o">+</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">l</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
         <span class="k">if</span> <span class="n">condition</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span>
@@ -813,15 +813,15 @@ document.write(`
 <li><p>Initialize (DP table &amp; Base cases) &amp; Iterate (based on the defined state transition).</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">DP</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="c1">## Step 1: Init</span>
-    <span class="n">dp</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>          <span class="c1">## DP table</span>
-    <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>               <span class="c1">## base case</span>
+    <span class="c1"># Step 1: Init</span>
+    <span class="n">dp</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>          <span class="c1"># DP table</span>
+    <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>               <span class="c1"># base case</span>
 
-    <span class="c1">## Step 2: Iterate</span>
+    <span class="c1"># Step 2: Iterate</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>   <span class="c1">## state transition</span>
+        <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>   <span class="c1"># state transition</span>
 
-    <span class="c1">## Step 3: Return end case</span>
+    <span class="c1"># Step 3: Return end case</span>
     <span class="k">return</span> <span class="n">dp</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -936,12 +936,12 @@ def reverseList(self, head):
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">## 739. Daily Temperatures</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dailyTemperatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperatures</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
     <span class="n">ans</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">temperatures</span><span class="p">)</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1">## store indices of monotonically decreasing temps</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># store indices of monotonically decreasing temps</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">temperatures</span><span class="p">):</span>
-        <span class="k">while</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">temperatures</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">:</span>  <span class="c1">## if a higher temp is met</span>
-            <span class="n">ans</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span><span class="o">-</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>              <span class="c1">## update ans</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>                           <span class="c1">## pop till no higher temp</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>                           <span class="c1">## append unanswered index to stack</span>
+        <span class="k">while</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">temperatures</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">:</span>  <span class="c1"># if a higher temp is met</span>
+            <span class="n">ans</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span><span class="o">-</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>              <span class="c1"># update ans</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>                           <span class="c1"># pop till no higher temp</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>                           <span class="c1"># append unanswered index to stack</span>
     <span class="k">return</span> <span class="n">ans</span>
 </pre></div>
 </div>
@@ -956,8 +956,8 @@ def reverseList(self, head):
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">dfs_pre</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">is_end_case</span><span class="p">():</span> <span class="k">return</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">break_condition</span><span class="p">():</span> <span class="k">return</span> <span class="kc">False</span>
-    <span class="c1">####### ACTION HERE ######</span>
-    <span class="c1">####### ACTION ENDS ######</span>
+    <span class="c1">###### ACTION HERE ######</span>
+    <span class="c1">###### ACTION ENDS ######</span>
     <span class="n">dfs_pre</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
     <span class="n">dfs_pre</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
 
@@ -965,8 +965,8 @@ def reverseList(self, head):
     <span class="k">if</span> <span class="n">is_end_case</span><span class="p">():</span> <span class="k">return</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">break_condition</span><span class="p">():</span> <span class="k">return</span> <span class="kc">False</span>
     <span class="n">dfs_in</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
-    <span class="c1">####### ACTION HERE ######</span>
-    <span class="c1">####### ACTION ENDS ######</span>
+    <span class="c1">###### ACTION HERE ######</span>
+    <span class="c1">###### ACTION ENDS ######</span>
     <span class="n">dfs_in</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">dfs_post</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
@@ -974,8 +974,8 @@ def reverseList(self, head):
     <span class="k">if</span> <span class="n">break_condition</span><span class="p">():</span> <span class="k">return</span> <span class="kc">False</span>
     <span class="n">dfs_post</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
     <span class="n">dfs_post</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
-    <span class="c1">####### ACTION HERE ######</span>
-    <span class="c1">####### ACTION ENDS ######</span>
+    <span class="c1">###### ACTION HERE ######</span>
+    <span class="c1">###### ACTION ENDS ######</span>
 </pre></div>
 </div>
 <p><strong>Tips</strong>:</p>
@@ -999,8 +999,8 @@ def reverseList(self, head):
     <span class="n">q</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">([</span><span class="n">node</span><span class="p">])</span>
     <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
-        <span class="c1">####### ACTION HERE ######</span>
-        <span class="c1">####### ACTION ENDS ######</span>
+        <span class="c1">###### ACTION HERE ######</span>
+        <span class="c1">###### ACTION ENDS ######</span>
         <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">:</span>  <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">:</span> <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
 </pre></div>
@@ -1009,63 +1009,81 @@ def reverseList(self, head):
 </section>
 <section id="heap">
 <h2>Heap<a class="headerlink" href="#heap" title="Link to this heading">#</a></h2>
-<p><strong>Where</strong>: get min/max fast</p>
+<ul class="simple">
+<li><p><strong>Where</strong>: Get min/max fast.</p></li>
+</ul>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>Action</p></th>
-<th class="head"><p>Time</p></th>
+<tr class="row-odd"><th class="head text-left"><p>Action</p></th>
+<th class="head text-center"><p>Time</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>top()</p></td>
-<td><p>O(1)</p></td>
+<tr class="row-even"><td class="text-left"><p>access</p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(O(1)\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p>insert()</p></td>
-<td><p>O(logn)</p></td>
+<tr class="row-odd"><td class="text-left"><p>insert</p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(O(\log n)\)</span></p></td>
 </tr>
-<tr class="row-even"><td><p>remove()</p></td>
-<td><p>O(logn)</p></td>
+<tr class="row-even"><td class="text-left"><p>remove</p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(O(\log n)\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p>heapify()</p></td>
-<td><p>O(n)</p></td>
+<tr class="row-odd"><td class="text-left"><p>heapify</p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(O(n)\)</span></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <section id="two-heap">
 <h3>Two Heap<a class="headerlink" href="#two-heap" title="Link to this heading">#</a></h3>
-<p><strong>Where</strong>: scheduling, median, any problem that involves both min and max somehow.</p>
-<p><strong>Tips</strong>:</p>
 <ul class="simple">
+<li><p><strong>Where</strong>: Problems involving both min and max (e.g., Scheduling, Median, etc.).</p></li>
+<li><p><strong>Tips</strong>:</p>
+<ul>
 <li><p>Set up 2 heaps:</p>
 <ul>
-<li><p>small: max heap (i.e., negative min heap)</p></li>
-<li><p>large: min heap</p></li>
+<li><p><strong>small</strong>: max heap (i.e., negative min heap)</p></li>
+<li><p><strong>large</strong>: min heap</p></li>
 </ul>
 </li>
 <li><p>Use their length as storage condition</p></li>
 <li><p>Do NOT pop when looking up items. Use index (0 for root).</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">## 295. Find Median from Data Stream</span>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 295. Find Median from Data Stream</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MedianFinder</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">small</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">## heap for the smaller half (negative so that min heap works)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">large</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">## heap for the larger half</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">small</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># heap for the smaller half (negative so that min heap works)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">large</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># heap for the larger half</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">addNum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">## O(logn)</span>
-        <span class="c1">## It doesn&#39;t really matter which one has one more value than the other. But be consistent during interview.</span>
-        <span class="c1">## In this case, we allow &quot;small&quot; to store one more value than &quot;large&quot; when #nums is odd.</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">):</span>                                 <span class="c1">## if #nums is now even</span>
-            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">,</span> <span class="o">-</span><span class="n">heapq</span><span class="o">.</span><span class="n">heappushpop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">,</span> <span class="n">num</span><span class="p">))</span>  <span class="c1">## push new num to &quot;large&quot;, pop the smallest from &quot;large&quot;, put it in &quot;small&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addNum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># O(logn)</span>
+        <span class="c1"># It doesn&#39;t really matter which one has one more value than the other.</span>
+        <span class="c1"># In this case, we allow &quot;small&quot; to store one more value than &quot;large&quot; when #nums is odd.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">):</span>                                 <span class="c1"># if #nums is now even</span>
+            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">,</span> <span class="o">-</span><span class="n">heapq</span><span class="o">.</span><span class="n">heappushpop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">,</span> <span class="n">num</span><span class="p">))</span>  <span class="c1"># push new num to &quot;large&quot;, pop the smallest from &quot;large&quot;, put it in &quot;small&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">,</span> <span class="o">-</span><span class="n">heapq</span><span class="o">.</span><span class="n">heappushpop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">,</span> <span class="o">-</span><span class="n">num</span><span class="p">))</span> <span class="c1">## push new num to &quot;small&quot;, pop the largest from &quot;small&quot;, put it in &quot;large&quot;</span>
+            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">,</span> <span class="o">-</span><span class="n">heapq</span><span class="o">.</span><span class="n">heappushpop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">,</span> <span class="o">-</span><span class="n">num</span><span class="p">))</span> <span class="c1"># push new num to &quot;small&quot;, pop the largest from &quot;small&quot;, put it in &quot;large&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">findMedian</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>      <span class="c1">## O(1)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">findMedian</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>      <span class="c1"># O(1)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">):</span>        
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Question</p></th>
+<th class="head text-left"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-median-from-data-stream/">295. Find Median from Data Stream</a></p></td>
+<td class="text-left"><p>Init large &amp; small (negative) lists. Be consistent with length control.<br>If same length, push new num to large, pop smallest from large, move to small.<br>If diff length (small &gt; large), push new num to small, pop largest from small, move to large.<br>Roots of small &amp; large lead to median.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 </section>
@@ -1178,13 +1196,13 @@ def reverseList(self, head):
 </details><section id="id1">
 <h3>DFS<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Graph: Adjacency list</p></li>
-<li><p>Init:</p>
+<li><p><strong>Graph</strong>: Adjacency list</p></li>
+<li><p><strong>Init</strong>:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
 </ul>
 </li>
-<li><p>Procedure:</p>
+<li><p><strong>Procedure</strong>:</p>
 <ul>
 <li><p>Repeat till end:</p>
 <ol class="arabic simple">
@@ -1201,8 +1219,8 @@ def reverseList(self, head):
 
 <span class="k">def</span><span class="w"> </span><span class="nf">dfs_recursive</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
     <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-    <span class="c1">####### ACTION HERE ######</span>
-    <span class="c1">####### ACTION ENDS ######</span>
+    <span class="c1">###### ACTION HERE ######</span>
+    <span class="c1">###### ACTION ENDS ######</span>
     <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">root</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
             <span class="n">dfs_recursive</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
@@ -1212,8 +1230,8 @@ def reverseList(self, head):
     <span class="k">while</span> <span class="n">s</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="c1">####### ACTION HERE ######</span>
-        <span class="c1">####### ACTION ENDS ######</span>
+        <span class="c1">###### ACTION HERE ######</span>
+        <span class="c1">###### ACTION ENDS ######</span>
         <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">root</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>  <span class="c1"># reverse for natural order (optional)</span>
             <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
                 <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
@@ -1228,13 +1246,13 @@ def reverseList(self, head):
 <section id="id2">
 <h3>BFS<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Graph: Adjacency list</p></li>
-<li><p>Init:</p>
+<li><p><strong>Graph</strong>: Adjacency list</p></li>
+<li><p><strong>Init</strong>:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
 </ul>
 </li>
-<li><p>Procedure:</p>
+<li><p><strong>Procedure</strong>:</p>
 <ol class="arabic simple">
 <li><p>Enqueue root.</p></li>
 <li><p>Repeat:</p>
@@ -1255,8 +1273,8 @@ def reverseList(self, head):
     <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
         <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="c1">####### ACTION HERE ######</span>
-        <span class="c1">####### ACTION ENDS ######</span>
+        <span class="c1">###### ACTION HERE ######</span>
+        <span class="c1">###### ACTION ENDS ######</span>
         <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
                 <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
@@ -1271,14 +1289,14 @@ def reverseList(self, head):
 <section id="union-find">
 <h3>Union-Find<a class="headerlink" href="#union-find" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Graph: Edge list</p></li>
-<li><p>Init:</p>
+<li><p><strong>Graph</strong>: Edge list</p></li>
+<li><p><strong>Init</strong>:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">parent</span></code>: array</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code>: array</p></li>
 </ul>
 </li>
-<li><p>Procedure:</p>
+<li><p><strong>Procedure</strong>:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">find(x)</span></code>:</p>
 <ol class="arabic simple">
@@ -1331,19 +1349,35 @@ def reverseList(self, head):
 <span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">find</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
 </pre></div>
 </div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Question</p></th>
+<th class="head text-left"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/">323. Number of Connected Components in an Undirected Graph</a></p></td>
+<td class="text-left"><p>Loop edges, union nodes.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/accounts-merge/">721. Accounts Merge</a></p></td>
+<td class="text-left"><p>Loop emails, union accounts.<br>No need for union by rank.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="topological-sort">
 <h3>Topological Sort<a class="headerlink" href="#topological-sort" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Graph: Adjacency list</p></li>
-<li><p>Init:</p>
+<li><p><strong>Graph</strong>: Adjacency list</p></li>
+<li><p><strong>Init</strong>:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">indegree</span></code>: array</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">queue</span></code>: queue</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
 </ul>
 </li>
-<li><p>Procedure:</p>
+<li><p><strong>Procedure</strong>:</p>
 <ol class="arabic simple">
 <li><p>Compute in-degree.</p></li>
 <li><p>Enqueue nodes with 0 in-degree.</p></li>
@@ -1379,8 +1413,8 @@ def reverseList(self, head):
     <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
         <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="c1">####### ACTION HERE ######</span>
-        <span class="c1">####### ACTION ENDS ######</span>
+        <span class="c1">###### ACTION HERE ######</span>
+        <span class="c1">###### ACTION ENDS ######</span>
         <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
             <span class="n">indegree</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">indegree</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1389,18 +1423,43 @@ def reverseList(self, head):
     <span class="k">return</span>
 </pre></div>
 </div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Question</p></th>
+<th class="head text-left"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/course-schedule/description/">207. Course Schedule</a></p></td>
+<td class="text-left"><p>TopoSort.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/course-schedule-ii/description/">210. Course Schedule II</a></p></td>
+<td class="text-left"><p>TopoSort + Cache.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/parallel-courses-iii/description/">2050. Parallel Courses III</a></p></td>
+<td class="text-left"><p><strong>Hint: Max Time == Time for the last course.</strong><br>When adding next course, update its total time with the total time for curr course.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/minimum-height-trees/description/">310. Minimum Height Trees</a></p></td>
+<td class="text-left"><p><strong>Hint: Leaves have only 1 edge.</strong><br>1. Init graph as List[Set].<br>2. Init indegree/leaves with nodes of only 1 edge.<br>3. While more than 2 nodes: continuously prune leaves &amp; update new leaves with nodes of only 1 edge.<br>4. Remaining leaves are roots.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/01-matrix/description/">542. 01 Matrix</a></p></td>
+<td class="text-left"><p><strong>Hint: 0 cells have 0 distance.</strong><br>1. Append all 0 cells to queue AND mark non-0 cells as -1 (unprocessed).<br>2. Loop queue: Skip processed, unprocessed should be processed + 1 (starting 0, then 1, then 2, …)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="dijkstra-s-shortest-path">
 <h3>Dijkstra’s Shortest Path<a class="headerlink" href="#dijkstra-s-shortest-path" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Graph: Adjacency list with edge weights</p></li>
-<li><p>Init:</p>
+<li><p><strong>Graph</strong>: Adjacency list with edge weights</p></li>
+<li><p><strong>Init</strong>:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">heap</span></code>: list[(weight, node)]</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
 </ul>
 </li>
-<li><p>Procedure:</p>
+<li><p><strong>Procedure</strong>:</p>
 <ol class="arabic simple">
 <li><p>Enheap (0, start).</p></li>
 <li><p>Repeat till empty:</p>
@@ -1436,13 +1495,13 @@ def reverseList(self, head):
 <section id="floyd-warshall">
 <h3>Floyd Warshall<a class="headerlink" href="#floyd-warshall" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Graph: Adjacency matrix</p></li>
-<li><p>Init:</p>
+<li><p><strong>Graph</strong>: Adjacency matrix</p></li>
+<li><p><strong>Init</strong>:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">dist</span></code>: list[list] (= graph edge weights)</p></li>
 </ul>
 </li>
-<li><p>Procedure: DP</p>
+<li><p><strong>Procedure</strong>: DP</p>
 <ul>
 <li><p>Loop intermediate, start, end nodes:</p>
 <ul>
@@ -1476,14 +1535,14 @@ def reverseList(self, head):
 <section id="prim-s-mst">
 <h3>Prim’s MST<a class="headerlink" href="#prim-s-mst" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Graph: Adjacency list with edge weights.</p></li>
-<li><p>Init:</p>
+<li><p><strong>Graph</strong>: Adjacency list with edge weights.</p></li>
+<li><p><strong>Init</strong>:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">heap</span></code>: list[(weight, node)]</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
 </ul>
 </li>
-<li><p>Procedure:</p>
+<li><p><strong>Procedure</strong>:</p>
 <ol class="arabic simple">
 <li><p>Start with a node.</p></li>
 <li><p>Repeat till all nodes included:</p>
@@ -1503,7 +1562,7 @@ def reverseList(self, head):
     <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="n">heap</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">start</span><span class="p">)]</span>                             <span class="c1"># (edge, start node)</span>
 
-    <span class="c1">## prim</span>
+    <span class="c1"># prim</span>
     <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">visited</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>            <span class="c1"># #edges should not exceed #nodes</span>
         <span class="n">edge</span><span class="p">,</span> <span class="n">node</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>        <span class="c1"># get node w shortest edge</span>
         <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>                       <span class="c1"># prevent cycle</span>
@@ -1520,15 +1579,15 @@ def reverseList(self, head):
 <section id="kruskal-s-mst">
 <h3>Kruskal’s MST<a class="headerlink" href="#kruskal-s-mst" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Graph: Edge list</p></li>
-<li><p>Init:</p>
+<li><p><strong>Graph</strong>: Edge list</p></li>
+<li><p><strong>Init</strong>:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">parent</span></code>: array</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code>: array</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">i</span></code>: int (index for sorted edges in graph)</p></li>
 </ul>
 </li>
-<li><p>Procedure:</p>
+<li><p><strong>Procedure</strong>:</p>
 <ol class="arabic simple">
 <li><p>Sort edges by weight.</p></li>
 <li><p>Repeat till V-1 edges are chosen:</p>
