@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Misc &#8212; LazyNotes</title>
+    <title>Post-Training &#8212; LazyNotes</title>
   
   
   
@@ -61,12 +61,10 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nlp/inference/misc';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nlp/training/post';</script>
     <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Evaluation" href="../eval.html" />
-    <link rel="prev" title="Decoding" href="decoding.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -129,6 +127,8 @@
       
       
       
+        
+      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -184,16 +184,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../../dl/quant.html">Precision &amp; Quantization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">NLP</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../transformer/transformer.html">Transformer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../transformer/tokenizer.html">Tokenization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transformer/pe.html">Positional Encoding</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="inference.html">Inference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="decoding.html">Decoding</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Misc</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../inference/inference.html">Inference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../inference/decoding.html">Decoding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../inference/misc.html">Misc</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../eval.html">Evaluation</a></li>
@@ -278,7 +278,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fnlp/inference/misc.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fnlp/training/post.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -308,7 +308,7 @@
       
       
       
-      <li><a href="../../_sources/nlp/inference/misc.md" target="_blank"
+      <li><a href="../../_sources/nlp/training/post.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -392,7 +392,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Misc</h1>
+    <h1>Post-Training</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -402,7 +402,26 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kv-cache">KV Cache</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#peft">PEFT</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lora">LoRA</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#qlora">QLoRA</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adapters">Adapters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-tuning">Prompt Tuning</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prefix-tuning">Prefix Tuning</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#instruction-tuning">Instruction Tuning</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alignment">Alignment</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rlhf-ppo">RLHF/PPO</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rlaif">RLAIF</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dpo">DPO</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#grpo">GRPO</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -414,44 +433,158 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="misc">
-<h1>Misc<a class="headerlink" href="#misc" title="Link to this heading">#</a></h1>
-<p>This page collects miscellaneous techniques in LLM inference.</p>
-<section id="kv-cache">
-<h2>KV Cache<a class="headerlink" href="#kv-cache" title="Link to this heading">#</a></h2>
+  <section class="tex2jax_ignore mathjax_ignore" id="post-training">
+<h1>Post-Training<a class="headerlink" href="#post-training" title="Link to this heading">#</a></h1>
 <ul class="simple">
-<li><p><strong>What</strong>: Cache the <span class="math notranslate nohighlight">\(K\)</span> &amp; <span class="math notranslate nohighlight">\(V\)</span> vectors for previous tokens.</p></li>
-<li><p><strong>Why</strong>: They don’t change during inference.</p>
-<ol class="arabic simple">
-<li><p>ONLY the last hidden state is used to predict next token.</p></li>
-<li><p>What’s the last hidden state?</p>
+<li><p><strong>What</strong>: Adapt/Align a pretrained general-purpose language model to a specific data distribution.</p></li>
+<li><p><strong>Why</strong>: Foundation models are pretrained on vast, general-domain corpora <span class="math notranslate nohighlight">\(\rightarrow\)</span> Mismatch from downstream tasks</p></li>
+</ul>
+<section id="peft">
+<h2>PEFT<a class="headerlink" href="#peft" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Name</strong>: Parameter-Efficient Fine-Tuning.</p></li>
+<li><p><strong>What</strong>: Fine-tune a small subset of params.</p></li>
+<li><p><strong>Why</strong>: <strong>Adaptation</strong> + <strong>Efficiency</strong>.</p>
 <ul>
-<li><p>Recall attention formula: <span class="math notranslate nohighlight">\(\mathrm{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V\)</span>.</p></li>
-<li><p><span class="math notranslate nohighlight">\(Q\)</span>: Query vector for LAST token.</p></li>
-<li><p><span class="math notranslate nohighlight">\(K\)</span>: Key vectors for ALL tokens.</p></li>
-<li><p><span class="math notranslate nohighlight">\(V\)</span>: Value vectors for ALL tokens.</p></li>
+<li><p><em>Why use PEFT?</em></p>
+<ul>
+<li><p>Full Fine-tuning:</p>
+<ul>
+<li><p>HIGH computational cost (time &amp; resource).</p></li>
+<li><p>HIGH storage cost (one full copy per task).</p></li>
+<li><p>Catastrophic Forgetting.</p></li>
 </ul>
 </li>
-<li><p>The causal masking in transformer decoders prevents later tokens from affecting earlier tokens.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> At each autoregressive step, <span class="math notranslate nohighlight">\(K\)</span> &amp; <span class="math notranslate nohighlight">\(V\)</span> of input tokens never change.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\xrightarrow{\text{cache}}\)</span> Avoid recomputation.</p></li>
+<li><p>PEFT solves all 3 problems above.</p></li>
+</ul>
+</li>
+<li><p><em>Why PEFT works?</em></p>
+<ul>
+<li><p>Assumption: The adaptation of a pretrained LM to a downstream task exists in a <strong>low-intrinsic dimension</strong>.</p></li>
+<li><p>The assumption is verified by empirical success.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p>Freeze pretrained params.</p></li>
+<li><p>Inject trainable adapters/modules with a small number of params.</p></li>
+<li><p>Train the injected params.</p></li>
 </ol>
 </li>
-<li><p><strong>How</strong>: Cache.</p></li>
 </ul>
+<section id="lora">
+<h3>LoRA<a class="headerlink" href="#lora" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Name</strong>: Low-Rank Adaptation.</p></li>
+<li><p><strong>What</strong>: Train <strong>low-rank</strong> matrices for adaptation.</p></li>
+<li><p><strong>Why</strong>: #params ⬇️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Finetuning efficiency ⬆️.</p></li>
+<li><p><strong>How</strong>: Inject low-rank matrices into the weights of specific layers, w/o modifying the original weights directly.</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{y}\in\mathbb{R}^{H_{out}}\)</span>: Output vector.</p></li>
+</ul>
+</li>
+<li><p>Params:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(B\in\mathbb{R}^{H_{out}\times r}\)</span>: Low-rank decomposed matrix (left)</p></li>
+<li><p><span class="math notranslate nohighlight">\(A\in\mathbb{R}^{r\times H_{in}}\)</span>: Low-rank decomposed matrix (right)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Delta W=BA\)</span>: Additional, trainable weight matrix.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(W_{0}\in\mathbb{R}^{H_{out}\times H_{in}}\)</span>: Original, frozen weight matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(r\ll\min(H_{in}, H_{out})\)</span>: Rank of the original weight matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha\in[0,r]\)</span>: Scaling factor of the additional weights.</p></li>
+</ul>
+</li>
+</ul>
+<p>Forward:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{y}=W_{0}\mathbf{x}+\frac{\alpha}{r}\Delta W\mathbf{x}=W_{0}\mathbf{x}+\frac{\alpha}{r}BA\mathbf{x}
+\]</div>
+<p>Backward:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+g_{B}=\frac{\alpha}{r}g_{\Delta W}A^T \\
+g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
+\end{align}\end{split}\]</div>
+</div>
 <div class="tip dropdown admonition">
 <p class="admonition-title">Q&amp;A</p>
-<p><em>Pro Tip:</em> The query vectors for previous tokens are NEVER needed during inference.</p>
-<p><em>If it’s so good, any cons?</em></p>
+<p><em>Pros</em>:</p>
 <ul class="simple">
-<li><p>⬆️Memory cost: <span class="math notranslate nohighlight">\(O(m\cdot h\cdot d_k\cdot \#\mathrm{layers})\)</span></p></li>
+<li><p>No overfitting <span class="math notranslate nohighlight">\(\leftarrow\)</span> Task-specific adaptation w/o modifying the original params</p></li>
 </ul>
-<p><em>When should you turn it off?</em></p>
+<p><em>Cons</em>:</p>
 <ul class="simple">
-<li><p>Very short prompts: Recomputation is cheaper than caching.</p></li>
-<li><p>Parallelism &amp; Hardware Acceleration: Caching adds an ALL-layer ALL-head copy for each step for each GPU.</p></li>
+<li><p>ONLY applicable to linear transformation.</p></li>
+<li><p>ONLY great performance with pretrained models <span class="math notranslate nohighlight">\(\rightarrow\)</span> Lower performance relative to full finetuning</p></li>
+<li><p>High sensitivity to hyperparameters.</p></li>
+</ul>
+<p><em>Where do I apply LoRA?</em></p>
+<ul class="simple">
+<li><p>OG paper: Attention weights ONLY <span class="math notranslate nohighlight">\(\rightarrow\)</span> Simplicity &amp; Param Efficiency</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\leftarrow\)</span> Empirical performance</p></li>
+</ul>
+</li>
 </ul>
 </div>
+<section id="qlora">
+<h4>QLoRA<a class="headerlink" href="#qlora" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>Name</strong>: LoRA for Quantized LLMs.</p></li>
+<li><p><strong>What</strong>: Insert learnable LoRAs into each layer of a quantized pretrained LM.</p></li>
+<li><p><strong>Why</strong>: Standard fine-tuning scales linearly with model size in memory <span class="math notranslate nohighlight">\(\rightarrow\)</span> HUGE memory cost</p>
+<ul>
+<li><p>QLoRA dramatically cuts down memory WHILE preserving full-precision performance.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>4-bit NormalFloat Quantization</strong>:</p></li>
+</ol>
+</li>
+</ul>
+</section>
+</section>
+<section id="adapters">
+<h3>Adapters<a class="headerlink" href="#adapters" title="Link to this heading">#</a></h3>
+</section>
+<section id="prompt-tuning">
+<h3>Prompt Tuning<a class="headerlink" href="#prompt-tuning" title="Link to this heading">#</a></h3>
+<section id="prefix-tuning">
+<h4>Prefix Tuning<a class="headerlink" href="#prefix-tuning" title="Link to this heading">#</a></h4>
+</section>
+<section id="instruction-tuning">
+<h4>Instruction Tuning<a class="headerlink" href="#instruction-tuning" title="Link to this heading">#</a></h4>
+</section>
+</section>
+</section>
+<section id="alignment">
+<h2>Alignment<a class="headerlink" href="#alignment" title="Link to this heading">#</a></h2>
+<section id="rlhf-ppo">
+<h3>RLHF/PPO<a class="headerlink" href="#rlhf-ppo" title="Link to this heading">#</a></h3>
+</section>
+<section id="rlaif">
+<h3>RLAIF<a class="headerlink" href="#rlaif" title="Link to this heading">#</a></h3>
+</section>
+<section id="dpo">
+<h3>DPO<a class="headerlink" href="#dpo" title="Link to this heading">#</a></h3>
+</section>
+<section id="grpo">
+<h3>GRPO<a class="headerlink" href="#grpo" title="Link to this heading">#</a></h3>
+</section>
 </section>
 </section>
 
@@ -468,7 +601,7 @@ document.write(`
         },
         kernelOptions: {
             name: "python3",
-            path: "./nlp/inference"
+            path: "./nlp/training"
         },
         predefinedOutput: true
     }
@@ -485,24 +618,6 @@ document.write(`
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="decoding.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Decoding</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="../eval.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Evaluation</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
@@ -519,7 +634,26 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kv-cache">KV Cache</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#peft">PEFT</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lora">LoRA</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#qlora">QLoRA</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adapters">Adapters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-tuning">Prompt Tuning</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prefix-tuning">Prefix Tuning</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#instruction-tuning">Instruction Tuning</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alignment">Alignment</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rlhf-ppo">RLHF/PPO</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rlaif">RLAIF</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dpo">DPO</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#grpo">GRPO</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

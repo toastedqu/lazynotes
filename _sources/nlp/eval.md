@@ -17,16 +17,16 @@ The common cons of all lexical metrics is **a lack of semantic understanding**. 
 
 ### BLEU
 - **Name**: Bilingual Evaluation Understudy.
-- **What**: N-gram overlap measure between cand sentence and one/more ref sentences.
+- **What**: N-gram overlap measure between candidate sentence and one/more reference sentences.
 - **Why**: Simple, efficient, language-agnostic for MT.
 - **How**: Geometric Average of Clipped N-gram Precisions $\times$ Brevity Penalty.
     - **N-gram Precision**: $\frac{\#\text{correct predicted n-grams}}{\#\text{total predicted n-grams}}$.
-    - **Clipped**: Limit the count for each correct n-gram to its max count in any ref sentence.
-        - *Any ref sentence?*
+    - **Clipped**: Limit the count for each correct n-gram to its max count in any reference sentence.
+        - *Any reference sentence?*
             - There are many ways to express the same sentence.
             - It's normal to have multiple ref sentences to capture variations of one cand sentence.
             - $\rightarrow$ Compare cand sentence with each ref sentence. If the n-gram matches any ref sentence, it's correct.
-        - *Max count in any ref sentence?*
+        - *Max count in any reference sentence?*
             - It's very easy to cheat precision by **repetition** of correct words.
             - $\rightarrow$ Restrain it in the scope of ref sentence instead.
     - **Geometric Average**: Of all n-grams up to the specified n.
@@ -37,9 +37,9 @@ The common cons of all lexical metrics is **a lack of semantic understanding**. 
 ```{admonition} Math
 :class: note, dropdown
 Notations:
-- $c$: Cand length (i.e., #words in cand).
-- $r_i$: Ref length (i.e., #words in ref).
-- $r=\arg\min_{r_i}|r_i-c|$: Effective ref length (i.e., Ref length with the smallest absolute difference from cand)
+- $c$: Candidate length (i.e., #words in cand).
+- $r_i$: Reference length (i.e., #words in ref).
+- $r=\arg\min_{r_i}|r_i-c|$: Effective reference length (i.e., Reference length with the smallest absolute difference from cand)
     - Choose the shorter one if tied.
 
 Clipped N-gram Precision:
@@ -81,17 +81,7 @@ $$
 ### ROUGE
 - **Name**: Recall-Oriented Understudy for Gisting Evaluation.
 - **What**: Recall-based N-gram overlap measure.
-- **How**:
-    1. Choose a variant:
-        - N-gram
-        - LCS (Longest Common Sequence)
-    2. Extract & Count the chosen units from the cand & each ref.
-    3. Count the overlapping units that appear in both cand and ref.
-    4. Compute P/R/F1:
-        - Precision: overlap / total in cand
-        - Recall: overlap / total in ref
-        - F1: 2PR / (P+R)
-    5. Aggregate: Max/Avg over all refs.
+
 
 ## NLG (Semantic)
 

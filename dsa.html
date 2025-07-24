@@ -190,14 +190,6 @@
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nlp/models.html">Models</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="nlp/training/training.html">Training</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="nlp/training/peft.html">PEFT</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nlp/training/rlhf.html">RL for LLMs</a></li>
-
-<li class="toctree-l2"><a class="reference internal" href="nlp/training/misc.html">Misc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nlp/training/parallel.html">Distributed Training</a></li>
-</ul>
-</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="nlp/inference/inference.html">Inference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="nlp/inference/decoding.html">Decoding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nlp/inference/misc.html">Misc</a></li>
@@ -586,19 +578,19 @@ document.write(`
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-mountain-in-array/description/">845. Longest Mountain in Array</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-mountain-in-array/">845. Longest Mountain in Array</a></p></td>
 <td class="text-left"><p><strong>Hint: FOR loop; expand both ends.</strong></p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-palindromic-substring/description/">5. Longest Palindromic Substring</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-palindromic-substring/">5. Longest Palindromic Substring</a></p></td>
 <td class="text-left"><p><strong>Hint: FOR loop; expand one end first, then expand both ends.</strong></p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/rotate-array/description/">189. Rotate Array</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/rotate-array/">189. Rotate Array</a></p></td>
 <td class="text-left"><p><strong>Hint: flip array, then flip both subarrays.</strong></p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/container-with-most-water/description/">11. Container With Most Water</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/container-with-most-water/">11. Container With Most Water</a></p></td>
 <td class="text-left"><p><strong>Hint: only higher heights can lead to higher volume.</strong><br>1. WHILE loop between l &amp; r.<br>2. At each step, check if volume needs to be updated.<br>3. Move the pointer with a smaller height.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/sort-colors/description/">75. Sort Colors</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/sort-colors/">75. Sort Colors</a></p></td>
 <td class="text-left"><p><strong>Hint: red &amp; blue pointers for reference, white pointer for iteration.</strong><br>1. r,b to left,right; w for looping from left.<br>2. If w is 0, swap with r and move both.<br>3. If w is 2, swap with b and move only b.<br>4. If w is 1, move w.</p></td>
 </tr>
 </tbody>
@@ -626,21 +618,21 @@ document.write(`
 </li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sliding_window</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="c1"># Step 1: init</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>                               <span class="c1"># slow pointer</span>
-    <span class="n">cache</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>   <span class="c1"># cache</span>
+    <span class="c1">## Step 1: init</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>                               <span class="c1">## slow pointer</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>   <span class="c1">## cache</span>
 
-    <span class="c1"># Step 2: iterate</span>
-    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)):</span>          <span class="c1"># fast pointer</span>
-        <span class="c1"># Step 2.1 expand</span>
+    <span class="c1">## Step 2: iterate</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)):</span>          <span class="c1">## fast pointer</span>
+        <span class="c1">## Step 2.1 expand</span>
         <span class="n">cache</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
 
-        <span class="c1"># Step 2.2 shrink</span>
-        <span class="k">while</span> <span class="n">condition</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>             <span class="c1"># condition state</span>
+        <span class="c1">## Step 2.2 shrink</span>
+        <span class="k">while</span> <span class="n">condition</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>             <span class="c1">## condition state</span>
             <span class="n">cache</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">s</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="c1"># Step 3: return whatever the question asks for</span>
+    <span class="c1">## Step 3: return whatever the question asks for</span>
     <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -656,31 +648,31 @@ document.write(`
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-substring-without-repeating-characters/description/">3. Longest Substring Without Repeating Characters</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-substring-without-repeating-characters/">3. Longest Substring Without Repeating Characters</a></p></td>
 <td class="text-left"><p>1. Expand till f char is already visited.<br>2. Remove visited s chars till f char is no longer visited.<br>Cache: visited (set), max len (int).</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/minimum-size-subarray-sum/description/">209. Minimum Size Subarray Sum</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/minimum-size-subarray-sum/">209. Minimum Size Subarray Sum</a></p></td>
 <td class="text-left"><p>1. Expand till curr sum exceeds target.<br>2. Shrink s till curr sum goes below target again.<br>Cache: curr sum (int), min len (int).</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-repeating-character-replacement/description/">424. Longest Repeating Character Replacement</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-repeating-character-replacement/">424. Longest Repeating Character Replacement</a></p></td>
 <td class="text-left"><p>1. Expand till curr len &gt;= max char freq + k. Keep track of char counts, max freq, curr len, and max len (i.e., the answer).<br>2. Shrink s till curr len is smaller again. Update char counts and max freq if necessary.<br>Cache: count (dict), max freq (int), curr len (int), max len (int).</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/subarray-product-less-than-k/description/">713. Subarray Product Less Than K</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/subarray-product-less-than-k/">713. Subarray Product Less Than K</a></p></td>
 <td class="text-left"><p>1. Expand &amp; update curr product till it exceeds k.<br>2. Shrink s till curr product goes below k again.<br>At each step, update #subarrays with the window length.<br>Cache: curr product (int), #subarrays (int).</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/count-subarrays-with-score-less-than-k/description/">2302. Count Subarrays With Score Less Than K</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/count-subarrays-with-score-less-than-k/">2302. Count Subarrays With Score Less Than K</a></p></td>
 <td class="text-left"><p>1. Expand till score exceeds k.<br>2. Shrink s till score goes below k again.<br>At each step, update #subarrays with the window length (window length = #subarrays for the current f pointer.)<br>Cache: curr sum (int), #subarrays (int).</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/description/">1493. Longest Subarray of 1’s After Deleting One Element</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/">1493. Longest Subarray of 1’s After Deleting One Element</a></p></td>
 <td class="text-left"><p>1. Expand till 0 is met.<br>2. If first time, update deleted. If not, move s after 0 index. Update 0 index to f in both cases.<br>Cache: deleted (bool), 0 index (int), max len (int).</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/fruit-into-baskets/description/">904. Fruit Into Baskets</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/fruit-into-baskets/">904. Fruit Into Baskets</a></p></td>
 <td class="text-left"><p>1. Expand till &gt;=2 types of fruits in basket.<br>2. Move both f &amp; s till only 2 types of fruits in basket. Update window count at each step. Delete the fruit with 0 count.<br>3. The max length is the window length.<br>Cache: basket (dict).</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-all-anagrams-in-a-string/description/">438. Find All Anagrams in a String</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-all-anagrams-in-a-string/">438. Find All Anagrams in a String</a></p></td>
 <td class="text-left"><p>0. Get p count.<br>1. Expand till length of p first.<br>2. Move both f &amp; s. Update window count at each step. Whenever window count is identical to p count, append s to answer.<br>Cache: p count (dict), window count (dict).</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/minimum-window-substring/description/">76. Minimum Window Substring</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/minimum-window-substring/">76. Minimum Window Substring</a></p></td>
 <td class="text-left"><p>0. Get t count. Init #missing as len(t).<br>1. Expand till #missing is 0 (i.e., curr window has the substring).<br>2. Shrink till #missing exceeds 0 again.<br>At each step, we update t count by subtracting f char count (and adding slow char count). We should only update #missing when the counts of t chars (which should always be &gt;=0) change.<br>The trick is, the counts of s chars that are not in t will always be below 0, so they will never affect #missing.<br>Cache: t count (dict), #missing chars (int), min substring indices (int)</p></td>
 </tr>
 </tbody>
@@ -698,13 +690,13 @@ document.write(`
 <p><strong>How</strong>: There are 2 cases to consider. (originally 4, but I think 2 are sufficient for explanation.)</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">## Find First True (i.e., assume `lefts=False, rights=True`)</span>
 <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">condition</span><span class="p">:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span>   <span class="c1"># If True, ans is on the left (inclusive), so we go left.</span>
-    <span class="k">else</span><span class="p">:</span> <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span>         <span class="c1"># If False, ans is on the right, so we go right.</span>
+    <span class="k">if</span> <span class="n">condition</span><span class="p">:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span>   <span class="c1">## If True, ans is on the left (inclusive), so we go left.</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span>         <span class="c1">## If False, ans is on the right, so we go right.</span>
 
 <span class="c1">## Find Last True (i.e., assume `lefts=True, rights=False`)</span>
 <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">condition</span><span class="p">:</span> <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span>   <span class="c1"># If True, answer is on the right (inclusive), so we go right.</span>
-    <span class="k">else</span><span class="p">:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span><span class="o">-</span><span class="mi">1</span>         <span class="c1"># If not, answer is on the left, so we go left.</span>
+    <span class="k">if</span> <span class="n">condition</span><span class="p">:</span> <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span>   <span class="c1">## If True, answer is on the right (inclusive), so we go right.</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span><span class="o">-</span><span class="mi">1</span>         <span class="c1">## If not, answer is on the left, so we go left.</span>
 </pre></div>
 </div>
 <p>These 2 templates are easily interchangeable by swapping the condition, so we end up with 1 universal template:</p>
@@ -712,7 +704,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">condition</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">pass</span>
 
-    <span class="n">l</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>     <span class="c1"># NOTE: Pay attention to edge cases. Sometimes we need to change this boundary.</span>
+    <span class="n">l</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>     <span class="c1">## NOTE: Pay attention to edge cases. Sometimes we need to change this boundary.</span>
     <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">:</span>
         <span class="n">mid</span> <span class="o">=</span> <span class="n">l</span><span class="o">+</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">l</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
         <span class="k">if</span> <span class="n">condition</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span>
@@ -727,31 +719,31 @@ document.write(`
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-peak-element/description/">162. Find Peak Element</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-peak-element/">162. Find Peak Element</a></p></td>
 <td class="text-left"><p><strong>Condition: find the first element &gt; its next element.</strong> (<code class="docutils literal notranslate"><span class="pre">nums[mid]</span> <span class="pre">&gt;</span> <span class="pre">nums[mid+1]</span></code>)</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/peak-index-in-a-mountain-array/description/">852. Peak Index in a Mountain Array</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/peak-index-in-a-mountain-array/">852. Peak Index in a Mountain Array</a></p></td>
 <td class="text-left"><p><strong>Condition: find the first element &gt; its next element.</strong> (<code class="docutils literal notranslate"><span class="pre">nums[mid]</span> <span class="pre">&gt;</span> <span class="pre">nums[mid+1]</span></code>)</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/description/">153. Find Minimum in Rotated Sorted Array</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/">153. Find Minimum in Rotated Sorted Array</a></p></td>
 <td class="text-left"><p><strong>Condition: find the first element &lt;= everything on its right.</strong> (<code class="docutils literal notranslate"><span class="pre">nums[mid]</span> <span class="pre">&lt;=</span> <span class="pre">nums[r]</span></code>)</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/random-pick-with-weight/description/">528. Random Pick with Weight</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/random-pick-with-weight/">528. Random Pick with Weight</a></p></td>
 <td class="text-left"><p><strong>Condition: find the first index with a cumulative probability &gt;= a random probability.</strong> (<code class="docutils literal notranslate"><span class="pre">self.w[mid]</span> <span class="pre">&gt;=</span> <span class="pre">p</span></code>)<br>NOTE: convert input array to cumulative probabilities.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/description/">34. Find First and Last Position of Element in Sorted Array</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/">34. Find First and Last Position of Element in Sorted Array</a></p></td>
 <td class="text-left"><p><strong>Condition: find the first element &gt;= input number.</strong> (<code class="docutils literal notranslate"><span class="pre">nums[mid]</span> <span class="pre">&gt;=</span> <span class="pre">n</span></code>)<br>1. Write this condition in a func.<br>2. The first occurrence is bs(target). (i.e., first element &gt;= target)<br>3. The last occurrence is bs(target+1)-1. (i.e., first element &gt;= target+1, then on its left)<br>4. If first &lt;= last, ans is valid. Else, target not in array.<br>NOTE: given the way <code class="docutils literal notranslate"><span class="pre">last</span></code> is defined, <code class="docutils literal notranslate"><span class="pre">r=len(nums)</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/design-hit-counter/description/">362. Design Hit Counter</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/design-hit-counter/">362. Design Hit Counter</a></p></td>
 <td class="text-left"><p><strong>Condition: find the index where <code class="docutils literal notranslate"><span class="pre">timestamp-300</span></code> would have been inserted at.</strong> (<code class="docutils literal notranslate"><span class="pre">self.hits[mid]</span> <span class="pre">&gt;</span> <span class="pre">target</span></code>)<br>1. Write this condition in a func.<br>2. #hits = <code class="docutils literal notranslate"><span class="pre">len(self.hits)-self.bs(timestamp-300)</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/single-element-in-a-sorted-array/description/">540. Single Element in a Sorted Array</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/single-element-in-a-sorted-array/">540. Single Element in a Sorted Array</a></p></td>
 <td class="text-left"><p><strong>Condition: find the first element that distorts the duplicate order.</strong><br>- For the input array, if <code class="docutils literal notranslate"><span class="pre">i</span></code> is odd / <code class="docutils literal notranslate"><span class="pre">i-1</span></code> is even, the condition should always hold: <code class="docutils literal notranslate"><span class="pre">nums[i]</span> <span class="pre">==</span> <span class="pre">nums[i-1]</span></code>.<br>- However, the element we are looking for violates this condition, so we have 2 cases:<br>- if <code class="docutils literal notranslate"><span class="pre">mid</span></code> is odd and <code class="docutils literal notranslate"><span class="pre">nums[mid]</span> <span class="pre">!=</span> <span class="pre">nums[mid-1]</span></code>.<br>- if <code class="docutils literal notranslate"><span class="pre">mid</span></code> is even and <code class="docutils literal notranslate"><span class="pre">nums[mid]</span> <span class="pre">!=</span> <span class="pre">nums[mid+1]</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-k-closest-elements/description/">658. Find K Closest Elements</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-k-closest-elements/">658. Find K Closest Elements</a></p></td>
 <td class="text-left"><p><strong>Condition: find the first element that starts the subarray.</strong><br>- Since <code class="docutils literal notranslate"><span class="pre">a</span></code> is closer than <code class="docutils literal notranslate"><span class="pre">b</span></code> if <code class="docutils literal notranslate"><span class="pre">|a-x|</span> <span class="pre">&lt;=</span> <span class="pre">|b-x|</span></code> and <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span></code>, it is straightforward that our first element in the subarray satisfies <code class="docutils literal notranslate"><span class="pre">|nums[mid]-x|</span> <span class="pre">&lt;=</span> <span class="pre">|nums[mid+k]-x|</span></code>.<br>- It’s the same as <code class="docutils literal notranslate"><span class="pre">x-nums[mid]</span> <span class="pre">&lt;=</span> <span class="pre">nums[mid+k]-x</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-k-th-smallest-pair-distance/description/">719. Find K-th Smallest Pair Distance</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-k-th-smallest-pair-distance/">719. Find K-th Smallest Pair Distance</a></p></td>
 <td class="text-left"><p><strong>Condition: find the smallest distance that has &gt;=k pairs within its range.</strong><br>1. Write a function that uses two pointers (slow &amp; fast) to find the #pairs with distances &lt;= input distance. Return True if there are &gt;=k pairs, else False.<br>2. Sort <code class="docutils literal notranslate"><span class="pre">nums</span></code> for two pointers to work.<br>3. Set <code class="docutils literal notranslate"><span class="pre">r=nums[-1]-nums[0]</span></code> because our search space is not <code class="docutils literal notranslate"><span class="pre">nums</span></code> but distances.<br>4. Search.</p></td>
 </tr>
 </tbody>
@@ -777,16 +769,16 @@ document.write(`
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/merge-intervals/description/">56. Merge Intervals</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/merge-intervals/">56. Merge Intervals</a></p></td>
 <td class="text-left"><p>0. Sort.<br>1. Loop.<br>Append interval till <code class="docutils literal notranslate"><span class="pre">front.end</span> <span class="pre">&gt;=</span> <span class="pre">back.start</span></code>.<br>Update <code class="docutils literal notranslate"><span class="pre">front.end</span></code> with max end.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/employee-free-time/description/">759. Employee Free Time (opposite of 56)</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/employee-free-time/">759. Employee Free Time (opposite of 56)</a></p></td>
 <td class="text-left"><p>0. Flatten &amp; Sort a workhour array by start time.<br>1. Loop.<br>Append interval till <code class="docutils literal notranslate"><span class="pre">front.end</span> <span class="pre">&gt;=</span> <span class="pre">back.start</span></code>.<br>Update <code class="docutils literal notranslate"><span class="pre">front.end</span></code> with max end.<br>2. Loop through the array of merged workhours. The intervals in between (i.e., <code class="docutils literal notranslate"><span class="pre">[front.end,</span> <span class="pre">back.start]</span></code>) are free hours.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/insert-interval/description/">57. Insert Interval</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/insert-interval/">57. Insert Interval</a></p></td>
 <td class="text-left"><p>0. Init left &amp; right subarrays.<br>1. Loop.<br>Append interval to left if <code class="docutils literal notranslate"><span class="pre">interval.end</span> <span class="pre">&lt;</span> <span class="pre">newinterval.start</span></code> (i.e., on the left of new interval)<br>Append interval to right if <code class="docutils literal notranslate"><span class="pre">interval.start</span> <span class="pre">&gt;</span> <span class="pre">newinterval.end</span></code> (i.e., on the right of new interval).<br>Else, we find the insertion position. Keep track of the position with MIN of start and MAX of end.<br>2. Concatenate left, <code class="docutils literal notranslate"><span class="pre">[insert_start,</span> <span class="pre">insert_end]</span></code>, and right together as the answer.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/interval-list-intersections/description/">986. Interval List Intersections</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/interval-list-intersections/">986. Interval List Intersections</a></p></td>
 <td class="text-left"><p>0. Init a pointer for each list.<br>1. Loop till length.<br>If intersect, append <code class="docutils literal notranslate"><span class="pre">[max_start,</span> <span class="pre">min_end]</span></code> to answer (i.e., the intersection interval)<br>Else, move the pointer with the smaller end value.</p></td>
 </tr>
 </tbody>
@@ -813,15 +805,15 @@ document.write(`
 <li><p>Initialize (DP table &amp; Base cases) &amp; Iterate (based on the defined state transition).</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">DP</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="c1"># Step 1: Init</span>
-    <span class="n">dp</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>          <span class="c1"># DP table</span>
-    <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>               <span class="c1"># base case</span>
+    <span class="c1">## Step 1: Init</span>
+    <span class="n">dp</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>          <span class="c1">## DP table</span>
+    <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>               <span class="c1">## base case</span>
 
-    <span class="c1"># Step 2: Iterate</span>
+    <span class="c1">## Step 2: Iterate</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>   <span class="c1"># state transition</span>
+        <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>   <span class="c1">## state transition</span>
 
-    <span class="c1"># Step 3: Return end case</span>
+    <span class="c1">## Step 3: Return end case</span>
     <span class="k">return</span> <span class="n">dp</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -832,34 +824,34 @@ document.write(`
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/combination-sum/description/">39. Combination Sum</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/combination-sum/">39. Combination Sum</a></p></td>
 <td class="text-left"><p><strong>DP: store the combinations to get the desired amount with the given coins.</strong><br>Base: f(0)=[]; f(coin)=[coin].<br>Transition: loop through each candidate and all numbers between candidate and target.<br>- If the number is the candidate, store the candidate.<br>- Else, append candidate to all combinations of the previous store. (<code class="docutils literal notranslate"><span class="pre">dp[i]</span> <span class="pre">=</span> <span class="pre">dp[i-c]+[c]</span></code>)</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/maximum-subarray/description/">53. Maximum Subarray</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/maximum-subarray/">53. Maximum Subarray</a></p></td>
 <td class="text-left"><p><strong>DP: store max attainable sum for the given index.</strong><br>Base: all 0.<br>Transition: loop through each index.<br>- If previous max sum is bigger than 0, curr max sum = prev + curr num.<br>- Else, curr max sum = curr num (because adding negative sum is not max.)<br>Return <code class="docutils literal notranslate"><span class="pre">max(dp)</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/unique-paths/description/">62. Unique Paths</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/unique-paths/">62. Unique Paths</a></p></td>
 <td class="text-left"><p><strong>DP: store #unique paths for the given point.</strong><br>Base: set all starting edges to 1.<br>Transition: loop through each point from top left to bottom right.<br>- <code class="docutils literal notranslate"><span class="pre">dp[i][j]</span> <span class="pre">=</span> <span class="pre">dp[i-1][j]</span> <span class="pre">+</span> <span class="pre">dp[i][j-1]</span></code></p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/word-break/description/">139. Word Break</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/word-break/">139. Word Break</a></p></td>
 <td class="text-left"><p><strong>DP: store whether there is a word in worddict that ends with index i in string s.</strong><br>Base: all False.<br>Transition: loop through each index and each word in dict.<br>- If there is such a word and (the preceding word also exists or this word is the first word), then <code class="docutils literal notranslate"><span class="pre">dp[i]=True</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/coin-change/description/">322. Coin Change</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/coin-change/">322. Coin Change</a></p></td>
 <td class="text-left"><p><strong>DP: store min #coins for each amount till target.</strong><br>Base: f(0)=0; f(coin)=1.<br>Transition: loop through each amount and each coin.<br>- If curr ammount is bigger than the coin, <code class="docutils literal notranslate"><span class="pre">dp[i]</span> <span class="pre">=</span> <span class="pre">min(dp[i-coin]</span> <span class="pre">for</span> <span class="pre">coin</span> <span class="pre">in</span> <span class="pre">coins)+1</span></code>.<br>- Else, <code class="docutils literal notranslate"><span class="pre">dp[i]=float(&quot;inf&quot;)</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/combination-sum-iv/description/">377. Combination Sum IV</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/combination-sum-iv/">377. Combination Sum IV</a></p></td>
 <td class="text-left"><p><strong>DP: store #combinations for each target till target.</strong><br>Base: f(0)=1.<br>Transition: loop through each target and each number.<br>- <code class="docutils literal notranslate"><span class="pre">dp[i]</span> <span class="pre">=</span> <span class="pre">sum(dp[i-num]</span> <span class="pre">for</span> <span class="pre">num</span> <span class="pre">in</span> <span class="pre">nums)</span></code></p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-common-subsequence/description/">1143. Longest Common Subsequence</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-common-subsequence/">1143. Longest Common Subsequence</a></p></td>
 <td class="text-left"><p><strong>DP: store max common subsequence length for each index in each string.</strong><br>Base: all 0.<br>Transition: loop through each index in each string.<br>- If two chars are the same, <code class="docutils literal notranslate"><span class="pre">dp[i+i][j+1]</span> <span class="pre">=</span> <span class="pre">dp[i][j]+1</span></code><br>- Else, <code class="docutils literal notranslate"><span class="pre">dp[i+1][j+1]</span> <span class="pre">=</span> <span class="pre">max(dp[i][j+1],dp[i+1][j])</span></code></p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/partition-equal-subset-sum/description/">416. Partition Equal Subset Sum</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/partition-equal-subset-sum/">416. Partition Equal Subset Sum</a></p></td>
 <td class="text-left"><p><strong>2 DPs: both sets store the sums of all subsets till this index. 1 for main store, 1 for looping.</strong><br>Base: f(0)=0.<br>Transition: loop through each index and each stored sum for previous index.<br>1. Init looping dp. Also, init target sum (i.e., half of total sum).<br>2. For each stored sum for previous index, stored in the main dp,<br>- At each number, we have 2 options: add it, or don’t.<br>- When add it, we append <code class="docutils literal notranslate"><span class="pre">sum+num</span></code> to the looping dp.<br>- When don’t, we append <code class="docutils literal notranslate"><span class="pre">sum</span></code> to the looping dp.<br>- Do both options at each loop because there is no if-else for this problem.<br>3. Update main dp with looping dp. If target sum in main dp, return True. If no true after all loops, return False.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/target-sum/description/">494. Target Sum</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/target-sum/">494. Target Sum</a></p></td>
 <td class="text-left"><p><strong>DP: store mappings of “(index, target) -&gt; #ways to get to target from curr index”.</strong><br><strong>DFS: return #ways to get to target from curr index.</strong><br>Leaf case: #ways is either 1 (if hit target) or 0 (if not).<br>Break case: if we already visited (index, target), no need to loop further.<br>Loop: #ways at curr index = #ways at left + #ways at right.<br>Start with (0,0).</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-increasing-path-in-a-matrix/description/">329. Longest Increasing Path in a Matrix</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/longest-increasing-path-in-a-matrix/">329. Longest Increasing Path in a Matrix</a></p></td>
 <td class="text-left"><p><strong>DP: store max attainable len for each point.</strong><br><strong>DFS: return max attainable len for curr point.</strong><br>Break case: return 0 if out of boundary or not increasing (keep track of previous number to check if increasing).<br>Loop: if curr point not visited, set curr point store to max of all 4 movements plus 1.<br>Start with all points on matrix. Return the max len.</p></td>
 </tr>
 </tbody>
@@ -890,13 +882,13 @@ document.write(`
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/description/">19. Remove Nth Node From End of List</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/">19. Remove Nth Node From End of List</a></p></td>
 <td class="text-left"><p>1. Two pointers at head.<br>2. Loop fast first till <code class="docutils literal notranslate"><span class="pre">n</span></code>. If fast cannot reach <code class="docutils literal notranslate"><span class="pre">n</span></code>, no need to remove.<br>3. Loop both fast and slow. When fast finishes, slow will be at <code class="docutils literal notranslate"><span class="pre">n-1</span></code>th node.<br>4. Put slow.next to slow.next.next. Return head.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/merge-k-sorted-lists/description/">23. Merge k Sorted Lists</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/merge-k-sorted-lists/">23. Merge k Sorted Lists</a></p></td>
 <td class="text-left"><p>1. Init a dummy node for the later merged list. Init a pointer for the list.<br>2. Init a heap with first nodes of each list, storing both value and index for the node.<br>3. Recursively pop &amp; push values and indices to the heap till we run out of nodes.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/swap-nodes-in-pairs/description/">24. Swap Nodes in Pairs</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/swap-nodes-in-pairs/">24. Swap Nodes in Pairs</a></p></td>
 <td class="text-left"><p>1. Init a dummy node for the head. Init 2 pointers (<code class="docutils literal notranslate"><span class="pre">prev</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">curr</span></code>) to <code class="docutils literal notranslate"><span class="pre">dummy</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">head</span></code>.<br>2. Keep track of 3 nodes in each iteration of the WHILE loop on <code class="docutils literal notranslate"><span class="pre">curr</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">post</span></code>.<br>2.1. Point curr &amp; post to new curr &amp; new post.<br>2.2. Point <code class="docutils literal notranslate"><span class="pre">curr.next</span></code> to <code class="docutils literal notranslate"><span class="pre">post.next</span></code>.<br>2.3. Point <code class="docutils literal notranslate"><span class="pre">post.next</span></code> to <code class="docutils literal notranslate"><span class="pre">curr</span></code>.<br>2.4. Point <code class="docutils literal notranslate"><span class="pre">prev.next</span></code> to <code class="docutils literal notranslate"><span class="pre">post</span></code>.<br>2.5. Move <code class="docutils literal notranslate"><span class="pre">prev</span></code> to <code class="docutils literal notranslate"><span class="pre">curr</span></code>.</p></td>
 </tr>
 </tbody>
@@ -936,12 +928,12 @@ def reverseList(self, head):
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">## 739. Daily Temperatures</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dailyTemperatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperatures</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
     <span class="n">ans</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">temperatures</span><span class="p">)</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># store indices of monotonically decreasing temps</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1">## store indices of monotonically decreasing temps</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">temperatures</span><span class="p">):</span>
-        <span class="k">while</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">temperatures</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">:</span>  <span class="c1"># if a higher temp is met</span>
-            <span class="n">ans</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span><span class="o">-</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>              <span class="c1"># update ans</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>                           <span class="c1"># pop till no higher temp</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>                           <span class="c1"># append unanswered index to stack</span>
+        <span class="k">while</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">temperatures</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">:</span>  <span class="c1">## if a higher temp is met</span>
+            <span class="n">ans</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span><span class="o">-</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>              <span class="c1">## update ans</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>                           <span class="c1">## pop till no higher temp</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>                           <span class="c1">## append unanswered index to stack</span>
     <span class="k">return</span> <span class="n">ans</span>
 </pre></div>
 </div>
@@ -956,8 +948,8 @@ def reverseList(self, head):
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">dfs_pre</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">is_end_case</span><span class="p">():</span> <span class="k">return</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">break_condition</span><span class="p">():</span> <span class="k">return</span> <span class="kc">False</span>
-    <span class="c1">###### ACTION HERE ######</span>
-    <span class="c1">###### ACTION ENDS ######</span>
+    <span class="c1">####### ACTION HERE ######</span>
+    <span class="c1">####### ACTION ENDS ######</span>
     <span class="n">dfs_pre</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
     <span class="n">dfs_pre</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
 
@@ -965,8 +957,8 @@ def reverseList(self, head):
     <span class="k">if</span> <span class="n">is_end_case</span><span class="p">():</span> <span class="k">return</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">break_condition</span><span class="p">():</span> <span class="k">return</span> <span class="kc">False</span>
     <span class="n">dfs_in</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
-    <span class="c1">###### ACTION HERE ######</span>
-    <span class="c1">###### ACTION ENDS ######</span>
+    <span class="c1">####### ACTION HERE ######</span>
+    <span class="c1">####### ACTION ENDS ######</span>
     <span class="n">dfs_in</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">dfs_post</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
@@ -974,8 +966,8 @@ def reverseList(self, head):
     <span class="k">if</span> <span class="n">break_condition</span><span class="p">():</span> <span class="k">return</span> <span class="kc">False</span>
     <span class="n">dfs_post</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
     <span class="n">dfs_post</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
-    <span class="c1">###### ACTION HERE ######</span>
-    <span class="c1">###### ACTION ENDS ######</span>
+    <span class="c1">####### ACTION HERE ######</span>
+    <span class="c1">####### ACTION ENDS ######</span>
 </pre></div>
 </div>
 <p><strong>Tips</strong>:</p>
@@ -999,8 +991,8 @@ def reverseList(self, head):
     <span class="n">q</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">([</span><span class="n">node</span><span class="p">])</span>
     <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
-        <span class="c1">###### ACTION HERE ######</span>
-        <span class="c1">###### ACTION ENDS ######</span>
+        <span class="c1">####### ACTION HERE ######</span>
+        <span class="c1">####### ACTION ENDS ######</span>
         <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">:</span>  <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">:</span> <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
 </pre></div>
@@ -1009,81 +1001,63 @@ def reverseList(self, head):
 </section>
 <section id="heap">
 <h2>Heap<a class="headerlink" href="#heap" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>Where</strong>: Get min/max fast.</p></li>
-</ul>
+<p><strong>Where</strong>: get min/max fast</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head text-left"><p>Action</p></th>
-<th class="head text-center"><p>Time</p></th>
+<tr class="row-odd"><th class="head"><p>Action</p></th>
+<th class="head"><p>Time</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td class="text-left"><p>access</p></td>
-<td class="text-center"><p><span class="math notranslate nohighlight">\(O(1)\)</span></p></td>
+<tr class="row-even"><td><p>top()</p></td>
+<td><p>O(1)</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p>insert</p></td>
-<td class="text-center"><p><span class="math notranslate nohighlight">\(O(\log n)\)</span></p></td>
+<tr class="row-odd"><td><p>insert()</p></td>
+<td><p>O(logn)</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p>remove</p></td>
-<td class="text-center"><p><span class="math notranslate nohighlight">\(O(\log n)\)</span></p></td>
+<tr class="row-even"><td><p>remove()</p></td>
+<td><p>O(logn)</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p>heapify</p></td>
-<td class="text-center"><p><span class="math notranslate nohighlight">\(O(n)\)</span></p></td>
+<tr class="row-odd"><td><p>heapify()</p></td>
+<td><p>O(n)</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <section id="two-heap">
 <h3>Two Heap<a class="headerlink" href="#two-heap" title="Link to this heading">#</a></h3>
+<p><strong>Where</strong>: scheduling, median, any problem that involves both min and max somehow.</p>
+<p><strong>Tips</strong>:</p>
 <ul class="simple">
-<li><p><strong>Where</strong>: Problems involving both min and max (e.g., Scheduling, Median, etc.).</p></li>
-<li><p><strong>Tips</strong>:</p>
-<ul>
 <li><p>Set up 2 heaps:</p>
 <ul>
-<li><p><strong>small</strong>: max heap (i.e., negative min heap)</p></li>
-<li><p><strong>large</strong>: min heap</p></li>
+<li><p>small: max heap (i.e., negative min heap)</p></li>
+<li><p>large: min heap</p></li>
 </ul>
 </li>
 <li><p>Use their length as storage condition</p></li>
 <li><p>Do NOT pop when looking up items. Use index (0 for root).</p></li>
 </ul>
-</li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 295. Find Median from Data Stream</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">## 295. Find Median from Data Stream</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MedianFinder</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">small</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># heap for the smaller half (negative so that min heap works)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">large</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># heap for the larger half</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">small</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">## heap for the smaller half (negative so that min heap works)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">large</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">## heap for the larger half</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">addNum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># O(logn)</span>
-        <span class="c1"># It doesn&#39;t really matter which one has one more value than the other.</span>
-        <span class="c1"># In this case, we allow &quot;small&quot; to store one more value than &quot;large&quot; when #nums is odd.</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">):</span>                                 <span class="c1"># if #nums is now even</span>
-            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">,</span> <span class="o">-</span><span class="n">heapq</span><span class="o">.</span><span class="n">heappushpop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">,</span> <span class="n">num</span><span class="p">))</span>  <span class="c1"># push new num to &quot;large&quot;, pop the smallest from &quot;large&quot;, put it in &quot;small&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addNum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">## O(logn)</span>
+        <span class="c1">## It doesn&#39;t really matter which one has one more value than the other. But be consistent during interview.</span>
+        <span class="c1">## In this case, we allow &quot;small&quot; to store one more value than &quot;large&quot; when #nums is odd.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">):</span>                                 <span class="c1">## if #nums is now even</span>
+            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">,</span> <span class="o">-</span><span class="n">heapq</span><span class="o">.</span><span class="n">heappushpop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">,</span> <span class="n">num</span><span class="p">))</span>  <span class="c1">## push new num to &quot;large&quot;, pop the smallest from &quot;large&quot;, put it in &quot;small&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">,</span> <span class="o">-</span><span class="n">heapq</span><span class="o">.</span><span class="n">heappushpop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">,</span> <span class="o">-</span><span class="n">num</span><span class="p">))</span> <span class="c1"># push new num to &quot;small&quot;, pop the largest from &quot;small&quot;, put it in &quot;large&quot;</span>
+            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">,</span> <span class="o">-</span><span class="n">heapq</span><span class="o">.</span><span class="n">heappushpop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">,</span> <span class="o">-</span><span class="n">num</span><span class="p">))</span> <span class="c1">## push new num to &quot;small&quot;, pop the largest from &quot;small&quot;, put it in &quot;large&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">findMedian</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>      <span class="c1"># O(1)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">findMedian</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>      <span class="c1">## O(1)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">):</span>        
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
-</div>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head text-left"><p>Question</p></th>
-<th class="head text-left"><p>Solution</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/find-median-from-data-stream/">295. Find Median from Data Stream</a></p></td>
-<td class="text-left"><p>Init large &amp; small (negative) lists. Be consistent with length control.<br>If same length, push new num to large, pop smallest from large, move to small.<br>If diff length (small &gt; large), push new num to small, pop largest from small, move to large.<br>Roots of small &amp; large lead to median.</p></td>
-</tr>
-</tbody>
-</table>
 </div>
 </section>
 </section>
@@ -1196,13 +1170,13 @@ def reverseList(self, head):
 </details><section id="id1">
 <h3>DFS<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Graph</strong>: Adjacency list</p></li>
-<li><p><strong>Init</strong>:</p>
+<li><p>Graph: Adjacency list</p></li>
+<li><p>Init:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
 </ul>
 </li>
-<li><p><strong>Procedure</strong>:</p>
+<li><p>Procedure:</p>
 <ul>
 <li><p>Repeat till end:</p>
 <ol class="arabic simple">
@@ -1219,8 +1193,8 @@ def reverseList(self, head):
 
 <span class="k">def</span><span class="w"> </span><span class="nf">dfs_recursive</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
     <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-    <span class="c1">###### ACTION HERE ######</span>
-    <span class="c1">###### ACTION ENDS ######</span>
+    <span class="c1">####### ACTION HERE ######</span>
+    <span class="c1">####### ACTION ENDS ######</span>
     <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">root</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
             <span class="n">dfs_recursive</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
@@ -1230,8 +1204,8 @@ def reverseList(self, head):
     <span class="k">while</span> <span class="n">s</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="c1">###### ACTION HERE ######</span>
-        <span class="c1">###### ACTION ENDS ######</span>
+        <span class="c1">####### ACTION HERE ######</span>
+        <span class="c1">####### ACTION ENDS ######</span>
         <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">root</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>  <span class="c1"># reverse for natural order (optional)</span>
             <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
                 <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
@@ -1246,13 +1220,13 @@ def reverseList(self, head):
 <section id="id2">
 <h3>BFS<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Graph</strong>: Adjacency list</p></li>
-<li><p><strong>Init</strong>:</p>
+<li><p>Graph: Adjacency list</p></li>
+<li><p>Init:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
 </ul>
 </li>
-<li><p><strong>Procedure</strong>:</p>
+<li><p>Procedure:</p>
 <ol class="arabic simple">
 <li><p>Enqueue root.</p></li>
 <li><p>Repeat:</p>
@@ -1273,8 +1247,8 @@ def reverseList(self, head):
     <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
         <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="c1">###### ACTION HERE ######</span>
-        <span class="c1">###### ACTION ENDS ######</span>
+        <span class="c1">####### ACTION HERE ######</span>
+        <span class="c1">####### ACTION ENDS ######</span>
         <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
                 <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
@@ -1289,14 +1263,14 @@ def reverseList(self, head):
 <section id="union-find">
 <h3>Union-Find<a class="headerlink" href="#union-find" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Graph</strong>: Edge list</p></li>
-<li><p><strong>Init</strong>:</p>
+<li><p>Graph: Edge list</p></li>
+<li><p>Init:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">parent</span></code>: array</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code>: array</p></li>
 </ul>
 </li>
-<li><p><strong>Procedure</strong>:</p>
+<li><p>Procedure:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">find(x)</span></code>:</p>
 <ol class="arabic simple">
@@ -1357,10 +1331,10 @@ def reverseList(self, head):
 </thead>
 <tbody>
 <tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/">323. Number of Connected Components in an Undirected Graph</a></p></td>
-<td class="text-left"><p>Loop edges, union nodes.</p></td>
+<td class="text-left"><p><strong>Hint: Loop edges. Union nodes.</strong></p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/accounts-merge/">721. Accounts Merge</a></p></td>
-<td class="text-left"><p>Loop emails, union accounts.<br>No need for union by rank.</p></td>
+<td class="text-left"><p><strong>Hint: Loop accounts. Union owners.</strong><br>No need for Path Compression or Union by Rank.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1369,15 +1343,15 @@ def reverseList(self, head):
 <section id="topological-sort">
 <h3>Topological Sort<a class="headerlink" href="#topological-sort" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Graph</strong>: Adjacency list</p></li>
-<li><p><strong>Init</strong>:</p>
+<li><p>Graph: Adjacency list</p></li>
+<li><p>Init:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">indegree</span></code>: array</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">queue</span></code>: queue</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
 </ul>
 </li>
-<li><p><strong>Procedure</strong>:</p>
+<li><p>Procedure:</p>
 <ol class="arabic simple">
 <li><p>Compute in-degree.</p></li>
 <li><p>Enqueue nodes with 0 in-degree.</p></li>
@@ -1413,8 +1387,8 @@ def reverseList(self, head):
     <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
         <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="c1">###### ACTION HERE ######</span>
-        <span class="c1">###### ACTION ENDS ######</span>
+        <span class="c1">####### ACTION HERE ######</span>
+        <span class="c1">####### ACTION ENDS ######</span>
         <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
             <span class="n">indegree</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">indegree</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1430,19 +1404,19 @@ def reverseList(self, head):
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/course-schedule/description/">207. Course Schedule</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/course-schedule/">207. Course Schedule</a></p></td>
 <td class="text-left"><p>TopoSort.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/course-schedule-ii/description/">210. Course Schedule II</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/course-schedule-ii/">210. Course Schedule II</a></p></td>
 <td class="text-left"><p>TopoSort + Cache.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/parallel-courses-iii/description/">2050. Parallel Courses III</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/parallel-courses-iii/">2050. Parallel Courses III</a></p></td>
 <td class="text-left"><p><strong>Hint: Max Time == Time for the last course.</strong><br>When adding next course, update its total time with the total time for curr course.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/minimum-height-trees/description/">310. Minimum Height Trees</a></p></td>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/minimum-height-trees/">310. Minimum Height Trees</a></p></td>
 <td class="text-left"><p><strong>Hint: Leaves have only 1 edge.</strong><br>1. Init graph as List[Set].<br>2. Init indegree/leaves with nodes of only 1 edge.<br>3. While more than 2 nodes: continuously prune leaves &amp; update new leaves with nodes of only 1 edge.<br>4. Remaining leaves are roots.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/01-matrix/description/">542. 01 Matrix</a></p></td>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://leetcode.com/problems/01-matrix/">542. 01 Matrix</a></p></td>
 <td class="text-left"><p><strong>Hint: 0 cells have 0 distance.</strong><br>1. Append all 0 cells to queue AND mark non-0 cells as -1 (unprocessed).<br>2. Loop queue: Skip processed, unprocessed should be processed + 1 (starting 0, then 1, then 2, …)</p></td>
 </tr>
 </tbody>
@@ -1452,14 +1426,14 @@ def reverseList(self, head):
 <section id="dijkstra-s-shortest-path">
 <h3>Dijkstra’s Shortest Path<a class="headerlink" href="#dijkstra-s-shortest-path" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Graph</strong>: Adjacency list with edge weights</p></li>
-<li><p><strong>Init</strong>:</p>
+<li><p>Graph: Adjacency list with edge weights</p></li>
+<li><p>Init:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">heap</span></code>: list[(weight, node)]</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
 </ul>
 </li>
-<li><p><strong>Procedure</strong>:</p>
+<li><p>Procedure:</p>
 <ol class="arabic simple">
 <li><p>Enheap (0, start).</p></li>
 <li><p>Repeat till empty:</p>
@@ -1495,13 +1469,13 @@ def reverseList(self, head):
 <section id="floyd-warshall">
 <h3>Floyd Warshall<a class="headerlink" href="#floyd-warshall" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Graph</strong>: Adjacency matrix</p></li>
-<li><p><strong>Init</strong>:</p>
+<li><p>Graph: Adjacency matrix</p></li>
+<li><p>Init:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">dist</span></code>: list[list] (= graph edge weights)</p></li>
 </ul>
 </li>
-<li><p><strong>Procedure</strong>: DP</p>
+<li><p>Procedure: DP</p>
 <ul>
 <li><p>Loop intermediate, start, end nodes:</p>
 <ul>
@@ -1535,14 +1509,14 @@ def reverseList(self, head):
 <section id="prim-s-mst">
 <h3>Prim’s MST<a class="headerlink" href="#prim-s-mst" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Graph</strong>: Adjacency list with edge weights.</p></li>
-<li><p><strong>Init</strong>:</p>
+<li><p>Graph: Adjacency list with edge weights.</p></li>
+<li><p>Init:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">heap</span></code>: list[(weight, node)]</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">visited</span></code>: set</p></li>
 </ul>
 </li>
-<li><p><strong>Procedure</strong>:</p>
+<li><p>Procedure:</p>
 <ol class="arabic simple">
 <li><p>Start with a node.</p></li>
 <li><p>Repeat till all nodes included:</p>
@@ -1562,7 +1536,7 @@ def reverseList(self, head):
     <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="n">heap</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">start</span><span class="p">)]</span>                             <span class="c1"># (edge, start node)</span>
 
-    <span class="c1"># prim</span>
+    <span class="c1">## prim</span>
     <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">visited</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>            <span class="c1"># #edges should not exceed #nodes</span>
         <span class="n">edge</span><span class="p">,</span> <span class="n">node</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>        <span class="c1"># get node w shortest edge</span>
         <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>                       <span class="c1"># prevent cycle</span>
@@ -1579,15 +1553,15 @@ def reverseList(self, head):
 <section id="kruskal-s-mst">
 <h3>Kruskal’s MST<a class="headerlink" href="#kruskal-s-mst" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Graph</strong>: Edge list</p></li>
-<li><p><strong>Init</strong>:</p>
+<li><p>Graph: Edge list</p></li>
+<li><p>Init:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">parent</span></code>: array</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code>: array</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">i</span></code>: int (index for sorted edges in graph)</p></li>
 </ul>
 </li>
-<li><p><strong>Procedure</strong>:</p>
+<li><p>Procedure:</p>
 <ol class="arabic simple">
 <li><p>Sort edges by weight.</p></li>
 <li><p>Repeat till V-1 edges are chosen:</p>

@@ -65,8 +65,6 @@
     <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="RL for LLMs" href="rlhf.html" />
-    <link rel="prev" title="Training" href="training.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -129,6 +127,8 @@
       
       
       
+        
+      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -184,21 +184,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../dl/quant.html">Precision &amp; Quantization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">NLP</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../transformer/transformer.html">Transformer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../transformer/tokenizer.html">Tokenization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transformer/pe.html">Positional Encoding</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="training.html">Training</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">PEFT</a></li>
-<li class="toctree-l2"><a class="reference internal" href="rlhf.html">RL for LLMs</a></li>
-
-<li class="toctree-l2"><a class="reference internal" href="misc.html">Misc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parallel.html">Distributed Training</a></li>
-</ul>
-</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../inference/inference.html">Inference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../inference/decoding.html">Decoding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../inference/misc.html">Misc</a></li>
@@ -387,9 +379,7 @@ document.write(`
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -405,15 +395,6 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lora-low-rank-adaptation">LoRA (Low-Rank Adaptation)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#qlora-lora-for-quantized-llms">QLoRA (LoRA for Quantized LLMs)</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -429,88 +410,6 @@ document.write(`
 <li><p><strong>What</strong>: Modify a small part of a large model <span class="math notranslate nohighlight">\(\xrightarrow{\text{adapt to}}\)</span> Downstream tasks</p></li>
 <li><p><strong>Why</strong>: Reduce cost &amp; Retain pretraining performance.</p></li>
 </ul>
-<section id="lora-low-rank-adaptation">
-<h2>LoRA (Low-Rank Adaptation)<a class="headerlink" href="#lora-low-rank-adaptation" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>What</strong>: Train <strong>low-rank</strong> matrices to adapt to downstream tasks.</p></li>
-<li><p><strong>Why</strong>: #params ⬇️ <span class="math notranslate nohighlight">\(\rightarrow\)</span> Finetuning efficiency ⬆️.</p></li>
-<li><p><strong>How</strong>: Inject low-rank matrices into the weights of specific layers, w/o modifying the original weights directly.</p></li>
-</ul>
-<div class="note dropdown admonition">
-<p class="admonition-title">Math</p>
-<p>Notations:</p>
-<ul class="simple">
-<li><p>IO:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^{H_{in}}\)</span>: Input vector.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{y}\in\mathbb{R}^{H_{out}}\)</span>: Output vector.</p></li>
-</ul>
-</li>
-<li><p>Params:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(B\in\mathbb{R}^{H_{out}\times r}\)</span>: Low-rank decomposed matrix (left)</p></li>
-<li><p><span class="math notranslate nohighlight">\(A\in\mathbb{R}^{r\times H_{in}}\)</span>: Low-rank decomposed matrix (right)</p></li>
-<li><p><span class="math notranslate nohighlight">\(\Delta W=BA\)</span>: Additional, trainable weight matrix.</p></li>
-</ul>
-</li>
-<li><p>Hyperparams:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(W_{0}\in\mathbb{R}^{H_{out}\times H_{in}}\)</span>: Original, frozen weight matrix.</p></li>
-<li><p><span class="math notranslate nohighlight">\(r\ll\min(H_{in}, H_{out})\)</span>: Rank of the original weight matrix.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\alpha\in[0,r]\)</span>: Scaling factor of the additional weights.</p></li>
-</ul>
-</li>
-</ul>
-<p>Forward:</p>
-<div class="math notranslate nohighlight">
-\[
-\mathbf{y}=W_{0}\mathbf{x}+\frac{\alpha}{r}\Delta W\mathbf{x}=W_{0}\mathbf{x}+\frac{\alpha}{r}BA\mathbf{x}
-\]</div>
-<p>Backward:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-g_{B}=\frac{\alpha}{r}g_{\Delta W}A^T \\
-g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
-\end{align}\end{split}\]</div>
-</div>
-<div class="tip dropdown admonition">
-<p class="admonition-title">Q&amp;A</p>
-<p><em>Pros</em>:</p>
-<ul class="simple">
-<li><p>No overfitting <span class="math notranslate nohighlight">\(\leftarrow\)</span> Task-specific adaptation w/o modifying the original params</p></li>
-</ul>
-<p><em>Cons</em>:</p>
-<ul class="simple">
-<li><p>ONLY applicable to linear transformation.</p></li>
-<li><p>ONLY great performance with pretrained models <span class="math notranslate nohighlight">\(\rightarrow\)</span> Lower performance relative to full finetuning</p></li>
-<li><p>High sensitivity to hyperparameters.</p></li>
-</ul>
-<p><em>Where do I apply LoRA?</em></p>
-<ul class="simple">
-<li><p>OG paper: Attention weights ONLY <span class="math notranslate nohighlight">\(\rightarrow\)</span> Simplicity &amp; Param Efficiency</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\leftarrow\)</span> Empirical performance</p></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="qlora-lora-for-quantized-llms">
-<h2>QLoRA (LoRA for Quantized LLMs)<a class="headerlink" href="#qlora-lora-for-quantized-llms" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>What</strong>: Insert learnable LoRAs into each layer of a quantized pretrained LM.</p></li>
-<li><p><strong>Why</strong>: Standard fine-tuning scales linearly with model size in memory <span class="math notranslate nohighlight">\(\rightarrow\)</span> HUGE memory cost</p>
-<ul>
-<li><p>QLoRA dramatically cuts down memory WHILE preserving full-precision performance.</p></li>
-</ul>
-</li>
-<li><p><strong>How</strong>:</p>
-<ol class="arabic simple">
-<li><p><strong>4-bit NormalFloat Quantization</strong>:</p></li>
-</ol>
-</li>
-</ul>
-</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -543,46 +442,12 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="training.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Training</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="rlhf.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">RL for LLMs</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lora-low-rank-adaptation">LoRA (Low-Rank Adaptation)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#qlora-lora-for-quantized-llms">QLoRA (LoRA for Quantized LLMs)</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>

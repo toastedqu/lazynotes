@@ -191,14 +191,6 @@
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="training/training.html">Training</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="training/peft.html">PEFT</a></li>
-<li class="toctree-l2"><a class="reference internal" href="training/rlhf.html">RL for LLMs</a></li>
-
-<li class="toctree-l2"><a class="reference internal" href="training/misc.html">Misc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="training/parallel.html">Distributed Training</a></li>
-</ul>
-</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="inference/inference.html">Inference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="inference/decoding.html">Decoding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="inference/misc.html">Misc</a></li>
@@ -444,21 +436,21 @@ document.write(`
 <h3>BLEU<a class="headerlink" href="#bleu" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>Name</strong>: Bilingual Evaluation Understudy.</p></li>
-<li><p><strong>What</strong>: N-gram overlap measure between cand sentence and one/more ref sentences.</p></li>
+<li><p><strong>What</strong>: N-gram overlap measure between candidate sentence and one/more reference sentences.</p></li>
 <li><p><strong>Why</strong>: Simple, efficient, language-agnostic for MT.</p></li>
 <li><p><strong>How</strong>: Geometric Average of Clipped N-gram Precisions <span class="math notranslate nohighlight">\(\times\)</span> Brevity Penalty.</p>
 <ul>
 <li><p><strong>N-gram Precision</strong>: <span class="math notranslate nohighlight">\(\frac{\#\text{correct predicted n-grams}}{\#\text{total predicted n-grams}}\)</span>.</p></li>
-<li><p><strong>Clipped</strong>: Limit the count for each correct n-gram to its max count in any ref sentence.</p>
+<li><p><strong>Clipped</strong>: Limit the count for each correct n-gram to its max count in any reference sentence.</p>
 <ul>
-<li><p><em>Any ref sentence?</em></p>
+<li><p><em>Any reference sentence?</em></p>
 <ul>
 <li><p>There are many ways to express the same sentence.</p></li>
 <li><p>It’s normal to have multiple ref sentences to capture variations of one cand sentence.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Compare cand sentence with each ref sentence. If the n-gram matches any ref sentence, it’s correct.</p></li>
 </ul>
 </li>
-<li><p><em>Max count in any ref sentence?</em></p>
+<li><p><em>Max count in any reference sentence?</em></p>
 <ul>
 <li><p>It’s very easy to cheat precision by <strong>repetition</strong> of correct words.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\rightarrow\)</span> Restrain it in the scope of ref sentence instead.</p></li>
@@ -483,9 +475,9 @@ document.write(`
 <p class="admonition-title">Math</p>
 <p>Notations:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(c\)</span>: Cand length (i.e., #words in cand).</p></li>
-<li><p><span class="math notranslate nohighlight">\(r_i\)</span>: Ref length (i.e., #words in ref).</p></li>
-<li><p><span class="math notranslate nohighlight">\(r=\arg\min_{r_i}|r_i-c|\)</span>: Effective ref length (i.e., Ref length with the smallest absolute difference from cand)</p>
+<li><p><span class="math notranslate nohighlight">\(c\)</span>: Candidate length (i.e., #words in cand).</p></li>
+<li><p><span class="math notranslate nohighlight">\(r_i\)</span>: Reference length (i.e., #words in ref).</p></li>
+<li><p><span class="math notranslate nohighlight">\(r=\arg\min_{r_i}|r_i-c|\)</span>: Effective reference length (i.e., Reference length with the smallest absolute difference from cand)</p>
 <ul>
 <li><p>Choose the shorter one if tied.</p></li>
 </ul>
@@ -530,26 +522,6 @@ BLEU_N=BP\times \bar{p}_N
 <ul class="simple">
 <li><p><strong>Name</strong>: Recall-Oriented Understudy for Gisting Evaluation.</p></li>
 <li><p><strong>What</strong>: Recall-based N-gram overlap measure.</p></li>
-<li><p><strong>How</strong>:</p>
-<ol class="arabic simple">
-<li><p>Choose a variant:</p>
-<ul>
-<li><p>N-gram</p></li>
-<li><p>LCS (Longest Common Sequence)</p></li>
-</ul>
-</li>
-<li><p>Extract &amp; Count the chosen units from the cand &amp; each ref.</p></li>
-<li><p>Count the overlapping units that appear in both cand and ref.</p></li>
-<li><p>Compute P/R/F1:</p>
-<ul>
-<li><p>Precision: overlap / total in cand</p></li>
-<li><p>Recall: overlap / total in ref</p></li>
-<li><p>F1: 2PR / (P+R)</p></li>
-</ul>
-</li>
-<li><p>Aggregate: Max/Avg over all refs.</p></li>
-</ol>
-</li>
 </ul>
 </section>
 </section>
