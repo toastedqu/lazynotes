@@ -317,6 +317,10 @@ def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
     return ans
 ```
 
+| Question | Solution |
+|:---------|:---------|
+| [739. Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | **Hint: Stack = Indices of monotonically decreasing temperatures.** |
+| [239. Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/) | **Hint: Stack[0] = Max of Current sliding window.** |
 
 
 ## Tree
@@ -357,6 +361,12 @@ def dfs_post(node):
     2) the curr node
 - When returning bool, specify both True and False end/base cases.
 
+| Question | Solution |
+|:---------|:---------|
+| [129. Sum Root to Leaf Numbers](https://leetcode.com/problems/sum-root-to-leaf-numbers/) | Hint:<br>End Case: Leaf node. Add curr path sum to answer.<br>Traversal: Keep track of curr path sum. |
+| [1448. Count Good Nodes in Binary Tree](https://leetcode.com/problems/count-good-nodes-in-binary-tree/) | Hint:<br>End Case: None node. Return.<br>Action: Update good node count.<br>Traversal: Keep track of curr max. |
+| [654. Maximum Binary Tree](https://leetcode.com/problems/maximum-binary-tree/) | Hint:<br>End Case: None arr. Return.<br>Action: Find current max. Return it as a node with children nodes from next traversal.<br>Traversal: DFS left & right subarrays as curr node's children. |
+| [538. Convert BST to Greater Tree](https://leetcode.com/problems/convert-bst-to-greater-tree/) | Hint:<br>End Case: None node. Return.<br>Action: Keep track of curr sum. Update root value with curr sum. Update curr sum as root value.<br>Traversal: Reverse in-traversal: Right -> Action -> Left. |
 
 
 ### BFS
@@ -567,7 +577,7 @@ parent = [find(i) for i in range(n)]
 | Question | Solution |
 |:---------|:---------|
 | [323. Number of Connected Components in an Undirected Graph](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/) | **Hint: Loop edges. Union nodes.** |
-| [721. Accounts Merge](https://leetcode.com/problems/accounts-merge/) | **Hint: Loop accounts. Union owners.**<br>No need for Path Compression or Union by Rank. |
+| [721. Accounts Merge](https://leetcode.com/problems/accounts-merge/) | **Hint: Loop accounts. Union owners.**<br>No need for Union by Rank. |
 
 
 ### Topological Sort
