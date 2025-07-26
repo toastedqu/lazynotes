@@ -363,11 +363,12 @@ def dfs_post(node):
 
 | Question | Solution |
 |:---------|:---------|
-| [129. Sum Root to Leaf Numbers](https://leetcode.com/problems/sum-root-to-leaf-numbers/) | Hint:<br>End Case: Leaf node. Add curr path sum to answer.<br>Traversal: Keep track of curr path sum. |
-| [1448. Count Good Nodes in Binary Tree](https://leetcode.com/problems/count-good-nodes-in-binary-tree/) | Hint:<br>End Case: None node. Return.<br>Action: Update good node count.<br>Traversal: Keep track of curr max. |
-| [654. Maximum Binary Tree](https://leetcode.com/problems/maximum-binary-tree/) | Hint:<br>End Case: None arr. Return.<br>Action: Find current max. Return it as a node with children nodes from next traversal.<br>Traversal: DFS left & right subarrays as curr node's children. |
-| [538. Convert BST to Greater Tree](https://leetcode.com/problems/convert-bst-to-greater-tree/) | Hint:<br>End Case: None node. Return.<br>Action: Keep track of curr sum. Update root value with curr sum. Update curr sum as root value.<br>Traversal: Reverse in-traversal: Right -> Action -> Left. |
-
+| [129. Sum Root to Leaf Numbers](https://leetcode.com/problems/sum-root-to-leaf-numbers/) | End Case: Leaf node. Add curr path sum to answer.<br>Traversal: Keep track of curr path sum. |
+| [297. Serialize and Deserialize Binary Tree](https://leetcode.com/problems/serialize-and-deserialize-binary-tree/) | End Case: None node. Append "#".<br>Action: Append curr node val.<br>Traversal: left & right. |
+| [538. Convert BST to Greater Tree](https://leetcode.com/problems/convert-bst-to-greater-tree/) | End Case: None node. Return.<br>Action: Keep track of curr sum. Update root value with curr sum. Update curr sum as root value.<br>Traversal: Right -> Action -> Left. |
+| [654. Maximum Binary Tree](https://leetcode.com/problems/maximum-binary-tree/) | End Case: None arr. Return.<br>Action: Find current max. Return it as a node with children nodes from next traversal.<br>Traversal: DFS left & right subarrays as curr node's children. |
+| [669. Trim a Binary Search Tree](https://leetcode.com/problems/trim-a-binary-search-tree/) | End Case: None node. Return.<br>Action:<br>1. If node.val in range, curr node is valid. Set both children to traversal.<br>2. If node.val < low, curr node is invalid. Traverse right.<br>3. If node.val > high, curr node is invalid. Traverse left. |
+| [1448. Count Good Nodes in Binary Tree](https://leetcode.com/problems/count-good-nodes-in-binary-tree/) | End Case: None node. Return.<br>Action: Update good node count.<br>Traversal: Keep track of curr max. |
 
 ### BFS
 **Where**: shortest search problems
@@ -386,6 +387,11 @@ def bfs(node):
         if node.right: q.append(node.right)
 ```
 
+| Question | Solution |
+|:---------|:---------|
+| [102. Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/) | Basic BFS. |
+| [103. Binary Tree Zigzag Level Order Traversal](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/) | Keep track of a boolean variable to switch subarray order. |
+| [199. Binary Tree Right Side View](https://leetcode.com/problems/binary-tree-right-side-view/) | Action: Append ONLY the last node val to answer.<br>Traversal: Update the ENTIRE queue with all children nodes. |
 
 
 ## Heap
@@ -492,6 +498,11 @@ def dfs_all_nodes():
             dfs(root)
 ```
 
+| Question | Solution |
+|:---------|:---------|
+| [529. Minesweeper](https://leetcode.com/problems/minesweeper/) | DFS Item: curr index.<br>Action: Check all 8 neighbors. Update #mines and explorable neighbors.<br>End case: If there are mines, curr cell = #mines. Return.<br>Traversal: If there's no mine, curr cell = blank. Traverse explorable neighbors. |
+| [1306. Jump Game III](https://leetcode.com/problems/jump-game-iii/) | DFS Item: curr index, visited.<br>End case: if curr index is visited or out of range, return False. If curr val == 0, return True.<br>Action: Add to visited.<br>Traversal: Next two jump-able indices. |
+
 ### BFS
 - Graph: Adjacency list
 - Init:
@@ -523,6 +534,14 @@ def bfs_all_nodes():
         if root not in visited:
             bfs(root)
 ```
+
+| Question | Solution |
+|:---------|:---------|
+| [133. Clone Graph](https://leetcode.com/problems/clone-graph/) | Queue Item: node.<br>Visited Item: mapping from node to copy node (hashmap)<br>Hint: Update new node's neighbors each time they are created. |
+| [994. Rotting Oranges](https://leetcode.com/problems/rotting-oranges/) | Queue Item: curr #minutes, curr index (all rotten oranges).<br>Visited Item: None. Only add neighbors when grid value == 1. grid value == 2 is visited. |
+| [1293. Shortest Path in a Grid with Obstacles Elimination](https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/) | Queue Item: curr #steps, curr index, curr remaining #obstacles.<br>Visited Item: curr index, curr remaining #obstacles. |
+| [1345. Jump Game IV](https://leetcode.com/problems/jump-game-iv/) | Queue Item: curr #jumps, curr index.<br>Visited Item: curr index.<br>Hint: Track the indices of each number in array. After adding indices as neighbors for a given number, delete the number record. |
+
 
 ### Union-Find
 - Graph: Edge list
