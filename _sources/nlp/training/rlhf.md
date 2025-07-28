@@ -260,7 +260,7 @@ $$
 Objective (BCE):
 
 $$
-L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(\beta\log\frac{\pi^*(y_l|x)}{\pi_\text{ref}(y_l|x)}-\beta\log\frac{\pi^*(y_w|x)}{\pi_\text{ref}(y_w|x)}\right)\right]
+L_\text{DPO}(\pi_\theta|\pi_\text{ref})=-\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}}\left[\log\sigma\left(\beta\log\frac{\pi^*(y_w|x)}{\pi_\text{ref}(y_w|x)}-\beta\log\frac{\pi^*(y_l|x)}{\pi_\text{ref}(y_l|x)}\right)\right]
 $$
 
 Gradient:
