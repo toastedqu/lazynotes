@@ -214,8 +214,8 @@ def binary_search(nums) -> int:
 | Question | Solution |
 |:---------|:---------|
 | [56. Merge Intervals](https://leetcode.com/problems/merge-intervals/) | 0. Sort.<br>1. Loop.<br>Append interval till `front.end >= back.start`.<br>Update `front.end` with max end. |
-| [759. Employee Free Time (opposite of 56)](https://leetcode.com/problems/employee-free-time/) | 0. Flatten & Sort a workhour array by start time.<br>1. Loop.<br>Append interval till `front.end >= back.start`.<br>Update `front.end` with max end.<br>2. Loop through the array of merged workhours. The intervals in between (i.e., `[front.end, back.start]`) are free hours. |
 | [57. Insert Interval](https://leetcode.com/problems/insert-interval/) | 0. Init left & right subarrays.<br>1. Loop.<br>Append interval to left if `interval.end < newinterval.start` (i.e., on the left of new interval)<br>Append interval to right if `interval.start > newinterval.end` (i.e., on the right of new interval).<br>Else, we find the insertion position. Keep track of the position with MIN of start and MAX of end.<br>2. Concatenate left, `[insert_start, insert_end]`, and right together as the answer.|
+| [759. Employee Free Time (opposite of 56)](https://leetcode.com/problems/employee-free-time/) | 0. Flatten & Sort a workhour array by start time.<br>1. Loop.<br>Append interval till `front.end >= back.start`.<br>Update `front.end` with max end.<br>2. Loop through the array of merged workhours. The intervals in between (i.e., `[front.end, back.start]`) are free hours. |
 | [986. Interval List Intersections](https://leetcode.com/problems/interval-list-intersections/) | 0. Init a pointer for each list.<br>1. Loop till length.<br>If intersect, append `[max_start, min_end]` to answer (i.e., the intersection interval)<br>Else, move the pointer with the smaller end value. |
 
 
@@ -319,9 +319,8 @@ def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
 
 | Question | Solution |
 |:---------|:---------|
-| [739. Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | **Hint: Stack = Indices of monotonically decreasing temperatures.** |
 | [239. Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/) | **Hint: Stack[0] = Max of Current sliding window.** |
-
+| [739. Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | **Hint: Stack = Indices of monotonically decreasing temperatures.** |
 
 ## Tree
 ### DFS
@@ -393,7 +392,6 @@ def bfs(node):
 | [103. Binary Tree Zigzag Level Order Traversal](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/) | Keep track of a boolean variable to switch subarray order. |
 | [199. Binary Tree Right Side View](https://leetcode.com/problems/binary-tree-right-side-view/) | Action: Append ONLY the last node val to answer.<br>Traversal: Update the ENTIRE queue with all children nodes. |
 
-
 ## Heap
 **Where**: get min/max fast
 | Action | Time |
@@ -402,6 +400,11 @@ def bfs(node):
 | insert()  | O(logn) |
 | remove()  | O(logn) |
 | heapify() | O(n) |
+
+| Question | Solution |
+|:---------|:---------|
+| [767. Reorganize String](https://leetcode.com/problems/reorganize-string/) | Heap Item: count, char.<br>Loop: Iteratively pop & push 2 chars with updated counts each time. This guarantees adjacent chars are different.<br>After loop, if remaining char has too many counts, impossible; else append. |
+
 
 ### Two Heap
 **Where**: scheduling, median, any problem that involves both min and max somehow.
