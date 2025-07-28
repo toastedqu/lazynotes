@@ -214,8 +214,8 @@ def binary_search(nums) -> int:
 | Question | Solution |
 |:---------|:---------|
 | [56. Merge Intervals](https://leetcode.com/problems/merge-intervals/) | 0. Sort.<br>1. Loop.<br>Append interval till `front.end >= back.start`.<br>Update `front.end` with max end. |
-| [759. Employee Free Time (opposite of 56)](https://leetcode.com/problems/employee-free-time/) | 0. Flatten & Sort a workhour array by start time.<br>1. Loop.<br>Append interval till `front.end >= back.start`.<br>Update `front.end` with max end.<br>2. Loop through the array of merged workhours. The intervals in between (i.e., `[front.end, back.start]`) are free hours. |
 | [57. Insert Interval](https://leetcode.com/problems/insert-interval/) | 0. Init left & right subarrays.<br>1. Loop.<br>Append interval to left if `interval.end < newinterval.start` (i.e., on the left of new interval)<br>Append interval to right if `interval.start > newinterval.end` (i.e., on the right of new interval).<br>Else, we find the insertion position. Keep track of the position with MIN of start and MAX of end.<br>2. Concatenate left, `[insert_start, insert_end]`, and right together as the answer.|
+| [759. Employee Free Time (opposite of 56)](https://leetcode.com/problems/employee-free-time/) | 0. Flatten & Sort a workhour array by start time.<br>1. Loop.<br>Append interval till `front.end >= back.start`.<br>Update `front.end` with max end.<br>2. Loop through the array of merged workhours. The intervals in between (i.e., `[front.end, back.start]`) are free hours. |
 | [986. Interval List Intersections](https://leetcode.com/problems/interval-list-intersections/) | 0. Init a pointer for each list.<br>1. Loop till length.<br>If intersect, append `[max_start, min_end]` to answer (i.e., the intersection interval)<br>Else, move the pointer with the smaller end value. |
 
 
@@ -319,9 +319,8 @@ def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
 
 | Question | Solution |
 |:---------|:---------|
-| [739. Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | **Hint: Stack = Indices of monotonically decreasing temperatures.** |
 | [239. Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/) | **Hint: Stack[0] = Max of Current sliding window.** |
-
+| [739. Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | **Hint: Stack = Indices of monotonically decreasing temperatures.** |
 
 ## Tree
 ### DFS
@@ -363,11 +362,12 @@ def dfs_post(node):
 
 | Question | Solution |
 |:---------|:---------|
-| [129. Sum Root to Leaf Numbers](https://leetcode.com/problems/sum-root-to-leaf-numbers/) | Hint:<br>End Case: Leaf node. Add curr path sum to answer.<br>Traversal: Keep track of curr path sum. |
-| [1448. Count Good Nodes in Binary Tree](https://leetcode.com/problems/count-good-nodes-in-binary-tree/) | Hint:<br>End Case: None node. Return.<br>Action: Update good node count.<br>Traversal: Keep track of curr max. |
-| [654. Maximum Binary Tree](https://leetcode.com/problems/maximum-binary-tree/) | Hint:<br>End Case: None arr. Return.<br>Action: Find current max. Return it as a node with children nodes from next traversal.<br>Traversal: DFS left & right subarrays as curr node's children. |
-| [538. Convert BST to Greater Tree](https://leetcode.com/problems/convert-bst-to-greater-tree/) | Hint:<br>End Case: None node. Return.<br>Action: Keep track of curr sum. Update root value with curr sum. Update curr sum as root value.<br>Traversal: Reverse in-traversal: Right -> Action -> Left. |
-
+| [129. Sum Root to Leaf Numbers](https://leetcode.com/problems/sum-root-to-leaf-numbers/) | End Case: Leaf node. Add curr path sum to answer.<br>Traversal: Keep track of curr path sum. |
+| [297. Serialize and Deserialize Binary Tree](https://leetcode.com/problems/serialize-and-deserialize-binary-tree/) | End Case: None node. Append "#".<br>Action: Append curr node val.<br>Traversal: left & right. |
+| [538. Convert BST to Greater Tree](https://leetcode.com/problems/convert-bst-to-greater-tree/) | End Case: None node. Return.<br>Action: Keep track of curr sum. Update root value with curr sum. Update curr sum as root value.<br>Traversal: Right -> Action -> Left. |
+| [654. Maximum Binary Tree](https://leetcode.com/problems/maximum-binary-tree/) | End Case: None arr. Return.<br>Action: Find current max. Return it as a node with children nodes from next traversal.<br>Traversal: DFS left & right subarrays as curr node's children. |
+| [669. Trim a Binary Search Tree](https://leetcode.com/problems/trim-a-binary-search-tree/) | End Case: None node. Return.<br>Action:<br>1. If node.val in range, curr node is valid. Set both children to traversal.<br>2. If node.val < low, curr node is invalid. Traverse right.<br>3. If node.val > high, curr node is invalid. Traverse left. |
+| [1448. Count Good Nodes in Binary Tree](https://leetcode.com/problems/count-good-nodes-in-binary-tree/) | End Case: None node. Return.<br>Action: Update good node count.<br>Traversal: Keep track of curr max. |
 
 ### BFS
 **Where**: shortest search problems
@@ -386,7 +386,11 @@ def bfs(node):
         if node.right: q.append(node.right)
 ```
 
-
+| Question | Solution |
+|:---------|:---------|
+| [102. Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/) | Basic BFS. |
+| [103. Binary Tree Zigzag Level Order Traversal](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/) | Keep track of a boolean variable to switch subarray order. |
+| [199. Binary Tree Right Side View](https://leetcode.com/problems/binary-tree-right-side-view/) | Action: Append ONLY the last node val to answer.<br>Traversal: Update the ENTIRE queue with all children nodes. |
 
 ## Heap
 **Where**: get min/max fast
@@ -396,6 +400,11 @@ def bfs(node):
 | insert()  | O(logn) |
 | remove()  | O(logn) |
 | heapify() | O(n) |
+
+| Question | Solution |
+|:---------|:---------|
+| [767. Reorganize String](https://leetcode.com/problems/reorganize-string/) | Heap Item: count, char.<br>Loop: Iteratively pop & push 2 chars with updated counts each time. This guarantees adjacent chars are different.<br>After loop, if remaining char has too many counts, impossible; else append. |
+
 
 ### Two Heap
 **Where**: scheduling, median, any problem that involves both min and max somehow.
@@ -492,6 +501,11 @@ def dfs_all_nodes():
             dfs(root)
 ```
 
+| Question | Solution |
+|:---------|:---------|
+| [529. Minesweeper](https://leetcode.com/problems/minesweeper/) | DFS Item: curr index.<br>Action: Check all 8 neighbors. Update #mines and explorable neighbors.<br>End case: If there are mines, curr cell = #mines. Return.<br>Traversal: If there's no mine, curr cell = blank. Traverse explorable neighbors. |
+| [1306. Jump Game III](https://leetcode.com/problems/jump-game-iii/) | DFS Item: curr index, visited.<br>End case: if curr index is visited or out of range, return False. If curr val == 0, return True.<br>Action: Add to visited.<br>Traversal: Next two jump-able indices. |
+
 ### BFS
 - Graph: Adjacency list
 - Init:
@@ -523,6 +537,14 @@ def bfs_all_nodes():
         if root not in visited:
             bfs(root)
 ```
+
+| Question | Solution |
+|:---------|:---------|
+| [133. Clone Graph](https://leetcode.com/problems/clone-graph/) | Queue Item: node.<br>Visited Item: mapping from node to copy node (hashmap)<br>Hint: Update new node's neighbors each time they are created. |
+| [994. Rotting Oranges](https://leetcode.com/problems/rotting-oranges/) | Queue Item: curr #minutes, curr index (all rotten oranges).<br>Visited Item: None. Only add neighbors when grid value == 1. grid value == 2 is visited. |
+| [1293. Shortest Path in a Grid with Obstacles Elimination](https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/) | Queue Item: curr #steps, curr index, curr remaining #obstacles.<br>Visited Item: curr index, curr remaining #obstacles. |
+| [1345. Jump Game IV](https://leetcode.com/problems/jump-game-iv/) | Queue Item: curr #jumps, curr index.<br>Visited Item: curr index.<br>Hint: Track the indices of each number in array. After adding indices as neighbors for a given number, delete the number record. |
+
 
 ### Union-Find
 - Graph: Edge list
