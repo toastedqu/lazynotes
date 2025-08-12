@@ -15,7 +15,25 @@ kernelspec:
 :width: 500px
 :align: center
 ```
+<center>Neuron (Source: [Casey L. Henley](https://openbooks.lib.msu.edu/neuroscience/chapter/the-neuron/))</center>
 
-- **What**: A specialized cell that receives signals, processes signals, and sends signals to other cells.
+- **What**: A specialized cell that receives, processes, and transmits signals to other cells.
+    - Components: Soma, Dendrites, Axon, Synapses.
 - **Why**:
-- **How**: 
+    - Single-celled organisms don't need neurons to interact with the environment.
+    - BUT Multi-cellular organisms needed dedicated cells to coordinate complex, rapid responses for survival.
+    - THUS neurons emerged as **communication specialists**.
+- **How**:
+    1. **Signal Reception**: Neurons/Sensory Receptors $\xrightarrow{input signal}$ Dendrites.
+    2. **Signal Integration**
+
+## Soma
+- **What**: 
+
+## Dendrite
+
+
+## Axon
+
+
+## Synapse
