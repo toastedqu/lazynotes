@@ -59,6 +59,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'neuro/neuron';</script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -377,7 +379,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -393,6 +397,17 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#soma">Soma</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dendrite">Dendrite</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#axon">Axon</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synapse">Synapse</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -406,11 +421,42 @@ document.write(`
 <h1>Neuron<a class="headerlink" href="#neuron" title="Link to this heading">#</a></h1>
 <a class="reference internal image-reference" href="https://openbooks.lib.msu.edu/app/uploads/sites/6/2020/11/LabeledNeuron.png"><img alt="https://openbooks.lib.msu.edu/app/uploads/sites/6/2020/11/LabeledNeuron.png" class="align-center" src="https://openbooks.lib.msu.edu/app/uploads/sites/6/2020/11/LabeledNeuron.png" style="width: 500px;" />
 </a>
+<center>Neuron (Source: [Casey L. Henley](https://openbooks.lib.msu.edu/neuroscience/chapter/the-neuron/))</center>
 <ul class="simple">
-<li><p><strong>What</strong>: A specialized cell that receives signals, processes signals, and sends signals to other cells.</p></li>
-<li><p><strong>Why</strong>:</p></li>
-<li><p><strong>How</strong>:</p></li>
+<li><p><strong>What</strong>: A specialized cell that receives, processes, and transmits signals to other cells.</p>
+<ul>
+<li><p>Components: Soma, Dendrites, Axon, Synapses.</p></li>
 </ul>
+</li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Single-celled organisms don’t need neurons to interact with the environment.</p></li>
+<li><p>BUT Multi-cellular organisms needed dedicated cells to coordinate complex, rapid responses for survival.</p></li>
+<li><p>THUS neurons emerged as <strong>communication specialists</strong>.</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Signal Reception</strong>: Neurons/Sensory Receptors <span class="math notranslate nohighlight">\(\xrightarrow{input signal}\)</span> Dendrites.</p></li>
+<li><p><strong>Signal Integration</strong></p></li>
+</ol>
+</li>
+</ul>
+<section id="soma">
+<h2>Soma<a class="headerlink" href="#soma" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>:</p></li>
+</ul>
+</section>
+<section id="dendrite">
+<h2>Dendrite<a class="headerlink" href="#dendrite" title="Link to this heading">#</a></h2>
+</section>
+<section id="axon">
+<h2>Axon<a class="headerlink" href="#axon" title="Link to this heading">#</a></h2>
+</section>
+<section id="synapse">
+<h2>Synapse<a class="headerlink" href="#synapse" title="Link to this heading">#</a></h2>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -449,6 +495,24 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#soma">Soma</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dendrite">Dendrite</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#axon">Axon</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synapse">Synapse</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
