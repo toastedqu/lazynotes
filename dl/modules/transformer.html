@@ -1,0 +1,770 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Transformer &#8212; LazyNotes</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'dl/modules/transformer';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Transfer Learning" href="../transfer-tag.html" />
+    <link rel="prev" title="Activations" href="activations.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="LazyNotes - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="LazyNotes - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../modules-tag.html">Modules</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basics.html">Linear</a></li>
+<li class="toctree-l2"><a class="reference internal" href="activations.html">Activations</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Transformer</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../transfer-tag.html">Transfer Learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../transfer/peft.html">PEFT</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">LLM</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../llm/rl.html">RL for LLMs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../llm/peft.html">PEFT</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fdl/modules/transformer.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/dl/modules/transformer.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Transformer</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">Encoder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scale-dot-product-attention">Scale Dot-Product Attention</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-connection">Residual Connection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-normalization">Layer Normalization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feed-forward-network">Feed-Forward Network</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-multi-head-attention">Masked Multi-Head Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-decoder-cross-attention">Encoder-Decoder Cross-Attention</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output">Output</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear">Linear</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="transformer">
+<h1>Transformer<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h1>
+<a class="reference internal image-reference" href="images/transformer.png"><img alt="images/transformer.png" class="align-center" src="images/transformer.png" style="width: 500px;" /></a>
+<ul class="simple">
+<li><p><strong>What</strong>: <strong>Self-attention</strong> for sequential data.</p></li>
+<li><p><strong>Why</strong>: <strong>Long-range dependencies</strong> + <strong>Parallel processing</strong>.</p></li>
+<li><p><strong>How</strong>:</p>
+<ul>
+<li><p><strong>Input</strong>:</p>
+<ul>
+<li><p><a class="reference internal" href="#token-embedding"><span class="xref myst">Token Embedding</span></a>: Converts each word/token into a high-dimensional vector for <strong>semantic information</strong>.</p></li>
+<li><p><a class="reference internal" href="#positional-encoding"><span class="xref myst">Positional Encoding</span></a>: Adds <strong>positional information</strong> on top of embeddings to preserve token order.</p></li>
+</ul>
+</li>
+<li><p><strong>Middle</strong>:</p>
+<ul>
+<li><p><a class="reference internal" href="#encoder"><span class="xref myst">Encoder</span></a>: Encodes the input into a <strong>contextual representation</strong>.</p></li>
+<li><p><a class="reference internal" href="#decoder"><span class="xref myst">Decoder</span></a>: Decodes the contextual representation <strong>one token at a time</strong> to form output.</p></li>
+</ul>
+</li>
+<li><p><strong>Output</strong>:</p>
+<ul>
+<li><p><a class="reference internal" href="#linear"><span class="xref myst">Linear</span></a>: Transforms representation for next-token prediction.</p></li>
+<li><p><a class="reference internal" href="#softmax"><span class="xref myst">Softmax</span></a>: Outputs probability for each token as the next token.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Conditions</strong>:</p>
+<ul>
+<li><p>Discrete inputs (in the form of tokens/patches).</p></li>
+<li><p>Sequential input + Global dependencies.</p></li>
+</ul>
+</li>
+<li><p><strong>Applications</strong>: Sequential data.</p></li>
+<li><p><strong>Pros</strong>:</p>
+<ul>
+<li><p>Outperforms RNNs.</p></li>
+<li><p>Higher computational efficiency than RNNs.</p></li>
+<li><p>Reduces Vanishing Gradients.</p></li>
+<li><p>Scalable.</p></li>
+<li><p>Flexible for extensive applications -&gt; Enables transfer learning.</p></li>
+</ul>
+</li>
+<li><p><strong>Cons</strong>:</p>
+<ul>
+<li><p><strong>Quadratic complexity</strong> w.r.t. sequence length.</p></li>
+<li><p>Slower for autoregressive tasks (i.e., generation).</p></li>
+<li><p>High data requirement.</p></li>
+<li><p>High computation requirement.</p></li>
+<li><p>Low interpretability.</p></li>
+<li><p>RIP environment.</p></li>
+</ul>
+</li>
+</ul>
+<section id="input">
+<h2>Input<a class="headerlink" href="#input" title="Link to this heading">#</a></h2>
+<section id="token-embedding">
+<h3>Token Embedding<a class="headerlink" href="#token-embedding" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Discrete tokens -&gt; Continuous <strong>semantic representations</strong>.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Enables transformer to process discrete tokens.</p></li>
+<li><p>Captures tokens’ intrinsic semantic meanings.</p></li>
+<li><p>Reduces <strong>vocabulary</strong> <strong>dimensionality</strong> (vocab size -&gt; hidden size).</p></li>
+</ul>
+</li>
+<li><p><strong>How</strong>: Look-up table or <a class="reference internal" href="#../basics.md#linear"><span class="xref myst">Linear</span></a>.</p></li>
+</ul>
+</section>
+<section id="positional-encoding">
+<h3>Positional Encoding<a class="headerlink" href="#positional-encoding" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>What</strong>: Adds <strong>positional information</strong> to each token in the sequence.</p></li>
+<li><p><strong>Why</strong>: Transformers lack inherent position awareness AND positions matter.</p>
+<ul>
+<li><p>Without positional encoding, self-attention scores remain unchanged regardless of token orders (See <a class="reference external" href="https://wangkuiyi.github.io/positional_encoding.html">Yi Wang’s blog post</a>).</p></li>
+</ul>
+</li>
+<li><p><strong>When</strong>: Positions matter.</p></li>
+</ul>
+<section id="sinusoidal-pe">
+<h4>Sinusoidal PE<a class="headerlink" href="#sinusoidal-pe" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>What</strong>: Sin &amp; Cos at varying frequencies to encode positions.</p></li>
+<li><p><strong>Why</strong>:</p>
+<ul>
+<li><p>Provides <strong>continuous, multi-scale position representations</strong> that can generalize to sequences of any length.</p></li>
+<li><p>Empirically performed well (same as learned PE).</p></li>
+</ul>
+</li>
+<li><p><strong>Conditions</strong>:</p>
+<ul>
+<li><p>Positional information is expressed by multi-frequency sine/cosine waves.</p></li>
+<li><p>Uniform token importance across the sequence.</p></li>
+</ul>
+</li>
+<li><p><strong>Applications</strong>: The OG Transformer.</p></li>
+<li><p><strong>Pros</strong>:</p>
+<ul>
+<li><p>High computational efficiency &lt;- No param.</p></li>
+<li><p>Extrapolates to unseen sequence lengths.</p></li>
+<li><p>Continuous positions (discrete)</p></li>
+<li><p>Multi-scale positional representations (as an embedding vector).</p></li>
+</ul>
+</li>
+<li><p><strong>Cons</strong>:</p>
+<ul>
+<li><p>No param -&gt; No learning of task-specific position patterns.</p></li>
+<li><p>Cannot capture complex, relative, or local positional relationships.</p></li>
+</ul>
+</li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Math</p>
+<p>Notations:</p>
+<ul class="simple">
+<li><p>IO:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(pos\in\mathbb{R}\)</span>: Token position.</p></li>
+</ul>
+</li>
+<li><p>Hyperparams:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(i\)</span>: Embedding dimension index.</p></li>
+<li><p><span class="math notranslate nohighlight">\(d_{\text{model}}\)</span>: Embedding dimension.</p></li>
+</ul>
+</li>
+</ul>
+<p>Forward:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+&amp;PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
+&amp;PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
+\end{align}\end{split}\]</div>
+</div>
+</section>
+</section>
+</section>
+<section id="encoder">
+<h2>Encoder<a class="headerlink" href="#encoder" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Sequence -&gt; <strong>Contextual representation</strong>.</p></li>
+<li><p><strong>Why</strong>: To produce more meaningful representations (context + semantics + position).</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#multi-head-attention"><span class="xref myst">Multi-Head Attention</span></a>: Applies attention across all tokens.</p></li>
+<li><p><a class="reference internal" href="#residual-connection"><span class="xref myst">Residual Connection</span></a>: Adds contextual info to the original input, to <strong>prevent info loss</strong> and <strong>make gradients smooth</strong>.</p></li>
+<li><p><a class="reference internal" href="#layer-normalization"><span class="xref myst">Layer Normalization</span></a>: Enhances training stability &amp; speed.</p></li>
+<li><p><a class="reference internal" href="#feed-forward-network"><span class="xref myst">Feed-Forward Network</span></a>: Refines the representation &amp; Captures additional complex patterns.</p></li>
+</ol>
+</li>
+<li><p><strong>Where</strong>: Inference models (e.g., BERT family).</p></li>
+</ul>
+<section id="multi-head-attention">
+<h3>Multi-Head Attention<a class="headerlink" href="#multi-head-attention" title="Link to this heading">#</a></h3>
+<section id="self-attention">
+<h4>Self-Attention<a class="headerlink" href="#self-attention" title="Link to this heading">#</a></h4>
+</section>
+<section id="scale-dot-product-attention">
+<h4>Scale Dot-Product Attention<a class="headerlink" href="#scale-dot-product-attention" title="Link to this heading">#</a></h4>
+<a class="reference internal image-reference" href="images/scaled_dot_product_attention.png"><img alt="images/scaled_dot_product_attention.png" class="align-center" src="images/scaled_dot_product_attention.png" style="width: 250px;" /></a>
+</section>
+</section>
+<section id="residual-connection">
+<h3>Residual Connection<a class="headerlink" href="#residual-connection" title="Link to this heading">#</a></h3>
+</section>
+<section id="layer-normalization">
+<h3>Layer Normalization<a class="headerlink" href="#layer-normalization" title="Link to this heading">#</a></h3>
+</section>
+<section id="feed-forward-network">
+<h3>Feed-Forward Network<a class="headerlink" href="#feed-forward-network" title="Link to this heading">#</a></h3>
+</section>
+</section>
+<section id="decoder">
+<h2>Decoder<a class="headerlink" href="#decoder" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What</strong>: Encoded representation -&gt; <strong>Sequence</strong>.</p></li>
+<li><p><strong>Why</strong>: To produce context-aware outputs via encoder’s info &amp; previously generated tokens.</p></li>
+<li><p><strong>How</strong>:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#masked-multi-head-attention"><span class="xref myst">Masked Multi-Head Attention</span></a>: Attends ONLY to past tokens in the target sequence, ensuring autoregressive output.</p></li>
+<li><p><a class="reference internal" href="#encoder-decoder-cross-attention"><span class="xref myst">Encoder-Decoder Cross-Attention</span></a>: Integrates input sequence context into output generation.</p></li>
+<li><p><a class="reference internal" href="#residual-connection"><span class="xref myst">Residual Connection</span></a>: Adds contextual info to the original input, to <strong>prevent info loss</strong> and <strong>make gradients smooth</strong>.</p></li>
+<li><p><a class="reference internal" href="#layer-normalization"><span class="xref myst">Layer Normalization</span></a>: Enhances training stability &amp; speed.</p></li>
+<li><p><a class="reference internal" href="#feed-forward-network"><span class="xref myst">Feed-Forward Network</span></a>: Refines the representation &amp; Captures additional complex patterns.</p></li>
+</ol>
+</li>
+<li><p><strong>Where</strong>: Generative models (e.g., GPT family)</p></li>
+</ul>
+<section id="masked-multi-head-attention">
+<h3>Masked Multi-Head Attention<a class="headerlink" href="#masked-multi-head-attention" title="Link to this heading">#</a></h3>
+</section>
+<section id="encoder-decoder-cross-attention">
+<h3>Encoder-Decoder Cross-Attention<a class="headerlink" href="#encoder-decoder-cross-attention" title="Link to this heading">#</a></h3>
+</section>
+</section>
+<section id="output">
+<h2>Output<a class="headerlink" href="#output" title="Link to this heading">#</a></h2>
+<section id="linear">
+<h3>Linear<a class="headerlink" href="#linear" title="Link to this heading">#</a></h3>
+<p>See <a class="reference internal" href="basics.html#linear"><span class="std std-ref">Linear</span></a></p>
+</section>
+<section id="softmax">
+<h3>Softmax<a class="headerlink" href="#softmax" title="Link to this heading">#</a></h3>
+<p>See <a class="reference internal" href="activations.html#softmax"><span class="std std-ref">Softmax</span></a></p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./dl\modules"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="activations.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Activations</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../transfer-tag.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Transfer Learning</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding">Token Embedding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sinusoidal-pe">Sinusoidal PE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">Encoder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scale-dot-product-attention">Scale Dot-Product Attention</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-connection">Residual Connection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-normalization">Layer Normalization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feed-forward-network">Feed-Forward Network</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-multi-head-attention">Masked Multi-Head Attention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-decoder-cross-attention">Encoder-Decoder Cross-Attention</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output">Output</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear">Linear</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Renyi Qu
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

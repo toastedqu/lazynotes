@@ -16,20 +16,22 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -65,9 +68,11 @@
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Transformer" href="recap.html" />
     <link rel="prev" title="About" href="about.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +88,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +97,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -111,8 +104,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +121,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +152,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="LazyNotes - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="LazyNotes - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="LazyNotes - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
@@ -206,6 +196,9 @@
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recap.html">Transformer</a></li>
+
+
 </ul>
 
     </div>
@@ -360,24 +353,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -617,7 +602,7 @@ document.write(`
 </ol>
 </li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sliding_window</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sliding_window</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="c1">## Step 1: init</span>
     <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>                               <span class="c1">## slow pointer</span>
     <span class="n">cache</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>   <span class="c1">## cache</span>
@@ -700,8 +685,8 @@ document.write(`
 </pre></div>
 </div>
 <p>These 2 templates are easily interchangeable by swapping the condition, so we end up with 1 universal template:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">binary_search</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">condition</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">binary_search</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">condition</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">pass</span>
 
     <span class="n">l</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>     <span class="c1">## NOTE: Pay attention to edge cases. Sometimes we need to change this boundary.</span>
@@ -754,8 +739,7 @@ document.write(`
 <h3>Merge Intervals<a class="headerlink" href="#merge-intervals" title="Link to this heading">#</a></h3>
 <p><strong>Where</strong>: interval problems</p>
 <p><strong>How</strong>: depends on the question tbh.</p>
-<a class="reference internal image-reference" href="_images/merge_interval.jpg"><img alt="_images/merge_interval.jpg" class="align-center" src="_images/merge_interval.jpg" style="width: 500px;" />
-</a>
+<a class="reference internal image-reference" href="_images/merge_interval.jpg"><img alt="_images/merge_interval.jpg" class="align-center" src="_images/merge_interval.jpg" style="width: 500px;" /></a>
 <p><strong>Tips</strong>:</p>
 <ul class="simple">
 <li><p>There are only 2 conditions for 2 intervals to overlap: <strong>front.start &lt;= back.end</strong> AND <strong>back.start &lt;= front.end</strong>.</p></li>
@@ -804,7 +788,7 @@ document.write(`
 </li>
 <li><p>Initialize (DP table &amp; Base cases) &amp; Iterate (based on the defined state transition).</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">DP</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">DP</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="c1">## Step 1: Init</span>
     <span class="n">dp</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>          <span class="c1">## DP table</span>
     <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>               <span class="c1">## base case</span>
@@ -926,7 +910,7 @@ def reverseList(self, head):
 <li><p>Else, append element to stack.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">## 739. Daily Temperatures</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">dailyTemperatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperatures</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">dailyTemperatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperatures</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
     <span class="n">ans</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">temperatures</span><span class="p">)</span>
     <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1">## store indices of monotonically decreasing temps</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">temperatures</span><span class="p">):</span>
@@ -961,7 +945,7 @@ def reverseList(self, head):
 <h3>DFS<a class="headerlink" href="#dfs" title="Link to this heading">#</a></h3>
 <p><strong>Where</strong>: longest/specific search problems</p>
 <p><strong>How?</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">dfs_pre</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dfs_pre</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">is_end_case</span><span class="p">():</span> <span class="k">return</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">break_condition</span><span class="p">():</span> <span class="k">return</span> <span class="kc">False</span>
     <span class="c1">####### ACTION HERE ######</span>
@@ -969,7 +953,7 @@ def reverseList(self, head):
     <span class="n">dfs_pre</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
     <span class="n">dfs_pre</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">dfs_in</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">dfs_in</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">is_end_case</span><span class="p">():</span> <span class="k">return</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">break_condition</span><span class="p">():</span> <span class="k">return</span> <span class="kc">False</span>
     <span class="n">dfs_in</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
@@ -977,7 +961,7 @@ def reverseList(self, head):
     <span class="c1">####### ACTION ENDS ######</span>
     <span class="n">dfs_in</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">dfs_post</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">dfs_post</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">is_end_case</span><span class="p">():</span> <span class="k">return</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">break_condition</span><span class="p">():</span> <span class="k">return</span> <span class="kc">False</span>
     <span class="n">dfs_post</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
@@ -1030,7 +1014,7 @@ def reverseList(self, head):
 <h3>BFS<a class="headerlink" href="#bfs" title="Link to this heading">#</a></h3>
 <p><strong>Where</strong>: shortest search problems</p>
 <p><strong>Tips</strong>: queue/priority queue</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">bfs</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bfs</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">node</span><span class="p">:</span> <span class="k">return</span>
     <span class="n">q</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">([</span><span class="n">node</span><span class="p">])</span>
     <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
@@ -1115,12 +1099,12 @@ def reverseList(self, head):
 <li><p>Do NOT pop when looking up items. Use index (0 for root).</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">## 295. Find Median from Data Stream</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">MedianFinder</span><span class="p">:</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MedianFinder</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">small</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">## heap for the smaller half (negative so that min heap works)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">large</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">## heap for the larger half</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">addNum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">## O(logn)</span>
+    <span class="k">def</span> <span class="nf">addNum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">## O(logn)</span>
         <span class="c1">## It doesn&#39;t really matter which one has one more value than the other. But be consistent during interview.</span>
         <span class="c1">## In this case, we allow &quot;small&quot; to store one more value than &quot;large&quot; when #nums is odd.</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">):</span>                                 <span class="c1">## if #nums is now even</span>
@@ -1128,7 +1112,7 @@ def reverseList(self, head):
         <span class="k">else</span><span class="p">:</span>
             <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">,</span> <span class="o">-</span><span class="n">heapq</span><span class="o">.</span><span class="n">heappushpop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">,</span> <span class="o">-</span><span class="n">num</span><span class="p">))</span> <span class="c1">## push new num to &quot;small&quot;, pop the largest from &quot;small&quot;, put it in &quot;large&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">findMedian</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>      <span class="c1">## O(1)</span>
+    <span class="k">def</span> <span class="nf">findMedian</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>      <span class="c1">## O(1)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">):</span>        
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">large</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">small</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1267,7 +1251,7 @@ def reverseList(self, head):
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>   <span class="c1"># adjacency list placeholder</span>
 <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">dfs_recursive</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">dfs_recursive</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
     <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
     <span class="c1">####### ACTION HERE ######</span>
     <span class="c1">####### ACTION ENDS ######</span>
@@ -1275,7 +1259,7 @@ def reverseList(self, head):
         <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
             <span class="n">dfs_recursive</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">dfs_iterative</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">dfs_iterative</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([</span><span class="n">root</span><span class="p">])</span>
     <span class="k">while</span> <span class="n">s</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
@@ -1286,7 +1270,7 @@ def reverseList(self, head):
             <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
                 <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">dfs_all_nodes</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">dfs_all_nodes</span><span class="p">():</span>
     <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">root</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
             <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
@@ -1334,7 +1318,7 @@ def reverseList(self, head):
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>   <span class="c1"># adjacency list placeholder</span>
 <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">bfs_iterative</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">bfs_iterative</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
     <span class="n">q</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([</span><span class="n">root</span><span class="p">])</span>
     <span class="k">while</span> <span class="n">q</span><span class="p">:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
@@ -1345,7 +1329,7 @@ def reverseList(self, head):
             <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
                 <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">bfs_all_nodes</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">bfs_all_nodes</span><span class="p">():</span>
     <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">root</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
             <span class="n">bfs</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
@@ -1405,7 +1389,7 @@ def reverseList(self, head):
 <span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
 <span class="n">rank</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If not root, keep finding root of curr parent &amp; set it as new parent.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1413,7 +1397,7 @@ def reverseList(self, head):
         <span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">union</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If same parent, they are in the same set already.</span>
 <span class="sd">    If diff parents,</span>
@@ -1481,7 +1465,7 @@ def reverseList(self, head):
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>   <span class="c1"># adjacency list placeholder</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">topologicalSort</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">topologicalSort</span><span class="p">():</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
     <span class="n">indegree</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
     <span class="n">q</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">()</span>
@@ -1562,7 +1546,7 @@ def reverseList(self, head):
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>   <span class="c1"># adjacency list placeholder</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">dijkstra</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">dijkstra</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
     <span class="n">heap</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">start</span><span class="p">)]</span>
     <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
@@ -1601,7 +1585,7 @@ def reverseList(self, head):
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>   <span class="c1"># adjacency matrix placeholder</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">floyd_warshall</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">floyd_warshall</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
     <span class="n">dist</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)]</span><span class="o">*</span><span class="n">n</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
     
@@ -1645,7 +1629,7 @@ def reverseList(self, head):
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>   <span class="c1"># adjacency list placeholder</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">primsMST</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">primsMST</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
     <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="n">heap</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">start</span><span class="p">)]</span>                             <span class="c1"># (edge, start node)</span>
@@ -1698,7 +1682,7 @@ def reverseList(self, head):
 </ol>
 </li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">KruskalMST</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">KruskalMST</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
     <span class="n">MST</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
     <span class="n">rank</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
@@ -1760,6 +1744,15 @@ def reverseList(self, head):
         <p class="prev-next-title">About</p>
       </div>
     </a>
+    <a class="right-next"
+       href="recap.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Transformer</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -1767,7 +1760,8 @@ def reverseList(self, head):
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1867,8 +1861,8 @@ By Renyi Qu
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
   </footer>
