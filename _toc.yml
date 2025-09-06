@@ -47,3 +47,4 @@ parts:
     - file: references
     - file: about
     - file: dsa
+    - file: recap
