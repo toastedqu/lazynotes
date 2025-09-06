@@ -514,6 +514,59 @@ class BeamSearch:
         return completed_sequences
 ```
 
+## Penalty
+```python
+class RepetitionPenaltyController:
+    def __init__(self, vocab_size: int):
+        self.vocab_size = vocab_size
+        self.reset()
+    
+    def reset(self):
+        """Reset all penalty tracking."""
+        self.token_counts = {}  # Track frequency of each token
+        self.token_presence = set()  # Track which tokens have appeared
+    
+    def update(self, token_id: int):
+        """Update tracking with a new token."""
+        self.token_counts[token_id] = self.token_counts.get(token_id, 0) + 1
+        self.token_presence.add(token_id)
+    
+    def apply_penalties(self, logits: torch.Tensor, 
+                       frequency_penalty: float = 0.0,
+                       presence_penalty: float = 0.0,
+                       repetition_penalty: float = 1.0) -> torch.Tensor:
+        """
+        Apply various repetition penalties to logits.
+        
+        Args:
+            logits: Raw model outputs [vocab_size]
+            frequency_penalty: Penalty based on token frequency (higher = more penalty)
+            presence_penalty: Penalty for tokens that have appeared before
+            repetition_penalty: Classic repetition penalty (>1 = penalize, <1 = encourage)
+        """
+        modified_logits = logits.clone()
+        
+        # Apply frequency penalty
+        if frequency_penalty != 0.0:
+            for token_id, count in self.token_counts.items():
+                modified_logits[token_id] -= frequency_penalty * count
+        
+        # Apply presence penalty
+        if presence_penalty != 0.0:
+            for token_id in self.token_presence:
+                modified_logits[token_id] -= presence_penalty
+        
+        # Apply repetition penalty (classic approach)
+        if repetition_penalty != 1.0:
+            for token_id in self.token_presence:
+                if modified_logits[token_id] > 0:
+                    modified_logits[token_id] /= repetition_penalty
+                else:
+                    modified_logits[token_id] *= repetition_penalty
+        
+        return modified_logits
+```
+
 # Optimization
 
 ## SGD
@@ -774,4 +827,693 @@ class AdamW(BaseOptimizer):
             
             # Update parameters
             param.data -= self.lr * m_hat / (v_hat.sqrt() + self.eps)
+```
+
+# Parallelism
+```python
+import torch.distributed as dist
+
+class DDP:
+    """
+    Data Parallel: Each GPU has a full copy of the model.
+    Gradients are synchronized across all GPUs after backward pass.
+    """
+    def __init__(self, model, rank, world_size):
+        self.model = copy.deepcopy(model)
+        self.rank = rank
+        self.world_size = world_size
+        
+    def forward(self, x):
+        # Each GPU processes its own batch
+        return self.model(x)
+    
+    def backward_and_sync(self, loss):
+        # Compute gradients locally
+        loss.backward()
+        
+        # Synchronize gradients across all GPUs
+        for param in self.model.parameters():
+            if param.grad is not None:
+                # All-reduce: sum gradients from all GPUs
+                dist.all_reduce(param.grad.data, op=dist.ReduceOp.SUM)
+                # Average the gradients
+                param.grad.data /= self.world_size
+    
+    def step(self, optimizer):
+        # Each GPU updates its model with synchronized gradients
+        optimizer.step()
+```
+
+## FSDP
+```python
+class FSDP:
+    """
+    Fully Sharded: Each GPU only stores a shard of model parameters.
+    Parameters are gathered when needed and released after use.
+    """
+    def __init__(self, model, rank, world_size):
+        self.rank = rank
+        self.world_size = world_size
+        self.model = model
+        
+        # Shard parameters across GPUs
+        self.param_shards = {}
+        self.shard_params()
+    
+    def shard_params(self):
+        """Distribute parameters across GPUs"""
+        for name, param in self.model.named_parameters():
+            # Split parameter into shards
+            shard_size = param.numel() // self.world_size
+            start_idx = self.rank * shard_size
+            end_idx = start_idx + shard_size if self.rank < self.world_size - 1 else param.numel()
+            
+            # Each GPU only keeps its shard
+            self.param_shards[name] = {
+                'local_shard': param.data.flatten()[start_idx:end_idx].clone(),
+                'shape': param.shape,
+                'start_idx': start_idx,
+                'end_idx': end_idx
+            }
+            
+            # Clear full parameter to save memory
+            param.data = torch.zeros_like(param.data)
+    
+    def gather_params(self, layer_name):
+        """Gather all shards to reconstruct full parameter"""
+        shard_info = self.param_shards[layer_name]
+        full_param = torch.zeros(shard_info['shape'].numel())
+        
+        # All-gather: collect shards from all GPUs
+        all_shards = [torch.zeros_like(shard_info['local_shard']) 
+                      for _ in range(self.world_size)]
+        dist.all_gather(all_shards, shard_info['local_shard'])
+        
+        # Reconstruct full parameter
+        for rank, shard in enumerate(all_shards):
+            shard_size = len(shard)
+            start = rank * shard_size
+            end = start + shard_size
+            full_param[start:end] = shard
+        
+        return full_param.reshape(shard_info['shape'])
+    
+    def forward(self, x, layer):
+        """Forward pass with parameter gathering"""
+        # Gather parameters for this layer
+        for name, param in layer.named_parameters():
+            param.data = self.gather_params(name)
+        
+        # Compute forward pass
+        output = layer(x)
+        
+        # Release parameters after use (zero them to save memory)
+        for param in layer.parameters():
+            param.data = torch.zeros_like(param.data)
+        
+        return output
+    
+    def reduce_scatter_gradients(self):
+        """Each GPU only keeps gradients for its parameter shard"""
+        for name, param in self.model.named_parameters():
+            if param.grad is not None:
+                shard_info = self.param_shards[name]
+                
+                # Reduce-scatter: sum gradients and distribute shards
+                grad_shard = torch.zeros_like(shard_info['local_shard'])
+                dist.reduce_scatter(
+                    grad_shard,
+                    list(param.grad.flatten()[shard_info['start_idx']:shard_info['end_idx']])
+                )
+                
+                # Store gradient shard
+                self.param_shards[name]['grad_shard'] = grad_shard
+```
+
+## ZeRO
+```python
+class SimpleZeRO:
+    """
+    ZeRO: Partition optimizer states, gradients, and parameters across GPUs.
+    Three stages of memory optimization.
+    """
+    def __init__(self, model, optimizer, rank, world_size, stage=1):
+        self.model = model
+        self.optimizer = optimizer
+        self.rank = rank
+        self.world_size = world_size
+        self.stage = stage
+        
+        # Partition assignments
+        self.param_to_rank = {}
+        self.assign_partitions()
+    
+    def assign_partitions(self):
+        """Assign each parameter to a GPU"""
+        params = list(self.model.parameters())
+        for i, param in enumerate(params):
+            assigned_rank = i % self.world_size
+            self.param_to_rank[id(param)] = assigned_rank
+    
+    def zero_stage_1(self):
+        """Stage 1: Partition optimizer states only"""
+        # Each GPU only maintains optimizer states for its assigned parameters
+        for param in self.model.parameters():
+            if self.param_to_rank[id(param)] != self.rank:
+                # Don't maintain optimizer state for this parameter
+                self.optimizer.state[param] = {}
+    
+    def zero_stage_2(self):
+        """Stage 2: Partition optimizer states + gradients"""
+        self.zero_stage_1()
+        
+        # After backward, each GPU only keeps gradients for its parameters
+        for param in self.model.parameters():
+            if param.grad is not None:
+                if self.param_to_rank[id(param)] == self.rank:
+                    # This GPU owns this parameter's gradient
+                    dist.reduce(param.grad, dst=self.param_to_rank[id(param)])
+                else:
+                    # Clear gradient to save memory
+                    param.grad = None
+    
+    def zero_stage_3(self):
+        """Stage 3: Partition everything (params + gradients + optimizer states)"""
+        self.zero_stage_2()
+        
+        # Each GPU only keeps parameters it owns
+        for param in self.model.parameters():
+            if self.param_to_rank[id(param)] != self.rank:
+                # Replace with empty tensor to save memory
+                param.data = torch.empty(0)
+    
+    def gather_params_for_forward(self):
+        """Gather parameters when needed (Stage 3)"""
+        if self.stage < 3:
+            return
+        
+        for param in self.model.parameters():
+            if param.data.numel() == 0:
+                # Need to gather this parameter from owner
+                owner_rank = self.param_to_rank[id(param)]
+                dist.broadcast(param.data, src=owner_rank)
+    
+    def step(self):
+        """Optimizer step with ZeRO optimization"""
+        if self.stage == 1:
+            self.zero_stage_1()
+        elif self.stage == 2:
+            self.zero_stage_2()
+        elif self.stage == 3:
+            self.zero_stage_3()
+        
+        # Each GPU updates only its assigned parameters
+        for param in self.model.parameters():
+            if self.param_to_rank[id(param)] == self.rank and param.grad is not None:
+                # Update parameter
+                self.optimizer.step()
+                
+                # Broadcast updated parameter to all GPUs (for stage 3)
+                if self.stage == 3:
+                    dist.broadcast(param.data, src=self.rank)
+```
+
+# Tokenization
+
+## BPE
+```python
+class BPETokenizer:
+    def __init__(self, vocab_size: int = 1000):
+        self.vocab_size = vocab_size
+        self.merges = []  # List of merge operations in order
+        self.vocab = {}  # Final vocabulary
+        
+    def get_word_frequencies(self, texts: List[str]) -> Dict[str, int]:
+        """Get frequency of each word in the corpus"""
+        word_freq = Counter()
+        for text in texts:
+            # Simple whitespace tokenization
+            words = text.lower().split()
+            for word in words:
+                # Add end-of-word token
+                word_freq[word + '</w>'] += 1
+        return dict(word_freq)
+    
+    def get_character_vocab(self, word_freq: Dict[str, int]) -> Set[str]:
+        """Get initial vocabulary of all characters"""
+        vocab = set()
+        for word in word_freq:
+            for char in word:
+                vocab.add(char)
+        return vocab
+    
+    def get_pairs(self, word_freq: Dict[str, int]) -> Dict[Tuple[str, str], int]:
+        """Get all adjacent pairs and their frequencies"""
+        pairs = defaultdict(int)
+        
+        for word, freq in word_freq.items():
+            # Split word into characters
+            symbols = word.split() if ' ' in word else list(word)
+            
+            # Count adjacent pairs
+            for i in range(len(symbols) - 1):
+                pair = (symbols[i], symbols[i + 1])
+                pairs[pair] += freq
+                
+        return dict(pairs)
+    
+    def merge_vocab(self, pair: Tuple[str, str], word_freq: Dict[str, int]) -> Dict[str, int]:
+        """Merge the most frequent pair in vocabulary"""
+        new_word_freq = {}
+        bigram = ' '.join(pair)
+        replacement = ''.join(pair)
+        
+        for word, freq in word_freq.items():
+            # Replace the pair with merged version
+            new_word = word.replace(bigram, replacement)
+            new_word_freq[new_word] = freq
+            
+        return new_word_freq
+    
+    def train(self, texts: List[str]):
+        """Train BPE on a corpus of texts"""
+        print("Training BPE tokenizer...")
+        
+        # Get word frequencies
+        word_freq = self.get_word_frequencies(texts)
+        
+        # Initialize vocabulary with characters
+        vocab = self.get_character_vocab(word_freq)
+        
+        # Add spaces between characters for merging
+        spaced_word_freq = {}
+        for word, freq in word_freq.items():
+            spaced_word = ' '.join(word)
+            spaced_word_freq[spaced_word] = freq
+        
+        word_freq = spaced_word_freq
+        
+        # Perform merges until we reach vocab_size
+        num_merges = self.vocab_size - len(vocab)
+        
+        for i in range(num_merges):
+            pairs = self.get_pairs(word_freq)
+            
+            if not pairs:
+                break
+                
+            # Find most frequent pair
+            best_pair = max(pairs, key=pairs.get)
+            
+            # Merge the pair
+            word_freq = self.merge_vocab(best_pair, word_freq)
+            self.merges.append(best_pair)
+            vocab.add(''.join(best_pair))
+            
+            if (i + 1) % 100 == 0:
+                print(f"Completed {i + 1} merges")
+        
+        self.vocab = {token: i for i, token in enumerate(sorted(vocab))}
+        print(f"Training complete. Vocabulary size: {len(self.vocab)}")
+    
+    def encode(self, text: str) -> List[str]:
+        """Encode text using trained BPE"""
+        if not self.vocab:
+            raise ValueError("Tokenizer not trained yet!")
+        
+        words = text.lower().split()
+        tokens = []
+        
+        for word in words:
+            word = word + '</w>'
+            word_tokens = list(word)
+            
+            # Apply merges in order
+            for pair in self.merges:
+                i = 0
+                while i < len(word_tokens) - 1:
+                    if (word_tokens[i], word_tokens[i + 1]) == pair:
+                        # Merge the pair
+                        merged = word_tokens[i] + word_tokens[i + 1]
+                        word_tokens = word_tokens[:i] + [merged] + word_tokens[i + 2:]
+                    else:
+                        i += 1
+            
+            tokens.extend(word_tokens)
+        
+        return tokens
+```
+
+## WordPiece
+```python
+class WordPieceTokenizer:
+    def __init__(self, vocab_size: int = 1000, unk_token: str = '[UNK]'):
+        self.vocab_size = vocab_size
+        self.unk_token = unk_token
+        self.vocab = {}
+        
+    def get_word_frequencies(self, texts: List[str]) -> Dict[str, int]:
+        """Get frequency of each word in the corpus"""
+        word_freq = Counter()
+        for text in texts:
+            words = text.lower().split()
+            for word in words:
+                word_freq[word] += 1
+        return dict(word_freq)
+    
+    def get_initial_vocab(self, word_freq: Dict[str, int]) -> Set[str]:
+        """Get initial vocabulary of characters"""
+        vocab = set([self.unk_token])
+        for word in word_freq:
+            for char in word:
+                vocab.add(char)
+        return vocab
+    
+    def get_subword_candidates(self, word_freq: Dict[str, int], vocab: Set[str]) -> Dict[str, float]:
+        """Get all possible subword candidates and their scores"""
+        candidates = {}
+        
+        for word, freq in word_freq.items():
+            # Generate all possible subwords
+            for i in range(len(word)):
+                for j in range(i + 1, len(word) + 1):
+                    subword = word[i:j]
+                    if i > 0:
+                        subword = '##' + subword  # WordPiece convention
+                    
+                    if subword not in vocab and len(subword) > 1:
+                        if subword not in candidates:
+                            candidates[subword] = 0
+                        candidates[subword] += freq
+        
+        return candidates
+    
+    def train(self, texts: List[str]):
+        """Train WordPiece tokenizer"""
+        print("Training WordPiece tokenizer...")
+        
+        word_freq = self.get_word_frequencies(texts)
+        vocab = self.get_initial_vocab(word_freq)
+        
+        while len(vocab) < self.vocab_size:
+            candidates = self.get_subword_candidates(word_freq, vocab)
+            
+            if not candidates:
+                break
+            
+            # Select best candidate (highest frequency)
+            best_candidate = max(candidates, key=candidates.get)
+            vocab.add(best_candidate)
+            
+            if len(vocab) % 100 == 0:
+                print(f"Vocabulary size: {len(vocab)}")
+        
+        self.vocab = {token: i for i, token in enumerate(sorted(vocab))}
+        print(f"Training complete. Final vocabulary size: {len(self.vocab)}")
+    
+    def encode_word(self, word: str) -> List[str]:
+        """Encode a single word using greedy longest-match"""
+        if not self.vocab:
+            raise ValueError("Tokenizer not trained yet!")
+        
+        tokens = []
+        i = 0
+        
+        while i < len(word):
+            longest_match = None
+            longest_length = 0
+            
+            # Find longest matching subword
+            for j in range(i + 1, len(word) + 1):
+                subword = word[i:j]
+                if i > 0:
+                    subword = '##' + subword
+                
+                if subword in self.vocab and len(subword) > longest_length:
+                    longest_match = subword
+                    longest_length = len(subword)
+            
+            if longest_match:
+                tokens.append(longest_match)
+                i += longest_length if not longest_match.startswith('##') else longest_length - 2
+            else:
+                tokens.append(self.unk_token)
+                i += 1
+        
+        return tokens
+    
+    def encode(self, text: str) -> List[str]:
+        """Encode text using WordPiece"""
+        words = text.lower().split()
+        tokens = []
+        
+        for word in words:
+            tokens.extend(self.encode_word(word))
+        
+        return tokens
+```
+
+## Unigram
+```python
+class UnigramTokenizer:
+    def __init__(self, vocab_size: int = 1000, unk_token: str = '<UNK>'):
+        self.vocab_size = vocab_size
+        self.unk_token = unk_token
+        self.vocab = {}
+        self.token_probs = {}
+        
+    def get_initial_vocab(self, texts: List[str]) -> Dict[str, int]:
+        """Get initial large vocabulary with all possible substrings"""
+        substring_freq = Counter()
+        
+        for text in texts:
+            words = text.lower().split()
+            for word in words:
+                # Add all possible substrings
+                for i in range(len(word)):
+                    for j in range(i + 1, len(word) + 1):
+                        substring = word[i:j]
+                        substring_freq[substring] += 1
+        
+        return dict(substring_freq)
+    
+    def viterbi_segment(self, word: str, vocab_probs: Dict[str, float]) -> List[str]:
+        """Find best segmentation using Viterbi algorithm"""
+        n = len(word)
+        if n == 0:
+            return []
+        
+        # Dynamic programming arrays
+        best_score = [-float('inf')] * (n + 1)
+        best_score[0] = 0
+        previous = [None] * (n + 1)
+        
+        for i in range(1, n + 1):
+            for j in range(i):
+                token = word[j:i]
+                if token in vocab_probs:
+                    score = best_score[j] + math.log(vocab_probs[token])
+                    if score > best_score[i]:
+                        best_score[i] = score
+                        previous[i] = j
+        
+        # Backtrack to get segmentation
+        tokens = []
+        i = n
+        while i > 0:
+            j = previous[i]
+            if j is not None:
+                tokens.append(word[j:i])
+                i = j
+            else:
+                tokens.append(self.unk_token)
+                break
+        
+        return list(reversed(tokens))
+    
+    def calculate_loss(self, texts: List[str], vocab_probs: Dict[str, float]) -> float:
+        """Calculate likelihood loss for current vocabulary"""
+        total_loss = 0
+        
+        for text in texts:
+            words = text.lower().split()
+            for word in words:
+                segmentation = self.viterbi_segment(word, vocab_probs)
+                word_loss = sum(-math.log(vocab_probs.get(token, 1e-10)) for token in segmentation)
+                total_loss += word_loss
+        
+        return total_loss
+    
+    def train(self, texts: List[str]):
+        """Train Unigram tokenizer"""
+        print("Training Unigram tokenizer...")
+        
+        # Start with large vocabulary
+        initial_vocab = self.get_initial_vocab(texts)
+        
+        # Keep only most frequent substrings (reduce computational cost)
+        sorted_vocab = sorted(initial_vocab.items(), key=lambda x: x[1], reverse=True)
+        current_vocab = dict(sorted_vocab[:self.vocab_size * 3])  # Start with 3x target size
+        
+        # Add single characters to ensure coverage
+        all_chars = set()
+        for text in texts:
+            all_chars.update(text.lower())
+        for char in all_chars:
+            if char not in current_vocab:
+                current_vocab[char] = 1
+        
+        current_vocab[self.unk_token] = 1
+        
+        # Iteratively reduce vocabulary
+        while len(current_vocab) > self.vocab_size:
+            # Calculate token probabilities
+            total_freq = sum(current_vocab.values())
+            vocab_probs = {token: freq / total_freq for token, freq in current_vocab.items()}
+            
+            # Find token that contributes least to likelihood
+            best_token_to_remove = None
+            best_loss_increase = float('inf')
+            
+            for token in list(current_vocab.keys()):
+                if token == self.unk_token or len(token) == 1:  # Don't remove UNK or single chars
+                    continue
+                
+                # Temporarily remove token
+                temp_vocab = current_vocab.copy()
+                del temp_vocab[token]
+                
+                # Recalculate probabilities
+                temp_total = sum(temp_vocab.values())
+                temp_probs = {t: f / temp_total for t, f in temp_vocab.items()}
+                
+                # Calculate loss increase (simplified)
+                loss_increase = current_vocab[token]  # Approximate
+                
+                if loss_increase < best_loss_increase:
+                    best_loss_increase = loss_increase
+                    best_token_to_remove = token
+            
+            if best_token_to_remove:
+                del current_vocab[best_token_to_remove]
+            
+            if len(current_vocab) % 100 == 0:
+                print(f"Vocabulary size: {len(current_vocab)}")
+        
+        # Final vocabulary and probabilities
+        total_freq = sum(current_vocab.values())
+        self.vocab = {token: i for i, token in enumerate(sorted(current_vocab.keys()))}
+        self.token_probs = {token: freq / total_freq for token, freq in current_vocab.items()}
+        
+        print(f"Training complete. Final vocabulary size: {len(self.vocab)}")
+    
+    def encode(self, text: str) -> List[str]:
+        """Encode text using Unigram tokenizer"""
+        if not self.vocab:
+            raise ValueError("Tokenizer not trained yet!")
+        
+        words = text.lower().split()
+        tokens = []
+        
+        for word in words:
+            word_tokens = self.viterbi_segment(word, self.token_probs)
+            tokens.extend(word_tokens)
+        
+        return tokens
+```
+
+# Inference
+## KV Cache
+```python
+class KVCache:
+    """Key-Value cache for transformer attention layers."""
+    
+    def __init__(self, max_seq_len: int, n_heads: int, head_dim: int, n_layers: int):
+        self.max_seq_len = max_seq_len
+        self.n_heads = n_heads
+        self.head_dim = head_dim
+        self.n_layers = n_layers
+        self.reset()
+    
+    def reset(self):
+        """Reset the cache."""
+        self.cache = {}
+        self.seq_len = 0
+    
+    def get(self, layer_idx: int) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
+        """Get cached K,V for a layer."""
+        if layer_idx not in self.cache:
+            return None, None
+        return self.cache[layer_idx]
+    
+    def update(self, layer_idx: int, k: torch.Tensor, v: torch.Tensor):
+        """Update cache with new K,V tensors."""
+        if layer_idx not in self.cache:
+            # Initialize cache for this layer
+            self.cache[layer_idx] = (k, v)
+        else:
+            # Concatenate with existing cache
+            cached_k, cached_v = self.cache[layer_idx]
+            self.cache[layer_idx] = (
+                torch.cat([cached_k, k], dim=-2),  # Concat along sequence dimension
+                torch.cat([cached_v, v], dim=-2)
+            )
+        
+        # Update sequence length
+        self.seq_len = self.cache[layer_idx][0].shape[-2]
+
+
+class MultiHeadAttentionWithKVCache(nn.Module):
+    """Multi-head attention with KV caching support."""
+    
+    def __init__(self, d_model: int, n_heads: int):
+        super().__init__()
+        self.d_model = d_model
+        self.n_heads = n_heads
+        self.head_dim = d_model // n_heads
+        
+        self.w_q = nn.Linear(d_model, d_model, bias=False)
+        self.w_k = nn.Linear(d_model, d_model, bias=False)
+        self.w_v = nn.Linear(d_model, d_model, bias=False)
+        self.w_o = nn.Linear(d_model, d_model, bias=False)
+    
+    def forward(self, x: torch.Tensor, kv_cache: Optional[KVCache] = None, 
+                layer_idx: int = 0) -> torch.Tensor:
+        batch_size, seq_len, d_model = x.shape
+        
+        # Compute Q, K, V
+        q = self.w_q(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
+        k = self.w_k(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
+        v = self.w_v(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
+        
+        # Handle KV caching
+        if kv_cache is not None:
+            cached_k, cached_v = kv_cache.get(layer_idx)
+            if cached_k is not None:
+                # Use cached K,V and only compute for new tokens
+                k = torch.cat([cached_k, k], dim=1)
+                v = torch.cat([cached_v, v], dim=1)
+            
+            # Update cache
+            kv_cache.update(layer_idx, k[:, -seq_len:], v[:, -seq_len:])
+        
+        # Transpose for attention computation
+        q = q.transpose(1, 2)  # [batch, n_heads, seq_len, head_dim]
+        k = k.transpose(1, 2)
+        v = v.transpose(1, 2)
+        
+        # Scaled dot-product attention
+        scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.head_dim)
+        
+        # Causal mask (only look at previous tokens)
+        if scores.size(-1) > 1:
+            mask = torch.triu(torch.ones(scores.size(-2), scores.size(-1)), diagonal=1).bool()
+            scores.masked_fill_(mask, float('-inf'))
+        
+        attn_weights = F.softmax(scores, dim=-1)
+        output = torch.matmul(attn_weights, v)
+        
+        # Reshape and project
+        output = output.transpose(1, 2).contiguous().view(batch_size, seq_len, d_model)
+        return self.w_o(output)
 ```

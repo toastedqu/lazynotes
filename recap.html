@@ -196,6 +196,9 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Transformer</a></li>
 
 
+
+
+
 </ul>
 
     </div>
@@ -409,6 +412,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k">Top K</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-p">Top P</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">Beam Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#penalty">Penalty</a></li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization">Optimization</a><ul class="visible nav section-nav flex-column">
@@ -420,6 +424,21 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adam">Adam</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw">AdamW</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#parallelism">Parallelism</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fsdp">FSDP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zero">ZeRO</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bpe">BPE</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wordpiece">WordPiece</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unigram">Unigram</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#inference">Inference</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kv-cache">KV Cache</a></li>
 </ul>
 </li>
 </ul>
@@ -952,6 +971,60 @@
 </pre></div>
 </div>
 </section>
+<section id="penalty">
+<h2>Penalty<a class="headerlink" href="#penalty" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RepetitionPenaltyController</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="n">vocab_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset all penalty tracking.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token_counts</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Track frequency of each token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token_presence</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># Track which tokens have appeared</span>
+    
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update tracking with a new token.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token_counts</span><span class="p">[</span><span class="n">token_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token_presence</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">token_id</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">apply_penalties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> 
+                       <span class="n">frequency_penalty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                       <span class="n">presence_penalty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                       <span class="n">repetition_penalty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply various repetition penalties to logits.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            logits: Raw model outputs [vocab_size]</span>
+<span class="sd">            frequency_penalty: Penalty based on token frequency (higher = more penalty)</span>
+<span class="sd">            presence_penalty: Penalty for tokens that have appeared before</span>
+<span class="sd">            repetition_penalty: Classic repetition penalty (&gt;1 = penalize, &lt;1 = encourage)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">modified_logits</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        
+        <span class="c1"># Apply frequency penalty</span>
+        <span class="k">if</span> <span class="n">frequency_penalty</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">token_id</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">modified_logits</span><span class="p">[</span><span class="n">token_id</span><span class="p">]</span> <span class="o">-=</span> <span class="n">frequency_penalty</span> <span class="o">*</span> <span class="n">count</span>
+        
+        <span class="c1"># Apply presence penalty</span>
+        <span class="k">if</span> <span class="n">presence_penalty</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">token_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_presence</span><span class="p">:</span>
+                <span class="n">modified_logits</span><span class="p">[</span><span class="n">token_id</span><span class="p">]</span> <span class="o">-=</span> <span class="n">presence_penalty</span>
+        
+        <span class="c1"># Apply repetition penalty (classic approach)</span>
+        <span class="k">if</span> <span class="n">repetition_penalty</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">token_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_presence</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">modified_logits</span><span class="p">[</span><span class="n">token_id</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">modified_logits</span><span class="p">[</span><span class="n">token_id</span><span class="p">]</span> <span class="o">/=</span> <span class="n">repetition_penalty</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">modified_logits</span><span class="p">[</span><span class="n">token_id</span><span class="p">]</span> <span class="o">*=</span> <span class="n">repetition_penalty</span>
+        
+        <span class="k">return</span> <span class="n">modified_logits</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="optimization">
 <h1>Optimization<a class="headerlink" href="#optimization" title="Link to this heading">#</a></h1>
@@ -1224,6 +1297,705 @@
 </div>
 </section>
 </section>
+<section class="tex2jax_ignore mathjax_ignore" id="parallelism">
+<h1>Parallelism<a class="headerlink" href="#parallelism" title="Link to this heading">#</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="nn">dist</span>
+
+<span class="k">class</span> <span class="nc">DDP</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Data Parallel: Each GPU has a full copy of the model.</span>
+<span class="sd">    Gradients are synchronized across all GPUs after backward pass.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="n">rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span> <span class="o">=</span> <span class="n">world_size</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Each GPU processes its own batch</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">backward_and_sync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="c1"># Compute gradients locally</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        
+        <span class="c1"># Synchronize gradients across all GPUs</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># All-reduce: sum gradients from all GPUs</span>
+                <span class="n">dist</span><span class="o">.</span><span class="n">all_reduce</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">dist</span><span class="o">.</span><span class="n">ReduceOp</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+                <span class="c1"># Average the gradients</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span>
+    
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">):</span>
+        <span class="c1"># Each GPU updates its model with synchronized gradients</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="fsdp">
+<h2>FSDP<a class="headerlink" href="#fsdp" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FSDP</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fully Sharded: Each GPU only stores a shard of model parameters.</span>
+<span class="sd">    Parameters are gathered when needed and released after use.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="n">rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span> <span class="o">=</span> <span class="n">world_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        
+        <span class="c1"># Shard parameters across GPUs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_shards</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shard_params</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">shard_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Distribute parameters across GPUs&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="c1"># Split parameter into shards</span>
+            <span class="n">shard_size</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span>
+            <span class="n">start_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">*</span> <span class="n">shard_size</span>
+            <span class="n">end_idx</span> <span class="o">=</span> <span class="n">start_idx</span> <span class="o">+</span> <span class="n">shard_size</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">param</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span>
+            
+            <span class="c1"># Each GPU only keeps its shard</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_shards</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;local_shard&#39;</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span>
+                <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                <span class="s1">&#39;start_idx&#39;</span><span class="p">:</span> <span class="n">start_idx</span><span class="p">,</span>
+                <span class="s1">&#39;end_idx&#39;</span><span class="p">:</span> <span class="n">end_idx</span>
+            <span class="p">}</span>
+            
+            <span class="c1"># Clear full parameter to save memory</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">gather_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gather all shards to reconstruct full parameter&quot;&quot;&quot;</span>
+        <span class="n">shard_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_shards</span><span class="p">[</span><span class="n">layer_name</span><span class="p">]</span>
+        <span class="n">full_param</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shard_info</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span>
+        
+        <span class="c1"># All-gather: collect shards from all GPUs</span>
+        <span class="n">all_shards</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">shard_info</span><span class="p">[</span><span class="s1">&#39;local_shard&#39;</span><span class="p">])</span> 
+                      <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world_size</span><span class="p">)]</span>
+        <span class="n">dist</span><span class="o">.</span><span class="n">all_gather</span><span class="p">(</span><span class="n">all_shards</span><span class="p">,</span> <span class="n">shard_info</span><span class="p">[</span><span class="s1">&#39;local_shard&#39;</span><span class="p">])</span>
+        
+        <span class="c1"># Reconstruct full parameter</span>
+        <span class="k">for</span> <span class="n">rank</span><span class="p">,</span> <span class="n">shard</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_shards</span><span class="p">):</span>
+            <span class="n">shard_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shard</span><span class="p">)</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">rank</span> <span class="o">*</span> <span class="n">shard_size</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">shard_size</span>
+            <span class="n">full_param</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">shard</span>
+        
+        <span class="k">return</span> <span class="n">full_param</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shard_info</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">])</span>
+    
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">layer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass with parameter gathering&quot;&quot;&quot;</span>
+        <span class="c1"># Gather parameters for this layer</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">layer</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gather_params</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        
+        <span class="c1"># Compute forward pass</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        
+        <span class="c1"># Release parameters after use (zero them to save memory)</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">layer</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">output</span>
+    
+    <span class="k">def</span> <span class="nf">reduce_scatter_gradients</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Each GPU only keeps gradients for its parameter shard&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">shard_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_shards</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                
+                <span class="c1"># Reduce-scatter: sum gradients and distribute shards</span>
+                <span class="n">grad_shard</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">shard_info</span><span class="p">[</span><span class="s1">&#39;local_shard&#39;</span><span class="p">])</span>
+                <span class="n">dist</span><span class="o">.</span><span class="n">reduce_scatter</span><span class="p">(</span>
+                    <span class="n">grad_shard</span><span class="p">,</span>
+                    <span class="nb">list</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="n">shard_info</span><span class="p">[</span><span class="s1">&#39;start_idx&#39;</span><span class="p">]:</span><span class="n">shard_info</span><span class="p">[</span><span class="s1">&#39;end_idx&#39;</span><span class="p">]])</span>
+                <span class="p">)</span>
+                
+                <span class="c1"># Store gradient shard</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">param_shards</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;grad_shard&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad_shard</span>
+</pre></div>
+</div>
+</section>
+<section id="zero">
+<h2>ZeRO<a class="headerlink" href="#zero" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleZeRO</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ZeRO: Partition optimizer states, gradients, and parameters across GPUs.</span>
+<span class="sd">    Three stages of memory optimization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="n">rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span> <span class="o">=</span> <span class="n">world_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">=</span> <span class="n">stage</span>
+        
+        <span class="c1"># Partition assignments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_to_rank</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_partitions</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">assign_partitions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign each parameter to a GPU&quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="n">assigned_rank</span> <span class="o">=</span> <span class="n">i</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_to_rank</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span> <span class="o">=</span> <span class="n">assigned_rank</span>
+    
+    <span class="k">def</span> <span class="nf">zero_stage_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stage 1: Partition optimizer states only&quot;&quot;&quot;</span>
+        <span class="c1"># Each GPU only maintains optimizer states for its assigned parameters</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_to_rank</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">:</span>
+                <span class="c1"># Don&#39;t maintain optimizer state for this parameter</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">def</span> <span class="nf">zero_stage_2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stage 2: Partition optimizer states + gradients&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zero_stage_1</span><span class="p">()</span>
+        
+        <span class="c1"># After backward, each GPU only keeps gradients for its parameters</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_to_rank</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">:</span>
+                    <span class="c1"># This GPU owns this parameter&#39;s gradient</span>
+                    <span class="n">dist</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param_to_rank</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">param</span><span class="p">)])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Clear gradient to save memory</span>
+                    <span class="n">param</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="k">def</span> <span class="nf">zero_stage_3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stage 3: Partition everything (params + gradients + optimizer states)&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zero_stage_2</span><span class="p">()</span>
+        
+        <span class="c1"># Each GPU only keeps parameters it owns</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_to_rank</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">:</span>
+                <span class="c1"># Replace with empty tensor to save memory</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">gather_params_for_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gather parameters when needed (Stage 3)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Need to gather this parameter from owner</span>
+                <span class="n">owner_rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_to_rank</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span>
+                <span class="n">dist</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">owner_rank</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optimizer step with ZeRO optimization&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zero_stage_1</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zero_stage_2</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zero_stage_3</span><span class="p">()</span>
+        
+        <span class="c1"># Each GPU updates only its assigned parameters</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_to_rank</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="ow">and</span> <span class="n">param</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Update parameter</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                
+                <span class="c1"># Broadcast updated parameter to all GPUs (for stage 3)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">dist</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="tokenization">
+<h1>Tokenization<a class="headerlink" href="#tokenization" title="Link to this heading">#</a></h1>
+<section id="bpe">
+<h2>BPE<a class="headerlink" href="#bpe" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BPETokenizer</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="n">vocab_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merges</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of merge operations in order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Final vocabulary</span>
+        
+    <span class="k">def</span> <span class="nf">get_word_frequencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get frequency of each word in the corpus&quot;&quot;&quot;</span>
+        <span class="n">word_freq</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+            <span class="c1"># Simple whitespace tokenization</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+                <span class="c1"># Add end-of-word token</span>
+                <span class="n">word_freq</span><span class="p">[</span><span class="n">word</span> <span class="o">+</span> <span class="s1">&#39;&lt;/w&gt;&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">word_freq</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">get_character_vocab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word_freq</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get initial vocabulary of all characters&quot;&quot;&quot;</span>
+        <span class="n">vocab</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_freq</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">word</span><span class="p">:</span>
+                <span class="n">vocab</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">char</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">vocab</span>
+    
+    <span class="k">def</span> <span class="nf">get_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word_freq</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all adjacent pairs and their frequencies&quot;&quot;&quot;</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">word_freq</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Split word into characters</span>
+            <span class="n">symbols</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">word</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+            
+            <span class="c1"># Count adjacent pairs</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">symbols</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">pair</span> <span class="o">=</span> <span class="p">(</span><span class="n">symbols</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">symbols</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="n">pairs</span><span class="p">[</span><span class="n">pair</span><span class="p">]</span> <span class="o">+=</span> <span class="n">freq</span>
+                
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">merge_vocab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pair</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">word_freq</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge the most frequent pair in vocabulary&quot;&quot;&quot;</span>
+        <span class="n">new_word_freq</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">bigram</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+        <span class="n">replacement</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">word_freq</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Replace the pair with merged version</span>
+            <span class="n">new_word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">bigram</span><span class="p">,</span> <span class="n">replacement</span><span class="p">)</span>
+            <span class="n">new_word_freq</span><span class="p">[</span><span class="n">new_word</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq</span>
+            
+        <span class="k">return</span> <span class="n">new_word_freq</span>
+    
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train BPE on a corpus of texts&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training BPE tokenizer...&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Get word frequencies</span>
+        <span class="n">word_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_word_frequencies</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+        
+        <span class="c1"># Initialize vocabulary with characters</span>
+        <span class="n">vocab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_character_vocab</span><span class="p">(</span><span class="n">word_freq</span><span class="p">)</span>
+        
+        <span class="c1"># Add spaces between characters for merging</span>
+        <span class="n">spaced_word_freq</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">word_freq</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">spaced_word</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+            <span class="n">spaced_word_freq</span><span class="p">[</span><span class="n">spaced_word</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq</span>
+        
+        <span class="n">word_freq</span> <span class="o">=</span> <span class="n">spaced_word_freq</span>
+        
+        <span class="c1"># Perform merges until we reach vocab_size</span>
+        <span class="n">num_merges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">vocab</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_merges</span><span class="p">):</span>
+            <span class="n">pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pairs</span><span class="p">(</span><span class="n">word_freq</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pairs</span><span class="p">:</span>
+                <span class="k">break</span>
+                
+            <span class="c1"># Find most frequent pair</span>
+            <span class="n">best_pair</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">pairs</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+            
+            <span class="c1"># Merge the pair</span>
+            <span class="n">word_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_vocab</span><span class="p">(</span><span class="n">best_pair</span><span class="p">,</span> <span class="n">word_freq</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">merges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_pair</span><span class="p">)</span>
+            <span class="n">vocab</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">best_pair</span><span class="p">))</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> merges&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">vocab</span><span class="p">))}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training complete. Vocabulary size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode text using trained BPE&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Tokenizer not trained yet!&quot;</span><span class="p">)</span>
+        
+        <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span> <span class="o">+</span> <span class="s1">&#39;&lt;/w&gt;&#39;</span>
+            <span class="n">word_tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+            
+            <span class="c1"># Apply merges in order</span>
+            <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">merges</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">word_tokens</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">word_tokens</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">word_tokens</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">pair</span><span class="p">:</span>
+                        <span class="c1"># Merge the pair</span>
+                        <span class="n">merged</span> <span class="o">=</span> <span class="n">word_tokens</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">word_tokens</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                        <span class="n">word_tokens</span> <span class="o">=</span> <span class="n">word_tokens</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">merged</span><span class="p">]</span> <span class="o">+</span> <span class="n">word_tokens</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+            <span class="n">tokens</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">word_tokens</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">tokens</span>
+</pre></div>
+</div>
+</section>
+<section id="wordpiece">
+<h2>WordPiece<a class="headerlink" href="#wordpiece" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">WordPieceTokenizer</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">unk_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;[UNK]&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="n">vocab_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unk_token</span> <span class="o">=</span> <span class="n">unk_token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="p">{}</span>
+        
+    <span class="k">def</span> <span class="nf">get_word_frequencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get frequency of each word in the corpus&quot;&quot;&quot;</span>
+        <span class="n">word_freq</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+                <span class="n">word_freq</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">word_freq</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">get_initial_vocab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word_freq</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get initial vocabulary of characters&quot;&quot;&quot;</span>
+        <span class="n">vocab</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">unk_token</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_freq</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">word</span><span class="p">:</span>
+                <span class="n">vocab</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">char</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">vocab</span>
+    
+    <span class="k">def</span> <span class="nf">get_subword_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word_freq</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">vocab</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all possible subword candidates and their scores&quot;&quot;&quot;</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">word_freq</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Generate all possible subwords</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">subword</span> <span class="o">=</span> <span class="n">word</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">subword</span> <span class="o">=</span> <span class="s1">&#39;##&#39;</span> <span class="o">+</span> <span class="n">subword</span>  <span class="c1"># WordPiece convention</span>
+                    
+                    <span class="k">if</span> <span class="n">subword</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vocab</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">subword</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">subword</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+                            <span class="n">candidates</span><span class="p">[</span><span class="n">subword</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">candidates</span><span class="p">[</span><span class="n">subword</span><span class="p">]</span> <span class="o">+=</span> <span class="n">freq</span>
+        
+        <span class="k">return</span> <span class="n">candidates</span>
+    
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train WordPiece tokenizer&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training WordPiece tokenizer...&quot;</span><span class="p">)</span>
+        
+        <span class="n">word_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_word_frequencies</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+        <span class="n">vocab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_initial_vocab</span><span class="p">(</span><span class="n">word_freq</span><span class="p">)</span>
+        
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">vocab</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">:</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subword_candidates</span><span class="p">(</span><span class="n">word_freq</span><span class="p">,</span> <span class="n">vocab</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span>
+                <span class="k">break</span>
+            
+            <span class="c1"># Select best candidate (highest frequency)</span>
+            <span class="n">best_candidate</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">candidates</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+            <span class="n">vocab</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">best_candidate</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vocab</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Vocabulary size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vocab</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">vocab</span><span class="p">))}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training complete. Final vocabulary size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">encode_word</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode a single word using greedy longest-match&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Tokenizer not trained yet!&quot;</span><span class="p">)</span>
+        
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
+            <span class="n">longest_match</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">longest_length</span> <span class="o">=</span> <span class="mi">0</span>
+            
+            <span class="c1"># Find longest matching subword</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">subword</span> <span class="o">=</span> <span class="n">word</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">subword</span> <span class="o">=</span> <span class="s1">&#39;##&#39;</span> <span class="o">+</span> <span class="n">subword</span>
+                
+                <span class="k">if</span> <span class="n">subword</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">subword</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">longest_length</span><span class="p">:</span>
+                    <span class="n">longest_match</span> <span class="o">=</span> <span class="n">subword</span>
+                    <span class="n">longest_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">subword</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">longest_match</span><span class="p">:</span>
+                <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">longest_match</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="n">longest_length</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">longest_match</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;##&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">longest_length</span> <span class="o">-</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unk_token</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="k">return</span> <span class="n">tokens</span>
+    
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode text using WordPiece&quot;&quot;&quot;</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+            <span class="n">tokens</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encode_word</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">tokens</span>
+</pre></div>
+</div>
+</section>
+<section id="unigram">
+<h2>Unigram<a class="headerlink" href="#unigram" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UnigramTokenizer</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">unk_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&lt;UNK&gt;&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="n">vocab_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unk_token</span> <span class="o">=</span> <span class="n">unk_token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token_probs</span> <span class="o">=</span> <span class="p">{}</span>
+        
+    <span class="k">def</span> <span class="nf">get_initial_vocab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get initial large vocabulary with all possible substrings&quot;&quot;&quot;</span>
+        <span class="n">substring_freq</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+        
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+                <span class="c1"># Add all possible substrings</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)):</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                        <span class="n">substring</span> <span class="o">=</span> <span class="n">word</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span>
+                        <span class="n">substring_freq</span><span class="p">[</span><span class="n">substring</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">substring_freq</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">viterbi_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vocab_probs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find best segmentation using Viterbi algorithm&quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        
+        <span class="c1"># Dynamic programming arrays</span>
+        <span class="n">best_score</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)]</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">best_score</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">word</span><span class="p">[</span><span class="n">j</span><span class="p">:</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">vocab_probs</span><span class="p">:</span>
+                    <span class="n">score</span> <span class="o">=</span> <span class="n">best_score</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">vocab_probs</span><span class="p">[</span><span class="n">token</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="n">best_score</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">best_score</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
+                        <span class="n">previous</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+        
+        <span class="c1"># Backtrack to get segmentation</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">[</span><span class="n">j</span><span class="p">:</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">j</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unk_token</span><span class="p">)</span>
+                <span class="k">break</span>
+        
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">tokens</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">calculate_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">vocab_probs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate likelihood loss for current vocabulary&quot;&quot;&quot;</span>
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+                <span class="n">segmentation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viterbi_segment</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">vocab_probs</span><span class="p">)</span>
+                <span class="n">word_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">vocab_probs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">))</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">segmentation</span><span class="p">)</span>
+                <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">word_loss</span>
+        
+        <span class="k">return</span> <span class="n">total_loss</span>
+    
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train Unigram tokenizer&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training Unigram tokenizer...&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Start with large vocabulary</span>
+        <span class="n">initial_vocab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_initial_vocab</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+        
+        <span class="c1"># Keep only most frequent substrings (reduce computational cost)</span>
+        <span class="n">sorted_vocab</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">initial_vocab</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">current_vocab</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sorted_vocab</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">*</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># Start with 3x target size</span>
+        
+        <span class="c1"># Add single characters to ensure coverage</span>
+        <span class="n">all_chars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+            <span class="n">all_chars</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">all_chars</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">char</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_vocab</span><span class="p">:</span>
+                <span class="n">current_vocab</span><span class="p">[</span><span class="n">char</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        
+        <span class="n">current_vocab</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">unk_token</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        
+        <span class="c1"># Iteratively reduce vocabulary</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_vocab</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">:</span>
+            <span class="c1"># Calculate token probabilities</span>
+            <span class="n">total_freq</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">current_vocab</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="n">vocab_probs</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">:</span> <span class="n">freq</span> <span class="o">/</span> <span class="n">total_freq</span> <span class="k">for</span> <span class="n">token</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">current_vocab</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            
+            <span class="c1"># Find token that contributes least to likelihood</span>
+            <span class="n">best_token_to_remove</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">best_loss_increase</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">current_vocab</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">token</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">unk_token</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Don&#39;t remove UNK or single chars</span>
+                    <span class="k">continue</span>
+                
+                <span class="c1"># Temporarily remove token</span>
+                <span class="n">temp_vocab</span> <span class="o">=</span> <span class="n">current_vocab</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">del</span> <span class="n">temp_vocab</span><span class="p">[</span><span class="n">token</span><span class="p">]</span>
+                
+                <span class="c1"># Recalculate probabilities</span>
+                <span class="n">temp_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">temp_vocab</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                <span class="n">temp_probs</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="n">f</span> <span class="o">/</span> <span class="n">temp_total</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">temp_vocab</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                
+                <span class="c1"># Calculate loss increase (simplified)</span>
+                <span class="n">loss_increase</span> <span class="o">=</span> <span class="n">current_vocab</span><span class="p">[</span><span class="n">token</span><span class="p">]</span>  <span class="c1"># Approximate</span>
+                
+                <span class="k">if</span> <span class="n">loss_increase</span> <span class="o">&lt;</span> <span class="n">best_loss_increase</span><span class="p">:</span>
+                    <span class="n">best_loss_increase</span> <span class="o">=</span> <span class="n">loss_increase</span>
+                    <span class="n">best_token_to_remove</span> <span class="o">=</span> <span class="n">token</span>
+            
+            <span class="k">if</span> <span class="n">best_token_to_remove</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">current_vocab</span><span class="p">[</span><span class="n">best_token_to_remove</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_vocab</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Vocabulary size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">current_vocab</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Final vocabulary and probabilities</span>
+        <span class="n">total_freq</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">current_vocab</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">current_vocab</span><span class="o">.</span><span class="n">keys</span><span class="p">()))}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token_probs</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">:</span> <span class="n">freq</span> <span class="o">/</span> <span class="n">total_freq</span> <span class="k">for</span> <span class="n">token</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">current_vocab</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training complete. Final vocabulary size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode text using Unigram tokenizer&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Tokenizer not trained yet!&quot;</span><span class="p">)</span>
+        
+        <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+            <span class="n">word_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viterbi_segment</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_probs</span><span class="p">)</span>
+            <span class="n">tokens</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">word_tokens</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">tokens</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="inference">
+<h1>Inference<a class="headerlink" href="#inference" title="Link to this heading">#</a></h1>
+<section id="kv-cache">
+<h2>KV Cache<a class="headerlink" href="#kv-cache" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">KVCache</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Key-Value cache for transformer attention layers.&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_seq_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_heads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">head_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_seq_len</span> <span class="o">=</span> <span class="n">max_seq_len</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_heads</span> <span class="o">=</span> <span class="n">n_heads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span> <span class="o">=</span> <span class="n">head_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span> <span class="o">=</span> <span class="n">n_layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the cache.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq_len</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get cached K,V for a layer.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">layer_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">layer_idx</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update cache with new K,V tensors.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">layer_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="c1"># Initialize cache for this layer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">layer_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Concatenate with existing cache</span>
+            <span class="n">cached_k</span><span class="p">,</span> <span class="n">cached_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">layer_idx</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">layer_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">cached_k</span><span class="p">,</span> <span class="n">k</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">),</span>  <span class="c1"># Concat along sequence dimension</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">cached_v</span><span class="p">,</span> <span class="n">v</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+            <span class="p">)</span>
+        
+        <span class="c1"># Update sequence length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">layer_idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">MultiHeadAttentionWithKVCache</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multi-head attention with KV caching support.&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_heads</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_heads</span> <span class="o">=</span> <span class="n">n_heads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span> <span class="o">=</span> <span class="n">d_model</span> <span class="o">//</span> <span class="n">n_heads</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_k</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_v</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_o</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">kv_cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KVCache</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                <span class="n">layer_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">d_model</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        
+        <span class="c1"># Compute Q, K, V</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_q</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_heads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_k</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_heads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_v</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_heads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span>
+        
+        <span class="c1"># Handle KV caching</span>
+        <span class="k">if</span> <span class="n">kv_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cached_k</span><span class="p">,</span> <span class="n">cached_v</span> <span class="o">=</span> <span class="n">kv_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">layer_idx</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cached_k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Use cached K,V and only compute for new tokens</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">cached_k</span><span class="p">,</span> <span class="n">k</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">cached_v</span><span class="p">,</span> <span class="n">v</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            
+            <span class="c1"># Update cache</span>
+            <span class="n">kv_cache</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">layer_idx</span><span class="p">,</span> <span class="n">k</span><span class="p">[:,</span> <span class="o">-</span><span class="n">seq_len</span><span class="p">:],</span> <span class="n">v</span><span class="p">[:,</span> <span class="o">-</span><span class="n">seq_len</span><span class="p">:])</span>
+        
+        <span class="c1"># Transpose for attention computation</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># [batch, n_heads, seq_len, head_dim]</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        
+        <span class="c1"># Scaled dot-product attention</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span>
+        
+        <span class="c1"># Causal mask (only look at previous tokens)</span>
+        <span class="k">if</span> <span class="n">scores</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">scores</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+            <span class="n">scores</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">))</span>
+        
+        <span class="n">attn_weights</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">attn_weights</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        
+        <span class="c1"># Reshape and project</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_o</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1307,6 +2079,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k">Top K</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-p">Top P</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">Beam Search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#penalty">Penalty</a></li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization">Optimization</a><ul class="visible nav section-nav flex-column">
@@ -1318,6 +2091,21 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adadelta">Adadelta</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adam">Adam</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adamw">AdamW</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#parallelism">Parallelism</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fsdp">FSDP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zero">ZeRO</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenization">Tokenization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bpe">BPE</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wordpiece">WordPiece</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unigram">Unigram</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#inference">Inference</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kv-cache">KV Cache</a></li>
 </ul>
 </li>
 </ul>
