@@ -830,6 +830,30 @@ class AdamW(BaseOptimizer):
 ```
 
 # Parallelism
+## Data Sharding
+```python
+def shard_dataset(dataset, rank, world_size):
+    total_length = len(dataset)
+    
+    # Calculate samples per rank (with remainder handling)
+    samples_per_rank = total_length // world_size
+    remainder = total_length % world_size
+    
+    # Calculate start and end indices for this rank
+    # Distribute remainder samples to first 'remainder' ranks
+    if rank < remainder:
+        start_idx = rank * (samples_per_rank + 1)
+        end_idx = start_idx + samples_per_rank + 1
+    else:
+        start_idx = rank * samples_per_rank + remainder
+        end_idx = start_idx + samples_per_rank
+    
+    # Return the shard for this rank
+    return dataset[start_idx:end_idx]
+```
+
+
+## DDP
 ```python
 import torch.distributed as dist
 
@@ -1037,6 +1061,452 @@ class SimpleZeRO:
                 if self.stage == 3:
                     dist.broadcast(param.data, src=self.rank)
 ```
+
+# Train
+## Gradient Accumulation
+```python
+def train_with_gradient_accumulation(model, X, y, small_batch_size=16, accumulation_steps=4, lr=0.01, epochs=5):
+    effective_batch_size = small_batch_size * accumulation_steps
+    print(f"=== Training with GRADIENT ACCUMULATION ===")
+    print(f"Small batch size: {small_batch_size}, Accumulation steps: {accumulation_steps}")
+    print(f"Effective batch size: {effective_batch_size}")
+    
+    optimizer = optim.SGD(model.parameters(), lr=lr)
+    criterion = nn.CrossEntropyLoss()
+    
+    num_batches = len(X) // effective_batch_size
+    
+    for epoch in range(epochs):
+        total_loss = 0
+        
+        for i in range(num_batches):
+            # Clear gradients at the start of each effective batch
+            optimizer.zero_grad()
+            
+            accumulated_loss = 0
+            
+            # Process multiple small batches and accumulate gradients
+            for step in range(accumulation_steps):
+                # Calculate indices for current small batch
+                start_idx = i * effective_batch_size + step * small_batch_size
+                end_idx = start_idx + small_batch_size
+                
+                batch_X = X[start_idx:end_idx]
+                batch_y = y[start_idx:end_idx]
+                
+                # Forward pass
+                outputs = model(batch_X)
+                loss = criterion(outputs, batch_y)
+                
+                # Scale loss by accumulation steps (important!)
+                loss = loss / accumulation_steps
+                
+                # Backward pass (gradients accumulate automatically)
+                loss.backward()
+                
+                accumulated_loss += loss.item()
+            
+            # Update parameters after accumulating gradients
+            optimizer.step()
+            
+            total_loss += accumulated_loss
+        
+        avg_loss = total_loss / num_batches
+        print(f"Epoch {epoch+1}, Average Loss: {avg_loss:.4f}")
+```
+
+# Inference
+## Perplexity
+```python
+def compute_perplexity(logits, labels):
+    """
+    Compute perplexity from logits and labels.
+    
+    Args:
+        logits: Raw model outputs (batch_size, num_classes) or (batch_size, seq_len, num_classes)
+        labels: True labels (batch_size,) or (batch_size, seq_len)
+    
+    Returns:
+        perplexity: Float value representing the perplexity
+    """
+    # Step 1: Flatten if we have sequence data
+    if logits.dim() > 2:
+        logits = logits.view(-1, logits.size(-1))  # (batch_size * seq_len, num_classes)
+        labels = labels.view(-1)  # (batch_size * seq_len,)
+    
+    # Step 2: Convert logits to probabilities using softmax
+    probabilities = F.softmax(logits, dim=-1)
+    
+    # Step 3: Compute cross-entropy loss manually
+    # Get the probability of the correct class for each example
+    correct_class_probs = probabilities[range(len(labels)), labels]
+    
+    # Compute negative log likelihood (cross-entropy)
+    # Add small epsilon to avoid log(0)
+    epsilon = 1e-8
+    cross_entropy = -torch.log(correct_class_probs + epsilon).mean()
+    
+    # Step 4: Convert cross-entropy to perplexity
+    perplexity = torch.exp(cross_entropy)
+    
+    # Alternatively, PyTorch's cross_entropy applies softmax internally
+    # cross_entropy = F.cross_entropy(logits, labels)
+    # perplexity = torch.exp(cross_entropy)
+
+    return perplexity.item()
+```
+
+## KV Cache
+```python
+class KVCache:
+    """Key-Value cache for transformer attention layers."""
+    
+    def __init__(self, max_seq_len: int, n_heads: int, head_dim: int, n_layers: int):
+        self.max_seq_len = max_seq_len
+        self.n_heads = n_heads
+        self.head_dim = head_dim
+        self.n_layers = n_layers
+        self.reset()
+    
+    def reset(self):
+        """Reset the cache."""
+        self.cache = {}
+        self.seq_len = 0
+    
+    def get(self, layer_idx: int) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
+        """Get cached K,V for a layer."""
+        if layer_idx not in self.cache:
+            return None, None
+        return self.cache[layer_idx]
+    
+    def update(self, layer_idx: int, k: torch.Tensor, v: torch.Tensor):
+        """Update cache with new K,V tensors."""
+        if layer_idx not in self.cache:
+            # Initialize cache for this layer
+            self.cache[layer_idx] = (k, v)
+        else:
+            # Concatenate with existing cache
+            cached_k, cached_v = self.cache[layer_idx]
+            self.cache[layer_idx] = (
+                torch.cat([cached_k, k], dim=-2),  # Concat along sequence dimension
+                torch.cat([cached_v, v], dim=-2)
+            )
+        
+        # Update sequence length
+        self.seq_len = self.cache[layer_idx][0].shape[-2]
+
+
+class MultiHeadAttentionWithKVCache(nn.Module):
+    """Multi-head attention with KV caching support."""
+    
+    def __init__(self, d_model: int, n_heads: int):
+        super().__init__()
+        self.d_model = d_model
+        self.n_heads = n_heads
+        self.head_dim = d_model // n_heads
+        
+        self.w_q = nn.Linear(d_model, d_model, bias=False)
+        self.w_k = nn.Linear(d_model, d_model, bias=False)
+        self.w_v = nn.Linear(d_model, d_model, bias=False)
+        self.w_o = nn.Linear(d_model, d_model, bias=False)
+    
+    def forward(self, x: torch.Tensor, kv_cache: Optional[KVCache] = None, 
+                layer_idx: int = 0) -> torch.Tensor:
+        batch_size, seq_len, d_model = x.shape
+        
+        # Compute Q, K, V
+        q = self.w_q(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
+        k = self.w_k(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
+        v = self.w_v(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
+        
+        # Handle KV caching
+        if kv_cache is not None:
+            cached_k, cached_v = kv_cache.get(layer_idx)
+            if cached_k is not None:
+                # Use cached K,V and only compute for new tokens
+                k = torch.cat([cached_k, k], dim=1)
+                v = torch.cat([cached_v, v], dim=1)
+            
+            # Update cache
+            kv_cache.update(layer_idx, k[:, -seq_len:], v[:, -seq_len:])
+        
+        # Transpose for attention computation
+        q = q.transpose(1, 2)  # [batch, n_heads, seq_len, head_dim]
+        k = k.transpose(1, 2)
+        v = v.transpose(1, 2)
+        
+        # Scaled dot-product attention
+        scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.head_dim)
+        
+        # Causal mask (only look at previous tokens)
+        if scores.size(-1) > 1:
+            mask = torch.triu(torch.ones(scores.size(-2), scores.size(-1)), diagonal=1).bool()
+            scores.masked_fill_(mask, float('-inf'))
+        
+        attn_weights = F.softmax(scores, dim=-1)
+        output = torch.matmul(attn_weights, v)
+        
+        # Reshape and project
+        output = output.transpose(1, 2).contiguous().view(batch_size, seq_len, d_model)
+        return self.w_o(output)
+```
+
+## Rate Limiter
+```python
+class TokenBucketRateLimiter:
+    """
+    Simple token bucket rate limiter.
+    
+    Concepts:
+    - Each user gets a "bucket" with a maximum capacity of tokens
+    - Tokens are refilled at a constant rate
+    - Each request consumes one token
+    - If no tokens available, request is denied
+    """
+    
+    def __init__(self, max_tokens: int, refill_rate: float):
+        """
+        Args:
+            max_tokens: Maximum tokens in the bucket (burst capacity)
+            refill_rate: Tokens added per second
+        """
+        self.max_tokens = max_tokens
+        self.refill_rate = refill_rate
+        self.buckets: Dict[str, Dict] = {}
+        self.lock = threading.Lock()
+    
+    def _get_bucket(self, user_id: str) -> Dict:
+        """Get or create a bucket for a user"""
+        if user_id not in self.buckets:
+            self.buckets[user_id] = {
+                'tokens': self.max_tokens,
+                'last_refill': time.time()
+            }
+        return self.buckets[user_id]
+    
+    def _refill_bucket(self, bucket: Dict) -> None:
+        """Refill tokens based on elapsed time"""
+        now = time.time()
+        elapsed = now - bucket['last_refill']
+        
+        # Calculate tokens to add
+        tokens_to_add = elapsed * self.refill_rate
+        bucket['tokens'] = min(self.max_tokens, bucket['tokens'] + tokens_to_add)
+        bucket['last_refill'] = now
+    
+    def allow_request(self, user_id: str) -> bool:
+        """
+        Check if a request should be allowed.
+        
+        Returns:
+            True if request is allowed, False if rate limited
+        """
+        with self.lock:
+            bucket = self._get_bucket(user_id)
+            self._refill_bucket(bucket)
+            
+            if bucket['tokens'] >= 1:
+                bucket['tokens'] -= 1
+                return True
+            else:
+                return False
+    
+    def get_bucket_status(self, user_id: str) -> Dict:
+        """Get current bucket status for monitoring"""
+        with self.lock:
+            bucket = self._get_bucket(user_id)
+            self._refill_bucket(bucket)
+            return {
+                'tokens': bucket['tokens'],
+                'max_tokens': self.max_tokens,
+                'refill_rate': self.refill_rate
+            }
+```
+
+## Thread-safe LRU Cache
+```python
+class ThreadSafeLRUCache:
+    """
+    Thread-safe LRU (Least Recently Used) cache.
+    
+    This cache is designed to store computational results, model outputs, embeddings,
+    or any other data that benefits from caching in ML/LLM workflows.
+    """
+    def __init__(self, max_size: int = 1000):
+        """
+        Initialize the LRU cache.
+        
+        Args:
+            max_size: Maximum number of items to store in cache
+        """
+        if max_size <= 0:
+            raise ValueError("max_size must be positive")
+            
+        self.max_size = max_size
+        self._cache: OrderedDict = OrderedDict()
+        self._lock = threading.RLock()  # Reentrant lock for nested calls
+        self._hits = 0
+        self._misses = 0
+        self._created_at = time.time()
+    
+    def get(self, key: str) -> Any:
+        """
+        Retrieve an item from the cache.
+        
+        Args:
+            key: The cache key
+            
+        Returns:
+            The cached value, or None if not found
+        """
+        with self._lock:
+            if key in self._cache:
+                # Move to end (most recently used)
+                value = self._cache.pop(key)
+                self._cache[key] = value
+                self._hits += 1
+                return value
+            else:
+                self._misses += 1
+                return None
+    
+    def put(self, key: str, value: Any) -> None:
+        """
+        Store an item in the cache.
+        
+        Args:
+            key: The cache key
+            value: The value to cache
+        """
+        with self._lock:
+            if key in self._cache:
+                # Update existing key, move to end
+                self._cache.pop(key)
+            elif len(self._cache) >= self.max_size:
+                # Remove least recently used item (first item)
+                self._cache.popitem(last=False)
+            
+            # Add new item (most recently used)
+            self._cache[key] = value
+    
+    def has_key(self, key: str) -> bool:
+        """Check if a key exists in the cache without affecting LRU order."""
+        with self._lock:
+            return key in self._cache
+    
+    def remove(self, key: str) -> bool:
+        """
+        Remove a specific key from the cache.
+        
+        Returns:
+            True if key was removed, False if key didn't exist
+        """
+        with self._lock:
+            if key in self._cache:
+                del self._cache[key]
+                return True
+            return False
+    
+    def clear(self) -> None:
+        """Clear all items from the cache."""
+        with self._lock:
+            self._cache.clear()
+            self._hits = 0
+            self._misses = 0
+    
+    def size(self) -> int:
+        """Get the current number of items in cache."""
+        with self._lock:
+            return len(self._cache)
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """Get cache statistics."""
+        with self._lock:
+            total_requests = self._hits + self._misses
+            hit_rate = (self._hits / total_requests * 100) if total_requests > 0 else 0
+            
+            return {
+                'size': len(self._cache),
+                'max_size': self.max_size,
+                'hits': self._hits,
+                'misses': self._misses,
+                'hit_rate_percent': round(hit_rate, 2),
+                'uptime_seconds': round(time.time() - self._created_at, 2)
+            }
+    
+    def get_keys(self) -> list:
+        """Get all cache keys in LRU order (least recent first)."""
+        with self._lock:
+            return list(self._cache.keys())
+```
+
+## Retry with Exponential Backoff
+```python
+class RetryError(Exception):
+    """Raised when all retry attempts have been exhausted."""
+    pass
+
+def retry_with_backoff(
+    max_retries: int = 3,
+    base_delay: float = 1.0,
+    max_delay: float = 60.0,
+    jitter: bool = True,
+    backoff_factor: float = 2.0,
+    exceptions: Tuple = (Exception,)
+) -> Callable:
+    """
+    Decorator that implements retry with exponential backoff and jitter.
+    
+    Args:
+        max_retries: Maximum number of retry attempts
+        base_delay: Initial delay between retries (seconds)
+        max_delay: Maximum delay between retries (seconds)
+        jitter: Whether to add random jitter to delay
+        backoff_factor: Multiplier for exponential backoff
+        exceptions: Tuple of exceptions to catch and retry on
+    
+    Returns:
+        Decorated function with retry logic
+    """
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs) -> Any:
+            last_exception = None
+            
+            for attempt in range(max_retries + 1):  # +1 for initial attempt
+                try:
+                    # Try the function
+                    result = func(*args, **kwargs)
+                    if attempt > 0:
+                        print(f"✅ Success after {attempt} retries")
+                    return result
+                    
+                except exceptions as e:
+                    last_exception = e
+                    
+                    # If this was the last attempt, raise the exception
+                    if attempt == max_retries:
+                        print(f"❌ Failed after {max_retries} retries")
+                        raise RetryError(f"Max retries ({max_retries}) exceeded") from e
+                    
+                    # Calculate delay with exponential backoff
+                    delay = min(base_delay * (backoff_factor ** attempt), max_delay)
+                    
+                    # Add jitter to prevent thundering herd
+                    if jitter:
+                        delay = delay * (0.5 + random.random() * 0.5)  # 50-100% of calculated delay
+                    
+                    print(f"🔄 Attempt {attempt + 1} failed: {e}")
+                    print(f"⏳ Retrying in {delay:.2f} seconds...")
+                    time.sleep(delay)
+            
+            # This should never be reached, but just in case
+            raise last_exception
+        
+        return wrapper
+    return decorator
+```
+
 
 # Tokenization
 
@@ -1420,100 +1890,4 @@ class UnigramTokenizer:
             tokens.extend(word_tokens)
         
         return tokens
-```
-
-# Inference
-## KV Cache
-```python
-class KVCache:
-    """Key-Value cache for transformer attention layers."""
-    
-    def __init__(self, max_seq_len: int, n_heads: int, head_dim: int, n_layers: int):
-        self.max_seq_len = max_seq_len
-        self.n_heads = n_heads
-        self.head_dim = head_dim
-        self.n_layers = n_layers
-        self.reset()
-    
-    def reset(self):
-        """Reset the cache."""
-        self.cache = {}
-        self.seq_len = 0
-    
-    def get(self, layer_idx: int) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
-        """Get cached K,V for a layer."""
-        if layer_idx not in self.cache:
-            return None, None
-        return self.cache[layer_idx]
-    
-    def update(self, layer_idx: int, k: torch.Tensor, v: torch.Tensor):
-        """Update cache with new K,V tensors."""
-        if layer_idx not in self.cache:
-            # Initialize cache for this layer
-            self.cache[layer_idx] = (k, v)
-        else:
-            # Concatenate with existing cache
-            cached_k, cached_v = self.cache[layer_idx]
-            self.cache[layer_idx] = (
-                torch.cat([cached_k, k], dim=-2),  # Concat along sequence dimension
-                torch.cat([cached_v, v], dim=-2)
-            )
-        
-        # Update sequence length
-        self.seq_len = self.cache[layer_idx][0].shape[-2]
-
-
-class MultiHeadAttentionWithKVCache(nn.Module):
-    """Multi-head attention with KV caching support."""
-    
-    def __init__(self, d_model: int, n_heads: int):
-        super().__init__()
-        self.d_model = d_model
-        self.n_heads = n_heads
-        self.head_dim = d_model // n_heads
-        
-        self.w_q = nn.Linear(d_model, d_model, bias=False)
-        self.w_k = nn.Linear(d_model, d_model, bias=False)
-        self.w_v = nn.Linear(d_model, d_model, bias=False)
-        self.w_o = nn.Linear(d_model, d_model, bias=False)
-    
-    def forward(self, x: torch.Tensor, kv_cache: Optional[KVCache] = None, 
-                layer_idx: int = 0) -> torch.Tensor:
-        batch_size, seq_len, d_model = x.shape
-        
-        # Compute Q, K, V
-        q = self.w_q(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
-        k = self.w_k(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
-        v = self.w_v(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
-        
-        # Handle KV caching
-        if kv_cache is not None:
-            cached_k, cached_v = kv_cache.get(layer_idx)
-            if cached_k is not None:
-                # Use cached K,V and only compute for new tokens
-                k = torch.cat([cached_k, k], dim=1)
-                v = torch.cat([cached_v, v], dim=1)
-            
-            # Update cache
-            kv_cache.update(layer_idx, k[:, -seq_len:], v[:, -seq_len:])
-        
-        # Transpose for attention computation
-        q = q.transpose(1, 2)  # [batch, n_heads, seq_len, head_dim]
-        k = k.transpose(1, 2)
-        v = v.transpose(1, 2)
-        
-        # Scaled dot-product attention
-        scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.head_dim)
-        
-        # Causal mask (only look at previous tokens)
-        if scores.size(-1) > 1:
-            mask = torch.triu(torch.ones(scores.size(-2), scores.size(-1)), diagonal=1).bool()
-            scores.masked_fill_(mask, float('-inf'))
-        
-        attn_weights = F.softmax(scores, dim=-1)
-        output = torch.matmul(attn_weights, v)
-        
-        # Reshape and project
-        output = output.transpose(1, 2).contiguous().view(batch_size, seq_len, d_model)
-        return self.w_o(output)
 ```
