@@ -1,0 +1,52 @@
+version: 1
+project:
+  title: LazyNotes
+  authors:
+    - name: Renyi Qu
+  github: executablebooks/jupyter-book
+  bibliography:
+    - references.bib
+  exports:
+    - format: pdf
+      template: plain_latex_book
+      output: exports/book.pdf
+  toc:
+    - file: intro.md
+    - title: Deep Learning
+      children:
+        - file: dl/module.md
+        - file: dl/optim.md
+        - file: dl/loss.md
+        - file: dl/quant.md
+    - title: NLP
+      children:
+        - file: nlp/transformer/transformer.md
+          children:
+            - file: nlp/transformer/tokenizer.md
+            - file: nlp/transformer/pe.md
+        - file: nlp/models.md
+        - file: nlp/training/training
+          children:
+            - file: nlp/training/peft.md
+            - file: nlp/training/rlhf.md
+            - file: nlp/training/misc.md
+            - file: nlp/training/parallel.md
+        - file: nlp/inference/inference.md
+          children:
+            - file: nlp/inference/decoding.md
+            - file: nlp/inference/misc.md
+        - file: nlp/eval.md
+    - title: Math
+      children:
+        - file: math/info.md
+    - title: Misc
+      children:
+        - file: references.md
+        - file: about.md
+        - file: dsa.md
+        - file: recap.md
+site:
+  options:
+    logo: logo.png
+    folders: true
+  template: book-theme
