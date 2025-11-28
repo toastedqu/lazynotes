@@ -46,8 +46,8 @@ This page contains my study notes for [Sergey Levine's CS 285](https://rail.eecs
     - **Markov Chain**: A stochastic process where the probability of transitioning to the next state depends ONLY on the curr state.
 - **Why**: Minimal structure of states, actions, transitions, and rewards.
 
-<!-- ```{admonition} Math
-:class: note, dropdown -->
+<!-- ```{note} Math
+:class: dropdown -->
 MDP:
 
 $$
@@ -82,8 +82,8 @@ $$\begin{align*}
 - **What**: MDP but the state is not directly observable but provides partial info.
 - **Why**: Uncertainty IRL.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 MDP:
 
 $$

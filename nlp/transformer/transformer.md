@@ -38,8 +38,8 @@ kernelspec:
 - **What**: Sequence $\rightarrow$ Tokens
 - **Why**: Machines can only read numbers.
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Why subword-level vocab? Why not whole words? Why not characters?*
 - Word-level vocab explode with out-of-vocab words.
 - Char-level vocab misses morphology.
@@ -56,8 +56,8 @@ kernelspec:
 	- Vocab size $\xrightarrow{\text{reduced to}}$ hidden size
 - **How**: [Linear](../dl/module.md#linear).
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
 	- $T=(t_1,\cdots,t_m)$: Input token sequence (after tokenization).
@@ -88,8 +88,8 @@ $$
     - No PE $\rightarrow$ Self-attention scores remain unchanged regardless of token orders
 - **How**: Add positional vectors onto semantic vectors.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
     - $X\in\mathbb{R}^{m\times d_{\text{model}}}$: Input/Output semantic vectors.
@@ -123,8 +123,8 @@ $$
 		2. Scale & Softmax the scores $\rightarrow$ Attention weights
 		3. Weighted sum of all tokens' values $\rightarrow$ $t$'s contextual representation
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Input:
 	- $X\in\mathbb{R}^{m\times d_{\text{model}}}$: Input sequence
@@ -150,8 +150,8 @@ $$
 $$
 ```
 
-```{admonition} Derivation (Backprop)
-:class: important, dropdown
+```{tip} Derivation (Backprop)
+:class: dropdown
 Notations:
 - $S=\frac{QK^T}{\sqrt{d_K}}$
 - $A=\text{softmax}(S)$
@@ -210,8 +210,8 @@ $$
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Cons?*
 - ⬆️ Computational cost $\leftarrow$ $O(n^2)$ (?)
 - Fixed sequence length.
@@ -234,8 +234,8 @@ $$
 - **How**: For each token, mask attention scores of all future tokens to $-\infty$ before softmax.
 	- $\text{softmax}(-\infty)$=0
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Causal Attention:
 
 $$
@@ -245,8 +245,8 @@ $$
 	- $M_{ij}=0\text{ if }i\geq j$ else $-\infty$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Conditions?*
 - Only applicable in decoder.
 	- Encoder's goal: Convert sequence into a meaningful representation.
@@ -278,8 +278,8 @@ $$
     2. Concatenate all outputs.
     3. Linear transform to match embedding dim.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
 	- $W_O\in\mathbb{R}^{(h\cdot d_v)\times d_{\text{model}}}$: Weight matrix to transform concatenated head outputs.
@@ -295,8 +295,8 @@ $$
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Cons?*
 - ⬆️ Computational cost
 - ⬇️ Interpretability
@@ -321,8 +321,8 @@ $$
         1. **Residual Connection**: Preserve the original signal & Ensure training stability for deep stacks.
         2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#internal-covariate-shift).
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
     - $\mathbf{x}\in\mathbb{R^{d_{\text{model}}}}$: Input token vector.

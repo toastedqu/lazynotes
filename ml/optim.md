@@ -39,8 +39,8 @@ This page does NOT cover [Gradient Descent & family](../dl/optim.md).
 	- **Expectation**: Given curr params, estimate latent vars.
 	- **Maximization**: Given curr data, optimize params to maximize data prob.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notation:
 - IO:
 	- $X={\mathbf{x}_1,\cdots,\mathbf{x}_m}$: Observed data.
@@ -91,8 +91,8 @@ $$
 	7. **Iteration**: Repeat Step 3-5.
 	8. **Termination**: Stop when reaching #iterations / convergence.
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - ✅Parallelism.
 - ✅Flexible $\leftarrow$ Tolerate arbitrary hyperparam types
@@ -106,8 +106,8 @@ $$
 - ✅Hyperparameter Tuning.
 ```
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Example: Basic Evolution Strategy (ES)
 
 Notation:

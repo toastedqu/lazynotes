@@ -26,8 +26,8 @@ This page collects miscellaneous techniques in LLM inference.
     5. $\xrightarrow{\text{cache}}$ Avoid recomputation.
 - **How**: Cache.
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pro Tip:* The query vectors for previous tokens are NEVER needed during inference.
 
 *If it's so good, any cons?*

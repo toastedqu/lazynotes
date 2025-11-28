@@ -15,8 +15,8 @@ kernelspec:
 	- In generation tasks, the transformer model only estimates the probabilities of outputting each token via logits.
 	- We need to select which token to output at each step, and we need to find the most probable output sequence given the input sequence.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
 	- $X$: Input sequence.
@@ -98,8 +98,8 @@ Notations:
 - **What**: Always take the most probable token at each step.
 - **Why**: Simplest.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Greedy Search:
 
 $$
@@ -122,8 +122,8 @@ $$
 		- All $k$ beams have generated the EOS token.
 	4. Output the beam with the highest score.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Beam Search:
 1. At $t=1$, select top $k$ most probable tokens via $P(y_1|X)$. Each forms an initial beam $Y_{1,i}=[y_{1,i}]$.
 2. $\forall t>1$:
@@ -135,8 +135,8 @@ Beam Search:
 4. Output.
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Cons?*
 - Beam Search naturally favors shorter sequences $\leftarrow$ Adding more log probabilities reduces the score.
 

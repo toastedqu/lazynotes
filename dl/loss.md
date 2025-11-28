@@ -10,30 +10,32 @@ kernelspec:
   name: python3
 ---
 # Loss
-- **What**: The discrepancy between predicted and actual values as the optimization (i.e., minimization) objective.
-- **Why**: **ML = Function Approximation**.
-	- There is an underlying function which maps features to targets, but we don't know what it is.
-	- $\rightarrow$ Function Approximation
-	- $\rightarrow$ Many ways of doing it...
-		1. **Discrepancy Minimization**
-			- BUT how do we measure discrepancy w/o knowing the underlying function?
-			- $\rightarrow$ Get samples
-			- $\rightarrow$ Predict on samples
-			- $\rightarrow$ Measure discrepancy over the samples
-			- $\rightarrow$ LOSS!
-		2. **Distribution Estimation**
-			- BUT how do we directly estimate the underlying data distribution with no knowledge of it?
-			- $\rightarrow$ Get samples
-			- Distribution Estimation $\xrightarrow{become}$ Likelihood Estimation
-			- $\rightarrow$ Tune our function to maximize the likelihood of observing these samples (i.e., **MLE**)
-	- MLE & Loss Minimization are essentially doing the same thing but differently.
-- **How**:
-	1. For each sample, measure discrepancy between predicted and actual target value.
-	2. Aggregate the discrepancies over all samples (i.e., **reduction**).
-	- This page only uses **sum reduction**, for interpretability.
 
-```{admonition} Q&A
-:class: tip, dropdown
+A loss function is the discrepancy between predicted and actual values, as the optimization (minimization) objective.
+
+Why? **ML = Function Approximation**.
+- There is an underlying function which maps features to targets, but we don't know what it is.
+- $\rightarrow$ Function Approximation
+- $\rightarrow$ Many ways of doing it...
+	1. **Discrepancy Minimization**
+		- BUT how do we measure discrepancy w/o knowing the underlying function?
+		- $\rightarrow$ Get samples
+		- $\rightarrow$ Predict on samples
+		- $\rightarrow$ Measure discrepancy over the samples
+		- $\rightarrow$ LOSS!
+	2. **Distribution Estimation**
+		- BUT how do we directly estimate the underlying data distribution with no knowledge of it?
+		- $\rightarrow$ Get samples
+		- Distribution Estimation $\xrightarrow{become}$ Likelihood Estimation
+		- $\rightarrow$ Tune our function to maximize the likelihood of observing these samples (i.e., **MLE**)
+- MLE & Loss Minimization are essentially doing the same thing but differently.
+
+How?
+1. For each sample, measure discrepancy between predicted and actual target value.
+2. Aggregate the discrepancies over all samples (i.e., **reduction**).
+
+```{attention} Q&A
+:class: dropdown
 *Reduction: Sum vs Mean*
 - Sum:
 	- Direct objective
@@ -47,7 +49,7 @@ kernelspec:
 	- Insensitive to outliers $\rightarrow$ Reduces the impact of important but rare samples
 ```
 
-<br/>
+&nbsp;
 
 ## Regression
 ### MSE
@@ -55,12 +57,12 @@ kernelspec:
 - **Why**: Assumption: **Gaussian Distribution**.
 - **How**: Get errors $\rightarrow$ Square errors $\rightarrow$ Aggregate
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Forward:
 
 $$
-\mathcal{L}=\sum_{i=1}^{m}(y_i-\hat{y}_i)^2
+\mathcal{L}=\frac{1}{m}\sum_{i=1}^{m}(y_i-\hat{y}_i)^2
 $$
 
 Backward:
@@ -70,8 +72,8 @@ $$
 $$
 ```
 
-```{admonition} Derivation
-:class: important, dropdown
+```{tip} Derivation
+:class: dropdown
 1. Relationship between true & predicted values:
 
 	$$y_i=\hat{y}_i+\varepsilon_i$$
@@ -98,8 +100,8 @@ $$
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - Penalizes higher/lower errors more/less.
 - Smooth $\rightarrow$ Differentiable
@@ -110,17 +112,19 @@ $$
 - Scale variant.
 ```
 
+&nbsp;
+
 ### MAE
 - **What**: Mean Absolute Error.
 - **Why**: Assumption: **Laplace Distribution**.
 - **How**: Get errors $\rightarrow$ Absolute values $\rightarrow$ Aggregate
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Forward:
 
 $$
-\mathcal{L}=\sum_{i=1}^{m}|y_i-\hat{y}_i|
+\mathcal{L}=\frac{1}{m}\sum_{i=1}^{m}|y_i-\hat{y}_i|
 $$
 
 Backward:
@@ -130,8 +134,8 @@ $$
 $$
 ```
 
-```{admonition} Derivation
-:class: important, dropdown
+```{tip} Derivation
+:class: dropdown
 1. Relationship between true & predicted values:
 
 	$$y_i=\hat{y}_i+\varepsilon_i$$
@@ -158,8 +162,8 @@ $$
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - Robust to outliers $\leftarrow$ Equal gradient for all errors
 - More interpretable (average error magnitude).
@@ -171,12 +175,131 @@ $$
 - No closed-form solution.
 ```
 
+&nbsp;
+
+### RMSE
+- **What**: Root Mean Squared Error.
+- **Why**: MSE in original units.
+- **How**: Get errors $\rightarrow$ Square errors $\rightarrow$ Mean $\rightarrow$ Square root
+
+```{note} Math
+:class: dropdown
+Forward:
+
+$$
+\mathcal{L}=\sqrt{\frac{1}{m}\sum_{i=1}^{m}(y_i-\hat{y}_i)^2}
+$$
+
+Backward:
+
+$$
+\frac{\partial \mathcal{L}}{\partial \hat{y}_i}= \frac{1}{m\,\mathcal{L}}(\hat{y}_i-y_i)
+$$
+```
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Same ordering as MSE (monotonic transform) but in original units.
+- Penalizes higher/lower errors more/less (like MSE).
+- Interpretable as “typical” error magnitude in target units.
+
+*Cons?*
+- Still sensitive to outliers (inherits MSE behavior).
+- Gradient depends on loss value $\rightarrow$ Unstable as $\mathcal{L} \rightarrow 0$
+- Inconvenient than MSE.
+```
+
+&nbsp;
+
 ### Huber Loss
+- **What**: Piecewise loss: **MSE** for small errors, **MAE** for large errors.
+- **Why**: Balance sensitivity + robustness (quadratic near 0, linear for outliers).
+- **How**: Get errors $\rightarrow$ Apply piecewise function with threshold $\delta$ $\rightarrow$ Aggregate
 
+```{note} Math
+:class: dropdown
+Forward: 
+- Let $e_i = y_i-\hat{y}_i$. Then
 
-### Quantile Loss
+$$
+\mathcal{L}_\delta(e_i)=
+\begin{cases}
+\frac{1}{2}e_i^2, & |e_i|\le \delta \\
+\delta\left(|e_i|-\frac{1}{2}\delta\right), & |e_i|>\delta
+\end{cases}
+$$
 
-<br/>
+- Aggregate:
+
+$$
+\mathcal{L}=\frac{1}{m}\sum_{i=1}^{m}\mathcal{L}_\delta(y_i-\hat{y}_i)
+$$
+
+Backward:
+
+$$
+\frac{\partial \mathcal{L}}{\partial \hat{y}_i}
+=
+\begin{cases}
+\frac{1}{m}(\hat{y}_i-y_i), & |y_i-\hat{y}_i|\le \delta \\
+\frac{1}{m}\delta\ \text{sign}(\hat{y}_i-y_i), & |y_i-\hat{y}_i|>\delta
+\end{cases}
+$$
+````
+
+```{tip} Derivation
+:class: dropdown
+1. Define error:
+
+$$
+e_i=y_i-\hat{y}_i
+$$
+
+2. Want a loss that behaves like:
+	- MSE near 0: $\frac{1}{2}e_i^2$ (smooth, strong pull to correct small errors)
+	- MAE for large errors: linear growth to reduce outlier influence
+
+3. Build a piecewise function that is continuous and differentiable at $|e_i|=\delta$:
+	- For $|e_i|\le \delta$ use $\frac{1}{2}e_i^2$.
+	- For $|e_i|>\delta$ use a line with slope $\delta$ matching value at $\delta$:
+
+$$
+\delta\left(|e_i|-\frac{1}{2}\delta\right)
+$$
+
+4. Differentiate (chain rule with $e_i=y_i-\hat{y}_i$):
+
+$$
+\frac{\partial \mathcal{L}_\delta}{\partial \hat{y}_i}
+=
+\begin{cases}
+-e_i, & |e_i|\le\delta \\
+-\delta\,\text{sign}(e_i), & |e_i|>\delta
+\end{cases}
+\Rightarrow
+\frac{\partial \mathcal{L}}{\partial \hat{y}_i}=
+\begin{cases}
+\frac{1}{m}(\hat{y}_i-y_i), & |e_i|\le \delta \\
+\frac{1}{m}\delta\ \text{sign}(\hat{y}_i-y_i), & |e_i|>\delta
+\end{cases}
+$$
+```
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Robust to outliers (linear tail like MAE).
+- Smooth around zero (unlike MAE) $\rightarrow$ stable gradients.
+- Interpolates between MSE and MAE via $\delta$.
+
+*Cons?*
+- Need to tune $\delta$ (problem-dependent, scale-dependent).
+	- If $\delta$ too large $\rightarrow$ behaves like MSE (outlier sensitive).
+	- If $\delta$ too small $\rightarrow$ behaves like MAE (slower learning).
+```
+
+&nbsp;
 
 ## Classification
 ### Cross Entropy
@@ -184,8 +307,8 @@ $$
 - **Why**: Assumption: **Categorical Dsitribution** (i.e., the probability of an observation belonging to each class $k$).
 - **How**: Get cross entropy per sample $\rightarrow$ Aggregate
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Forward:
 
 $$
@@ -200,8 +323,8 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-```{admonition} Derivation
-:class: important, dropdown
+```{tip} Derivation
+:class: dropdown
 **Forward Formula**:
 1. Categorical Distribution:
 
@@ -267,8 +390,8 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *What is Entropy?*
 - Degree of uncertainty in a probability distribution.
 - ⬆️Entropy $\rightarrow$ More uncertain/balanced outcomes.
@@ -284,9 +407,7 @@ $$\begin{align*}
 - Scale variant.
 ```
 
-### Hinge
-
-<br/>
+&nbsp;
 
 ## Ranking
 ### Contrastive
@@ -296,8 +417,8 @@ $$\begin{align*}
 	1. Prepare positive & negative sample pairs.
 	2. For positive/negative pairs, **penalize** wide/narrow distances.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
 	- $X_1, X_2$: Embedding 1 & 2.
@@ -329,8 +450,8 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Cons*:
 - Difficult to find high-quality data.
 - Pairwise relations only.
@@ -344,22 +465,125 @@ $$\begin{align*}
 		$\rightarrow$ **Collapsing**
 ```
 
-
-### Triplet
-
-<br/>
+&nbsp;
 
 ## Generative Model
-### Adversarial
-
 ### KL Divergence
 - **What**: Relative entropy (i.e., Cross Entropy - Entropy).
-- **Why**: To force the learned distribution to resemble the target distribution.
-- **How**: 
+- **Why**: Learned distribution $\xrightarrow{\text{resemble}}$ Target distribution
+- **How**: Compute & Minimize divergence.
 
-```{admonition} Q&A
-:class: tip, dropdown
-*Why KL Divergence if we already have Cross Entropy?*:
+
+`````{note} Math
+:class: dropdown
+````{tab-set}
+```{tab} Distribution
+Notations:
+- Distributions:
+	- $P$: Target / true distribution.
+	- $Q$: Learned / model distribution.
+- Events:
+	- $x$: An outcome/event in the sample space.
+- Information measures:
+	- $H(P)=-\sum_x P(x)\log P(x)$: Entropy of $P$.
+	- $H(P,Q)=-\sum_x P(x)\log Q(x)$: Cross entropy of $P$ relative to $Q$.
+
+Forward (discrete):
+
+$$
+D_{\text{KL}}(P\|Q)=H(P,Q)-H(P)=\sum_x P(x)\log\frac{P(x)}{Q(x)}
+$$
+```
+
+```{tab} Dataset
+Notations:
+- IO:
+	- $y_{ik}$: Target probability for sample $i$ and class $k$ (often one-hot).
+	- $\hat{p}_{ik}=Q(k|x_i)$: Predicted probability for sample $i$ and class $k$.
+	- $z_{ik}$: Logit for sample $i$, class $k$ (before softmax).
+
+Forward:
+- Normal:
+
+$$
+\mathcal{L}=\frac{1}{m}\sum_{i=1}^{m}\sum_{k=1}^{K} y_{ik}\log\frac{y_{ik}}{\hat{p}_{ik}}
+$$
+
+- One-hot ($y_{ik}\in\{0,1\}$):
+
+$$
+\mathcal{L}=\frac{1}{m}\sum_{i=1}^{m}\left(-\sum_{k=1}^{K}y_{ik}\log \hat{p}_{ik}\right)
+$$
+
+Backward:
+- w.r.t. predicted probabilities:
+
+$$
+\frac{\partial \mathcal{L}}{\partial \hat{p}_{ik}}=-\frac{1}{m}\frac{y_{ik}}{\hat{p}_{ik}}
+$$
+
+- w.r.t softmax logits:
+
+$$
+\frac{\partial \mathcal{L}}{\partial z_{ik}}=\frac{1}{m}\left(\hat{p}_{ik}-y_{ik}\right)
+$$
+```
+````
+`````
+
+```{tip} Derivation
+:class: dropdown
+1. Start from definition (discrete case):
+
+$$
+D_{\text{KL}}(P\|Q)=\sum_x P(x)\log\frac{P(x)}{Q(x)}
+$$
+
+2. Split the log ratio:
+
+$$
+\sum_x P(x)\left(\log P(x)-\log Q(x)\right)
+= \sum_x P(x)\log P(x) - \sum_x P(x)\log Q(x)
+$$
+
+3. Recognize entropy and cross entropy:
+
+$$
+-\sum_x P(x)\log P(x)=H(P),\qquad
+-\sum_x P(x)\log Q(x)=H(P,Q)
+$$
+
+So
+
+$$
+D_{\text{KL}}(P\|Q)=H(P,Q)-H(P)
+$$
+
+4. Why minimizing KL often equals minimizing cross entropy:
+- If $P$ is fixed (the data-generating / target distribution), then $H(P)$ does not depend on $Q$.
+- Therefore,
+
+$$
+\arg\min_Q D_{\text{KL}}(P\|Q)=\arg\min_Q H(P,Q)
+$$
+
+5. 
+```
+
+```{attention} Q&A
+:class: dropdown
+*Why minimizing KL often equals minimizing cross entropy?*
+- If $P$ is fixed (the data-generating / target distribution), then $H(P)$ does not depend on $Q$.
+- Therefore,
+
+$$
+\arg\min_Q D_{\text{KL}}(P\|Q)=\arg\min_Q H(P,Q)
+$$
+
+- From a dataset's viewpoint, let $P$ be the empirical distribution over labels given inputs. Then minimizing KL pushes $Q(\cdot|x)$ to match $P(\cdot|x)$.
+- For one-hot labels, $H(P)$ becomes constant (often 0 per sample), so KL reduces to the standard cross-entropy objective.
+
+*Why KL Divergence if we already have Cross Entropy?*
 1. Information Theory:
 	- Entropy tells us the minimum possible average #bits needed to encode events drawn from $P$.
 	- Cross Entropy tells us the average #bits needed to encode events drawn from $P$, if we are using an encoding scheme optimized for $Q$.
@@ -368,7 +592,8 @@ $$\begin{align*}
 	- If we use a fixed model $Q$ to approximate 2 different true distributions $P_1$ and $P_2$, then KL Divergence may not necessarily follow the pattern of cross entropy.
 ```
 
-### Wasserstein
+<!-- ### Adversarial -->
+<!-- ### Wasserstein -->
 
 <!-- <br/> -->
 

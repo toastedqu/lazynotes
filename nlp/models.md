@@ -48,8 +48,8 @@ This page does NOT cover contemporary LLM for now.
             - Linear: Shape transform from hidden dim to two logits.
         5. Compute & Add Cross-Entropy losses from MLM & NSP. Backprop & Update.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
     - $t_i$: The true token at masked index $i$.
@@ -71,8 +71,8 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Why select 15% tokens for MLM? Why not more?*
 - We want to provide enough context for BERT to learn rich representations $\rightarrow$ Masking too many = Insufficient context
 - We also want to create a sufficiently challenging classification task $\rightarrow$ Masking too few = Insufficient learning signal
@@ -103,8 +103,8 @@ $$\begin{align*}
         - **Sequence length scheduling**: Alternate between short (128 tokens) & full-length (512 tokens) sequences in a single training run.
             - BERT sticks to 512 tokens.
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Why no NSP?*
 - Empirically, NSP provides negligible benefits.
 - So why waste computational resources on it?
@@ -145,8 +145,8 @@ $$\begin{align*}
         3. Next Token Prediction: Compute Cross-Entropy loss between predicted and true next tokens.
         4. Backprop & Update.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
     - $t_i$: The true token at position $i$.

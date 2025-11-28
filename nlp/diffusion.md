@@ -21,8 +21,8 @@ kernelspec:
     - Fine-grained control over iterative generation process.
 - **How**: 
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
     - $x_0$: The original, clean data at step $0$.

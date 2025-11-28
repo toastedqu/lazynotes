@@ -34,8 +34,8 @@ The common cons of all lexical metrics is **a lack of semantic understanding**. 
         - *Why?*
             - It's very easy to cheat precision with super short sentences $\leftarrow$ The occurrence ratio of correct words in short cand sentences is higher
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - $c$: Candidate length (i.e., #words in cand).
 - $r_i$: Reference length (i.e., #words in ref).
@@ -70,8 +70,8 @@ BLEU_N=BP\times \bar{p}_N
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Cons?*
 - Exact word matches $\rightarrow$ No word variations
 - Ignore word importance $\rightarrow$ Useless but frequent words can boost BLEU score

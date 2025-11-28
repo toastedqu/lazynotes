@@ -13,8 +13,8 @@ kernelspec:
 - **What**: Sequence $\rightarrow$ Tokens
 - **Why**: Machines can only read numbers.
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Why subword-level vocab? Why not whole words? Why not characters?*
 - Word-level vocab explode with out-of-vocab words.
 - Char-level vocab misses morphology.
@@ -40,8 +40,8 @@ kernelspec:
 	3. Merge the pair with the **highest likelihood gain** into one token.
 	4. Repeat Step 2-3 till reaching vocab size.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
 	- $w_i$: $i$th word (i.e., space-separated tokens) in training corpus.
@@ -85,10 +85,29 @@ $$
 
 ## Unigram
 - **What**: Reverse of BPE/WordPiece $\leftarrow$ Prune a large initial vocab instead of merging from chars
-- **Why**:
+- **Why**: Pruning + Likelihood can avoid early bad merge decisions & yield more natural segmentations.
 - **How**:
     1. Build a large candidate vocab from the full training corpus.
         - **Candidate**: Every single substring in the corpus no longer than a preset max length (e.g., 10-12 for Alphabets; 6 for CJK).
         - **Large**: 10x-30x final vocab size.
     2. Assign each candidate a probability.
-        1. Treat each token 
+        1. Treat each token $t$ as a symbol in a **unigram language model** with parameter $p(t)$, where $\sum_t p(t)=1$.
+        2. A string $x$ can be segmented in many ways; for a segmentation $s=(t_1,\dots,t_k)$, define:
+            - $P(s)=\prod_{i=1}^{k} p(t_i)$
+            - $P(x)=\sum_{s \in \text{Seg}(x)} P(s)$  (sum over all valid segmentations)
+        3. Use dynamic programming to compute:
+            - **Best segmentation** (Viterbi): $\arg\max_s P(s)$ for tokenizing at inference time.
+            - **Marginals / expected counts** (Forward–Backward) needed for training.
+    3. Fit token probabilities with EM (Maximum Likelihood).
+        1. **E-step**: compute expected counts of each token under $P(s \mid x)$ across the corpus (via Forward–Backward).
+        2. **M-step**: update $p(t)$ proportional to its expected count (with smoothing/prior in practice):
+            - $p(t) \leftarrow \dfrac{\mathbb{E}[\text{count}(t)]}{\sum_{t'} \mathbb{E}[\text{count}(t')]}$
+    4. Prune the vocabulary (the “reverse of merges” part).
+        1. Score tokens by how harmful it would be to remove them (utility/importance), often approximated by the **increase in negative log-likelihood** if the token is dropped.
+        2. Remove a fraction of the lowest-utility tokens (e.g., 10–20%) while keeping:
+            - required tokens (special tokens, sometimes all single characters/bytes)
+            - an unknown/fallback mechanism to guarantee coverage
+        3. Re-run EM on the reduced vocab.
+        4. Repeat prune + re-fit until reaching the target vocab size.
+    5. Tokenization at inference:
+        - Given final vocab + $p(t)$, find the **most likely** segmentation with Viterbi DP (typically maximizing $\sum_i \log p(t_i)$).

@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Optimization (Parameter)
+# Optimization
 This page ONLY covers Gradient Descent & family because it is most widely used for optimizing NNs.
 
 ## Gradient Descent
@@ -33,8 +33,8 @@ This page ONLY covers Gradient Descent & family because it is most widely used f
 	3. Use new params to calculate loss.
 	4. Repeat Steps 1-3 till training ends.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
 	- $(x_i,y_i)$: Sample.
@@ -76,8 +76,8 @@ $$
 		- Flat region: Prev grad & Curr grad same direction $\rightarrow$ Velocity builds up $\rightarrow$ Faster convergence
 		- Valley region: Prev grad & Curr grad diff direction $\rightarrow$ Velocity cancels out $\rightarrow$ Oscillations are dampened
 	
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
 	- $w_t$: Param at step $t$.
@@ -115,8 +115,8 @@ $$\begin{align*}
 	2. Compute grad from the preliminary position (i.e., preliminary jump).
 	3. Update param with this preliminary grad + accumulated momentum.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
 	- $w_t$: Param at step $t$.
@@ -160,8 +160,8 @@ $$
 	2. Scale learning rate by $\sqrt{\sum\text{grads}^2}$.
 		- Large/Small past grads $\rightarrow$ Small/Large learning rate
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
 	- $w_t$: Param at step $t$.
@@ -187,8 +187,8 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Why square?*
 - Positive + Penalizes larger grads more.
 
@@ -202,8 +202,8 @@ $$
 	- Learning rate decays too much $\leftarrow$ Grad sum grows till training ends.
 - **How**: ❌Grad sum, ✅EWMA of past squared grads $\rightarrow$ No infinite growth
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $w_t$: Param at step $t$.
@@ -229,8 +229,8 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{G_t+\epsilon}}\odot g_t
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Why name it RMS?*
 - Square: $g^2_t$.
 - Mean: EWMA.
@@ -252,8 +252,8 @@ $$
 	2.  ❌Global LR, ✅EWMA of past squared param updates ($\Delta W_{t}$) $\rightarrow$ No LR decay
     3.  ❌Fixed LR, ✅Adaptive ratio between RMS of prev param updates & RMS of curr accumulated squared grads ($\frac{\text{RMS}[\Delta w]_{\text{prev}}}{\text{RMS}[g]_{\text{curr}}}$)
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $w_t$: Param at step $t$.
@@ -293,8 +293,8 @@ w_{t+1} = w_t + \Delta w_t
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Why RMS ratio?*
 1. It's in the exact **same unit** as the value it applies to.
 2. $\frac{\text{RMS}[\Delta w]_{t-1}}{\text{RMS}[g]_t}$ has units "$\Delta$param/grad".
@@ -321,8 +321,8 @@ $$
 	3. Bias Correction: EWMAs are init to 0 $\rightarrow$ They are biased toward 0 early in training $\rightarrow$ Need to correct it
 	4. Update params.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $w_t$: Param at step $t$.
@@ -363,8 +363,8 @@ w_t \leftarrow w_{t-1} - \frac{\eta}{\sqrt{\hat{G}_t+\epsilon}} \hat{v}_t
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - ✅Best empirical performance & convergence speed.
 
@@ -382,8 +382,8 @@ $$
 	- Adam & L2 conflict by design.
 - **How**: Add an extra weight decay step after Adam.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $w_t$: Param at step $t$.
@@ -400,8 +400,8 @@ w_t \leftarrow w_{t-1} - \Delta w_t^{\text{Adam}} - \eta\lambda w_{t-1}
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Why not replace Adam?*
 - ONLY applicable when L2 regularization is used (or set $\lambda=0$ for other cases for AdamW).
 ```
@@ -448,8 +448,8 @@ $$
 		1. Within each step interval, LR stays the same.
 		2. When jumping to the next interval, LR drops.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $\eta_t$: LR at step $t$.
@@ -480,8 +480,8 @@ e.g., if $s=10$
 	1. Init: LR, Decay rate.
 	2. At each step, multiply curr LR with decay rate.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $\eta_t$: LR at step $t$.
@@ -506,8 +506,8 @@ $$
 	2. At each step, compute curr LR.
 	3. If decay process ends, LR stays at final LR.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $\eta_t$: LR at step $t$.
@@ -542,8 +542,8 @@ $$
 		- **triangle2**: Triangle BUT max LR is halved at the each of each cycle.
 		- **exp_range**: Triangle BUT max LR decays exponentially.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $\eta_t$: LR at step $t$.
@@ -575,8 +575,8 @@ $$\begin{align*}
 		2. $t\in(0,S)\rightarrow\eta_t$⬇️ via cosine curve
 		3. $t=S\rightarrow\eta_t=\eta_{\min}$
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $\eta_t$: LR at step $t$.
@@ -592,8 +592,8 @@ $$
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *But why cosine?*
 - First, cosine is NOT the only option that works.
 - Cosine is smooth, and its 1st derivative (i.e., sine) is also smooth, and its 2nd derivative (i.e., cosine) is also smooth... $\rightarrow$ Cosine is infinitely smooth.
@@ -617,8 +617,8 @@ $$
 	2. Cool-down: LR ⬇️ from max to min (e.g., Cosine).
 	3. Annihilation: LR ⬇️ below min.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $\eta_t$: LR at step $t$.
@@ -643,8 +643,8 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Why does the OG paper schedule momentum together with LR?*
 - Pure empirical findings:
 	- ⬆️LR $\rightarrow$ ⬇️momentum helps prevent divergence.
@@ -666,8 +666,8 @@ $$\begin{align*}
 		- If the metric never improves during patience, LR is reduced by a multiplicative factor ($\eta_\text{new}=\eta_\text{old}\cdot\lambda_\text{mul}$).
 		- Else, recount patience from improvement event.
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Seems promising. Why use other schedulers then?*
 - Proactive vs Reactive:
 	- ReduceLROnPlateau is **reactive**: It only works when a problem occurs.
@@ -692,8 +692,8 @@ $$\begin{align*}
 	1. Init: initial LR, target LR, #Epochs for warmup.
 	2. For each step, increase initial LR toward target LR by a fixed amount (i.e., linearly).
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $\eta_t$: LR at step $t$.
@@ -716,8 +716,8 @@ $$
 	1. Init: initial LR, target LR, #Epochs for warmup.
 	2. For each step, increase initial LR toward target LR at a fixed rate (i.e., exponentially).
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - Params:
     - $\eta_t$: LR at step $t$.

@@ -24,8 +24,8 @@ Linear models predicts outputs by combining input features with assigned paramet
         1. Measure the gap between predicted & actual outputs.
         2. Adjust the hyperplane to minimize the overall gap.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
     - $X=[\mathbf{x}_1,\cdots,\mathbf{x}_m]^T\in\mathbb{R}^{m\times n}$: Input matrix.
@@ -95,8 +95,8 @@ Training:
         $$
 ```
 
-```{admonition} Derivation
-:class: important, dropdown
+```{tip} Derivation
+:class: dropdown
 Exact Solution:
 1. Compute gradient & Set to 0:
 
@@ -112,8 +112,8 @@ Exact Solution:
     \end{align*}$$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - ✅Simple.
 - ✅Interpretable.
@@ -168,8 +168,8 @@ Exact Solution:
     - High sensitivity to outliers.
     - Limited to classification (discrete output).
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
     - $X=[\mathbf{x}_1,\cdots,\mathbf{x}_m]^T\in\mathbb{R}^{m\times n}$: Input matrix.
@@ -252,8 +252,8 @@ Training:
 
 ```
 
-```{admonition} Derivation
-:class: tip, dropdown
+```{tip} Derivation
+:class: dropdown
 
 ```
 

@@ -37,8 +37,8 @@ kernelspec:
 - **Why**: #params ⬇️ $\rightarrow$ Finetuning efficiency ⬆️.
 - **How**: Inject low-rank matrices into the weights of specific layers, w/o modifying the original weights directly.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
 	- $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
@@ -66,8 +66,8 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 \end{align}$$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros*:
 - No overfitting $\leftarrow$ Task-specific adaptation w/o modifying the original params
 

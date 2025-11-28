@@ -23,8 +23,8 @@ kernelspec:
 	- No params $\rightarrow$ Low computational cost
 	- Empirically performed as well as learned PE
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
 	- $pos\in\mathbb{R}$: Input token position.
@@ -40,8 +40,8 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Cons?*
 - No params $\rightarrow$ No learning of task-specific position patterns.
 - Requires uniform token importance across the sequence. {cite:p}`vaswani2017attention`
@@ -63,8 +63,8 @@ $$\begin{align*}
 	6. Compute attention scores with rotated query & key vectors.
 		- The paired rotation ONLY depends on the relative offset between their positions.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 I forgot everything about Complex Analysis, so I will write in the layman's way.
 
 Notations:
@@ -142,8 +142,8 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *That's genius. How did they come up with this?*
 - They appreciate relative PE, but they don't appreciate the additional trainable params.
 - Let $\mathbf{q}_i$ & $\mathbf{k}_j$ be query & key vectors at positions $i$ and $j$ respectively.

@@ -36,8 +36,8 @@ kernelspec:
 - You: "Hol up WTF???" (You got huge info)
 ```
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 **Information**:
 
 $$
@@ -66,8 +66,8 @@ $$
 - Not much. We need a measure of the predictability.
 ```
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 **Entropy**:
 
 $$
@@ -110,8 +110,8 @@ $$
 ## KL Divergence
 - **What**
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 KL Divergence
 
 $$

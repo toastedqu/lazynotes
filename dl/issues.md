@@ -32,7 +32,7 @@ This page lists the common issues in deep learning in Alphabetic order.
 		- BUT slower convergence.
 	- Adaptive learning rates (e.g., Adam) $\rightarrow$ dynamically control the magnitude of param updates.
 
-# Overfitting
+## Overfitting
 - **What**: The model performs well on the training data but badly on the test/unseen data.
 - **Cause**: Too high model complexity relative to training data size.
 - **Consequence**: Poor generalization.
@@ -44,7 +44,7 @@ This page lists the common issues in deep learning in Alphabetic order.
     - Cross validation $\rightarrow$ ensure consistent model performance across different data splits.
 	- Reduce model complexity $\rightarrow$ a simpler model is less likely to capture too many details in the training data.
 
-# Vanishing/Exploding Gradient
+## Vanishing/Exploding Gradient
 - **What**:
     - **Vanishing gradients**: The gradients become smaller and smaller during backprop. They have almost no effect to the front layers.
     - **Exploding gradients**: The gradients become larger and larger during backprop. They change the weights of the front layers too much.

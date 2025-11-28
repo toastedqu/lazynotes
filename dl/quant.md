@@ -32,8 +32,8 @@ kernelspec:
             3. $\rightarrow$ Every base number starts with 1.
             4. $\rightarrow$ We don't need to store it. We ONLY need to store the **fraction**.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Representation Formula:
 
 $$

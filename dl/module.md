@@ -10,26 +10,25 @@ kernelspec:
   name: python3
 ---
 # Module
-- **What**: A function mapping input tensor $X$ to output tensor $Y$.
-- **Why**:
-    1. ML = Function Approximation.
-    2. DL = Function Approximation with a deep NN.
-    3. Deep NN = A bunch of modules stacked together.
+A module/layer is a function mapping an input tensor $X$ to an output tensor $Y$.
+- ML = Function Approximation.
+- DL = Function Approximation with a deep NN.
+- Deep NN = A bunch of modules stacked together.
 
 Let $g$ denote the gradient $\frac{\partial\mathcal{L}}{\partial y}$ for readability.
 
-This page does NOT cover transformer.
-<br/>
+This page does NOT cover attention & transformer modules.
+
+&nbsp;
 
 ## Linear
 - **What**: Linear transform.
 - **Why**: Simplest way to transform data & learn patterns.
 - **How**: Sum of weighted input features (+ bias).
 
-<!-- #, toggle-hidden -->
-
-````{admonition} Math
-:class: note, dropdown 
+`````{note} Math
+:class: dropdown
+````{tab-set}
 ```{tab} Vector
 Notations:
 - IO:
@@ -81,8 +80,11 @@ $$\begin{align*}
 &\frac{\partial\mathcal{L}}{\partial\textbf{b}}=\sum_*\textbf{g}_*\\
 &\frac{\partial\mathcal{L}}{\partial\textbf{x}}=\textbf{g}W
 \end{align*}$$
+```
 ````
+`````
 
+&nbsp;
 
 ## Dropout
 - **What**: Randomly ignore some neurons during training.
@@ -91,8 +93,9 @@ $$\begin{align*}
     1. Randomly set a fraction of neurons to 0.
     2. Scale the outputs/gradients on active neurons by the keep probability.
 
-````{admonition} Math
-:class: note, dropdown
+`````{note} Math
+:class: dropdown
+````{tab-set}
 ```{tab} Vector
 Notations:
 - IO:
@@ -138,13 +141,16 @@ $$
 $$
 ```
 ````
+`````
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Cons?*
 - ⬆️Training time $\leftarrow$ ⬇️Convergence speed $\leftarrow$ Sparsity
 - ✅Hyperparameter Tuning.
 ```
+
+&nbsp;
 
 ## Residual Connection
 - **What**: Model the residual ($Y-X$) instead of the output ($Y$).
@@ -152,8 +158,9 @@ $$
 - **How**: Add input $X$ to block output $F(X)$.
     - If the feature dimension of $X$ and $F(X)$ doesn't match, use a shortcut linear layer on $X$ to change its feature dimension.
 
-````{admonition} Math
-:class: note, dropdown
+`````{note} Math
+:class: dropdown
+````{tab-set}
 ```{tab} Vector
 **Notation**:
 - IO:
@@ -195,7 +202,9 @@ $$
 $$
 ```
 ````
+`````
 
+&nbsp;
 
 ## Normalization
 ### Batch Normalization
@@ -207,8 +216,8 @@ $$
     3. Scale and shift the normalized output using learnable params.
 
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 **Notation**:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
@@ -256,8 +265,8 @@ Backward:
     \end{align*}$$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - Accelerates training with higher learning rates.
 - Reduces sensitivity to weight initialization.
@@ -268,6 +277,8 @@ Backward:
 - Works best when each mini-batch is representative of the overall input distribution to accurately estimate the mean and variance.
 - Causes potential issues in certain cases like small mini-batches or when batch statistics differ from overall dataset statistics.
 ```
+
+&nbsp;
 
 ### Layer Normalization
 - **What**: Normalize each sample across input features to zero mean and unit variance.
@@ -280,8 +291,8 @@ Backward:
     2. Normalize the feature.
     3. Scale and shift the normalized output using learnable params.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 It's easy to explain with the vector form for batch normalization, but it's more intuitive to explain with the scalar form for layer normalization.
 
 Notations:
@@ -331,8 +342,8 @@ Backward:
     \end{align*}$$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - Reduces hyperparam tuning effort.
 - High consistency during training and inference.
@@ -343,7 +354,7 @@ Backward:
 - Inapplicable in CNNs due to varied statistics of spatial features.
 ```
 
-<br/>
+&nbsp;
 
 ## Convolution
 - **What**: Slide a set of filters over input data to extract local features.
@@ -354,8 +365,8 @@ Backward:
         1. Perform element-wise multiplication and summation between each filter & scanned area of input data
         2. Store the output in the corresponding position as a feature map.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
@@ -395,8 +406,8 @@ $$\begin{align*}
 Notice it is similar to backprop of linear layer except it sums over the scanned area and removes padding.
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - Translation invariance.
 - Efficiently captures spatial hierarchies.
@@ -407,9 +418,13 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
 - Requires extensive hyperparam tuning.
 ```
 
+&nbsp;
+
 ### Depthwise Convolution
 - **What**: Apply a single convolutional filter to each input channel independently.
-- **Why**: To learn spatial features within each channel separately, significantly reducing computational cost and model parameters compared to standard convolution.
+- **Why**:
+    - To learn spatial features within each channel separately.
+    - $\rightarrow$ Significantly reduce computational cost and model parameters compared to standard convolution.
 - **How**:
     1. Initialize a set of filters, one for each input channel.
     2. For each input channel, from top-left to bottom-right:
@@ -417,8 +432,8 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
         2. Store the output in the corresponding position in the respective output feature map.
     3. The resulting feature maps (one for each input channel) are typically stacked together.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
@@ -452,8 +467,8 @@ $$\begin{align*}
 Notice the similarity to the standard convolution's backpropagation but applied independently for each channel.
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - Computational cost⬇️⬇️ $\leftarrow$ #Params⬇️⬇️ & #Multiplications⬇️⬇️
 - Learns per-channel spatial features.
@@ -462,291 +477,93 @@ Notice the similarity to the standard convolution's backpropagation but applied 
 - ❌Cross-channel info.
 ```
 
-<!-- ## Depthwise Separable Convolution
-- **What**: Depthwise convolution + Pointwise convolution. ([paper](https://arxiv.org/pdf/1610.02357))
-- **Why**: To significantly reduce computational cost and #params.
-- **How**:
-    - **Depthwise**: Use a single filter independently per channel.
-    - **Pointwise**: Use Conv1d to combine the outputs of depthwise convolution.
-- **When**: When computational efficiency and model size are crucial.
-- **Where**: [MobileNets](https://arxiv.org/pdf/1704.04861), [Xception](https://openaccess.thecvf.com/content_cvpr_2017/papers/Chollet_Xception_Deep_Learning_CVPR_2017_paper.pdf), etc.
-- **Pros**: Significantly higher computational efficiency (time & space).
-- **Cons**: Lower accuracy.
+&nbsp;
 
-```{admonition} Math
-:class: note, dropdown
-Notations:
-    - IO:
-        - $\mathbf{X} \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}$: Input volume.
-        - $\mathbf{Y} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}$: Output volume.
-    - Params:
-        - $\mathbf{W^d} \in \mathbb{R}^{f_h \times f_w \times C_{in}}$: Depthwise filters.
-        - $\mathbf{b^d} \in \mathbb{R}^{C_{in}}$: Depthwise biases.
-        - $\mathbf{W^p} \in \mathbb{R}^{1 \times 1 \times C_{in} \times C_{out}}$: Pointwise filters.
-        - $\mathbf{b^p} \in \mathbb{R}^{C_{out}}$: Pointwise biases.
-    - Hyperparams:
-        - $H_{in}, W_{in}$: Input height & width.
-        - $C_{in}$: #Input channels.
-        - $C_{out}$: #Output channels.
-        - $f_h, f_w$: Filter height & width.
-        - $s$: Stride size.
-        - $p$: Padding size.
-Forward:
-    1. Depthwise convolution: Calculate $\mathbf{Z} \in \mathbb{R}^{H_{out} \times W_{out} \times C_{in}}$:
-
-        $$
-        Z_{h,w,c_{in}} = \sum_{i=1}^{f_h} \sum_{j=1}^{f_w} W^d_{i,j,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}} + b^d_{c_{in}}
-        $$
-
-    2. Pointwise convolution:
-
-        $$
-        Y_{h,w,c_{out}} = \sum_{c_{in}=1}^{C_{in}} W^p_{1,1,c_{in},c_{out}} \cdot Z_{h,w,c_{in}} + b^p_{c_{out}}
-        $$
-        where
-        $$\begin{align*}
-        H_{out} &= \left\lfloor \frac{H_{in} + 2p - f_h}{s} \right\rfloor + 1 \\
-        W_{out} &= \left\lfloor \frac{W_{in} + 2p - f_w}{s} \right\rfloor + 1
-        \end{align*}$$
-
-Backward:
-    1. Pointwise convolution: Let $g^{p}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Y}}$.
-
-        $$\begin{align*}
-        &\frac{\partial \mathcal{L}}{\partial W^p_{1,1,c_{in},c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}} \cdot Z_{h,w,c_{in}}\\
-        &\frac{\partial \mathcal{L}}{\partial b^p_{c_{out}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^{p}_{h,w,c_{out}}\\
-        &\frac{\partial \mathcal{L}}{\partial Z_{h,w,c_{in}}} = \sum_{c_{out}=1}^{C_{out}} g^{p}_{h,w,c_{out}} \cdot W^p_{1,1,c_{in},c_{out}}
-        \end{align*}$$
-    2. Depthwise convolution: Let $g^{d}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$ be $\frac{\partial\mathcal{L}}{\partial\mathbf{Z}}$.
-
-        $$\begin{align*}
-        &\frac{\partial \mathcal{L}}{\partial W^d_{i,j,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}} \cdot X_{sh+i-p, sw+j-p, c_{in}}\\
-        &\frac{\partial \mathcal{L}}{\partial b_{d,c_{in}}} = \sum_{h=1}^{H_{out}} \sum_{w=1}^{W_{out}} g^d_{h,w,c_{in}}\\
-        &\frac{\partial \mathcal{L}}{\partial X_{i,j,c_{in}}} = \sum_{h=1}^{f_h} \sum_{w=1}^{f_w} g^d_{h,w,c_{in}} \cdot W^d_{i-sh+p,j-sw+p,c_{in}}
-        \end{align*}$$
-``` -->
-
-<!-- ## Atrous/Dilated Convolution
-- **What**: Add holes between filter elements (i.e., dilation). ([paper](https://arxiv.org/pdf/1511.07122))
-- **Why**: The filters can capture larger contextual info w/o increasing #params.
-- **How**: Introduce a dilation rate $r$ to determine the space between the filter elements. Then compute convolution accordingly.
-- **When**: When understanding the broader context is important.
-- **Where**: Semantic image segmentation, object detection, depth estimation, optical flow estimation, etc.
-- **Pros**:
-    - Larger receptive fields w/o increasing #params.
-    - Captures multi-scale info w/o upsampling layers.
-- **Cons**:
-    - Requires very careful hyperparam tuning, or info loss. -->
-
-<!-- ```{admonition} Math
-:class: note, dropdown
-Notations:
-    - IO:
-        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
-        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{out}}$: Output volume.
-    - Params:
-        - $\mathbf{W}\in\mathbb{R}^{F_{H}\times F_{W}\times C_{out}\times C_{in}}$: Filters.
-        - $\mathbf{b}\in\mathbb{R}^{C_{out}}$: Biases.
-    - Hyperparams:
-        - $H_{in}, W_{in}$: Input height & width.
-        - $C_{in}$: #Input channels.
-        - $C_{out}$: #Filters (i.e., #Output channels).
-        - $f_h, f_w$: Filter height & width.
-        - $s$: Stride size.
-        - $p$: Padding size.
-        - $r$: Dilation rate.
-Forward:
-    1. (optional) Pad input tensor: $\mathbf{X}^\text{pad}\in\mathbb{R}^{(H_{in}+2p)\times (W_{in}+2p)\times C_{in}}$
-    2. Perform element-wise multiplication (i.e., convolution):
-
-        $$
-        Y_{h,w,c_{out}}=\sum_{c_{in}=1}^{C_{in}}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}W_{i,j,c_{out},c_{in}}\cdot X_{sh+r(i-1)-p,sw+r(j-1)-p,c_{in}}+b_{c_{out}}
-        $$
-
-        where
-
-        $$\begin{align*}
-        H_{out}&=\left\lfloor\frac{H_{in}+2p-r(f_h-1)-1}{s}\right\rfloor+1\\
-        W_{out}&=\left\lfloor\frac{W_{in}+2p-r(f_w-1)-1}{s}\right\rfloor+1
-        \end{align*}$$
-
-Backward:
-
-    $$\begin{align*}
-    &\frac{\partial\mathcal{L}}{\partial W_{i,j,c_{out},c_{in}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\cdot X_{sh+r(i-1)-p, sw+r(j-1)-p, c_{in}}\\
-    &\frac{\partial\mathcal{L}}{\partial b_{c_{out}}}=\sum_{h=1}^{H_{out}}\sum_{w=1}^{W_{out}}g_{h,w,c_{out}}\\
-    &\frac{\partial\mathcal{L}}{\partial X_{i,j,c_{in}}}=\sum_{c_{out}=1}^{C_{out}}\sum_{h=1}^{f_h}\sum_{w=1}^{f_w}g_{h,w,c_{out}}\cdot W_{r(i-1)-sh+p,r(j-1)-sw+p,c_{out},c_{in}}
-    \end{align*}$$
-``` -->
-
-<!-- ## Pooling
-- **What**: Convolution but ([paper](https://proceedings.neurips.cc/paper_files/paper/1989/file/53c3bce66e43be4f209556518c2fcb54-Paper.pdf))
+### Pooling
+- **What**: Convolution but
     - computes a heuristic per scanned patch.
     - uses the same #channels.
 - **Why**: Dimensionality reduction while preserving dominant features.
-- **How**: Slide the pooling window over the input & apply the heuristic within the scanned patch.
-    - **Max**: Output the maximum value from each patch.
-    - **Average**: Output the average value of each patch.
-- **When**: When downsampling is necessary.
-- **Where**: After convolutional layer.
-- **Pros**:
-    - Significantly higher computational efficiency (time & space).
-    - No params to train.
-    - Reduces overfitting.
-    - Preserves translation invariance w/o losing too much info.
-    - High robustness.
-- **Cons**:
-    - Slight spatial info loss.
-    - Requires hyperparam tuning.
-        - Large filter or stride results in coarse features.
-- **Max vs Average**:
-    - **Max**: Captures most dominant features; higher robustness.
-    - **Avg**: Preserves more info; provides smoother features; dilutes the importance of dominant features. -->
+- **How**: Slide the pooling window over the input & apply the heuristic (max/avg) within the scanned patch.
 
-<!-- ```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Notations:
-    - IO:
-        - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
-        - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$: Output volume.
-    - Hyperparams:
-        - $H_{in}, W_{in}$: Input height & width.
-        - $C_{in}$: #Input channels.
-        - $f_h, f_w$: Filter height & width.
-        - $s$: Stride size.
+- IO:
+    - $\mathbf{X}\in\mathbb{R}^{H_{in}\times W_{in}\times C_{in}}$: Input volume.
+    - $\mathbf{Y}\in\mathbb{R}^{H_{out}\times W_{out}\times C_{in}}$: Output volume.
+- Hyperparams:
+    - $H_{in}, W_{in}$: Input height & width.
+    - $C_{in}$: #Input channels.
+    - $f_h, f_w$: Filter height & width.
+    - $s$: Stride size.
+
 Forward:
 
-    $$\begin{array}{ll}
-    \text{Max:} & Y_{h,w,c}=\max_{i=1,\cdots,f_h\ |\ j=1,\cdots,f_w}X_{sh+i,sw+j,c}\\
-    \text{Avg:} & Y_{h,w,c}=\frac{1}{f_hf_w}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}X_{sh+i,sw+j,c}
-    \end{array}$$
+$$\begin{array}{ll}
+\text{Max:} & Y_{h,w,c}=\max_{i=1,\cdots,f_h\ |\ j=1,\cdots,f_w}X_{sh+i,sw+j,c}\\
+\text{Avg:} & Y_{h,w,c}=\frac{1}{f_hf_w}\sum_{i=1}^{f_h}\sum_{j=1}^{f_w}X_{sh+i,sw+j,c}
+\end{array}$$
 
-    where
+where
 
-    $$\begin{align*}
-    H_{out}&=\left\lfloor\frac{H_{in}-f_h}{s}\right\rfloor+1\\
-    W_{out}&=\left\lfloor\frac{W_{in}-f_h}{s}\right\rfloor+1
-    \end{align*}$$
+$$\begin{align*}
+H_{out}&=\left\lfloor\frac{H_{in}-f_h}{s}\right\rfloor+1\\
+W_{out}&=\left\lfloor\frac{W_{in}-f_h}{s}\right\rfloor+1
+\end{align*}$$
 
 Backward:
 
-    $$\begin{array}{ll}
-    \text{Max:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=g_{h,w,c}\text{ if }X_{sh+i,sw+j,c}=Y_{h,w,c}\\
-    \text{Avg:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=\frac{g_{h,w,c}}{f_hf_w}
-    \end{array}$$
+$$\begin{array}{ll}
+\text{Max:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=g_{h,w,c}\text{ if }X_{sh+i,sw+j,c}=Y_{h,w,c}\\
+\text{Avg:} & \frac{\partial\mathcal{L}}{\partial X_{sh+i,sw+j,c}}=\frac{g_{h,w,c}}{f_hf_w}
+\end{array}$$
 
-    - Max: Gradients only propagate to the max element of each window.
-    - Avg: Gradients are equally distributed among all elements in each window.
-``` -->
-
-<br/>
-
-<!-- # Recurrent
-```{image} ../images/RNN.png
-:width: 400
-:align: center
+- Max: Gradients only propagate to the max element of each window.
+- Avg: Gradients are equally distributed among all elements in each window.
 ```
 
-$$
-h_t=\tanh(x_tW_{xh}^T+h_{t-1}W_{hh}^T)
-$$
+```{attention} Q&A
+:class: dropdown
+*Max vs Average*
+- **Max**: Captures most dominant features; higher robustness.
+- **Avg**: Preserves more info; provides smoother features; dilutes the importance of dominant features.
 
-Idea: **recurrence** - maintain a hidden state that captures information about previous inputs in the sequence
+*Pros?*
+- Computational cost⬇️⬇️.
+- ❌ params.
+- Preserves translation invariance w/o losing too much info.
+- Overfitting ⬇️.
+- Robustness ⬆️.
 
-Notations:
-- $ x_t$: input at time $t$ of shape $(m,H_{in}) $
-- $ h_t$: hidden state at time $t$ of shape $(D,m,H_{out}) $
-- $ W_{xh}$: weight matrix of shape $(H_{out},H_{in})$ if initial layer, else $(H_{out},DH_{out}) $
-- $ W_{hh}$: weight matrix of shape $(H_{out},H_{out}) $
-- $ H_{in}$: input size, #features in $x_t $
-- $ H_{out}$: hidden size, #features in $h_t $
-- $ m $: batch size
-- $ D$: $=2$ if bi-directional else $1 $
-
-Cons:
-- Short-term memory: hard to carry info from earlier steps to later ones if long seq
-- Vanishing gradient: gradients in earlier parts become extremely small if long seq
-
-## GRU
-
-```{image} ../images/GRU.png
-:width: 400
-:align: center
+*Cons?*
+- Slight spatial info loss.
+- Requires hyperparam tuning.
+    - Large filter or stride results in coarse features.
 ```
 
-$$\begin{align*}
-&r_t=\sigma(x_tW_{xr}^T+h_{t-1}W_{hr}^T) \\\\
-&z_t=\sigma(x_tW_{xz}^T+h_{t-1}W_{hz}^T) \\\\
-&\tilde{h}\_t=\tanh(x_tW_{xn}^T+r_t\odot(h_{t-1}W_{hn}^T)) \\\\
-&h_t=(1-z_t)\odot\tilde{h}\_t+z_t\odot h_{t-1}
-\end{align*}$$
-
-Idea: Gated Recurrent Unit - use 2 gates to address long-term info propagation issue in RNN:
-1. **Reset gate**: determine how much of $ h_{t-1}$ should be ignored when computing $\tilde{h}\_t $.
-2. **Update gate**: determine how much of $ h_{t-1}$ should be retained for $h_t $.
-3. **Candidate**: calculate candidate $ \tilde{h}\_t$ with reset $h_{t-1} $.
-4. **Final**: calculate weighted average between candidate $ \tilde{h}\_t$ and prev state $h_{t-1} $ with the retain ratio.
-
-Notations:
-- $ r_t$: reset gate at time $t$ of shape $(m,H_{out}) $
-- $ z_t$: update gate at time $t$ of shape $(m,H_{out}) $
-- $ \tilde{h}\_t$: candidate hidden state at time $t$ of shape $(m,H_{out}) $
-- $ \odot $: element-wise product
-
-## LSTM
-
-```{image} ../images/LSTM.png
-:width: 400
-:align: center
-```
-
-$$\begin{align*}
-&i_t=\sigma(x_tW_{xi}^T+h_{t-1}W_{hi}^T) \\\\
-&f_t=\sigma(x_tW_{xf}^T+h_{t-1}W_{hf}^T) \\\\
-&\tilde{c}\_t=\tanh(x_tW_{xc}^T+h_{t-1}W_{hc}^T) \\\\
-&c_t=f_t\odot c_{t-1}+i_t\odot \tilde{c}\_t \\\\
-&o_t=\sigma(x_tW_{xo}^T+h_{t-1}W_{ho}^T) \\\\
-&h_t=o_t\odot\tanh(c_t)
-\end{align*}$$
-
-Idea: Long Short-Term Memory - use 3 gates:
-1. **Input gate**: determine what new info from $ x_t$ should be added to cell state $c_t $.
-2. **Forget gate**: determine what info from prev cell $ c_{t-1} $ should be forgotten.
-3. **Candidate cell**: create a new candidate cell from $ x_t$ and $h_{t-1} $.
-4. **Update cell**: use $ i_t$ and $f_t $ to combine prev and new candidate cells.
-5. **Output gate**: determine what info from curr cell $ c_t$ should be added to output $h_t $.
-6. **Final**: simply apply $ o_t$ to activated cell $c_t $.
-
-Notations:
-- $ i_t$: input gate at time $t$ of shape $(m,H_{out}) $
-- $ f_t$: forget gate at time $t$ of shape $(m,H_{out}) $
-- $ c_t$: cell state at time $t$ of shape $(m,H_{cell}) $
-- $ o_t$: output gate at time $t$ of shape $(m,H_{out}) $
-- $ H_{cell}$: cell hidden size (in most cases same as $H_{out} $)
-
-## Bidirectional
-## Stacked -->
-
-<br/>
+&nbsp;
 
 ## Activation
 - **What**: An element-wise non-linear function over a layer's output.
 - **Why**: Non-linearity.
-    - w/o it, a full NN is just simple linear regression.
+    - No activation $\rightarrow$ NN = LinReg.
 
 ### Binary-like
 - **What**: Functions with near-binary outputs.
-- **Why**: Biology - Biological neurons generally:
-    - react little to small inputs
-    - react rapidly after input stimulus passes a threshold
-    - converge to a max as stimulus increases
+- **Why**: Biological neurons generally:
+    - react little to small inputs.
+    - react rapidly after input stimulus passes a threshold.
+    - converge to a max as stimulus increases.
+
+&nbsp;
 
 #### Sigmoid
 - **What**: Sigmoid function.
 - **Why**: Mathematically convenient $\leftarrow$ Smooth gradient.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Forward:
 
 $$
@@ -763,19 +580,21 @@ $$
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Cons?*
 -  Vanishing gradient.
 -  Non-zero centric bias $\rightarrow$ Non-zero mean activations
 ```
 
+&nbsp;
+
 #### Tanh
 - **What**: Tanh function.
 - **Why**: Mathematically convenient $\leftarrow$ Smooth gradient.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Forward:
 
 $$
@@ -791,14 +610,16 @@ $$
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - Zero-centered.
 
 *Cons?*
 -  Vanishing gradient.
 ```
+
+&nbsp;
 
 ### ReLU
 - **What**: Rectified Linear Unit
@@ -808,8 +629,8 @@ $$
     - ReLU-like functions existed long ago ([Householder, 1941](https://link.springer.com/article/10.1007/BF02478220)).
 - **How**: Linear for positive, 0 for negative.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Forward:
 
 $$
@@ -826,8 +647,8 @@ $$
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Pros?*
 - ❌Vanishing gradient.
 - ✅Sparsity.
@@ -840,19 +661,21 @@ $$
 - Activation explosion $\longleftarrow$ $z\rightarrow\infty$. (NOTE: NOT A SEVERE DISADVANTAGE SO FAR)
 ```
 
-### LReLU
+&nbsp;
+
+#### LReLU
 - **What**: Leaky ReLU.
 - **Why**: Dying ReLU.
 - **How**: Linear for positive, tiny linear for negative.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Forward:
 
 $$
 y=\text{LReLU}(z)=\max{(\alpha z,z)}
 $$
-- $\alpha\in(0,1)$: Negative slope hyperparameter, default 0.01.
+- $\alpha\in(0,1)$: Negative slope hyperparam, default 0.01.
 
 Backward:
 
@@ -864,8 +687,8 @@ $$
 $$
 ```
 
-```{admonition} Q&A
-:class: tip, dropdown
+```{attention} Q&A
+:class: dropdown
 *Why aren't we using LReLU in place of ReLU?*
 
 Because Dying ReLU became insignificant.
@@ -876,196 +699,306 @@ Because Dying ReLU became insignificant.
     - Residual Connection $\rightarrow$ Gradients can flow directly back to input even if ReLU is dead.
 ```
 
-<!-- 
-### PReLU
+&nbsp;
+
+#### PReLU
+- **What**: Parametric ReLU.
+- **Why**: Fixed slope in LReLU.
+- **How**: Scale negative linear outputs by a learnable $\alpha$.
+
+```{note} Math
+:class: dropdown
+Forward:
 
 $$
-\mathrm{PReLU}(z)=\max{(\alpha z,z)}
+y=\mathrm{PReLU}(z)=\max{(\alpha z,z)}
 $$
+- $\alpha\in(0,1)$: Learnable negative slope param, default 0.25.
 
-Name: Parametric Rectified Linear Unit
-
-Params:
-- $ \alpha\in(0,1) $: learnable param (negative slope), default 0.25.
-
-Idea:
-- scale negative linear outputs by a learnable $ \alpha $.
-
-Pros:
-- a variable, adaptive param learned from data.
-
-Cons:
-- slightly more computationally expensive than LReLU.
-- activation explosion as $ z\rightarrow\infty $.
-
-
-
-### RReLU
+Backward:
 
 $$
-\mathrm{RReLU}(z)=\max{(\alpha z,z)}
+\frac{\partial\mathcal{L}}{\partial z}=\begin{cases}
+\frac{\partial\mathcal{L}}{\partial y} & z\geq0 \\
+\alpha\frac{\partial\mathcal{L}}{\partial y} & z<0
+\end{cases}
 $$
+```
 
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Adaptive param learned from data.
 
-Name: Randomized Rectified Linear Unit
+*Cons?*
+- Computational cost ⬆️.
+```
 
-Params:
-- $ \alpha\sim\mathrm{Uniform}(l,u) $: a random number sampled from a uniform distribution.
-- $ l,u $: hyperparams (lower bound, upper bound)
+&nbsp;
 
-Idea:
-- scale negative linear outputs by a random $ \alpha $.
+#### RReLU
+- **What**: Randomized ReLU.
+- **Why**: Dying ReLU.
+- **How**: Scale negative linear outputs by a random $ \alpha $.
 
-Pros:
-- reduce overfitting by randomization.
-
-Cons:
-- slightly more computationally expensive than LReLU.
-- activation explosion as $ z\rightarrow\infty $.
-
-## ELU
-- **What**: Exponential Linear Units
-- **Why**: 
+```{note} Math
+:class: dropdown
+Forward:
 
 $$
-\mathrm{ELU}(z)=\begin{cases}
-z & z\geq0 \\\\
+y=\mathrm{RReLU}(z)=\max{(\alpha z,z)}
+$$
+- $\alpha\sim\mathrm{Uniform}(l,u)$ in training.
+- $\alpha=\frac{l+u}{2}$ in inference.
+- $ l,u $: hyperparams (lower bound, upper bound).
+
+Backward:
+
+$$
+\frac{\partial\mathcal{L}}{\partial z}=\begin{cases}
+\frac{\partial\mathcal{L}}{\partial y} & z\geq0 \\
+\alpha\frac{\partial\mathcal{L}}{\partial y} & z<0
+\end{cases}
+$$
+```
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Reduce overfitting by randomization.
+
+*Cons?*
+- Computational cost ⬆️.
+```
+
+&nbsp;
+
+### ELU
+- **What**: Exponential Linear Units.
+- **Why**:
+    - Dying ReLU.
+    - Negative outputs push mean activations to 0 $\rightarrow$ bias shift ⬇️.
+    - Smooth.
+- **How**: Linear for positive, exponential saturation for negative.
+
+```{note} Math
+:class: dropdown
+Forward:
+
+$$
+y=\text{ELU}(z)=\begin{cases}
+z & z\ge 0\\
 \alpha(e^z-1) & z<0
 \end{cases}
 $$
+- $\alpha>0$: controls negative saturation level ($y\to -\alpha$ as $z\to -\infty$).
 
-Params:
-- $ \alpha $: hyperparam, default 1.
-
-Idea:
-- convert negative linear outputs to the non-linear exponential function above.
-
-Pros:
-- mean unit activation is closer to 0 $ \rightarrow $ reduce bias shift (i.e., non-zero mean activation is intrinsically a bias for the next layer.)
-- lower computational complexity compared to batch normalization.
-- smooth to $ -\alpha $ slowly with smaller derivatives that decrease forwardprop variation.
-- faster learning and higher accuracy for image classification in practice.
-
-Cons:
-- slightly more computationally expensive than ReLU.
-- activation explosion as $ z\rightarrow\infty $. -->
-
-<!-- ### SELU
+Backward:
 
 $$
-\mathrm{SELU}(z)=\lambda\begin{cases}
-z & \mathrm{if}\ z\geq0 \\
-\alpha(e^z-1) & \mathrm{if}\ z<0
+\frac{\partial\mathcal{L}}{\partial z}=\begin{cases}
+\frac{\partial\mathcal{L}}{\partial y} & z\ge 0 \\
+\frac{\partial\mathcal{L}}{\partial y}\cdot \alpha e^z & z<0
 \end{cases}
 $$
+```
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Non-zero gradient for $z<0$ $\rightarrow$ fewer “dead” neurons than ReLU.
+- Negative outputs $\rightarrow$ activations closer to zero-mean.
+- Smooth for $z<0$ (and continuous at $0$).
+
+*Cons?*
+- Saturation for very negative $z$: $\alpha e^z \to 0$ $\rightarrow$ gradients can still vanish on far negative side.
+- Computational cost ⬆️ (exp) vs ReLU.
+- Can be less GPU-friendly than piecewise-linear activations.
+```
+
+&nbsp;
+
+#### SELU
+- **What**: Scaled ELU.
+- **Why**: Self-normalizing to $N(0,1)$ $\rightarrow$ Vanishing/Exploding activations ⬇️⬇️
+- **How**: ELU scaled by fixed constants.
+
+```{note} Math
+:class: dropdown
+Forward:
+
+$$
+y=\text{SELU}(z)=\lambda\begin{cases}
+z & z\ge 0\\
+\alpha(e^z-1) & z<0
+\end{cases}
+$$
+- $\alpha \approx 1.6733, \lambda \approx 1.0507$
 
 
-Name: Scaled Exponential Linear Unit
+Backward:
 
-Params:
-- $ \alpha $: hyperparam, default 1.67326.
-- $ \lambda $: hyperparam (scale), default 1.05070.
+$$
+\frac{\partial\mathcal{L}}{\partial z}=\begin{cases}
+\lambda\frac{\partial\mathcal{L}}{\partial y} & z\ge 0 \\
+\lambda\frac{\partial\mathcal{L}}{\partial y}\cdot \alpha e^z & z<0
+\end{cases}
+$$
+```
 
-Idea:
-- scale ELU.
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Self-normalization.
+- Reduce reliance on explicit normalization layers in some settings.
 
-Pros:
-- self-normalization $ \rightarrow $ activations close to zero mean and unit variance that are propagated through many network layers will converge towards zero mean and unit variance.
+*Cons?*
+- Useless with Normalization layers.
+```
 
-Cons:
-- more computationally expensive than ReLU.
-- activation explosion as $ z\rightarrow\infty $.
-
-
+&nbsp;
 
 ### CELU
+- **What**: Continuously Differentiable Exponential Linear Unit.
+- **Why**: ELU is NOT continuously differentiable at $0$ unless $\alpha=1$.
+- **How**: Linear for positive, scaled exponential for negative with $z/\alpha$ inside the exp.
+
+```{note} Math
+:class: dropdown
+Forward:
 
 $$
-\mathrm{CELU}(z)=\begin{cases}
-z & \mathrm{if}\ z\geq0\\
-\alpha(e^{\frac{z}{\alpha}}-1) & \mathrm{if}\ z<0
+y=\text{CELU}(z)=\begin{cases}
+z & z\ge 0\\
+\alpha\left(e^{z/\alpha}-1\right) & z<0
+\end{cases}
+$$
+- $\alpha>0$: controls negative saturation level ($y\to -\alpha$ as $z\to -\infty$).
+
+Backward:
+
+$$
+\frac{\partial\mathcal{L}}{\partial z}=\begin{cases}
+\frac{\partial\mathcal{L}}{\partial y} & z\ge 0 \\
+\frac{\partial\mathcal{L}}{\partial y}\cdot e^{z/\alpha} & z<0
 \end{cases}
 $$
 
+- $\frac{d}{dz}\text{CELU}(0^-)=e^{0}=1=\frac{d}{dz}\text{CELU}(0^+)$
+```
 
-Name: Continuously Differentiable Exponential Linear Unit
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Continuously differentiable at $0$ for any $\alpha$ (smooth gradient through the transition).
 
-Params:
-- $ \alpha $: hyperparam, default 1.
+*Cons?*
+- Saturates for very negative $z$ ($e^{z/\alpha}\to 0$) $\rightarrow$ vanishing gradients far left.
+- Computational cost ⬆️ (exp).
+```
 
-Idea:
-- scale the exponential part of ELU with $ \frac{1}{\alpha} $ to make it continuously differentiable.
+&nbsp;
 
-Pros:
-- smooth gradient due to continuous differentiability (i.e., $ \mathrm{CELU}'(0)=1 $).
+### Other LUs
+#### Softplus
+- **What**: Smooth approximation to ReLU.
+- **Why**: Differentiable everywhere (no kink at 0).
+- **How**: Log-sum-exp smooth ramp.
 
-Cons:
-- slightly more computationally expensive than ELU.
-- activation explosion as $ z\rightarrow\infty $.
-
-## Linear Units (Others)
-
-### GELU
-
-$$
-\mathrm{GELU}(z)=z*\Phi(z)=0.5z(1+\tanh{[\sqrt{\frac{2}{\pi}}(z+0.044715z^3)]})
-$$
-
-
-Name: Gaussian Error Linear Unit
-
-Idea:
-- weigh each output value by its Gaussian cdf.
-
-Pros:
-- throw away gate structure and add probabilistic-ish feature to neuron outputs.
-- seemingly better performance than the ReLU and ELU families, SOTA in transformers.
-
-Cons:
-- slightly more computationally expensive than ReLU.
-- lack of practical testing at the moment. -->
-
-
-
-<!-- ### SiLU
+```{note} Math
+:class: dropdown
+Forward:
 
 $$
-\mathrm{SiLU}(z)=z*\sigma(z)
+y=\text{Softplus}(z)=\ln(1+e^z)
 $$
 
-Name: Sigmoid Linear Unit
-
-Idea:
-- weigh each output value by its sigmoid value.
-
-Pros:
-- throw away gate structure.
-- seemingly better performance than the ReLU and ELU families.
-
-Cons:
-- worse than GELU.
-
-
-
-### Softplus
+Backward:
 
 $$
-\mathrm{softplus}(z)=\frac{1}{\beta}\log{(1+e^{\beta z})}
+\frac{\partial\mathcal{L}}{\partial z}
+=\frac{\partial\mathcal{L}}{\partial y}\cdot \sigma(z)
+=\frac{\partial\mathcal{L}}{\partial y}\cdot \frac{1}{1+e^{-z}}
+$$
+```
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Smooth everywhere.
+- No 0 gradient (unlike ReLU for $z<0$).
+
+*Cons?*
+- ❌ Sparsity.
+- Computational cost ⬆️ (log/exp).
+- Smaller gradients for large negative inputs, vs ReLU.
+```
+
+&nbsp;
+
+#### SiLU
+- **What**: Swish / Sigmoid Linear Unit.
+- **Why**: Smooth and empirically competitive in CNN family.
+- **How**: Gate input by its sigmoid.
+
+```{note} Math
+:class: dropdown
+Forward:
+
+$$
+y=\text{SiLU}(z)=z\,\sigma(z)
 $$
 
+Backward:
 
-Idea:
-- smooth approximation of ReLU.
+$$
+\frac{\partial\mathcal{L}}{\partial z}
+=\frac{\partial\mathcal{L}}{\partial y}\cdot \left(\sigma(z)+z\,\sigma(z)(1-\sigma(z))\right)
+$$
+```
 
-Pros:
-- differentiable and thus theoretically better than ReLU.
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Smooth.
 
-Cons:
-- empirically far worse than ReLU in terms of computation and performance.
+*Cons?*
+- Computational cost ⬆️ (sigmoid).
+```
 
+&nbsp;
 
+#### GELU
+- **What**: Gaussian Error Linear Unit.
+- **Why**: Smooth, non-linear gating.
+- **How**: Multiply input by probability it’s “kept” under a Gaussian.
 
-## Multiclass -->
+```{note} Math
+:class: dropdown
+Forward (definition):
+
+$$
+y=\text{GELU}(z)=z\,\Phi(z)
+$$
+
+Backward (exact):
+
+$$
+\frac{\partial\mathcal{L}}{\partial z}
+=\frac{\partial\mathcal{L}}{\partial y}\left(\Phi(z)+z\phi(z)\right)
+$$
+```
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Empirically best in **transformers**.
+
+*Cons?*
+- Computational cost ⬆️ vs ReLU (though approximations help).
+```
+
+&nbsp;
 
 ### Softmax
 - **What**: Numbers $\rightarrow$ Probabilities
@@ -1074,8 +1007,8 @@ Cons:
     1. Exponentiation: Larger/Smaller numbers $\rightarrow$ even larger/smaller numbers.
     2. Normalization: Numbers $\rightarrow$ Probabilities
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Forward:
 
 $$
@@ -1092,18 +1025,3 @@ $$
 \end{cases}
 $$
 ```
-
-<!-- ### Softmin
-
-$$
-\mathrm{softmin}(z_i)=\mathrm{softmax}(-z_i)=\frac{\exp{(-z_i)}}{\sum_j{\exp{(-z_j)}}}
-$$
-
-Idea:
-- reverse softmax.
-
-Pros:
-- suitable for multiclass classification.
-
-Cons:
-- why not softmax. -->

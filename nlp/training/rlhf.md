@@ -81,8 +81,8 @@ kernelspec:
         2. **PPO-ptx**: Max Reward + Min Deviation + **Min Alignment Tax**
             - Alignment Tax Minimization: ❌Degradation of Pre/SFT task performance.
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 RM:
 - Reward Estimation (**Bradley-Terry Model**):
 
@@ -143,8 +143,8 @@ PO:
     - (Empirically, 1>2)
     - (Empirically by Anthropic, ❌1&2, ✅$\beta=0.001$) {cite:p}`bai2022traininghelpfulharmlessassistant`
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 TRPO (quick recap):
 - **Probability Ratio**: How much more/less likely to take the given action under new policy vs old policy.
 
@@ -231,8 +231,8 @@ PPO:
         3. Yo, probability of data? $\rightarrow$ MLE $\rightarrow$ BCE
 - **How**: Get data $\rightarrow$ Train LM to minimize BCE
 
-```{admonition} Math
-:class: note, dropdown
+```{note} Math
+:class: dropdown
 Optimal Policy:
 
 $$\begin{align*}
@@ -273,8 +273,8 @@ $$
 - $\log\pi_\theta(y|x)$: Log likelihood of $y|x$ $\rightarrow$ ⬆️$y_w$, ⬇️$y_l$.
 ```
 
-```{admonition} Derivation: PPO -> BCE 
-:class: important, dropdown
+```{tip} Derivation: PPO -> BCE 
+:class: dropdown
 1. Solve PPO for arbitrary reward function $r(x,y)$:
 
     $$\begin{align*}
