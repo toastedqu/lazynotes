@@ -1,6 +1,6 @@
 version: 1
 project:
-  title: LazyNotes
+  title: Lazynotes
   authors:
     - name: Renyi Qu
   github: executablebooks/jupyter-book

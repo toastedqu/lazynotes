@@ -1,4 +1,4 @@
-# LazyNotes
+# Lazynotes
 A minimalist AI handbook, focusing on intuition and theory.
 
 Each concept is structured as follows:
