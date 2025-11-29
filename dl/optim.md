@@ -9,29 +9,30 @@ kernelspec:
   language: python
   name: python3
 ---
-# Optimization
+# Optimization (GD)
 This page ONLY covers Gradient Descent & family because it is most widely used for optimizing NNs.
 
-## Gradient Descent
-- **What**: Update the params based on the grad's size and direction.
-	- **Gradient**: First-order derivative of the loss w.r.t. the corresponding param.
-	- **Descent**: Subtract the grad.
-		- Objective: **Loss minimization**.
-		- Assumption: Loss function is **convex**.
-		- Descent in both cases:
-			- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}>0\rightarrow \mathcal{L}\propto w\rightarrow$ Reduce $w$ to reduce $\mathcal{L}$ $\rightarrow$ Subtract the positive grad.
-			- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}<0\rightarrow \mathcal{L}\propto -w\rightarrow$ Raise $w$ to reduce $\mathcal{L}$ $\rightarrow$ Subtract the negative grad.
-- **Why**: Practical.
-	- *Analytical solutions?* Often impossible.
-	- *Search?* Impractical.
-	- *Other optimization algorithms?* High computational cost.
-	- *Second-order derivative?* High computational cost.
-	- Gradient descent: practical, simple, intuitive, iterative, scalable, empirically effective, ...
-- **How**: For each param:
-	1. Calculate grad.
-	2. Subtract grad.
-	3. Use new params to calculate loss.
-	4. Repeat Steps 1-3 till training ends.
+GD updates params based on grad's **size & direction**.
+- **Gradient**: First-order derivative of the loss w.r.t. the corresponding param.
+- **Descent**: Subtract the grad.
+	- Objective: **Loss minimization**.
+	- Assumption: Loss function is **convex**.
+	- Descent in both cases:
+		- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}>0\rightarrow \mathcal{L}\propto w\rightarrow$ Reduce $w$ to reduce $\mathcal{L}$ $\rightarrow$ Subtract the positive grad.
+		- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}<0\rightarrow \mathcal{L}\propto -w\rightarrow$ Raise $w$ to reduce $\mathcal{L}$ $\rightarrow$ Subtract the negative grad.
+
+But *Why GD only?* Why not others? Because GD is **practical**.
+- *Analytical solutions?* Often impossible.
+- *Search?* Impractical.
+- *Other optimization algorithms?* High computational cost.
+- *Second-order derivative?* High computational cost.
+- GD: practical, simple, intuitive, iterative, scalable, empirically effective, ...
+
+*How does GD work?* For each param:
+1. Calculate grad.
+2. Subtract grad.
+3. Use new params to calculate loss.
+4. Repeat Steps 1-3 till training ends.
 
 ```{note} Math
 :class: dropdown
@@ -106,6 +107,8 @@ $$\begin{align*}
 \end{align*}$$
 ```
 
+&nbsp;
+
 ### NAG (Nesterov Accelerated Gradient)
 - **What**: Momentum + "Look-ahead"
 - **Why**: Momentum can sometimes jump over the global minimum.
@@ -148,6 +151,8 @@ $$
 w_t \leftarrow w_{t-1} - \eta v_t 
 $$
 ```
+
+&nbsp;
 
 ## Adaptive LR
 ### Adagrad (Adaptive Gradient)
@@ -196,6 +201,8 @@ $$
 - Memory of how active the param has been throughout the entire training process.
 ```
 
+&nbsp;
+
 ### RMSprop (Root Mean Square Propagation)
 - **What**: Adagrad w EWMA (Exponentially Weighted Moving Average) of squared grads instead of sum.
 - **Why**:
@@ -242,6 +249,8 @@ $$
 *Why EWMA?*
 - The older/newer the grad, the less/more influence it has on curr param update.
 ```
+
+&nbsp;
 
 ### Adadelta
 - **What**: RMSprop w/o manually set global learning rate + EWMA on param updates.
@@ -305,6 +314,8 @@ $$
 - ⬆️Simplicity & Interpretability.
 - Adam is built upon RMSprop & outperforms everything above.
 ```
+
+&nbsp;
 
 ## Adam (Adaptive Moment Estimation)
 - **What**: Momentum + RMSprop.
@@ -373,6 +384,8 @@ $$
 - May still get stuck in local optima.
 ```
 
+&nbsp;
+
 ### AdamW (Adam with Weight Decay)
 - **What**: Adam + Weight Decay.
 - **Why**: L2 regularization.
@@ -427,7 +440,7 @@ $$
 ### RAdam (Rectified Adam)
 ### Lookahead Optimizer -->
 
-<br/>
+&nbsp;
 
 ## LR Scheduler
 - **What**: Dynamically adjust LR during training.
@@ -472,6 +485,8 @@ e.g., if $s=10$
 - ...
 ```
 
+&nbsp;
+
 #### Exponential Decay
 - **Why**: Step Decay makes abrupt changes
 	- $\rightarrow$ Unstable convergence & potential disruptions in training
@@ -495,6 +510,8 @@ $$
 \eta_t\leftarrow\eta_{t-1}\cdot\gamma
 $$
 ```
+
+&nbsp;
 
 #### Polynomial Decay
 - **Why**: Step & Exponential decay can decay FOREVER & have no control over decay shape.
@@ -524,6 +541,8 @@ $$
 \eta_t\leftarrow(\eta_0-\eta_\text{end})\cdot\left(1-\frac{t}{T}\right)^p+\eta_\text{end}
 $$
 ```
+
+&nbsp;
 
 ### Cycle
 - **What**: Cycle the LR between lower & upper bounds.
@@ -564,6 +583,8 @@ $$\begin{align*}
 &\text{exp range:} &&\eta_{\max,t}=\eta_{\max,0}\cdot\gamma^t \\
 \end{align*}$$
 ```
+
+&nbsp;
 
 #### Cosine Annealing
 - **Why**: Cyclical LR starts with low LR, which slows the initial learning process.
@@ -609,6 +630,8 @@ $$
 - $T_i=T_0\times\lambda_\text{mul}^i$, where $\lambda_\text{mul}$ is a factor by which the cycle length is increased after each restart.
 ```
 
+&nbsp;
+
 #### One Cycle Policy
 - **What**: Use ONLY 1 cycle for LR scheduling throughout training.
 - **Why**: Super-convergence: training models to high accuracy in ⬇️⬇️ epochs.
@@ -651,7 +674,7 @@ $$\begin{align*}
 	- ⬇️LR $\rightarrow$ ⬆️momentum helps continue making progress.
 ```
 
-<br/>
+&nbsp;
 
 ### ReduceLROnPlateau
 - **What**: Reduce LR when the model is on a plateau of **performance** (i.e., stuck).
@@ -679,6 +702,8 @@ $$\begin{align*}
 		- ❌Patience? GG.
 		- We could waste epochs being stuck without doing anything.
 ```
+
+&nbsp;
 
 ## Warmup
 - **What**: Start with "small LR $\rightarrow$ large LR".
@@ -708,6 +733,8 @@ $$
 \eta_t = \eta_0 + (\eta_{\text{tgt}} - \eta_0) \times \frac{t}{T}
 $$
 ```
+
+&nbsp;
 
 ### Exponential Warmup
 - **Why**: Exponential function offers an even gentler start & a faster ramp-up towards the target $\rightarrow$ Amplifies the reasons for using warmups

@@ -14,7 +14,7 @@ kernelspec:
 - **Why**: **Long-range dependencies** + **Parallel processing**.
 - **How**: {cite:p}`vaswani2017attention`
 
-```{image} ../../images/transformer/transformer.png
+```{image} ../images/nlp-transformer/transformer.png
 :align: center
 :width: 500px
 ```
@@ -46,7 +46,98 @@ kernelspec:
 - Subword offers a fixed-size, open-vocab symbol set which can handle rare words while maintaining morphology.
 ```
 
-<br/>
+### BPE
+- **What**: Byte-Pair Encoding (Frequency-based subword tokenization).
+- **How**:
+	1. Start with single characters as tokens.
+	2. Count every pair of adjacent tokens.
+	3. Merge the **most frequent** pair into one token.
+	4. Repeat Step 2-3 till reaching vocab size.
+
+### WordPiece
+- **What**: Likelihood-based subword tokenization.
+- **Why**: 
+	- BPE merges by frequency $\rightarrow$ Greedy $\rightarrow$ Doesn't care about the merge's impact on the overall LM probability
+	- WordPiece aims to **maximize corpus likelihood** under a unigram LM over subword tokens.
+- **How**:
+	1. Start with single characters as tokens.
+	2. Compute corpus likelihood gain for each pair of adjacent tokens.
+	3. Merge the pair with the **highest likelihood gain** into one token.
+	4. Repeat Step 2-3 till reaching vocab size.
+
+```{note} Math
+:class: dropdown
+Notations:
+- IO:
+	- $w_i$: $i$th word (i.e., space-separated tokens) in training corpus.
+	- $t_{i,j}$: $j$th subtoken in word $w_i$.
+- Hyperparams:
+	- $M$: #words in training corpus.
+	- $m_{w_i}$: #subtokens in word $w_i$.
+- Params:
+	- $\mathcal{V}$: Vocab of subword tokens.
+- Misc:
+	- $L(\mathcal{V})$: Corpus likelihood given curr vocab.
+	- $a,b$: 2 selected tokens.
+	- $c$: New token if merging $ab$.
+
+Objective: Maximize Corpus Likelihood
+
+$$
+L(\mathcal{V})=\prod_{i=1}^{M}P(w_i|\mathcal{V})=\prod_{i=1}^{M}\prod_{j=1}^{m_{w_i}}t_{i,j}
+$$
+
+Likelihood: #Counts of curr token over #Counts of all tokens in corpus from vocab:
+
+$$
+P(a)=\frac{\# a}{\sum_{b\in\mathcal{V}}\# b}
+$$
+
+Merging $a$&$b$ into $c$:
+
+$$\begin{align*}
+\# c\leftarrow \# c + \# ab \\
+\# a\leftarrow \# a - \# ab	\\
+\# b\leftarrow \# b - \# ab
+\end{align*}$$
+
+Likelihood Gain:
+
+$$
+\Delta(a,b)=\sum_{ab}\left[\log P_\mathrm{postmerge}(c)-\log P(a)-\log P(b)\right]
+$$
+```
+
+### Unigram
+- **What**: Reverse of BPE/WordPiece $\leftarrow$ Prune a large initial vocab instead of merging from chars
+- **Why**: Pruning + Likelihood can avoid early bad merge decisions & yield more natural segmentations.
+- **How**:
+    1. Build a large candidate vocab from the full training corpus.
+        - **Candidate**: Every single substring in the corpus no longer than a preset max length (e.g., 10-12 for Alphabets; 6 for CJK).
+        - **Large**: 10x-30x final vocab size.
+    2. Assign each candidate a probability.
+        1. Treat each token $t$ as a symbol in a **unigram language model** with parameter $p(t)$, where $\sum_t p(t)=1$.
+        2. A string $x$ can be segmented in many ways; for a segmentation $s=(t_1,\dots,t_k)$, define:
+            - $P(s)=\prod_{i=1}^{k} p(t_i)$
+            - $P(x)=\sum_{s \in \text{Seg}(x)} P(s)$  (sum over all valid segmentations)
+        3. Use dynamic programming to compute:
+            - **Best segmentation** (Viterbi): $\arg\max_s P(s)$ for tokenizing at inference time.
+            - **Marginals / expected counts** (Forward–Backward) needed for training.
+    3. Fit token probabilities with EM (Maximum Likelihood).
+        1. **E-step**: compute expected counts of each token under $P(s \mid x)$ across the corpus (via Forward–Backward).
+        2. **M-step**: update $p(t)$ proportional to its expected count (with smoothing/prior in practice):
+            - $p(t) \leftarrow \dfrac{\mathbb{E}[\text{count}(t)]}{\sum_{t'} \mathbb{E}[\text{count}(t')]}$
+    4. Prune the vocabulary (the “reverse of merges” part).
+        1. Score tokens by how harmful it would be to remove them (utility/importance), often approximated by the **increase in negative log-likelihood** if the token is dropped.
+        2. Remove a fraction of the lowest-utility tokens (e.g., 10–20%) while keeping:
+            - required tokens (special tokens, sometimes all single characters/bytes)
+            - an unknown/fallback mechanism to guarantee coverage
+        3. Re-run EM on the reduced vocab.
+        4. Repeat prune + re-fit until reaching the target vocab size.
+    5. Tokenization at inference:
+        - Given final vocab + $p(t)$, find the **most likely** segmentation with Viterbi DP (typically maximizing $\sum_i \log p(t_i)$).
+
+&nbsp;
 
 ## Token Embedding
 - **What**: Tokens $\rightarrow$ Semantic vectors.
@@ -80,30 +171,164 @@ E_{t_m}
 $$
 ```
 
-<br/>
+&nbsp;
 
 ## Positional Encoding
 - **What**: Semantic vectors + Positional vectors $\rightarrow$ Position-aware vectors
-- **Why**: Transformers don't know positions due to parallelism, BUT positions matter.
-    - No PE $\rightarrow$ Self-attention scores remain unchanged regardless of token orders
-- **How**: Add positional vectors onto semantic vectors.
+- **Why**:
+	- Transformers don't know positions.
+	- BUT positions matter!
+		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
+
+### Sinusoidal PE
+- **What**: Positional vectors $\rightarrow$ Sine waves
+- **Why**:
+	- Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
+	- No params $\rightarrow$ Low computational cost
+	- Empirically performed as well as learned PE
 
 ```{note} Math
 :class: dropdown
 Notations:
 - IO:
-    - $X\in\mathbb{R}^{m\times d_{\text{model}}}$: Input/Output semantic vectors.
-- Params:
-    - $P\in\mathbb{R}^{m\times d_{\text{model}}}$: Positional embedding vectors.
+	- $pos\in\mathbb{R}$: Input token position.
+- Hyperparams:
+	- $i$: Embedding dimension index.
+	- $d_{\text{model}}$: Embedding dimension.
 
-Positional Encoding:
+Sinusoidal PE:
 
-$$
-X\leftarrow X+P
-$$
+$$\begin{align*}
+&PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
+&PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
+\end{align*}$$
 ```
 
-<br/>
+```{attention} Q&A
+:class: dropdown
+*Cons?*
+- No params $\rightarrow$ No learning of task-specific position patterns.
+- Requires uniform token importance across the sequence. {cite:p}`vaswani2017attention`
+- Cannot capture complex, relative, or local positional relationships.
+```
+
+### RoPE
+- **What**: Rotary Postion Embedding.
+	- Encode relative positions $\leftarrow$ Rotate each QKV pair.
+- **Why**:
+	- Absolute PE tie each token to a fixed index $\rightarrow$ NO generalization to longer sequences
+	- Learned relative PE learn one weight per distance bucket $\rightarrow$ Limit distance ranges & Add params
+	- RoPE: **Param-free, Continuous, Relative, Generalizable**.
+- **How**:
+	1. Project each token embedding at position index $p$ to $\mathbf{q}_p$ & $\mathbf{k}_p$.
+	2. Each query/key vector of hidden dim $d$ = $\frac{d}{2}$ two-component planes formed by even-odd feature pairs.
+	3. Assign a rotation angle $\theta_n$, which grows smoothly with two-component pair index $n$, to each token.
+	4. Define a fixed 2D rotation operator $R(\theta_n)$, which rotates every plane counterclockwise by the angle $\theta_n$.
+	5. Rotate query & key vectors.
+	6. Compute attention scores with rotated query & key vectors.
+		- The paired rotation ONLY depends on the relative offset between their positions.
+
+```{note} Math
+:class: dropdown
+I forgot everything about Complex Analysis, so I will write in the layman's way.
+
+Notations:
+- IO:
+	- $\mathbf{x}\in\mathbb{R}^d$: Input token embedding.
+- Hyperparam:
+	- $d$: Hidden dim.
+- Misc:
+	- $i,j$: Token position indices.
+	- $n\in[1,\cdots,\frac{d}{2}]$: 2D plane index.
+	- $\theta_n$: Angle assigned to plane $n$.
+	- $R_\theta$: Rotation matrix for angle $\theta$.
+	- $\mathbf{q}_i$: Query vector for $i$th token.
+	- $\mathbf{k}_j$: Key vector for $j$th token.
+
+2D plane:
+1. The input token vector can be viewed as a sequence of consecutive pairs:
+
+$$
+\mathbf{x}=\left[(x_1,x_2),\cdots,(x_{d-1},x_d)\right]
+$$
+
+2. Each pair $(x_{2n-1},x_{2n})$ = A point in a 2D Cartesian plane.
+3. For each pair, define a rotation angle, which is smoothly dependent on the plane index:
+
+$$
+\theta_n=10000^{-\frac{2(n-1)}{d}}
+$$
+
+4. For each pair, define a rotation matrix:
+
+$$
+R_{\theta_n}=\begin{bmatrix}
+\cos\theta_n & -\sin\theta_n \\
+\sin\theta_n & \cos\theta_n
+\end{bmatrix}
+$$
+
+5. Note the core property of rotation matrices:
+
+$$
+R_\theta^TR_\phi=R_{\phi-\theta}
+$$
+
+6. For each pair, rotate counterclockwise (i.e., Cartesian $\rightarrow$ Polar $\rightarrow$ Cartesian):
+
+$$
+\begin{bmatrix}
+x'_{2n-1} \\ x'_{2n}
+\end{bmatrix}=R_{\theta_n}\begin{bmatrix}
+x_{2n-1} \\ x_{2n}
+\end{bmatrix}=\begin{bmatrix}
+\cos\theta_n & -\sin\theta_n \\
+\sin\theta_n & \cos\theta_n
+\end{bmatrix}\begin{bmatrix}
+x_{2n-1} \\ x_{2n}
+\end{bmatrix}
+$$
+
+RoPE:
+1. For a given query vector $\mathbf{q}_i$ and key vector $\mathbf{k}_j$, apply RoPE to each 2D plane.
+	- NOTE: The angle fed into the rotation matrix is ALSO dependent on the **position**.
+
+$$\begin{align*}
+{\mathbf{q}'}_i^{(n)}&=R_{i\theta_n}\mathbf{q}_i^{(n)} \\
+{\mathbf{k}'}_j^{(n)}&=R_{j\theta_n}\mathbf{k}_j^{(n)}
+\end{align*}$$
+
+2. For each pair, compute dot product, which is ONLY dependent on the vector values and the relative distance between $i$ & $j$:
+
+$$\begin{align*}
+\left({\mathbf{q}'}_i^{(k)}\right)^T{\mathbf{k}'}_j^{(k)}&=\left(R_{i\theta_n}\mathbf{q}_i^{(n)}\right)^TR_{j\theta_n}\mathbf{k}_j^{(n)} \\
+&=\left(\mathbf{q}_i^{(n)}\right)^TR_{i\theta_n}^TR_{j\theta_n}\mathbf{k}_j^{(n)} \\
+&=\left(\mathbf{q}_i^{(n)}\right)^TR_{(j-i)\theta_n}\mathbf{k}_j^{(n)}
+\end{align*}$$
+```
+
+```{attention} Q&A
+:class: dropdown
+*That's genius. How did they come up with this?*
+- They appreciate relative PE, but they don't appreciate the additional trainable params.
+- Let $\mathbf{q}_i$ & $\mathbf{k}_j$ be query & key vectors at positions $i$ and $j$ respectively.
+- They want their dot product to ONLY depend on the input vectors and the relative distance $i-j$:
+
+$$
+f(\mathbf{q},i)\cdot f(\mathbf{k},j) = g(\mathbf{q},\mathbf{k},i-j)
+$$
+
+- This is best achieved by rotation as explained in the Math section.
+
+*Why define the angle that way?*
+- Well, they didn't define it that way, but the OG [Sinusoidal PE](#sinusoidal-pe) did.
+- Long-term decay: This function ensures that the inner-product decays as the relative distance increases.
+- Varying granularity:
+	- Early dimensions have large angles $\rightarrow$ Rotation changes significantly even between nearby tokens $\rightarrow$ Effectively capture fine-grained relationship
+	- Late dimensions have small angles $\rightarrow$ Rotation changes very slowly, almost identical between nearby tokens $\rightarrow$ They ONLY make a significant difference with distant tokens $\rightarrow$ Effectively capture coarse-grained relationship
+```
+
+&nbsp;
 
 ## Attention
 - **What**: Different weights for different parts.
@@ -303,7 +528,7 @@ $$
 - Redundancy $\leftarrow$ Some heads may learn similar patterns
 ```
 
-<br>
+&nbsp;
 
 ## Encoder
 - **What**:
@@ -316,10 +541,10 @@ $$
 - **How**:
     1. **MHA**: Immediately establish global context from input sequence BEFORE per-token processing.
         1. **Residual Connection**: Preserve the original signal & Ensure training stability for deep stacks.
-        2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#internal-covariate-shift).
+        2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#covariate-shift).
     2. **Position-wise FFN**: Apply FFN independently **to each token vector** $\rightarrow$ Transform features within each position's channel dimension, w/o exchanging info across positions.
         1. **Residual Connection**: Preserve the original signal & Ensure training stability for deep stacks.
-        2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#internal-covariate-shift).
+        2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#covariate-shift).
 
 ```{note} Math
 :class: dropdown

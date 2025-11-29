@@ -424,7 +424,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
 - **What**: Apply a single convolutional filter to each input channel independently.
 - **Why**:
     - To learn spatial features within each channel separately.
-    - $\rightarrow$ Significantly reduce computational cost and model parameters compared to standard convolution.
+    - $\rightarrow$ Significantly reduce computational cost and model params compared to standard convolution.
 - **How**:
     1. Initialize a set of filters, one for each input channel.
     2. For each input channel, from top-left to bottom-right:
@@ -540,6 +540,165 @@ $$\begin{array}{ll}
 - Slight spatial info loss.
 - Requires hyperparam tuning.
     - Large filter or stride results in coarse features.
+```
+
+&nbsp;
+
+## RNN
+
+```{image} ../images/dl-module/rnn.png
+:align: center
+:width: 400px
+```
+
+- **What**: Keep & Update a hidden state while scanning a sequence.
+- **Why**: To model temporal dependencies with a parameter-sharing cell (same weights at every timestep).
+- **How**: 
+    1. Keep track of a hidden state.
+    2. At each step, combine current input with previous hidden state, then activate.
+
+```{note} Math
+:class: dropdown
+Notations:
+- IO:
+    - $\mathbf{x}_t\in\mathbb{R}^{H_{in}}$: Input at time $t$
+    - $\mathbf{h}_t\in\mathbb{R}^{H}$: Hidden state at time $t$
+    - $\mathbf{y}_t\in\mathbb{R}^{H_{out}}$: Output at time $t$ (optional)
+- Params:
+    - $W_{xh}\in\mathbb{R}^{H\times H_{in}},\; W_{hh}\in\mathbb{R}^{H\times H},\; \mathbf{b}_h\in\mathbb{R}^{H}$
+    - (optional) $W_{hy}\in\mathbb{R}^{H_{out}\times H},\; \mathbf{b}_y\in\mathbb{R}^{H_{out}}$
+- Hyperparams:
+    - $H_{in}, H_{out}, H$: Input size, output size, and hidden size.
+
+Forward:
+\begin{align*}
+&\text{Activation:} &&\mathbf{a}_t = W_{xh}\mathbf{x}_t + W_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h \\
+&\text{Hidden:} &&\mathbf{h}_t=\tanh(\mathbf{a}_t) \\
+&\text{Output (optional):} &&\mathbf{y}_t = W_{hy}\mathbf{h}_t + \mathbf{b}_y
+\end{align*}
+
+Backward:
+- Let $\mathbf{g}_{h_t}=\frac{\partial\mathcal{L}}{\partial \mathbf{h}_t}$. Then
+$$
+\delta_t \equiv \frac{\partial\mathcal{L}}{\partial \mathbf{a}_t}=\mathbf{g}_{h_t}\odot(1-\mathbf{h}_t^2)
+$$
+- Gradients:
+\begin{align*}
+&\frac{\partial\mathcal{L}}{\partial W_{xh}} \mathrel{+}= \delta_t \mathbf{x}_t^T \\
+&\frac{\partial\mathcal{L}}{\partial W_{hh}} \mathrel{+}= \delta_t \mathbf{h}_{t-1}^T \\
+&\frac{\partial\mathcal{L}}{\partial \mathbf{b}_h} \mathrel{+}= \delta_t \\
+&\frac{\partial\mathcal{L}}{\partial \mathbf{h}_{t-1}} \mathrel{+}= W_{hh}^T\delta_t
+\end{align*}
+```
+
+```{attention} Q&A
+:class: dropdown
+*Cons?*
+- **Vanishing/exploding gradients** in backprop-through-time (BPTT), esp. for long sequences.
+- Hard to preserve information for many timesteps.
+```
+
+&nbsp; 
+
+### GRU
+
+```{image} ../images/dl-module/gru.png
+:align: center
+:width: 400px
+```
+
+- **What**: Gated Recurrent Unit.
+    - **Gate**: controls how much past information to keep vs overwrite.
+- **Why**:
+    - Stable gradients.
+    - Selective memory.
+- **How**:
+    - **Update gate**: Keep info nearly unchanged for many steps.
+    - **Reset gate**: Ignore irrelevant history when forming candidate.
+
+```{note} Math
+:class: dropdown
+Notations:
+- IO:
+    - $\mathbf{x}_t\in\mathbb{R}^{H_{in}}$
+    - $\mathbf{h}_t\in\mathbb{R}^{H}$
+- Intermediate:
+    - $\mathbf{z}_t\in\mathbb{R}^{H}$: Update gate.
+    - $\mathbf{r}_t\in\mathbb{R}^{H}$: Reset gate.
+    - $\tilde{\mathbf{h}}_t\in\mathbb{R}^{H}$: Candidate state.
+
+Forward:
+\begin{align*}
+&\text{Update:}  &&\mathbf{z}_t=\sigma(W_{xz}\mathbf{x}_t+W_{hz}\mathbf{h}_{t-1}+\mathbf{b}_z) \\
+&\text{Reset:}  &&\mathbf{r}_t=\sigma(W_{xr}\mathbf{x}_t+W_{hr}\mathbf{h}_{t-1}+\mathbf{b}_r) \\
+&\text{Candidate:} &&\tilde{\mathbf{h}}_t=\tanh(W_{xh}\mathbf{x}_t+W_{hh}(\mathbf{r}_t\odot \mathbf{h}_{t-1})+\mathbf{b}_h) \\
+&\text{Hidden:}  &&\mathbf{h}_t=(1-\mathbf{z}_t)\odot \mathbf{h}_{t-1}+\mathbf{z}_t\odot \tilde{\mathbf{h}}_t
+\end{align*}
+```
+
+```{attention} Q&A
+:class: dropdown
+*Cons?*
+- Still struggle with long dependencies.
+- Computational cost ⬆️.
+- Interpretability ⬇️.
+```
+
+&nbsp;
+
+### LSTM
+
+```{image} ../images/dl-module/lstm.png
+:align: center
+:width: 400px
+```
+
+- **What**: Long Short-Term Memory.
+    - GRU + cell state (i.e., memory).
+- **Why**:
+    - Memory cell mitigates vanishing gradients.
+    - Finer control over write/keep/expose operations $\rightarrow$ More robust on longer sequences.
+- **How**:
+    - **Forget gate**: How much previous memory to keep/erase.
+    - **Input gate**: How much new info to write into memory.
+    - **Candidate**: New content that could be stored in memory.
+    - **Cell state**: Running memory that carries info forward through time with minimal distortion.
+    - **Output gate**: How much memory to reveal as the hidden/output state.
+
+
+```{note} Math
+:class: dropdown
+Notations:
+- IO:
+  - $\mathbf{x}_t\in\mathbb{R}^{H_{in}}$
+  - $\mathbf{h}_t\in\mathbb{R}^{H}$
+  - $\mathbf{c}_t\in\mathbb{R}^{H}$: Cell state.
+- Intermediate:
+  - $\mathbf{i}_t\in\mathbb{R}^{H}$: Input.
+  - $\mathbf{f}_t\in\mathbb{R}^{H}$: Forget.
+  - $\mathbf{o}_t\in\mathbb{R}^{H}$: Output.
+  - $\tilde{\mathbf{c}}_t\in\mathbb{R}^{H}$: Candidate.
+
+Forward:
+\begin{align*}
+&\text{Forget:} &&\mathbf{f}_t=\sigma\left(W_{xf}\mathbf{x}_t+W_{hf}\mathbf{h}_{t-1}+\mathbf{b}_f\right) \\
+&\text{Input:} &&\mathbf{i}_t=\sigma\left(W_{xi}\mathbf{x}_t+W_{hi}\mathbf{h}_{t-1}+\mathbf{b}_i\right) \\
+&\text{Candidate:} &&\tilde{\mathbf{c}}_t=\tanh\left(W_{xc}\mathbf{x}_t+W_{hc}\mathbf{h}_{t-1}+\mathbf{b}_c\right) \\
+&\text{Cell state:} &&\mathbf{c}_t=\mathbf{f}_t\odot \mathbf{c}_{t-1}+\mathbf{i}_t\odot \tilde{\mathbf{c}}_t \\
+&\text{Output:} &&\mathbf{o}_t=\sigma\left(W_{xo}\mathbf{x}_t+W_{ho}\mathbf{h}_{t-1}+\mathbf{b}_o\right) \\
+&\text{Hidden:} &&\mathbf{h}_t=\mathbf{o}_t\odot \tanh(\mathbf{c}_t)
+\end{align*}
+```
+
+```{attention} Q&A
+:class: dropdown
+**Pros?**
+- Strong long-range memory in the RNN era.
+- Very stable training in many sequence tasks.
+
+**Cons?**
+- SO SLOW.
+- No one cares. It's the transformer era.
 ```
 
 &nbsp;
@@ -858,7 +1017,7 @@ $$
 
 &nbsp;
 
-### CELU
+#### CELU
 - **What**: Continuously Differentiable Exponential Linear Unit.
 - **Why**: ELU is NOT continuously differentiable at $0$ unless $\alpha=1$.
 - **How**: Linear for positive, scaled exponential for negative with $z/\alpha$ inside the exp.

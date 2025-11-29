@@ -11,7 +11,7 @@ kernelspec:
 ---
 # Supervised Learning
 # Linear Models
-Linear models predicts outputs by combining input features with assigned parameters linearly.
+Linear models predicts outputs by combining input features with assigned params linearly.
 
 ## Linear Regression
 - **What**: Models a linear relationship between input & output.

@@ -228,7 +228,7 @@ def binary_search(nums) -> int:
     - Top-Down (**Memoization**): Break problem into smaller subproblems. Store results for each subproblem in an array/hash.
     - Bottom-Up (**Tabulation**): Start from the simplest subproblems and iteratively solve larger problems. Store results in a table (i.e., 2d array).
 2. Define the state:
-    - Variables: Determine what parameters can uniquely identify a subproblem, which will be used to index into your memoization table or array.
+    - Variables: Determine what params can uniquely identify a subproblem, which will be used to index into your memoization table or array.
     - Transition: Define how to break your problem into subproblems.
 3. Initialize (DP table & Base cases) & Iterate (based on the defined state transition).
 

@@ -89,7 +89,7 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 - **How**:
 	1. **4-bit NormalFloat Quantization**: 
 
-### Adapters
+<!-- ### Adapters
 
 ### Prompt Tuning
 
@@ -104,4 +104,4 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 
 ### DPO
 
-### GRPO
+### GRPO -->

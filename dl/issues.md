@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 # Issues
-This page lists the common issues in deep learning in Alphabetic order.
+This page lists common issues in DL in Alphabetic order.
 
 ## Covariate Shift
 - **What**: A learned function suddenly sees its input data distribution change, while the conditional distribution of labels given data is presumed unchanged.
@@ -34,8 +34,7 @@ This page lists the common issues in deep learning in Alphabetic order.
 
 ## Overfitting
 - **What**: The model performs well on the training data but badly on the test/unseen data.
-- **Cause**: Too high model complexity relative to training data size.
-- **Consequence**: Poor generalization.
+- **Why**: Too high model complexity relative to training data size $\rightarrow$ Poor generalization.
 - **How to mitigate**:
 	- Parameter regularization (L1/L2) $\rightarrow$ reduce the magnitude of params.
     - Dropout $\rightarrow$ reduce dependency on certain neurons $\rightarrow$ promote learning of robust features.
@@ -47,16 +46,15 @@ This page lists the common issues in deep learning in Alphabetic order.
 ## Vanishing/Exploding Gradient
 - **What**:
     - **Vanishing gradients**: The gradients become smaller and smaller during backprop. They have almost no effect to the front layers.
+        - $\rightarrow$ Slows & potentially stops the learning process for the front layers.
     - **Exploding gradients**: The gradients become larger and larger during backprop. They change the weights of the front layers too much.
-- **Cause**:
+        - $\rightarrow$ Harder convergence & Training instability.
+- **Why**:
     - Too many layers.
     - Too small/large gradient on certain layers (e.g., Sigmoid, Tanh, extremely large weight initialization, etc.) $\rightarrow$ propagates via chain rule.
-- **Consequence**:
-	- **Vanishing gradients**: Slows & potentially stops the learning process for the front layers.
-	- **Exploding gradients**: Harder convergence & Training instability.
 - **How to mitigate**:
-	- Proper activation functions (e.g., ReLU and variants) $\rightarrow$ low likelihood of tiny gradients.
-    - Proper weight initialization (e.g., Xavier, He, etc.) $\rightarrow$ maintain stable gradients.
-    - Batch Normalization $\rightarrow$ 
-    - Residual connection.
-    - Gradient clipping.
+	- Proper activation functions (e.g., ReLU and variants) $\rightarrow$ Low likelihood of tiny gradients
+    - Proper weight initialization (e.g., Xavier, He, etc.) $\rightarrow$ Maintain stable gradients
+    - Batch Normalization $\rightarrow$ Maintain scaled gradients
+    - Residual connection $\rightarrow$ Shortcut paths for gradient flow
+    - Gradient clipping $\rightarrow$ Caps gradient magnitude

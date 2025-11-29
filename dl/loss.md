@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Loss
+# Objective (Loss)
 
 A loss function is the discrepancy between predicted and actual values, as the optimization (minimization) objective.
 
@@ -595,13 +595,13 @@ $$
 <!-- ### Adversarial -->
 <!-- ### Wasserstein -->
 
-<!-- <br/> -->
+<!-- &nbsp; -->
 
 <!-- ## Sequence Model
 ### CTC
 - **What**: Connectionist Temporal Classification.
 
-<br/>
+&nbsp;
 
 # Segmentation
 ## Dice
@@ -609,7 +609,7 @@ $$
 ## GDL
 - **What**: Generalized Dice Loss.
 
-<br/>
+&nbsp;
 
 # Object Detection
 ## YOLO (Composite)

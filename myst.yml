@@ -17,22 +17,18 @@ project:
         - file: dl/module.md
         - file: dl/loss.md
         - file: dl/optim.md
-        - file: dl/quant.md
+        - file: dl/train.md
         - file: dl/issues.md
     - title: NLP
       children:
-        - file: nlp/transformer/transformer.md
-          children:
-            - file: nlp/transformer/tokenizer.md
-            - file: nlp/transformer/pe.md
+        - file: nlp/transformer.md
         - file: nlp/models.md
         - title: Training
           children:
             - file: nlp/training/post.md
             - file: nlp/training/rlhf.md
             - file: nlp/training/misc.md
-            - file: nlp/training/parallel.md
-        - file: Inference
+        - title: Inference
           children:
             - file: nlp/inference/decoding.md
             - file: nlp/inference/misc.md
