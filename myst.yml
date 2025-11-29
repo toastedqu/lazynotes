@@ -39,7 +39,7 @@ project:
     - title: Misc
       children:
         - file: dsa.md
-        - file: about.md
+    - file: about.md
 site:
   options:
     logo: logo.png

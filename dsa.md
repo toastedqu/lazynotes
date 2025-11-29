@@ -261,7 +261,7 @@ def DP(args):
 
 
 ## Linked List
-My peanut brain literally cannot understand linked list problems, so take this section with a grain of salt.
+I hate linked lists, so take this section with a grain of salt.
 
 **Where**: linked list
 
