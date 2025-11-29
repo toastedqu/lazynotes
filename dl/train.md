@@ -9,8 +9,10 @@ kernelspec:
   language: python
   name: python3
 ---
-# Training
-This page covers some common training techniques in DL.
+# Training Toolkit
+This page covers training tricks commonly used in all kinds of DL tasks.
+
+This page does NOT cover specialized training methods like transfer learning or post-training. They are discussed separately.
 
 ## Weight Initialization
 ### Zero Initialization
@@ -51,7 +53,7 @@ This page covers some common training techniques in DL.
 
 ### He Initialization
 - **What**: All params in ReLU nets are constrained to a fixed variance.
-- **Why**: To mitigate [vanishing/exploding gradients](../dl/issues.md#vanishingexploding-gradient) in very deep NNs with ReLU activations.
+- **Why**: To mitigate [vanishing/exploding gradients](../dl/issues.md) in very deep NNs with ReLU activations.
 
 ```{note} Math
 :class: dropdown
@@ -80,7 +82,7 @@ This page covers some common training techniques in DL.
 
 ### Xavier/Glorot Initialization
 - **What**: "He Init" but preserve variance in **both ways**.
-- **Why**: To mitigate [vanishing/exploding gradients](../dl/issues.md#vanishingexploding-gradient) in very deep NNs with ReLU activations.
+- **Why**: To mitigate [vanishing/exploding gradients](../dl/issues.md) in very deep NNs with ReLU activations.
 
 ```{note} Math
 :class: dropdown
@@ -107,7 +109,28 @@ This page covers some common training techniques in DL.
 
 &nbsp;
 
-## Gradient Control
+## Regularization
+### Early Stopping
+- **What**: Stop when val perf stops improving.
+- **Why**: To prevent overfitting.
+- **How**:
+	1. Choose:
+		- Monitored val metric.
+		- **Patience**: How many epochs to wait for improvement.
+		- **Min Delta**: Minimum threshold to qualify as "improvement".
+	2. Train:
+		- Every time improvement exceeds Min Delta, reset Patience counter.
+		- If Patience runs out, quit & keep best checkpoint.
+
+```{attention} Q&A
+:class: dropdown
+*Cons?*
+- May stop too early $\rightarrow$ Hyperparam tuning, validation data/metric noise, etc.
+```
+
+&nbsp;
+
+## Gradient Tricks
 ### Gradient Clipping
 - **What**: Cap grads by value/norm.
 - **Why**: To mitigate exploding grads.
@@ -142,35 +165,46 @@ This page covers some common training techniques in DL.
 
 &nbsp;
 
-## Regularization
-### Early Stopping
-- **What**: Stop when val perf stops improving.
-- **Why**: To prevent overfitting.
+### Gradient Checkpointing
+- **What**: Store fewer intermediate activations during forward pass $\rightarrow$ Recompute them during backprop.
+- **Why**: To fit larger models/batches into limited GPU memory $\rightarrow$ Trade compute for memory.
 - **How**:
-	1. Choose:
-		- Monitored val metric.
-		- **Patience**: How many epochs to wait for improvement.
-		- **Min Delta**: Minimum threshold to qualify as "improvement".
-	2. Train:
-		- Every time improvement exceeds Min Delta, reset Patience counter.
-		- If Patience runs out, quit & keep best checkpoint.
+    1. Divide the computational graph into segments.
+    2. Forward: Store activations only at segment boundaries (checkpoints).
+    3. Backward: Recompute intermediate activations on-demand.
+    4. Apply optimizer step.
 
 ```{attention} Q&A
 :class: dropdown
+*Pros?*
+- HUGE memory savings (often 30-50% less GPU memory).
+- Enables training deeper NNs on larger batches on the same hardware.
+
 *Cons?*
-- May stop too early $\rightarrow$ Hyperparam tuning, validation data/metric noise, etc.
+- ⬆️⬆️ Computational cost (~20–30% more FLOPs).
+- ⬆️⬆️ Training time.
+- ⬆️ Implementation complexity $\leftarrow$ Requires careful graph segmentation
+
+*FYI:*
+- Gradient checkpointing is **orthogonal** to gradient accumulation $\rightarrow$ Combine both for MASSIVE memory savings
 ```
 
 &nbsp;
 
 ## Distributed Training
-```{dropdown} Table: DDP vs FSDP
-| Category | DDP | FSDP |
-|:---------|-----|------|
-| Memory | ⬆️ | ⬇️ |
-| Time | ⬆️ on small/medium models | ⬆️ on large models<br>when memory savings permit larger batch sizes |
-| Scalability | #GPUs | #Params per GPU |
-| Debugging | Single-GPU semantics | Extra metadata and indirection layers |
+```{dropdown} Table: Parallelism Comparison
+| Category                       | DDP                                     | FSDP                                                                | ZeRO                                                     | Pipeline Parallelism                               | Tensor Parallelism                                     |
+| :----------------------------- | :-------------------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------- | :------------------------------------------------- | :----------------------------------------------------- |
+| **Memory**                     | ⬆️                                      | ⬇️                                                                  | ⬇️⬇️ (Stage-dependent: S1→S3)                            | ↔️ (splits layers, but states still exist)         | ↔️/⬇️ (layer-scope sharding only)                      |
+| **Time**                       | ⬆️ on small/medium models               | ⬆️ on large models<br>when memory savings permit larger batch sizes | ⬆️ when memory savings avoid OOM; ⬇️ if comms bottleneck | ↔️/⬆️ if well-balanced; ⬇️ with pipeline bubbles   | ⬆️ with fast interconnect; ⬇️ if comms-heavy per layer |
+| **Memory Targets**             | Params+Grads+Opt **replicated**         | Params **sharded**, grads sometimes sharded                         | Opt (S1)<br>Grads (S2)<br>Params (S3) **sharded**     | Layers **partitioned** across devices              | Tensors inside layers **sharded**                      |
+| **Scalability**                | #GPUs                                   | #Params per GPU                                                     | #Params total (via sharding all states)                  | #Depth (number of layers/stages)                   | #Width (hidden size / shards per layer)                |
+| **Debugging**                  | Single-GPU semantics                    | Extra metadata and indirection layers                               | Runtime-managed state partitioning                       | Cross-stage scheduling and correctness             | Per-op sharding + collectives                          |
+| **Communication**              | All-reduce grads (ring)                 | All-gather/Reduce-Scatter per shard                                 | Heavy All-Gather/Reduce-Scatter of params/grads/states   | Activation transfers between stages                | Per-layer collectives (matmul shards)                  |
+| **Failure Modes**              | OOM at larger models                    | Comms hotspots<br>Sharding bugs                                       | Network bottlenecks<br>Partition mismatches                | Pipeline bubbles<br>Stage imbalance                  | Synchronization stalls<br>Kernel mismatch                |
+| **When to Use**            | Model fits per GPU | Large models that barely fit with sharding                         | Ultra-large models                  | Ultra-deep NNs (e.g., transformers with many blocks) | Ultra-wide NNs (large hidden sizes/heads)            |
+| **When NOT to Use**            | Model doesn’t fit per GPU               | Very small models                          | Weak interconnect / Unstable comms                      | Shallow models; hard-to-balance stages             | Small hidden sizes                    |
+| **IRL Tools**     | PyTorch DDP                             | PyTorch FSDP                                                        | DeepSpeed ZeRO (Stages 1–3)                              | Megatron/DeepSpeed PP                              | Megatron-LM TP                                         |
 ```
 
 ### DDP
@@ -191,6 +225,8 @@ This page covers some common training techniques in DL.
 		3. Each copy uses the averaged grad to update its local model's weights.
 			- Since all copy weights are the same initially, they remain the same after each identical update.
 
+&nbsp;
+
 ### FSDP
 - **What**: Fully Sharded Data Parallel.
 	- Shard model params, grads, and optimizer states across multi processes (GPUs), each taking a unique mini-batch of data.
@@ -207,7 +243,38 @@ This page covers some common training techniques in DL.
 
 &nbsp;
 
-## Mixed Precision Training
+### ZeRO
+- **What**: Zero Redundancy Optimizer.
+	- Partition optimizer states, grads, and params across multiple devices instead of replication $\rightarrow$ Memory optimization
+- **Why**: Replication results in redundancy in data storage $\rightarrow$ Partitioning directly eliminates redundancy in memory storage.
+- **How**:
+    1. Partitioning:
+        - **Stage 1**: Partition optimizer states (e.g., Adam's momentum & variance).
+        - **Stage 2**: Partition grads.
+        - **Stage 3**: Partition params.
+    2. Forward:
+        - Each GPU holds ONLY the necessary params for computation.
+        - When required, params are fetched on-demand from other GPUs.
+    3. Backward:
+        - Grads are computed locally, then partitioned and communicated to the GPUs responsible for those params.
+    4. Optimizer Step:
+        - Each GPU updates ONLY its own opt states & params.
+
+```{attention} Q&A
+:class: dropdown
+*Cons?*
+- Communication overhead:
+    - Frequent all-gather/reduce-scatter calls $\rightarrow$ Network bottlenecks.
+
+*FYI:*
+- ZeRO = the backbone of **DeepSpeed**.
+- ZeRO does NOT change the math of optimization — only how states are stored and communicated.
+- ZeRO is combinable with pipeline/tensor parallelism.
+```
+
+&nbsp;
+
+## Mixed Precision
 ### Precision
 - **What**: Numerical format + Bit-width.
     - **Bit-width**: #Bits to encode each numerical value in memory.
@@ -223,7 +290,7 @@ This page covers some common training techniques in DL.
             2. **Stored exponent** $\leftarrow$ **Actual exponent** + **Bias**.
     - **Mantissa/Fraction**:
         - Theory: $a$ in scientific notation $a \times 2^n$.
-        - Practice: 
+        - Practice:
             1. The first non-zero digit is always immediately to the left of the decimal point.
             2. The only possible non-zero binary digit is 1.
             3. $\rightarrow$ Every base number starts with 1.
@@ -308,7 +375,131 @@ $$
 | **INT8** | Quantized inference with extreme memory limits. |
 ```
 
-<!-- ## Model Compression
-### Pruning
-### Quantization
-### Knowledge Distillation -->
+&nbsp;
+
+### Mixed Precision Training
+- **What**: Train using a mix of **low & high** precisions for different parts of computation.
+- **Why**: To reduce memory usage & speed up training WHILE maintaining model accuracy.
+    - FP16 ops are faster & use less memory.
+	- FP32 is kept for critical steps (e.g., weight updates) to maintain numerical stability.
+- **How**:
+    1. Forward:
+        1. Compute most operations in FP16.
+        2. Multiply loss by a scale factor to avoid underflow in FP16 gradients.
+    2. Backward:
+		1. Compute grads in FP16.
+		2. Unscale grads.
+       	3. Convert grads to FP32 for weight updates.
+       	4. Apply optimizer step in FP32.
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- ⬆️ Training speed.
+- ⬇️ Memory usage $\rightarrow$ Larger batch sizes become possible.
+- ❌ Accuracy loss, if implemented correctly.
+
+*Cons?*
+- Very complex implementation & debugging $\leftarrow$ Mixed data types
+```
+
+&nbsp;
+
+## Performance Metrics
+### FLOP
+- **What**: Floating Point Operation.
+	- = A single arithmetic operation on floating-point numbers (e.g., addition, multiplication).
+- **Why**: To measure **computational complexity** of a model.
+- **How**:
+    1. Count all floating-point operations in forward + backward pass.
+    2.  Sum across all layers.
+    3.  Report in GFLOPs (billions) or TFLOPs (trillions).
+
+```{dropdown} Table: Example FLOPs
+| Module   | FLOPs |
+| :------- |:--------------|
+| **Linear** | $\text{FLOPs} \approx 2 \times (\text{input size} \times \text{output size})$ |
+| **Convolution** | $\text{FLOPs} \approx 2 \times (\text{kernel size}^2 \times \text{input channels} \times \text{output channels} \times \text{output feature map size})$ |
+| **Self-Attention** | $\text{FLOPs} \approx 4 \times (\text{seq len} \times \text{hidden size}^2) + 2 \times (\text{seq len}^2 \times \text{hidden size})$ |
+```
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Hardware-agnostic metric for cost computation.
+- ✅ Model comparison.
+- ✅ Scaling law.
+- ✅ Training/Inference time estimation with hardware specs.
+
+*Cons?*
+- FLOPs ≠ actual runtime $\leftarrow$ Memory bandwidth, parallelism, and hardware optimizations matter.
+- ❌ Precision.
+- ❌ Sparsity.
+- ❌ Data movement cost.
+
+*FYI:*
+- FLOPs for training ≈ 2-3× FLOPs for inference (due to backward pass).
+- FLOPs ≠ FLOPS:
+    - FLOPs = operations count.
+    - FLOPS = operations per second (hardware speed).
+```
+
+&nbsp;
+
+### Memory Footprint
+- **What**: Total #memory (RAM/VRAM) consumed during training/inference.
+    - Includes: model params, optimizer states, activations, grads, and buffers.
+- **Why**: Memory footprint determines:
+    - Whether your model **fits on the hardware**.
+    - Max batch size.
+    - Whether you need memory save techniques.
+    - Whether you can avoid the STINKY OOM error.
+
+```{attention} Q&A
+:class: dropdown
+*Cons?*
+- Hard to estimate precisely for dynamic graphs or custom ops.
+- May spike due to **non-obvious buffers** (e.g., fused kernels).
+```
+
+&nbsp;
+
+### Throughput
+- **What**: #Samples (or Tokens) processed **per unit time** (e.g., per second).
+- **Why**: To measure **training** efficiency & hardware utilization $\rightarrow$ Training time
+    - Higher/Lower throughput = Faster/Slower iteration cycles.
+- **How**: Measure total samples processed over a fixed time window, then divide.
+
+```{attention} Q&A
+:class: dropdown
+*Cons?*
+- Chasing throughput can harm model quality:
+    - Large batch sizes $\rightarrow$ Poor generalization.
+    - Aggressive mixed precision without stability checks.
+
+*FYI:*
+- Throughput is NOT constant:
+    - Early epochs may have lower throughput due to warm-up.
+    - Distributed training overhead (e.g., all-reduce) can reduce effective throughput.
+```
+
+&nbsp;
+
+### Latency
+- **What**: **Time** taken to complete a single operation.
+- **Why**: To monitor **real-time inference**.
+    - Lower latency → Faster response for end-users.
+    - In training, latency per step affects overall throughput.
+
+```{attention} Q&A
+:class: dropdown
+*Cons?*
+- Reducing latency often requires:
+    - Model compression $\rightarrow$ Accuracy trade-offs.
+    - Specialized hardware $\rightarrow$ Higher cost.
+
+*FYI:*
+- Latency ≠ Throughput.
+	- Latency is "per request".
+	- Throughput is "aggregate over time".
+```

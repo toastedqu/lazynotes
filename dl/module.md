@@ -154,7 +154,7 @@ $$
 
 ## Residual Connection
 - **What**: Model the residual ($Y-X$) instead of the output ($Y$).
-- **Why**: To mitigate [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
+- **Why**: To mitigate [vanishing/exploding gradients](../dl/issues.md/).
 - **How**: Add input $X$ to block output $F(X)$.
     - If the feature dimension of $X$ and $F(X)$ doesn't match, use a shortcut linear layer on $X$ to change its feature dimension.
 
@@ -270,7 +270,7 @@ Backward:
 *Pros?*
 - Accelerates training with higher learning rates.
 - Reduces sensitivity to weight initialization.
-- Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
+- Mitigates [vanishing/exploding gradients](../dl/issues.md/).
 
 *Cons?*
 - Adds computation overhead and complexity.
@@ -347,7 +347,7 @@ Backward:
 *Pros?*
 - Reduces hyperparam tuning effort.
 - High consistency during training and inference.
-- Mitigates [vanishing/exploding gradients](../dl/issues.md/#vanishing/exploding-gradient).
+- Mitigates [vanishing/exploding gradients](../dl/issues.md/).
 
 *Cons?*
 - Adds computation overhead and complexity.
