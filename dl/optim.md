@@ -18,8 +18,8 @@ GD updates params based on grad's **size & direction**.
 	- Objective: **Loss minimization**.
 	- Assumption: Loss function is **convex**.
 	- Descent in both cases:
-		- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}>0\rightarrow \mathcal{L}\propto w\rightarrow$ Reduce $w$ to reduce $\mathcal{L}$ $\rightarrow$ Subtract the positive grad.
-		- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}<0\rightarrow \mathcal{L}\propto -w\rightarrow$ Raise $w$ to reduce $\mathcal{L}$ $\rightarrow$ Subtract the negative grad.
+		- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}>0\rightarrow \mathcal{L}\propto w\rightarrow$ Reduce $w$ to reduce $\mathcal{L}$ → Subtract the positive grad.
+		- $\frac{\partial\mathcal{L}}{\partial\mathcal{w}}<0\rightarrow \mathcal{L}\propto -w\rightarrow$ Raise $w$ to reduce $\mathcal{L}$ → Subtract the negative grad.
 
 But *Why GD only?* Why not others? Because GD is **practical**.
 - *Analytical solutions?* Often impossible.
@@ -74,8 +74,8 @@ $$
 	- stuck in local minima.
 - **How**: **Velocity**: Exponentially decaying moving average of past grads.
 	- At each param update step, add a fraction of the previous update to the curr grad.
-		- Flat region: Prev grad & Curr grad same direction $\rightarrow$ Velocity builds up $\rightarrow$ Faster convergence
-		- Valley region: Prev grad & Curr grad diff direction $\rightarrow$ Velocity cancels out $\rightarrow$ Oscillations are dampened
+		- Flat region: Prev grad & Curr grad same direction → Velocity builds up → Faster convergence
+		- Valley region: Prev grad & Curr grad diff direction → Velocity cancels out → Oscillations are dampened
 	
 ```{note} Math
 :class: dropdown
@@ -158,12 +158,12 @@ $$
 ### Adagrad (Adaptive Gradient)
 - **What**: GD + Adaptive learning rate for each param.
 - **Why**: A single, fixed learning rate is problematic:
-	- Diff feature frequencies: Rare/Common features $\rightarrow$ Rarely/Commonly update their corresponding params $\rightarrow$ Need to take larger/smaller steps.
-	- Diff param sizes: Large/Small params $\rightarrow$ Large/Small grads in nature
+	- Diff feature frequencies: Rare/Common features → Rarely/Commonly update their corresponding params → Need to take larger/smaller steps.
+	- Diff param sizes: Large/Small params → Large/Small grads in nature
 - **How**:
 	1. Track past grads for each param.
 	2. Scale learning rate by $\sqrt{\sum\text{grads}^2}$.
-		- Large/Small past grads $\rightarrow$ Small/Large learning rate
+		- Large/Small past grads → Small/Large learning rate
 
 ```{note} Math
 :class: dropdown
@@ -206,8 +206,8 @@ $$
 ### RMSprop (Root Mean Square Propagation)
 - **What**: Adagrad w EWMA (Exponentially Weighted Moving Average) of squared grads instead of sum.
 - **Why**:
-	- Learning rate decays too much $\leftarrow$ Grad sum grows till training ends.
-- **How**: ❌Grad sum, ✅EWMA of past squared grads $\rightarrow$ No infinite growth
+	- Learning rate decays too much ← Grad sum grows till training ends.
+- **How**: ❌Grad sum, ✅EWMA of past squared grads → No infinite growth
 
 ```{note} Math
 :class: dropdown
@@ -257,8 +257,8 @@ $$
 - **Why**:
 	- Performance is highly sensitive to learning rate.
 - **How**:
-    1.  ❌Grad sum, ✅EWMA of past squared grads ($G_t$) $\rightarrow$ No infinite growth
-	2.  ❌Global LR, ✅EWMA of past squared param updates ($\Delta W_{t}$) $\rightarrow$ No LR decay
+    1.  ❌Grad sum, ✅EWMA of past squared grads ($G_t$) → No infinite growth
+	2.  ❌Global LR, ✅EWMA of past squared param updates ($\Delta W_{t}$) → No LR decay
     3.  ❌Fixed LR, ✅Adaptive ratio between RMS of prev param updates & RMS of curr accumulated squared grads ($\frac{\text{RMS}[\Delta w]_{\text{prev}}}{\text{RMS}[g]_{\text{curr}}}$)
 
 ```{note} Math
@@ -329,7 +329,7 @@ $$
 - **How**:
 	1. Update 1st moment using new grads.
 	2. Update 2nd moment using new squared grads.
-	3. Bias Correction: EWMAs are init to 0 $\rightarrow$ They are biased toward 0 early in training $\rightarrow$ Need to correct it
+	3. Bias Correction: EWMAs are init to 0 → They are biased toward 0 early in training → Need to correct it
 	4. Update params.
 
 ```{note} Math
@@ -386,11 +386,11 @@ $$
 
 &nbsp;
 
-### AdamW (Adam with Weight Decay)
+### AdamW
 - **What**: Adam + Weight Decay.
 - **Why**: L2 regularization.
 	- L2 adds an additional change to the original grad: $\lambda w$.
-	- $\rightarrow$ Designed to decay all weights toward 0, at a rate proportional to their magnitudes, regardless of grad history.
+	- → Designed to decay all weights toward 0, at a rate proportional to their magnitudes, regardless of grad history.
 	- BUT in Adam, weights with large/small historical grads get a small/large learning rate, thus a small/large weight decay.
 	- Adam & L2 conflict by design.
 - **How**: Add an extra weight decay step after Adam.
@@ -445,8 +445,8 @@ $$
 ## LR Scheduler
 - **What**: Dynamically adjust LR during training.
 - **Why**:
-	- ⬇️LR $\rightarrow$ ⬇️Convergence speed $\rightarrow$ Training takes too long $\rightarrow$ We want fast
-	- ⬆️LR $\rightarrow$ ⬆️Convergence speed $\rightarrow$ Overshoot global minima $\rightarrow$ We want fast initially but slow later
+	- ⬇️LR → ⬇️Convergence speed → Training takes too long → We want fast
+	- ⬆️LR → ⬆️Convergence speed → Overshoot global minima → We want fast initially but slow later
 	- LR Scheduler: How about both?
 
 ### Decay
@@ -489,8 +489,8 @@ e.g., if $s=10$
 
 #### Exponential Decay
 - **Why**: Step Decay makes abrupt changes
-	- $\rightarrow$ Unstable convergence & potential disruptions in training
-	- $\rightarrow$ Need **smoother transition**
+	- → Unstable convergence & potential disruptions in training
+	- → Need **smoother transition**
 - **How**:
 	1. Init: LR, Decay rate.
 	2. At each step, multiply curr LR with decay rate.
@@ -547,8 +547,8 @@ $$
 ### Cycle
 - **What**: Cycle the LR between lower & upper bounds.
 - **Why**: Decays are good, BUT they are heavily sensitive to hyperparams.
-	- If LR ⬇️ too slow $\rightarrow$ Overshoot global minima
-	- If LR ⬇️ too fast $\rightarrow$ No chance to explore further regions $\rightarrow$ Stuck in local minima & saddle points
+	- If LR ⬇️ too slow → Overshoot global minima
+	- If LR ⬇️ too fast → No chance to explore further regions → Stuck in local minima & saddle points
 	- Periodically increasing LR can help escape local minima & saddle points.
 
 #### Cyclical LR
@@ -617,8 +617,8 @@ $$
 :class: dropdown
 *But why cosine?*
 - First, cosine is NOT the only option that works.
-- Cosine is smooth, and its 1st derivative (i.e., sine) is also smooth, and its 2nd derivative (i.e., cosine) is also smooth... $\rightarrow$ Cosine is infinitely smooth.
-	- Smoothness ⬆️ $\rightarrow$ Training stability ⬆️
+- Cosine is smooth, and its 1st derivative (i.e., sine) is also smooth, and its 2nd derivative (i.e., cosine) is also smooth... → Cosine is infinitely smooth.
+	- Smoothness ⬆️ → Training stability ⬆️
 - Cosine follows the **slow-fast-slow** decay pattern:
 	- Initial lingering high LR allows for broad exploration.
 	- Rapid drop in LR allows for faster convergence.
@@ -670,8 +670,8 @@ $$\begin{align*}
 :class: dropdown
 *Why does the OG paper schedule momentum together with LR?*
 - Pure empirical findings:
-	- ⬆️LR $\rightarrow$ ⬇️momentum helps prevent divergence.
-	- ⬇️LR $\rightarrow$ ⬆️momentum helps continue making progress.
+	- ⬆️LR → ⬇️momentum helps prevent divergence.
+	- ⬇️LR → ⬆️momentum helps continue making progress.
 ```
 
 &nbsp;
@@ -706,10 +706,10 @@ $$\begin{align*}
 &nbsp;
 
 ## Warmup
-- **What**: Start with "small LR $\rightarrow$ large LR".
+- **What**: Start with "small LR → large LR".
 - **Why**: Large initial LR can go wrong:
-	- Large batches $\rightarrow$ Accurate initial grads $\xrightarrow{+\text{large LR}}$ Overshooting
-	- Adaptive Optimizers $\rightarrow$ Super noisy average grads due to few samples in history $\xrightarrow{+\text{large LR}}$ Wild fluctiations
+	- Large batches → Accurate initial grads $\xrightarrow{+\text{large LR}}$ Overshooting
+	- Adaptive Optimizers → Super noisy average grads due to few samples in history $\xrightarrow{+\text{large LR}}$ Wild fluctiations
 	- Early local minima/saddle points.
 
 ### Linear Warmup
@@ -737,7 +737,7 @@ $$
 &nbsp;
 
 ### Exponential Warmup
-- **Why**: Exponential function offers an even gentler start & a faster ramp-up towards the target $\rightarrow$ Amplifies the reasons for using warmups
+- **Why**: Exponential function offers an even gentler start & a faster ramp-up towards the target → Amplifies the reasons for using warmups
 	- However, empirically, it's not necessarily better than Linear.
 - **How**:
 	1. Init: initial LR, target LR, #Epochs for warmup.

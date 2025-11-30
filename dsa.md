@@ -554,7 +554,7 @@ def bfs_all_nodes():
 - Procedure:
     - `find(x)`:
         1. Recursively find root once.
-        2. On the way back, rewire each visited node to point straight to the root (i.e., Path Compression) $\rightarrow$ Flatten the tree.
+        2. On the way back, rewire each visited node to point straight to the root (i.e., Path Compression) → Flatten the tree.
     - `union(x,y)`:
         1. Find both roots.
         2. Union the roots by rank.

@@ -15,19 +15,19 @@ A loss function is the discrepancy between predicted and actual values, as the o
 
 Why? **ML = Function Approximation**.
 - There is an underlying function which maps features to targets, but we don't know what it is.
-- $\rightarrow$ Function Approximation
-- $\rightarrow$ Many ways of doing it...
+- → Function Approximation
+- → Many ways of doing it...
 	1. **Discrepancy Minimization**
 		- BUT how do we measure discrepancy w/o knowing the underlying function?
-		- $\rightarrow$ Get samples
-		- $\rightarrow$ Predict on samples
-		- $\rightarrow$ Measure discrepancy over the samples
-		- $\rightarrow$ LOSS!
+		- → Get samples
+		- → Predict on samples
+		- → Measure discrepancy over the samples
+		- → LOSS!
 	2. **Distribution Estimation**
 		- BUT how do we directly estimate the underlying data distribution with no knowledge of it?
-		- $\rightarrow$ Get samples
+		- → Get samples
 		- Distribution Estimation $\xrightarrow{become}$ Likelihood Estimation
-		- $\rightarrow$ Tune our function to maximize the likelihood of observing these samples (i.e., **MLE**)
+		- → Tune our function to maximize the likelihood of observing these samples (i.e., **MLE**)
 - MLE & Loss Minimization are essentially doing the same thing but differently.
 
 How?
@@ -39,14 +39,14 @@ How?
 *Reduction: Sum vs Mean*
 - Sum:
 	- Direct objective
-	- Preserves sample importance $\leftarrow$ Each sample contributes its full error.
+	- Preserves sample importance ← Each sample contributes its full error.
 	- Sensitive to batch size ($\propto$ batch size)
 - Mean:
 	- Default objective
 	- Batch size invariance
-		- $\rightarrow$ Optimization stability
-		- $\rightarrow$ Awful performance when samples have uneven distributions across small batches
-	- Insensitive to outliers $\rightarrow$ Reduces the impact of important but rare samples
+		- → Optimization stability
+		- → Awful performance when samples have uneven distributions across small batches
+	- Insensitive to outliers → Reduces the impact of important but rare samples
 ```
 
 &nbsp;
@@ -55,7 +55,7 @@ How?
 ### MSE
 - **What**: Mean Squared Error.
 - **Why**: Assumption: **Gaussian Distribution**.
-- **How**: Get errors $\rightarrow$ Square errors $\rightarrow$ Aggregate
+- **How**: Get errors → Square errors → Aggregate
 
 ```{note} Math
 :class: dropdown
@@ -104,11 +104,11 @@ $$
 :class: dropdown
 *Pros?*
 - Penalizes higher/lower errors more/less.
-- Smooth $\rightarrow$ Differentiable
-- Convex $\rightarrow$ Guaranteed global minimum.
+- Smooth → Differentiable
+- Convex → Guaranteed global minimum.
 
 *Cons?*
-- Sensitive to outliers $\leftarrow$ Outliers take too much gradient
+- Sensitive to outliers ← Outliers take too much gradient
 - Scale variant.
 ```
 
@@ -117,7 +117,7 @@ $$
 ### MAE
 - **What**: Mean Absolute Error.
 - **Why**: Assumption: **Laplace Distribution**.
-- **How**: Get errors $\rightarrow$ Absolute values $\rightarrow$ Aggregate
+- **How**: Get errors → Absolute values → Aggregate
 
 ```{note} Math
 :class: dropdown
@@ -165,13 +165,13 @@ $$
 ```{attention} Q&A
 :class: dropdown
 *Pros?*
-- Robust to outliers $\leftarrow$ Equal gradient for all errors
+- Robust to outliers ← Equal gradient for all errors
 - More interpretable (average error magnitude).
 - Scale follows the original units.
 
 *Cons?*
-- Non-differentiable at zero $\rightarrow$ Requires subgradients
-- Constant gradient $\rightarrow$ Slower learning
+- Non-differentiable at zero → Requires subgradients
+- Constant gradient → Slower learning
 - No closed-form solution.
 ```
 
@@ -180,7 +180,7 @@ $$
 ### RMSE
 - **What**: Root Mean Squared Error.
 - **Why**: MSE in original units.
-- **How**: Get errors $\rightarrow$ Square errors $\rightarrow$ Mean $\rightarrow$ Square root
+- **How**: Get errors → Square errors → Mean → Square root
 
 ```{note} Math
 :class: dropdown
@@ -206,7 +206,7 @@ $$
 
 *Cons?*
 - Still sensitive to outliers (inherits MSE behavior).
-- Gradient depends on loss value $\rightarrow$ Unstable as $\mathcal{L} \rightarrow 0$
+- Gradient depends on loss value → Unstable as $\mathcal{L} \rightarrow 0$
 - Inconvenient than MSE.
 ```
 
@@ -215,7 +215,7 @@ $$
 ### Huber Loss
 - **What**: Piecewise loss: **MSE** for small errors, **MAE** for large errors.
 - **Why**: Balance sensitivity + robustness (quadratic near 0, linear for outliers).
-- **How**: Get errors $\rightarrow$ Apply piecewise function with threshold $\delta$ $\rightarrow$ Aggregate
+- **How**: Get errors → Apply piecewise function with threshold $\delta$ → Aggregate
 
 ```{note} Math
 :class: dropdown
@@ -290,13 +290,13 @@ $$
 :class: dropdown
 *Pros?*
 - Robust to outliers (linear tail like MAE).
-- Smooth around zero (unlike MAE) $\rightarrow$ stable gradients.
+- Smooth around zero (unlike MAE) → stable gradients.
 - Interpolates between MSE and MAE via $\delta$.
 
 *Cons?*
 - Need to tune $\delta$ (problem-dependent, scale-dependent).
-	- If $\delta$ too large $\rightarrow$ behaves like MSE (outlier sensitive).
-	- If $\delta$ too small $\rightarrow$ behaves like MAE (slower learning).
+	- If $\delta$ too large → behaves like MSE (outlier sensitive).
+	- If $\delta$ too small → behaves like MAE (slower learning).
 ```
 
 &nbsp;
@@ -305,7 +305,7 @@ $$
 ### Cross Entropy
 - **What**: Entropy of 2 probability distributions (predicted & actual) crossed over each other.
 - **Why**: Assumption: **Categorical Dsitribution** (i.e., the probability of an observation belonging to each class $k$).
-- **How**: Get cross entropy per sample $\rightarrow$ Aggregate
+- **How**: Get cross entropy per sample → Aggregate
 
 ```{note} Math
 :class: dropdown
@@ -394,16 +394,16 @@ $$\begin{align*}
 :class: dropdown
 *What is Entropy?*
 - Degree of uncertainty in a probability distribution.
-- ⬆️Entropy $\rightarrow$ More uncertain/balanced outcomes.
-- ⬇️Entropy $\rightarrow$ More deterministic outcomes.
+- ⬆️Entropy → More uncertain/balanced outcomes.
+- ⬇️Entropy → More deterministic outcomes.
 
 *Pros?*
 - Penalizes higher/lower errors more/less.
-- Smooth $\rightarrow$ Differentiable
-- Convex $\rightarrow$ Guaranteed global minimum.
+- Smooth → Differentiable
+- Convex → Guaranteed global minimum.
 
 *Cons?*
-- Sensitive to outliers $\leftarrow$ Outliers take too much gradient
+- Sensitive to outliers ← Outliers take too much gradient
 - Scale variant.
 ```
 
@@ -423,8 +423,8 @@ Notations:
 - IO:
 	- $X_1, X_2$: Embedding 1 & 2.
 	- $Y$: Similarity indicator.
-		- $Y=0$ $\leftarrow$ $X_1$ & $X_2$ are similar.
-		- $Y=1$ $\leftarrow$ $X_1$ & $X_2$ are dissimilar.
+		- $Y=0$ ← $X_1$ & $X_2$ are similar.
+		- $Y=1$ ← $X_1$ & $X_2$ are dissimilar.
 - Hyperparams:
 	- $M$: Margin, as minimal distance threshold for negative pairs.
 		- If the distance is below the margin, penalize.
@@ -457,12 +457,12 @@ $$\begin{align*}
 - Pairwise relations only.
 - ✅Hard measure (distance/similarity) & ❌Soft measure (probability).
 - ✅Hyperparameter Tuning (for dissimilar samples)
-	- $M$ too small $\rightarrow$ Cannot learn separation between dissimilar samples.
+	- $M$ too small → Cannot learn separation between dissimilar samples.
 	- $M$ too large
-		$\rightarrow$ Too difficult to minimize this loss
-		$\rightarrow$ Ignore negative pair constraint
-		$\rightarrow$ All embeddings become similar to best satisfy positive pair constraint
-		$\rightarrow$ **Collapsing**
+		→ Too difficult to minimize this loss
+		→ Ignore negative pair constraint
+		→ All embeddings become similar to best satisfy positive pair constraint
+		→ **Collapsing**
 ```
 
 &nbsp;
@@ -587,7 +587,7 @@ $$
 1. Information Theory:
 	- Entropy tells us the minimum possible average #bits needed to encode events drawn from $P$.
 	- Cross Entropy tells us the average #bits needed to encode events drawn from $P$, if we are using an encoding scheme optimized for $Q$.
-	- KL Divergence tells us the **extra bits** incurred by using $Q$-optimized encoding for events that actually follow $P$ $\rightarrow$ Quantifies **information lost / inefficiency** when approximating $P$ with $Q$.
+	- KL Divergence tells us the **extra bits** incurred by using $Q$-optimized encoding for events that actually follow $P$ → Quantifies **information lost / inefficiency** when approximating $P$ with $Q$.
 2. Entropy may not always be constant:
 	- If we use a fixed model $Q$ to approximate 2 different true distributions $P_1$ and $P_2$, then KL Divergence may not necessarily follow the pattern of cross entropy.
 ```

@@ -11,7 +11,7 @@ kernelspec:
 ---
 # Post-Training
 - **What**: Adapt/Align a pretrained general-purpose language model to a specific data distribution.
-- **Why**: Foundation models are pretrained on vast, general-domain corpora $\rightarrow$ Mismatch from downstream tasks
+- **Why**: Foundation models are pretrained on vast, general-domain corpora → Mismatch from downstream tasks
 
 ## PEFT
 - **Name**: Parameter-Efficient Fine-Tuning.
@@ -34,7 +34,7 @@ kernelspec:
 ### LoRA
 - **Name**: Low-Rank Adaptation.
 - **What**: Train **low-rank** matrices for adaptation.
-- **Why**: #params ⬇️ $\rightarrow$ Finetuning efficiency ⬆️.
+- **Why**: #params ⬇️ → Finetuning efficiency ⬆️.
 - **How**: Inject low-rank matrices into the weights of specific layers, w/o modifying the original weights directly.
 
 ```{note} Math
@@ -69,22 +69,22 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 ```{attention} Q&A
 :class: dropdown
 *Pros*:
-- No overfitting $\leftarrow$ Task-specific adaptation w/o modifying the original params
+- No overfitting ← Task-specific adaptation w/o modifying the original params
 
 *Cons*:
 - ONLY applicable to linear transformation.
-- ONLY great performance with pretrained models $\rightarrow$ Lower performance relative to full finetuning
+- ONLY great performance with pretrained models → Lower performance relative to full finetuning
 - High sensitivity to hyperparameters.
 
 *Where do I apply LoRA?*
-- OG paper: Attention weights ONLY $\rightarrow$ Simplicity & Param Efficiency
-	- $\leftarrow$ Empirical performance
+- OG paper: Attention weights ONLY → Simplicity & Param Efficiency
+	- ← Empirical performance
 ```
 
 #### QLoRA
 - **Name**: LoRA for Quantized LLMs.
 - **What**: Insert learnable LoRAs into each layer of a quantized pretrained LM.
-- **Why**: Standard fine-tuning scales linearly with model size in memory $\rightarrow$ HUGE memory cost
+- **Why**: Standard fine-tuning scales linearly with model size in memory → HUGE memory cost
 	- QLoRA dramatically cuts down memory WHILE preserving full-precision performance.
 - **How**:
 	1. **4-bit NormalFloat Quantization**: 

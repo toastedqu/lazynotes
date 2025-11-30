@@ -25,7 +25,7 @@ This page does NOT cover specialized training methods like transfer learning or 
 - Simple, unbiased, good performance with small models.
 
 *Cons?*
-- **Failure to break symmetry**: All weights produce the same output and receive the same gradients $\rightarrow$ No learning.
+- **Failure to break symmetry**: All weights produce the same output and receive the same gradients → No learning.
 - Vanishing gradients.
 - No non-linearity.
 - Dead neurons if activated by the ReLU family.
@@ -35,7 +35,7 @@ This page does NOT cover specialized training methods like transfer learning or 
 
 ### Random Initialization
 - **What**: All params are random.
-- **Why**: To **break symmetry** $\rightarrow$ Neurons learn diff features.
+- **Why**: To **break symmetry** → Neurons learn diff features.
 
 ```{attention} Q&A
 :class: dropdown
@@ -64,8 +64,8 @@ This page does NOT cover specialized training methods like transfer learning or 
 	\end{align*}
 	- $\text{Var}[U(-a,a)]=\frac{a^2}{3}\rightarrow\frac{a^2}{3}=\frac{2}{\text{fan\_in}}$
 - Modes:
-	- `fan_in`: Preserves forward activation scale (most common) $\rightarrow$ Mitigates vanishing/exploding activations.
-	- `fan_out`: Preserves backprop gradient scale $\rightarrow$ Mitigates gradient issues not caused by activation issues.
+	- `fan_in`: Preserves forward activation scale (most common) → Mitigates vanishing/exploding activations.
+	- `fan_out`: Preserves backprop gradient scale → Mitigates gradient issues not caused by activation issues.
 ```
 
 ```{attention} Q&A
@@ -93,8 +93,8 @@ This page does NOT cover specialized training methods like transfer learning or 
 	\end{align*}
 	- $n=\text{fan\_in},\quad m=\text{fan\_out}$.
 - Modes:
-	- `fan_in`: Preserves forward activation scale (most common) $\rightarrow$ Mitigates vanishing/exploding activations.
-	- `fan_out`: Preserves backprop gradient scale $\rightarrow$ Mitigates gradient issues not caused by activation issues.
+	- `fan_in`: Preserves forward activation scale (most common) → Mitigates vanishing/exploding activations.
+	- `fan_out`: Preserves backprop gradient scale → Mitigates gradient issues not caused by activation issues.
 ```
 
 ```{attention} Q&A
@@ -125,7 +125,7 @@ This page does NOT cover specialized training methods like transfer learning or 
 ```{attention} Q&A
 :class: dropdown
 *Cons?*
-- May stop too early $\rightarrow$ Hyperparam tuning, validation data/metric noise, etc.
+- May stop too early → Hyperparam tuning, validation data/metric noise, etc.
 ```
 
 &nbsp;
@@ -159,15 +159,15 @@ This page does NOT cover specialized training methods like transfer learning or 
 :class: dropdown
 *Cons?*
 - Fewer param updates per epoch.
-- Longer training $\leftarrow$ Extra forward/backward passes.
+- Longer training ← Extra forward/backward passes.
 - May mess up other operations that affect grads (e.g., Normalization, Dropout, LR scheduling, etc.).
 ```
 
 &nbsp;
 
 ### Gradient Checkpointing
-- **What**: Store fewer intermediate activations during forward pass $\rightarrow$ Recompute them during backprop.
-- **Why**: To fit larger models/batches into limited GPU memory $\rightarrow$ Trade compute for memory.
+- **What**: Store fewer intermediate activations during forward pass → Recompute them during backprop.
+- **Why**: To fit larger models/batches into limited GPU memory → Trade compute for memory.
 - **How**:
     1. Divide the computational graph into segments.
     2. Forward: Store activations only at segment boundaries (checkpoints).
@@ -183,10 +183,10 @@ This page does NOT cover specialized training methods like transfer learning or 
 *Cons?*
 - ⬆️⬆️ Computational cost (~20–30% more FLOPs).
 - ⬆️⬆️ Training time.
-- ⬆️ Implementation complexity $\leftarrow$ Requires careful graph segmentation
+- ⬆️ Implementation complexity ← Requires careful graph segmentation
 
 *FYI:*
-- Gradient checkpointing is **orthogonal** to gradient accumulation $\rightarrow$ Combine both for MASSIVE memory savings
+- Gradient checkpointing is **orthogonal** to gradient accumulation → Combine both for MASSIVE memory savings
 ```
 
 &nbsp;
@@ -245,8 +245,8 @@ This page does NOT cover specialized training methods like transfer learning or 
 
 ### ZeRO
 - **What**: Zero Redundancy Optimizer.
-	- Partition optimizer states, grads, and params across multiple devices instead of replication $\rightarrow$ Memory optimization
-- **Why**: Replication results in redundancy in data storage $\rightarrow$ Partitioning directly eliminates redundancy in memory storage.
+	- Partition optimizer states, grads, and params across multiple devices instead of replication → Memory optimization
+- **Why**: Replication results in redundancy in data storage → Partitioning directly eliminates redundancy in memory storage.
 - **How**:
     1. Partitioning:
         - **Stage 1**: Partition optimizer states (e.g., Adam's momentum & variance).
@@ -264,12 +264,76 @@ This page does NOT cover specialized training methods like transfer learning or 
 :class: dropdown
 *Cons?*
 - Communication overhead:
-    - Frequent all-gather/reduce-scatter calls $\rightarrow$ Network bottlenecks.
+    - Frequent all-gather/reduce-scatter calls → Network bottlenecks.
 
 *FYI:*
 - ZeRO = the backbone of **DeepSpeed**.
 - ZeRO does NOT change the math of optimization — only how states are stored and communicated.
 - ZeRO is combinable with pipeline/tensor parallelism.
+```
+
+&nbsp;
+
+### Pipeline Parallelism
+- **What**: Split a model by **layers** into sequential stages across devices.
+- **Why**: To train deep NNs that don't fit on 1 GPU.
+- **How**:
+    1. Partition the network into $K$ stages, each placed on a different device.
+    2. Microbatch the global batch into $m$ microbatches: $B \rightarrow {b_1,\dots,b_m}$.
+    3. Forward:
+        1. Stage 0 runs $b_1$.
+        2. Stage 0 runs $b_2$. Stage 1 runs $b_1$.
+        3. Stage 0 runs $b_3$. Stage 1 runs $b_2$. Stage 2 runs $b_1$.
+        4. ...
+    4. Backward:
+        - GPipe: Do ALL forwards for ALL batches first, then ALL backwards for ALL batches.
+            - Cleaner BUT slower.
+        - 1F1B (common): Once the pipeline is filled, each stage alternates:
+            - 1 Forward on a newer microbatch.
+            - 1 Backward on an older microbatch whose grad is ready.
+    5. Apply optimizer step.
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- ⬆️ Device utilization ← Overlapping.
+- Combinable with data parallelism.
+
+*Cons?*
+- Pipeline bubbles: At start/end, some stages sit idle (waste).
+- Communication overhead ← Activations/Grads must be sent between stages every microbatch.
+- ❌ Load balancing ← Slowest stage bottlenecks the whole pipeline.
+```
+
+&nbsp;
+
+### Tensor Parallelism
+- **What**: Split the **tensors inside a single layer** across multiple GPUs.
+- **Why**: To train wide NNs that don't fit on 1 GPU.
+- **How**: e.g., Transformer blocks,
+    1. Choose a sharding axis: hidden/output dimensions are most common.
+    2. Shard weights:
+        - MLP:
+            - Column-parallel: Shard output features → Each GPU produces a slice of activations.
+            - Row-parallel: Shard input features → Each GPU consumes a slice of input. Partial results need reduction.
+        - Attention:
+            - Shard heads: Each GPU owns $\frac{H}{\text{\#GPU}}$ heads.
+    3. Forward:
+        - **All-Gather** when assembling full activations for the next op.
+        - **All-Reduce / Reduce-Scatter** when partial sums must become a correct full result.
+    4. Backward:
+        - Grads for sharded weights are computed locally & combined via the same collectives.
+    5. Optimizer Step:
+        - Each GPU updates ONLY its own opt states & params.
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- ⬆️ Device utilization than PP for Transformers.
+- **The 3D Parallelism**: DP × PP × TP.
+
+*Cons?*
+- Communication overhead ← TP introduces collectives inside almost every layer.
 ```
 
 &nbsp;
@@ -280,21 +344,21 @@ This page does NOT cover specialized training methods like transfer learning or 
     - **Bit-width**: #Bits to encode each numerical value in memory.
 - **Why**:
     1. It affects params, activations, and grads
-    2. $\rightarrow$ It affects memory cost, time cost, model quality, training stabiity
+    2. → It affects memory cost, time cost, model quality, training stabiity
 - **How (Bit-width)**: 3 components:
     - **Sign**: 0 = +; 1 = -
     - **Exponent**:
         - Theory: **Actual exponent** $n$ in scientific notation $a \times 2^n$.
         - Practice:
             1. Use a given **#exponent bits** $k$ to calculate **bias** $2^{k-1}-1$.
-            2. **Stored exponent** $\leftarrow$ **Actual exponent** + **Bias**.
+            2. **Stored exponent** ← **Actual exponent** + **Bias**.
     - **Mantissa/Fraction**:
         - Theory: $a$ in scientific notation $a \times 2^n$.
         - Practice:
             1. The first non-zero digit is always immediately to the left of the decimal point.
             2. The only possible non-zero binary digit is 1.
-            3. $\rightarrow$ Every base number starts with 1.
-            4. $\rightarrow$ We don't need to store it. We ONLY need to store the **fraction**.
+            3. → Every base number starts with 1.
+            4. → We don't need to store it. We ONLY need to store the **fraction**.
 
 ```{note} Math
 :class: dropdown
@@ -396,11 +460,11 @@ $$
 :class: dropdown
 *Pros?*
 - ⬆️ Training speed.
-- ⬇️ Memory usage $\rightarrow$ Larger batch sizes become possible.
+- ⬇️ Memory usage → Larger batch sizes become possible.
 - ❌ Accuracy loss, if implemented correctly.
 
 *Cons?*
-- Very complex implementation & debugging $\leftarrow$ Mixed data types
+- Very complex implementation & debugging ← Mixed data types
 ```
 
 &nbsp;
@@ -432,7 +496,7 @@ $$
 - ✅ Training/Inference time estimation with hardware specs.
 
 *Cons?*
-- FLOPs ≠ actual runtime $\leftarrow$ Memory bandwidth, parallelism, and hardware optimizations matter.
+- FLOPs ≠ actual runtime ← Memory bandwidth, parallelism, and hardware optimizations matter.
 - ❌ Precision.
 - ❌ Sparsity.
 - ❌ Data movement cost.
@@ -466,7 +530,7 @@ $$
 
 ### Throughput
 - **What**: #Samples (or Tokens) processed **per unit time** (e.g., per second).
-- **Why**: To measure **training** efficiency & hardware utilization $\rightarrow$ Training time
+- **Why**: To measure **training** efficiency & hardware utilization → Training time
     - Higher/Lower throughput = Faster/Slower iteration cycles.
 - **How**: Measure total samples processed over a fixed time window, then divide.
 
@@ -474,7 +538,7 @@ $$
 :class: dropdown
 *Cons?*
 - Chasing throughput can harm model quality:
-    - Large batch sizes $\rightarrow$ Poor generalization.
+    - Large batch sizes → Poor generalization.
     - Aggressive mixed precision without stability checks.
 
 *FYI:*
@@ -495,8 +559,8 @@ $$
 :class: dropdown
 *Cons?*
 - Reducing latency often requires:
-    - Model compression $\rightarrow$ Accuracy trade-offs.
-    - Specialized hardware $\rightarrow$ Higher cost.
+    - Model compression → Accuracy trade-offs.
+    - Specialized hardware → Higher cost.
 
 *FYI:*
 - Latency ≠ Throughput.

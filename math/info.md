@@ -12,7 +12,7 @@ kernelspec:
 # Information Theory
 ## Information
 - **What**: Surprise.
-    - Less/More likely events $\rightarrow$ More/Less info
+    - Less/More likely events → More/Less info
 - **Why**: To mathematically analyze, optimize, & understand the fundamental limits of systems that store, process, & transmit data.
     - Data compression
     - Communication
@@ -24,8 +24,8 @@ kernelspec:
     1. Higher surprise for less probable events.
     2. Zero surprise for deterministic events.
     3. If 2 independent events happen, their surprises should add up.
-    - 2 & 3 $\rightarrow$ $\log P$
-    - 1 $\rightarrow$ $-\log P$
+    - 2 & 3 → $\log P$
+    - 1 → $-\log P$
 
 ```{dropdown} ELI5
 *What is information?*
@@ -54,7 +54,7 @@ $$
 
 ## Entropy
 - **What**: Average surprise.
-	- More/Less randomness $\rightarrow$ High/Low entropy
+	- More/Less randomness → High/Low entropy
 - **Why**: To quantitatively measure the inherent randomness in a system/process.
 - **How**: Take the expectation of info across the probability distribution. 
 

@@ -146,7 +146,7 @@ $$
 ```{attention} Q&A
 :class: dropdown
 *Cons?*
-- ⬆️Training time $\leftarrow$ ⬇️Convergence speed $\leftarrow$ Sparsity
+- ⬆️Training time ← ⬇️Convergence speed ← Sparsity
 - ✅Hyperparameter Tuning.
 ```
 
@@ -162,7 +162,7 @@ $$
 :class: dropdown
 ````{tab-set}
 ```{tab} Vector
-**Notation**:
+Notation:
 - IO:
     - $\mathbf{x}\in\mathbb{R}^{H_{in}}$: Input vector.
     - $\mathbf{y}\in\mathbb{R}^{H_{out}}$: Output vector.
@@ -182,7 +182,7 @@ $$
 $$
 ```
 ```{tab} Tensor
-**Notation**:
+Notation:
 - IO:
     - $\mathbf{x}\in\mathbb{R}^{*\times H_{in}}$: Input tensor.
     - $\mathbf{y}\in\mathbb{R}^{*\times H_{out}}$: Output tensor.
@@ -207,7 +207,7 @@ $$
 &nbsp;
 
 ## Normalization
-### Batch Normalization
+### BatchNorm
 - **What**: Normalize each feature across input samples to zero mean & unit variance.
 - **Why**: To mitigate [internal covariate shift](../dl/issues.md/#vanishing/internal-covariate-shift).
 - **How**:
@@ -218,7 +218,7 @@ $$
 
 ```{note} Math
 :class: dropdown
-**Notation**:
+Notation:
 - IO:
     - $\mathbf{X}\in\mathbb{R}^{m\times n}$: Input matrix.
     - $\mathbf{Y}\in\mathbb{R}^{m\times n}$: Output matrix.
@@ -280,9 +280,9 @@ Backward:
 
 &nbsp;
 
-### Layer Normalization
+### LayerNorm
 - **What**: Normalize each sample across input features to zero mean and unit variance.
-- **Why**: Batch normalization depends on the batch size.
+- **Why**: BatchNorm depends on the batch size.
     - When it's too big, high computational cost.
     - When it's too small, the batch may not be representative of the underlying data distribution.
     - Hyperparam tuning is required to find the optimal batch size, leading to high computational cost.
@@ -293,7 +293,7 @@ Backward:
 
 ```{note} Math
 :class: dropdown
-It's easy to explain with the vector form for batch normalization, but it's more intuitive to explain with the scalar form for layer normalization.
+It's easy to explain with the vector form for BatchNorm, but it's more intuitive to explain with the scalar form for LayerNorm.
 
 Notations:
 - IO:
@@ -352,6 +352,65 @@ Backward:
 *Cons?*
 - Adds computation overhead and complexity.
 - Inapplicable in CNNs due to varied statistics of spatial features.
+```
+
+&nbsp;
+
+### RMSNorm
+Normalize each sample across input features to zero mean and unit variance.
+- **What**: Normalize each sample's input features using its RMS, then apply a learnable per-feature gain.
+- **Why**: Cheaper & More stable than LayerNorm ← Skip mean-centering.
+- **How**:
+    1. For each token vector $\mathbf{x}$, compute RMS over hidden dimension.
+    2. Divide $\mathbf{x}$ by the RMS (plus $\epsilon$).
+    3. Apply learnable gain $\boldsymbol{\gamma}$ elementwise.
+
+```{note} Math
+:class: dropdown
+Notations:
+- IO:
+  - $\mathbf{x}\in\mathbb{R}^{d}$: input hidden vector for one token (one position).
+  - $\mathbf{y}\in\mathbb{R}^{d}$: output vector.
+- Params:
+  - $\boldsymbol{\gamma}\in\mathbb{R}^{d}$: learnable gain (per feature).
+- Hyperparams / misc:
+  - $d$: hidden size.
+  - $\epsilon>0$: numerical stability constant.
+
+Forward:
+1. RMS over features:
+$$
+\operatorname{rms}(\mathbf{x})=\sqrt{\frac{1}{d}\sum_{j=1}^{d}x_j^2}
+$$
+
+2. Normalize + scale:
+$$
+\mathbf{y}=\boldsymbol{\gamma}\odot \frac{\mathbf{x}}{\operatorname{rms}(\mathbf{x})+\epsilon}
+$$
+
+Backward: Let $s=\operatorname{rms}+\epsilon$
+- Gradient w.r.t. gain:
+$$
+\frac{\partial\mathcal{L}}{\partial \boldsymbol{\gamma}}=\mathbf{g}\odot\frac{\mathbf{x}}{s}
+$$
+
+- Gradient w.r.t. input:
+    1. Derivative of RMS scalar:
+    $$
+    \frac{\partial \operatorname{rms}}{\partial \mathbf{x}}=\frac{\mathbf{x}}{d\operatorname{rms}}
+    $$
+
+    2. Final grad:
+    $$
+    \frac{\partial\mathcal{L}}{\partial \mathbf{x}}=\frac{\mathbf{g}\odot\boldsymbol{\gamma}}{s}-\frac{\mathbf{x}}{d\,\operatorname{rms}\,s^{2}}\left((\mathbf{g}\odot\boldsymbol{\gamma})^{T}\mathbf{x}\right)
+    $$
+```
+
+```{attention} Q&A
+:class: dropdown
+*Why does skipping mean-centering work?*
+- In many Transformer setups, the key stability issue is controlling activation scale. 
+- Residual connections + linear layers can absorb offsets, while RMS-based scaling keeps magnitudes from drifting.
 ```
 
 &nbsp;
@@ -424,7 +483,7 @@ Notice it is similar to backprop of linear layer except it sums over the scanned
 - **What**: Apply a single convolutional filter to each input channel independently.
 - **Why**:
     - To learn spatial features within each channel separately.
-    - $\rightarrow$ Significantly reduce computational cost and model params compared to standard convolution.
+    - → Significantly reduce computational cost and model params compared to standard convolution.
 - **How**:
     1. Initialize a set of filters, one for each input channel.
     2. For each input channel, from top-left to bottom-right:
@@ -470,7 +529,7 @@ Notice the similarity to the standard convolution's backpropagation but applied 
 ```{attention} Q&A
 :class: dropdown
 *Pros?*
-- Computational cost⬇️⬇️ $\leftarrow$ #Params⬇️⬇️ & #Multiplications⬇️⬇️
+- Computational cost⬇️⬇️ ← #Params⬇️⬇️ & #Multiplications⬇️⬇️
 - Learns per-channel spatial features.
 
 *Cons?*
@@ -657,7 +716,7 @@ Forward:
     - GRU + cell state (i.e., memory).
 - **Why**:
     - Memory cell mitigates vanishing gradients.
-    - Finer control over write/keep/expose operations $\rightarrow$ More robust on longer sequences.
+    - Finer control over write/keep/expose operations → More robust on longer sequences.
 - **How**:
     - **Forget gate**: How much previous memory to keep/erase.
     - **Input gate**: How much new info to write into memory.
@@ -706,7 +765,7 @@ Forward:
 ## Activation
 - **What**: An element-wise non-linear function over a layer's output.
 - **Why**: Non-linearity.
-    - No activation $\rightarrow$ NN = LinReg.
+    - No activation → NN = LinReg.
 
 ### Binary-like
 - **What**: Functions with near-binary outputs.
@@ -719,7 +778,7 @@ Forward:
 
 #### Sigmoid
 - **What**: Sigmoid function.
-- **Why**: Mathematically convenient $\leftarrow$ Smooth gradient.
+- **Why**: Mathematically convenient ← Smooth gradient.
 
 ```{note} Math
 :class: dropdown
@@ -743,14 +802,14 @@ $$
 :class: dropdown
 *Cons?*
 -  Vanishing gradient.
--  Non-zero centric bias $\rightarrow$ Non-zero mean activations
+-  Non-zero centric bias → Non-zero mean activations
 ```
 
 &nbsp;
 
 #### Tanh
 - **What**: Tanh function.
-- **Why**: Mathematically convenient $\leftarrow$ Smooth gradient.
+- **Why**: Mathematically convenient ← Smooth gradient.
 
 ```{note} Math
 :class: dropdown
@@ -814,9 +873,9 @@ $$
 - ✅Computational efficiency.
 
 *Cons?*
-- **Dying ReLU**: If most inputs are negative, then most neurons output 0 $\rightarrow$ No gradient $\rightarrow$ No param update $\rightarrow $ Dead. (NOTE: A SOLVABLE DISADVANTAGE)
-    - Cause 1: High learning rate $ \rightarrow$ Too much subtraction in param update $\rightarrow$ Weight⬇️⬇️ $\rightarrow$ Input for neuron⬇️⬇️.
-    - Cause 2: Bias too negative $\rightarrow$ Input for neuron⬇️⬇️.
+- **Dying ReLU**: If most inputs are negative, then most neurons output 0 → No gradient → No param update $\rightarrow $ Dead. (NOTE: A SOLVABLE DISADVANTAGE)
+    - Cause 1: High learning rate $ \rightarrow$ Too much subtraction in param update → Weight⬇️⬇️ → Input for neuron⬇️⬇️.
+    - Cause 2: Bias too negative → Input for neuron⬇️⬇️.
 - Activation explosion $\longleftarrow$ $z\rightarrow\infty$. (NOTE: NOT A SEVERE DISADVANTAGE SO FAR)
 ```
 
@@ -851,11 +910,11 @@ $$
 *Why aren't we using LReLU in place of ReLU?*
 
 Because Dying ReLU became insignificant.
-- Empirical performance: ReLU >> LReLU $\leftarrow$ Sparsity
+- Empirical performance: ReLU >> LReLU ← Sparsity
 - Dying ReLU is solvable with other structural changes:
-    - Weight Init $\rightarrow$ Ensure sufficient initial positive weights.
-    - Batch Norm $\rightarrow$ Ensure $\sim$50% input values are positive.
-    - Residual Connection $\rightarrow$ Gradients can flow directly back to input even if ReLU is dead.
+    - Weight Init → Ensure sufficient initial positive weights.
+    - Batch Norm → Ensure $\sim$50% input values are positive.
+    - Residual Connection → Gradients can flow directly back to input even if ReLU is dead.
 ```
 
 &nbsp;
@@ -936,7 +995,7 @@ $$
 - **What**: Exponential Linear Units.
 - **Why**:
     - Dying ReLU.
-    - Negative outputs push mean activations to 0 $\rightarrow$ bias shift ⬇️.
+    - Negative outputs push mean activations to 0 → bias shift ⬇️.
     - Smooth.
 - **How**: Linear for positive, exponential saturation for negative.
 
@@ -965,12 +1024,12 @@ $$
 ```{attention} Q&A
 :class: dropdown
 *Pros?*
-- Non-zero gradient for $z<0$ $\rightarrow$ fewer “dead” neurons than ReLU.
-- Negative outputs $\rightarrow$ activations closer to zero-mean.
+- Non-zero gradient for $z<0$ → fewer “dead” neurons than ReLU.
+- Negative outputs → activations closer to zero-mean.
 - Smooth for $z<0$ (and continuous at $0$).
 
 *Cons?*
-- Saturation for very negative $z$: $\alpha e^z \to 0$ $\rightarrow$ gradients can still vanish on far negative side.
+- Saturation for very negative $z$: $\alpha e^z \to 0$ → gradients can still vanish on far negative side.
 - Computational cost ⬆️ (exp) vs ReLU.
 - Can be less GPU-friendly than piecewise-linear activations.
 ```
@@ -979,7 +1038,7 @@ $$
 
 #### SELU
 - **What**: Scaled ELU.
-- **Why**: Self-normalizing to $N(0,1)$ $\rightarrow$ Vanishing/Exploding activations ⬇️⬇️
+- **Why**: Self-normalizing to $N(0,1)$ → Vanishing/Exploding activations ⬇️⬇️
 - **How**: ELU scaled by fixed constants.
 
 ```{note} Math
@@ -1052,7 +1111,7 @@ $$
 - Continuously differentiable at $0$ for any $\alpha$ (smooth gradient through the transition).
 
 *Cons?*
-- Saturates for very negative $z$ ($e^{z/\alpha}\to 0$) $\rightarrow$ vanishing gradients far left.
+- Saturates for very negative $z$ ($e^{z/\alpha}\to 0$) → vanishing gradients far left.
 - Computational cost ⬆️ (exp).
 ```
 
@@ -1160,11 +1219,11 @@ $$
 &nbsp;
 
 ### Softmax
-- **What**: Numbers $\rightarrow$ Probabilities
+- **What**: Numbers → Probabilities
 - **Why**: Multiclass classification.
 - **How**:
-    1. Exponentiation: Larger/Smaller numbers $\rightarrow$ even larger/smaller numbers.
-    2. Normalization: Numbers $\rightarrow$ Probabilities
+    1. Exponentiation: Larger/Smaller numbers → even larger/smaller numbers.
+    2. Normalization: Numbers → Probabilities
 
 ```{note} Math
 :class: dropdown

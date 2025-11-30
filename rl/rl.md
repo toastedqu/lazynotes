@@ -14,8 +14,8 @@ This page contains my study notes for [Sergey Levine's CS 285](https://rail.eecs
 
 - **What**: Agent $\overset{\text{action}}{\underset{\text{reward}}{\rightleftarrows}}$ Environment
 - **Why**: To learn decision-making where actions have delayed consequence in dynamic, sequential tasks, from experience.
-    - Data w/o Optimization $\rightarrow$ No innovation to solve new problems
-    - Optimization w/o Data $\rightarrow$ Hard to apply IRL
+    - Data w/o Optimization → No innovation to solve new problems
+    - Optimization w/o Data → Hard to apply IRL
 
 ```{dropdown} Table: 3 Learning Types
 |  | Supervised Learning | Unsupervised Learning | Reinforcement Learning |

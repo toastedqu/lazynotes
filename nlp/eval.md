@@ -25,14 +25,14 @@ The common cons of all lexical metrics is **a lack of semantic understanding**. 
         - *Any reference sentence?*
             - There are many ways to express the same sentence.
             - It's normal to have multiple ref sentences to capture variations of one cand sentence.
-            - $\rightarrow$ Compare cand sentence with each ref sentence. If the n-gram matches any ref sentence, it's correct.
+            - → Compare cand sentence with each ref sentence. If the n-gram matches any ref sentence, it's correct.
         - *Max count in any reference sentence?*
             - It's very easy to cheat precision by **repetition** of correct words.
-            - $\rightarrow$ Restrain it in the scope of ref sentence instead.
+            - → Restrain it in the scope of ref sentence instead.
     - **Geometric Average**: Of all n-grams up to the specified n.
     - **Brevity Penality**: Penalize overly short sentences.
         - *Why?*
-            - It's very easy to cheat precision with super short sentences $\leftarrow$ The occurrence ratio of correct words in short cand sentences is higher
+            - It's very easy to cheat precision with super short sentences ← The occurrence ratio of correct words in short cand sentences is higher
 
 ```{note} Math
 :class: dropdown
@@ -73,9 +73,9 @@ $$
 ```{attention} Q&A
 :class: dropdown
 *Cons?*
-- Exact word matches $\rightarrow$ No word variations
-- Ignore word importance $\rightarrow$ Useless but frequent words can boost BLEU score
-- Ignore n-gram order $\rightarrow$ You can switch the n-grams and still get the same BLEU score
+- Exact word matches → No word variations
+- Ignore word importance → Useless but frequent words can boost BLEU score
+- Ignore n-gram order → You can switch the n-grams and still get the same BLEU score
 ```
 
 ### ROUGE

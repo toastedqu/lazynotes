@@ -33,8 +33,8 @@ This page does NOT cover [Gradient Descent & family](../dl/optim.md).
 - **Why**:
 	- If data were fully observed, then ML/MAP estimates would be easy to compute.
 	- If we observe the latent vars, we observe the full data.
-	- BUT, direct MLE/MAP is hard $\leftarrow$ Sum/Integrate over all hidden configs $\leftarrow$ Bayes' Theorem
-	- $\rightarrow$ Iteratively observe & optimize.
+	- BUT, direct MLE/MAP is hard ← Sum/Integrate over all hidden configs ← Bayes' Theorem
+	- → Iteratively observe & optimize.
 - **How**: Iterate between Expectation & Maximization.
 	- **Expectation**: Given curr params, estimate latent vars.
 	- **Maximization**: Given curr data, optimize params to maximize data prob.
@@ -95,13 +95,13 @@ $$
 :class: dropdown
 *Pros?*
 - ✅Parallelism.
-- ✅Flexible $\leftarrow$ Tolerate arbitrary hyperparam types
-- ✅Escapes local optima $\leftarrow$ Randomness
+- ✅Flexible ← Tolerate arbitrary hyperparam types
+- ✅Escapes local optima ← Randomness
 - ❌Gradient.
 
 *Cons?*
-- ❌Sample efficiency $\leftarrow$ Requires many samples to work well.
-- ❌Stability $\leftarrow$ Randomness
+- ❌Sample efficiency ← Requires many samples to work well.
+- ❌Stability ← Randomness
 - ⬆️Computational cost (despite parallelism).
 - ✅Hyperparameter Tuning.
 ```

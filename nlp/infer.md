@@ -11,7 +11,7 @@ kernelspec:
 ---
 # Inference
 ## Decoding
-- **What**: Token probabilities $\rightarrow$ Output token
+- **What**: Token probabilities → Output token
 - **Why**:
 	- In generation tasks, the transformer model only estimates the probabilities of outputting each token via logits.
 	- We need to select which token to output at each step, and we need to find the most probable output sequence given the input sequence.
@@ -57,18 +57,18 @@ $$
 - **Why**: **Boltzmann distribution** from statistical mechanics: $p_i\propto\exp\left(-\frac{E_i}{kT}\right)$
 	- This describes the probability of a system being in a particular state $i$ given the state's energy $E_i$ and the system's temperature $T$.
 	- Temperature $T$ controls the randomness of physical systems:
-		- $T$⬆️ $\rightarrow$ Difference in $p$ between low-energy and high-energy states⬇️ $\rightarrow$ Can't stick to low-energy states $\rightarrow$ Randomness⬆️
-		- $T$⬇️ $\rightarrow$ Difference in $p$ between low-energy and high-energy states⬆️ $\rightarrow$ Stick to low-energy states $\rightarrow$ Randomness⬇️
+		- $T$⬆️ → Difference in $p$ between low-energy and high-energy states⬇️ → Can't stick to low-energy states → Randomness⬆️
+		- $T$⬇️ → Difference in $p$ between low-energy and high-energy states⬆️ → Stick to low-energy states → Randomness⬇️
 	- Identical problem setting:
 		- States $\Leftrightarrow$ Tokens
 		- Energy $\Leftrightarrow$ Logits
-		- $T$⬆️ $\rightarrow$ Less probable tokens become more probable $\rightarrow$ Randomness⬆️
-		- $T$⬇️ $\rightarrow$ Less probable tokens become even less probable $\rightarrow$ Randomness⬇️
+		- $T$⬆️ → Less probable tokens become more probable → Randomness⬆️
+		- $T$⬇️ → Less probable tokens become even less probable → Randomness⬇️
 - **How**:
 	- $\tau\rightarrow 0$: More deterministic.
 	- $\tau\rightarrow \infty$: More random/uniform.
 	- $\tau=1$: Standard softmax. Probabilities reflect differences in logits.
-	- $\tau>1$: Generally NOT recommended $\leftarrow$ Randomness goes BEYOND what the model has learnt.
+	- $\tau>1$: Generally NOT recommended ← Randomness goes BEYOND what the model has learnt.
 
 ### Penalty
 - **What**: Penalize the logits of tokens present in current token sequence.
@@ -83,7 +83,7 @@ $$
 | Type | What | Math | Cons |
 |:-----|:-----|:-----|:-----|
 | **Frequency** | Subtraction based on how many times the token occurred in the output sequence | $z_{ti} \leftarrow z_{ti}-\alpha n_{v_i}$ | Suppresses important keywords |
-| **Presence** | Subtraction based on the **existence** of the token in the output sequence | $z_{ti} \leftarrow z_{ti}-\beta \mathbf{1}_{v_i}[Y_{<t}]$ | Incoherence $\leftarrow$ Too harsh compared to frequency penalty |
+| **Presence** | Subtraction based on the **existence** of the token in the output sequence | $z_{ti} \leftarrow z_{ti}-\beta \mathbf{1}_{v_i}[Y_{<t}]$ | Incoherence ← Too harsh compared to frequency penalty |
 | **Repetition** | Multiplication based on the **existence** of the token in the **entire sequence** | $z_{ti} \leftarrow \begin{cases} z_{ti} / \rho & v_i \in [X, Y_{<t}]\ \& \ z_{ti} > 0 \\ z_{ti} \cdot \rho & v_i \in [X, Y_{<t}]\ \& \ z_{ti} < 0 \\ z_{ti} & v_i \notin [X, Y_{<t}] \end{cases}$ | Suppresses references to important keywords in the input | 
 
 Notations:
@@ -110,12 +110,12 @@ $$
 
 ### Beam Search
 - **What**: Iteratively explore & evaluate multiple hypotheses (i.e., beams). 
-- **Why**: Greedy search focuses on local optima $\rightarrow$ May not lead to globally optimal sequence.
+- **Why**: Greedy search focuses on local optima → May not lead to globally optimal sequence.
 - **How**:
 	1. Initialize $k$ beams with top $k$ most probable tokens.
 	2. For each step:
 		1. For each beam: Compute probability distribution for next token.
-		2. Consider all possible next tokens in vocab $\rightarrow$ Form candidate beams.
+		2. Consider all possible next tokens in vocab → Form candidate beams.
 		3. For each candidate beam: Compute a **score** based on the log probability of the beam sequence.
 		4. Select top $k$ beams with the highest scores.
 	3. Stop when
@@ -129,7 +129,7 @@ Beam Search:
 1. At $t=1$, select top $k$ most probable tokens via $P(y_1|X)$. Each forms an initial beam $Y_{1,i}=[y_{1,i}]$.
 2. $\forall t>1$:
 	1. $\forall Y_{t-1,i}=[y_{1,i},\cdots,y_{t-1,i}]$: Compute $P(y_t|Y_{t-1,i},X)$.
-	2. Consider all $|\mathcal{V}|$ possible tokens $\rightarrow$ Form $k\times|\mathcal{V}|$ candidate beams.
+	2. Consider all $|\mathcal{V}|$ possible tokens → Form $k\times|\mathcal{V}|$ candidate beams.
 	3. $\forall Y_{t,i}=[y_{1,i},\cdots,y_{t,i}]$: Compute $S(Y_t)=\log P(Y_t|X)=\sum_{t'=1}^{t}\log P(y_{t'}|Y_{<t'},X)$.
 	4. Select top $k$ beams with the highest scores.
 3. Termination.
@@ -139,7 +139,7 @@ Beam Search:
 ```{attention} Q&A
 :class: dropdown
 *Cons?*
-- Beam Search naturally favors shorter sequences $\leftarrow$ Adding more log probabilities reduces the score.
+- Beam Search naturally favors shorter sequences ← Adding more log probabilities reduces the score.
 
 *Solution?*
 - **Length normalization**:
@@ -160,7 +160,7 @@ Beam Search:
 
 #### Top-k
 - **What**: Output token $\sim$ Top-$k$ most probable tokens.
-- **Why**: Temperature sampling $\rightarrow$ Too much randomness if large temperature $\rightarrow$ Incoherent sequence
+- **Why**: Temperature sampling → Too much randomness if large temperature → Incoherent sequence
 	- Any token may be selected based on its probability, including less probable ones.
 	- We don't want that, so we limit the vocab options and resample.
 - **How**:
@@ -173,8 +173,8 @@ Beam Search:
 - **What**: Output token $\sim$ Smallest possible set of tokens whose cumulative probability exceeds $p$.
 	- **Nucleus**: the set.
 - **Why**: In Top-k,
-	- If the model is very certain about the next word, large $k$ $\rightarrow$ too random.
-	- If the model is very uncertain about the next word, small $k$ $\rightarrow$ too deterministic.
+	- If the model is very certain about the next word, large $k$ → too random.
+	- If the model is very uncertain about the next word, small $k$ → too deterministic.
 - **How**:
 	1. Compute probabilities of all tokens in vocab.
 	2. Sort tokens by probability.
@@ -194,7 +194,7 @@ Beam Search:
         - $K$: Key vectors for ALL tokens.
         - $V$: Value vectors for ALL tokens.
     3. The causal masking in transformer decoders prevents later tokens from affecting earlier tokens.
-    4. $\rightarrow$ At each autoregressive step, $K$ & $V$ of input tokens never change.
+    4. → At each autoregressive step, $K$ & $V$ of input tokens never change.
     5. $\xrightarrow{\text{cache}}$ Avoid recomputation.
 - **How**: Cache.
 

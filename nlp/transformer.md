@@ -35,7 +35,7 @@ kernelspec:
 ```` -->
 
 ## Tokenization
-- **What**: Sequence $\rightarrow$ Tokens
+- **What**: Sequence → Tokens
 - **Why**: Machines can only read numbers.
 
 ```{attention} Q&A
@@ -57,7 +57,7 @@ kernelspec:
 ### WordPiece
 - **What**: Likelihood-based subword tokenization.
 - **Why**: 
-	- BPE merges by frequency $\rightarrow$ Greedy $\rightarrow$ Doesn't care about the merge's impact on the overall LM probability
+	- BPE merges by frequency → Greedy → Doesn't care about the merge's impact on the overall LM probability
 	- WordPiece aims to **maximize corpus likelihood** under a unigram LM over subword tokens.
 - **How**:
 	1. Start with single characters as tokens.
@@ -109,7 +109,7 @@ $$
 ```
 
 ### Unigram
-- **What**: Reverse of BPE/WordPiece $\leftarrow$ Prune a large initial vocab instead of merging from chars
+- **What**: Reverse of BPE/WordPiece ← Prune a large initial vocab instead of merging from chars
 - **Why**: Pruning + Likelihood can avoid early bad merge decisions & yield more natural segmentations.
 - **How**:
     1. Build a large candidate vocab from the full training corpus.
@@ -140,7 +140,7 @@ $$
 &nbsp;
 
 ## Token Embedding
-- **What**: Tokens $\rightarrow$ Semantic vectors.
+- **What**: Tokens → Semantic vectors.
 - **Why**: 
 	- Discrete tokens $\xrightarrow{\text{map to}}$ Continuous vectors
 	- Vocab index $\xrightarrow{\text{map to}}$ Semantic meaning
@@ -174,17 +174,17 @@ $$
 &nbsp;
 
 ## Positional Encoding
-- **What**: Semantic vectors + Positional vectors $\rightarrow$ Position-aware vectors
+- **What**: Semantic vectors + Positional vectors → Position-aware vectors
 - **Why**:
 	- Transformers don't know positions.
 	- BUT positions matter!
-		- No PE $\rightarrow$ self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
+		- No PE → self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
 
 ### Sinusoidal PE
-- **What**: Positional vectors $\rightarrow$ Sine waves
+- **What**: Positional vectors → Sine waves
 - **Why**:
-	- Continuous & multi-scale $\rightarrow$ Generalize to sequences of arbitrary lengths
-	- No params $\rightarrow$ Low computational cost
+	- Continuous & multi-scale → Generalize to sequences of arbitrary lengths
+	- No params → Low computational cost
 	- Empirically performed as well as learned PE
 
 ```{note} Math
@@ -207,17 +207,17 @@ $$\begin{align*}
 ```{attention} Q&A
 :class: dropdown
 *Cons?*
-- No params $\rightarrow$ No learning of task-specific position patterns.
+- No params → No learning of task-specific position patterns.
 - Requires uniform token importance across the sequence. {cite:p}`vaswani2017attention`
 - Cannot capture complex, relative, or local positional relationships.
 ```
 
 ### RoPE
 - **What**: Rotary Postion Embedding.
-	- Encode relative positions $\leftarrow$ Rotate each QKV pair.
+	- Encode relative positions ← Rotate each QKV pair.
 - **Why**:
-	- Absolute PE tie each token to a fixed index $\rightarrow$ NO generalization to longer sequences
-	- Learned relative PE learn one weight per distance bucket $\rightarrow$ Limit distance ranges & Add params
+	- Absolute PE tie each token to a fixed index → NO generalization to longer sequences
+	- Learned relative PE learn one weight per distance bucket → Limit distance ranges & Add params
 	- RoPE: **Param-free, Continuous, Relative, Generalizable**.
 - **How**:
 	1. Project each token embedding at position index $p$ to $\mathbf{q}_p$ & $\mathbf{k}_p$.
@@ -274,7 +274,7 @@ $$
 R_\theta^TR_\phi=R_{\phi-\theta}
 $$
 
-6. For each pair, rotate counterclockwise (i.e., Cartesian $\rightarrow$ Polar $\rightarrow$ Cartesian):
+6. For each pair, rotate counterclockwise (i.e., Cartesian → Polar → Cartesian):
 
 $$
 \begin{bmatrix}
@@ -324,8 +324,8 @@ $$
 - Well, they didn't define it that way, but the OG [Sinusoidal PE](#sinusoidal-pe) did.
 - Long-term decay: This function ensures that the inner-product decays as the relative distance increases.
 - Varying granularity:
-	- Early dimensions have large angles $\rightarrow$ Rotation changes significantly even between nearby tokens $\rightarrow$ Effectively capture fine-grained relationship
-	- Late dimensions have small angles $\rightarrow$ Rotation changes very slowly, almost identical between nearby tokens $\rightarrow$ They ONLY make a significant difference with distant tokens $\rightarrow$ Effectively capture coarse-grained relationship
+	- Early dimensions have large angles → Rotation changes significantly even between nearby tokens → Effectively capture fine-grained relationship
+	- Late dimensions have small angles → Rotation changes very slowly, almost identical between nearby tokens → They ONLY make a significant difference with distant tokens → Effectively capture coarse-grained relationship
 ```
 
 &nbsp;
@@ -344,9 +344,9 @@ $$
 		- $K$: What are the keywords for identification?
 		- $V$: What is the content?
 	2. For each token $t$:
-        1. Multiply its query & all tokens' keys $\rightarrow$ Relevance scores
-		2. Scale & Softmax the scores $\rightarrow$ Attention weights
-		3. Weighted sum of all tokens' values $\rightarrow$ $t$'s contextual representation
+        1. Multiply its query & all tokens' keys → Relevance scores
+		2. Scale & Softmax the scores → Attention weights
+		3. Weighted sum of all tokens' values → $t$'s contextual representation
 
 ```{note} Math
 :class: dropdown
@@ -438,7 +438,7 @@ $$
 ```{attention} Q&A
 :class: dropdown
 *Cons?*
-- ⬆️ Computational cost $\leftarrow$ $O(n^2)$ (?)
+- ⬆️ Computational cost ← $O(n^2)$ (?)
 - Fixed sequence length.
 
 *Why scale?*
@@ -447,10 +447,10 @@ $$
 3. Scaling normalizes this variance.
 	
 *Why softmax?*
-- Scores $\rightarrow$ Probability distribution
+- Scores → Probability distribution
 	- All weights > 0.
 	- All weights sum to 1.
-- Score margins are amplified $\rightarrow$ More attention to relevant elements
+- Score margins are amplified → More attention to relevant elements
 ```
 
 ### Masked/Causal Attention
@@ -487,8 +487,8 @@ $$
 
 ### Cross Attention
 - **What**: Scaled Dot-Product Attention BUT
-	- K&V $\leftarrow$ Source (e.g., Encoder)
-	- Q $\leftarrow$ Curr sequence (i.e., Decoder)
+	- K&V ← Source (e.g., Encoder)
+	- Q ← Curr sequence (i.e., Decoder)
 - **Why**: Additional source info may be helpful for predicting next token for curr sequence.
 - **How**: See [Self-Attention](#self-attention) but $K \& V$ are from Encoder.
 
@@ -525,7 +525,7 @@ $$
 *Cons?*
 - ⬆️ Computational cost
 - ⬇️ Interpretability
-- Redundancy $\leftarrow$ Some heads may learn similar patterns
+- Redundancy ← Some heads may learn similar patterns
 ```
 
 &nbsp;
@@ -534,15 +534,15 @@ $$
 - **What**:
     1. MHA + Residual Connection + LayerNorm
     2. Position-wise FFN + Residual Connection + LayerNorm
-- **Why**: MHA merely forms a softmax-weighted linear blend of other tokens' value vectors $\rightarrow$ Where is non-liearity & info complexity?
+- **Why**: MHA merely forms a softmax-weighted linear blend of other tokens' value vectors → Where is non-liearity & info complexity?
     - **Non-linearity**: Two-layer FFN with ReLU in between.
-    - **Info complexity**: Each token gets its own info processing stage: "Diffuse $\rightarrow$ Activate $\rightarrow$ Compress".
-        - A mere weighted sum of value vectors $\rightarrow$ Higher-order feature mixes.
+    - **Info complexity**: Each token gets its own info processing stage: "Diffuse → Activate → Compress".
+        - A mere weighted sum of value vectors → Higher-order feature mixes.
 - **How**:
     1. **MHA**: Immediately establish global context from input sequence BEFORE per-token processing.
         1. **Residual Connection**: Preserve the original signal & Ensure training stability for deep stacks.
         2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#covariate-shift).
-    2. **Position-wise FFN**: Apply FFN independently **to each token vector** $\rightarrow$ Transform features within each position's channel dimension, w/o exchanging info across positions.
+    2. **Position-wise FFN**: Apply FFN independently **to each token vector** → Transform features within each position's channel dimension, w/o exchanging info across positions.
         1. **Residual Connection**: Preserve the original signal & Ensure training stability for deep stacks.
         2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#covariate-shift).
 
@@ -576,11 +576,11 @@ $$
         - THEN, we do per-token processing.
 
 ## Output
-- **What**: Embeddings $\rightarrow$ Token probability distribution.
+- **What**: Embeddings → Token probability distribution.
 - **Why**: Next Token Prediction.
 - **How**: Linear + Softmax.
-    - **Linear**: Shape conversion: Embedding dim $\rightarrow$ Vocab size.
-    - **Softmax**: Logits $\rightarrow$ Probs
+    - **Linear**: Shape conversion: Embedding dim → Vocab size.
+    - **Softmax**: Logits → Probs
 
 ## References
 - [Jay Alammar's Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/)

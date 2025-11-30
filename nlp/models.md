@@ -20,7 +20,7 @@ This page does NOT cover contemporary LLM for now.
     - **MLM (Masked Language Modeling)**: Learn to fill in the blank.
     - **NSP (Next Sentence Prediction)**: Learn to predict whether Sentence B is the next sentence of Sentence A.
 - **Why**: To enable truly bidirectional context understanding.
-    - A transformer model with decoder relies on causal masking for token prediction $\rightarrow$ Unidirectional understanding.
+    - A transformer model with decoder relies on causal masking for token prediction → Unidirectional understanding.
     - BERT replaces causal masking with random masking to force model to predict missing words.
 - **How (Pretraining)**:
     1. Data Processing:
@@ -30,16 +30,16 @@ This page does NOT cover contemporary LLM for now.
             - "[CLS]": Classification token. Added at the beginning.
             - "[SEP]": Separation token. Added between & after sentences.
         4. For each sentence pair,
-            - 50% chance keep it unchanged $\rightarrow$ Positive
-            - 50% chance replace Sentence B with a random sentence $\rightarrow$ Negative.
+            - 50% chance keep it unchanged → Positive
+            - 50% chance replace Sentence B with a random sentence → Negative.
         5. Randomly select 15% of all input tokens for MLM:
             - 80% of them get replaced with "[MASK]".
             - 10% of them get replaced with a random token.
             - 10% of them are unchanged.
     2. Pretraining:
         1. Compute & Add Token embeddings, Segment embeddings, and Position embeddings.
-            - **Token embeddings**: Trainable "token ID $\rightarrow$ embedding" look-up table/matrix.
-            - **Segment embeddings**: Trainable "segment ID $\rightarrow$ embedding" look-up table/matrix, to distinguish the two sentences.
+            - **Token embeddings**: Trainable "token ID → embedding" look-up table/matrix.
+            - **Segment embeddings**: Trainable "segment ID → embedding" look-up table/matrix, to distinguish the two sentences.
             - **Positional embeddings**: Trainable "position index $\rightarrow embedding$" look-up table/matrix.
         2. BERT forward pass.
         3. **MLM**: For each masked position, use Linear + Softmax to convert BERT output to token probability distribution.
@@ -74,13 +74,13 @@ $$\begin{align*}
 ```{attention} Q&A
 :class: dropdown
 *Why select 15% tokens for MLM? Why not more?*
-- We want to provide enough context for BERT to learn rich representations $\rightarrow$ Masking too many = Insufficient context
-- We also want to create a sufficiently challenging classification task $\rightarrow$ Masking too few = Insufficient learning signal
+- We want to provide enough context for BERT to learn rich representations → Masking too many = Insufficient context
+- We also want to create a sufficiently challenging classification task → Masking too few = Insufficient learning signal
 - 15% = A perfect balance.
 
 *Why the 80-10-10 separation? Why not just mask all of them as [MASK]?*
 - 80% [MASK]: Make BERT learn to predict missing words using surrounding context.
-- 10% random token: Prevent BERT from overfitting to the [MASK] token as a missing word $\rightarrow$ This is STILL treated as a prediction target.
+- 10% random token: Prevent BERT from overfitting to the [MASK] token as a missing word → This is STILL treated as a prediction target.
 - 10% unchanged token: Reduce discrepancy between pretraining & finetuning/inference.
     - Pretraining: [MASK] tokens exist.
     - Finetuning/Inference: [MASK] tokens do not exist.
@@ -94,7 +94,7 @@ $$\begin{align*}
     - Pretrained on much larger corpora (10x).
     - Use **BPE**.
     - **No NSP**. ONLY MLM.
-    - **Dynamic Masking**: Create a new masking pattern every time a sequence is fed to RoBERTa $\rightarrow$ Empirically better than static masking.
+    - **Dynamic Masking**: Create a new masking pattern every time a sequence is fed to RoBERTa → Empirically better than static masking.
     - Training configs:
         - Batch size ⬆️⬆️.
         - #Training steps ⬆️.
@@ -136,10 +136,10 @@ $$\begin{align*}
     1. Data Processing:
         1. Collect corpora.
         2. Tokenize each sentence with [BPE](tokenizer.md#bpe-byte-pair-encoding).
-        3. Form input-target pairs $\leftarrow$ Shift each token sequence right by 1 token.
+        3. Form input-target pairs ← Shift each token sequence right by 1 token.
     2. Pretraining:
         1. Compute & Add Token embeddings and Position embeddings.
-            - **Token embeddings**: Trainable "token ID $\rightarrow$ embedding" look-up table/matrix.
+            - **Token embeddings**: Trainable "token ID → embedding" look-up table/matrix.
             - **Positional embeddings**: Trainable "position index $\rightarrow embedding$" look-up table/matrix.
         2. GPT forward pass.
         3. Next Token Prediction: Compute Cross-Entropy loss between predicted and true next tokens.
@@ -167,13 +167,13 @@ $$
 - **Why**: OpenAI bet on the scaling law.
 - **How (improvement)**: 
     - Larger & Better:
-        - Model size: 117M $\rightarrow$ 1.5B
+        - Model size: 117M → 1.5B
         - Training data: 8x
-        - #Blocks (i.e., Depth): 12 $\rightarrow$ 48
-        - Hidden dim (i.e., Width): 768 $\rightarrow$ 1600
-        - Context window: 512 $\rightarrow$ 1024
-        - Vocab size: 40478 $\rightarrow$ 50257
-        - Batch size: 64 $\rightarrow$ 512
+        - #Blocks (i.e., Depth): 12 → 48
+        - Hidden dim (i.e., Width): 768 → 1600
+        - Context window: 512 → 1024
+        - Vocab size: 40478 → 50257
+        - Batch size: 64 → 512
     - [Nucleus sampling](inference.md#top-p-nucleus).
     - Zero-shot prompting.
 
@@ -182,11 +182,11 @@ $$
 - **Why**: OpenAI bet on the scaling law.
 - **How (improvement)**:
     - Larger & Better:
-        - Model size: 1.5B $\rightarrow$ 175B
+        - Model size: 1.5B → 175B
         - Training data: 15x
-        - #Blocks (i.e., Depth): 48 $\rightarrow$ 96
-        - Hidden dim (i.e., Width): 1600 $\rightarrow$ 12288
-        - Context window: 1024 $\rightarrow$ 2048
+        - #Blocks (i.e., Depth): 48 → 96
+        - Hidden dim (i.e., Width): 1600 → 12288
+        - Context window: 1024 → 2048
     - Few-shot prompting.
 
 ### GPT-3.5 (ChatGPT / Better InstructGPT)
@@ -195,7 +195,7 @@ $$
 - **How (improvement)**:
     - Larger & Better:
         - Training data: Basically all texts on the internet till 2022.
-        - Context window: 2048 $\rightarrow$ 4096.
+        - Context window: 2048 → 4096.
     - Instruction tuning: Finetune the model on specific types of system and user prompts to mimic dialogue system behavior.
     - Multi-step reasoning.
     - [RLHF](rlhf.md).

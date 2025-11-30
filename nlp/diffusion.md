@@ -11,12 +11,12 @@ kernelspec:
 ---
 # Diffusion
 - **What**:
-    - **Forward**: Data $\rightarrow$ Noise.
+    - **Forward**: Data → Noise.
         - Thermodynamic Diffusion: Particles gradually spread from high to low concentration.
-    - **Reverse**: Noise $\rightarrow$ Data.
+    - **Reverse**: Noise → Data.
         - Denoising: Gradually denoise pure noise into structured data. (impossible in Physics, but possible in ML)
 - **Why**:
-    - Stable training $\leftarrow$ No adversarial training (> GAN)
+    - Stable training ← No adversarial training (> GAN)
     - Full data distribution converage (> VAE)
     - Fine-grained control over iterative generation process.
 - **How**: 
@@ -59,8 +59,8 @@ Forward:
     $$
 
     - Given $x_{t-1}$, the next step $x_t$
-        1. Shrinks the signal toward 0 $\leftarrow$ $\times\sqrt{\alpha_t}$
-        2. Adds Gaussian noise $\leftarrow$ $+\sqrt{\beta_t}\epsilon$
+        1. Shrinks the signal toward 0 ← $\times\sqrt{\alpha_t}$
+        2. Adds Gaussian noise ← $+\sqrt{\beta_t}\epsilon$
 
 - Direct Sampling:
 

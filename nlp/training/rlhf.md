@@ -34,7 +34,7 @@ kernelspec:
         - Typically computed after a full token sequence is generated.
     - **Policy**: LLM weights.
         - Dictates how LLM predicts next token given input token sequence.
-        - Initial policy $\leftarrow$ Pretraining (& SFT).
+        - Initial policy ← Pretraining (& SFT).
 - **Why**: Human values are dynamic, subjective, and constantly evolving. There isn't always one "correct answer" for IRL scenarios, so SFT falls short.
 - **How**:
     - **Process**: Feedback $\xrightarrow{\text{train}}$ RM $\xrightarrow{\text{train}}$ Policy
@@ -76,7 +76,7 @@ kernelspec:
     - **RM**: Explicit + Pointwise.
     - **PO**:
         1. **PPO**: Max Reward + **Min Deviation**
-            - Deviation Minimization: Aligned policy $\Leftrightarrow$ Initial policy $\leftarrow$ Trust Region Constraint
+            - Deviation Minimization: Aligned policy $\Leftrightarrow$ Initial policy ← Trust Region Constraint
                 - *Why?* To keep what works while aiming at what we want, via minimal changes. Drastic changes could make it forget what worked.
         2. **PPO-ptx**: Max Reward + Min Deviation + **Min Alignment Tax**
             - Alignment Tax Minimization: ❌Degradation of Pre/SFT task performance.
@@ -102,7 +102,7 @@ RM:
     - $r_\phi(x,y)$: Reward model for input $x$ and output $y$, parameterized by $\phi$.
     - $\binom{K}{2}=\frac{K(K-1)}{2}$: #Comparisons for each prompt shown to each labeler.
     - $\mathcal{D}$: RL Dataset.
-    - $\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)$: Sigmoid function $\rightarrow$ Bradley-Terry model.
+    - $\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)$: Sigmoid function → Bradley-Terry model.
 ---
 
 PO:
@@ -166,8 +166,8 @@ TRPO (quick recap):
     - $l$: Time step increment.
     - $\gamma$: Discount factor for future rewards.
     - $\lambda\in[0,1]$: Bias-variance tradeoff coefficient.
-        - $\lambda=0$: One-step TD $\rightarrow$ ⬆️Bias, ⬇️Variance
-        - $\lambda=1$: Full Monte Carlo return $\rightarrow$ ⬇️Bias, ⬆️Variance
+        - $\lambda=0$: One-step TD → ⬆️Bias, ⬇️Variance
+        - $\lambda=1$: Full Monte Carlo return → ⬇️Bias, ⬆️Variance
     - $r_t$: Curr reward.
     - $V(s)$: Value function at state $s$.
 - **KL Divergence**:
@@ -219,17 +219,17 @@ PPO:
 
 ## DPO
 - **Name**: Direct Preference Optimization {cite:p}`rafailov2023direct`
-- **What**: ❌RM $\rightarrow$ LM=RM $\rightarrow$ ✅Classification
+- **What**: ❌RM → LM=RM → ✅Classification
 - **Why**:
     - *Why do we need it?*
-        - RLHF is unstable $\leftarrow$ RM underfitting/overfitting
-        - PPO is expensive $\leftarrow$ Extra RM, Hyperparameter tuning, On-policy sampling, etc.
+        - RLHF is unstable ← RM underfitting/overfitting
+        - PPO is expensive ← Extra RM, Hyperparameter tuning, On-policy sampling, etc.
     - *Why does it even work?*
         1. PPO's KL-constrained reward maximization objective actually has a **closed-form solution**.
         2. The solution actually satisfies **Bradley-Terry model** (or other pairwise preference models).
         3. The model provides the **probability of human preference data in terms of the optimal policy** (❌RM).
-        3. Yo, probability of data? $\rightarrow$ MLE $\rightarrow$ BCE
-- **How**: Get data $\rightarrow$ Train LM to minimize BCE
+        3. Yo, probability of data? → MLE → BCE
+- **How**: Get data → Train LM to minimize BCE
 
 ```{note} Math
 :class: dropdown
@@ -270,7 +270,7 @@ $$
 $$
 - $\hat{r}_\theta(x,y)=\beta\log\frac{\pi^*(y|x)}{\pi_\text{ref}(y|x)}$: Implicit reward model via LM.
 - $\hat{r}_\theta(x,y_l)-\hat{r}_\theta(x,y_w)$: Higher update when reward estimate is wrong ($y_l\succ y_w$).
-- $\log\pi_\theta(y|x)$: Log likelihood of $y|x$ $\rightarrow$ ⬆️$y_w$, ⬇️$y_l$.
+- $\log\pi_\theta(y|x)$: Log likelihood of $y|x$ → ⬆️$y_w$, ⬇️$y_l$.
 ```
 
 ```{tip} Derivation: PPO -> BCE 
@@ -304,17 +304,17 @@ $$
 
 ## GRPO
 - **Name**: Group Relative Policy Optimization {cite:p}`shao2024deepseekmath`
-- **What**: ❌Value Function $\rightarrow$ ✅Average of multisampling from reference policy = baseline for Advantage Estimation.
+- **What**: ❌Value Function → ✅Average of multisampling from reference policy = baseline for Advantage Estimation.
 - **Why**: PPO objective $\xleftarrow{\text{compute}}$ Advantage $\xleftarrow{\text{compute}}$ Extra value model (i.e., critic)
-    - $\rightarrow$ ⬆️**Computational cost**
+    - → ⬆️**Computational cost**
         - Value models can be as large as reward models.
         - e.g., OG RLHF/PPO initialized a 6B value function from a 6B RM {cite:p}`ouyang2022training`.
-    - $\rightarrow$ ⬇️**Value model accuracy**
+    - → ⬇️**Value model accuracy**
         - Value model is supposed to be accurate at each token.
         - BUT reward score is only computed at the last token.
         - SO there's no reward signal for intermediate tokens.
         - SO value model has to guess the final reward based on incomplete information.
-        - $\rightarrow$ High variance + Training instability.
+        - → High variance + Training instability.
 
 - **How**:
     - **Outcome Supervision**: For each input,
