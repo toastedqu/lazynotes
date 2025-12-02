@@ -39,6 +39,31 @@ This page lists common issues in DL in Alphabetic order.
         - Add stochasticity: stronger data augmentation, dropout, stochastic depth, etc.
     - Grad Accumulation.
 
+&nbsp;
+
+## Catastrophic Forgetting
+- **What**: When a NN trained on Task A is later trained on Task B, it can lose performance on Task A.
+- **Why**: Standard training assumes **i.i.d. + stationary** data. BUT continual learning violates this assumption.
+    1. Train on Task A → params settle into a good basin for A.
+    2. Switch to Task B (no/limited A data) → optimize only for B’s loss.
+    3. Grads for Task B push params into basin B, which isn't meant for basin A.
+    4. Result: B improves, A collapses (forgetting).
+- **How to mitigate**:
+    1. Keep & Mix some old data into new tasks.
+    2. Penalize changing "important" params for old tasks.
+    3. Separate params per task (e.g., adapters, task-specific heads, routing/mixture-of-experts).
+
+```{attention} Q&A
+:class: dropdown
+*Is catastrophic forgetting ALWAYS bad?*
+- Only if you really need to retain earlier skills → If you only care about the latest data, forgetting can be a feature (fast adaptation).
+
+*What’s the #1 practical cause during fine-tuning?*
+- Unconstrained updates + small/new dataset + too-large LR → weight drift.  
+```
+
+&nbsp;
+
 ## Covariate Shift
 - **What**: A learned function suddenly sees its input data distribution change, while the conditional distribution of labels given data is presumed unchanged.
     - Dataset Covariate Shift: Training $\leftrightarrow$ Inference.
