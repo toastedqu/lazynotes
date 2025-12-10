@@ -10,9 +10,7 @@ kernelspec:
   name: python3
 ---
 # Transformer
-- **What**: **Self-attention** for modeling relationships between all tokens in input sequence.
-- **Why**: **Long-range dependencies** + **Parallel processing**.
-- **How**: {cite:p}`vaswani2017attention`
+Transformer uses **self-attention** to model relationships between all tokens in input sequence. It excels in NLP because of **long-range dependencies** & **parallel processing** {cite:p}`vaswani2017attention`.
 
 ```{image} ../images/nlp-transformer/transformer.png
 :align: center
@@ -35,33 +33,33 @@ kernelspec:
 ```` -->
 
 ## Tokenization
-- **What**: Sequence → Tokens
+- **What**: Text sequence → Token sequence
 - **Why**: Machines can only read numbers.
 
 ```{attention} Q&A
 :class: dropdown
-*Why subword-level vocab? Why not whole words? Why not characters?*
+*Why subword-level vocab? Why not whole words? Why not chars?*
 - Word-level vocab explode with out-of-vocab words.
 - Char-level vocab misses morphology.
 - Subword offers a fixed-size, open-vocab symbol set which can handle rare words while maintaining morphology.
 ```
 
 ### BPE
-- **What**: Byte-Pair Encoding (Frequency-based subword tokenization).
+- **What**: Byte-Pair Encoding (**Frequency-based** subword tokenization).
 - **How**:
-	1. Start with single characters as tokens.
-	2. Count every pair of adjacent tokens.
+	1. Start with single chars as tokens.
+	2. Count each pair of adjacent tokens.
 	3. Merge the **most frequent** pair into one token.
 	4. Repeat Step 2-3 till reaching vocab size.
 
 ### WordPiece
-- **What**: Likelihood-based subword tokenization.
+- **What**: **Likelihood-based** subword tokenization.
 - **Why**: 
 	- BPE merges by frequency → Greedy → Doesn't care about the merge's impact on the overall LM probability
 	- WordPiece aims to **maximize corpus likelihood** under a unigram LM over subword tokens.
 - **How**:
-	1. Start with single characters as tokens.
-	2. Compute corpus likelihood gain for each pair of adjacent tokens.
+	1. Start with single chars as tokens.
+	2. Compute **corpus likelihood gain** for each pair of adjacent tokens.
 	3. Merge the pair with the **highest likelihood gain** into one token.
 	4. Repeat Step 2-3 till reaching vocab size.
 
@@ -87,7 +85,7 @@ $$
 L(\mathcal{V})=\prod_{i=1}^{M}P(w_i|\mathcal{V})=\prod_{i=1}^{M}\prod_{j=1}^{m_{w_i}}t_{i,j}
 $$
 
-Likelihood: #Counts of curr token over #Counts of all tokens in corpus from vocab:
+- Likelihood: #Counts of curr token over #Counts of all tokens in corpus from vocab:
 
 $$
 P(a)=\frac{\# a}{\sum_{b\in\mathcal{V}}\# b}
@@ -109,33 +107,93 @@ $$
 ```
 
 ### Unigram
-- **What**: Reverse of BPE/WordPiece ← Prune a large initial vocab instead of merging from chars
-- **Why**: Pruning + Likelihood can avoid early bad merge decisions & yield more natural segmentations.
+- **What**: Reverse of BPE/Wordpiece → Start with a **large candidate vocabulary** & Repeatedly **prune tokens** while fitting a **unigram LM** over tokens
+- **Why**: 
+	- Pruning avoids committing to early irreversible merges.
+	- Unigram explicitly models segmentation uncertainty → Produce more natural/diverse segmentations
 - **How**:
-    1. Build a large candidate vocab from the full training corpus.
-        - **Candidate**: Every single substring in the corpus no longer than a preset max length (e.g., 10-12 for Alphabets; 6 for CJK).
-        - **Large**: 10x-30x final vocab size.
-    2. Assign each candidate a probability.
-        1. Treat each token $t$ as a symbol in a **unigram language model** with parameter $p(t)$, where $\sum_t p(t)=1$.
-        2. A string $x$ can be segmented in many ways; for a segmentation $s=(t_1,\dots,t_k)$, define:
-            - $P(s)=\prod_{i=1}^{k} p(t_i)$
-            - $P(x)=\sum_{s \in \text{Seg}(x)} P(s)$  (sum over all valid segmentations)
-        3. Use dynamic programming to compute:
-            - **Best segmentation** (Viterbi): $\arg\max_s P(s)$ for tokenizing at inference time.
-            - **Marginals / expected counts** (Forward–Backward) needed for training.
-    3. Fit token probabilities with EM (Maximum Likelihood).
-        1. **E-step**: compute expected counts of each token under $P(s \mid x)$ across the corpus (via Forward–Backward).
-        2. **M-step**: update $p(t)$ proportional to its expected count (with smoothing/prior in practice):
-            - $p(t) \leftarrow \dfrac{\mathbb{E}[\text{count}(t)]}{\sum_{t'} \mathbb{E}[\text{count}(t')]}$
-    4. Prune the vocabulary (the “reverse of merges” part).
-        1. Score tokens by how harmful it would be to remove them (utility/importance), often approximated by the **increase in negative log-likelihood** if the token is dropped.
-        2. Remove a fraction of the lowest-utility tokens (e.g., 10–20%) while keeping:
-            - required tokens (special tokens, sometimes all single characters/bytes)
-            - an unknown/fallback mechanism to guarantee coverage
-        3. Re-run EM on the reduced vocab.
-        4. Repeat prune + re-fit until reaching the target vocab size.
-    5. Tokenization at inference:
-        - Given final vocab + $p(t)$, find the **most likely** segmentation with Viterbi DP (typically maximizing $\sum_i \log p(t_i)$).
+	1. Build a large candidate vocab from training corpus.
+		- **Candidate**: Every substring up to a max length (e.g., ~10–12 for alphabetic scripts).
+		- **Large**: 10×~30× final vocab size.
+	2. Assign token probabilities via a unigram LM.
+		- Treat each token $t$ as a symbol with probability $p(t)$ ($\sum_t p(t)=1$).
+		- A string $x$ has many valid segmentations $s=(t_1,\dots,t_k)$.
+		- Each segmentation has probability $P(s)=\prod_i p(t_i)$.
+		- Use DP to compute:
+			- Training: **Forward–Backward** marginals / expected counts.
+			- Inference: **Viterbi** best segmentation.
+	3. Fit $p(t)$ with EM.
+		- **E-step**: Compute expected token counts under $P(s|x)$ across the corpus.
+		- **M-step**: Update probabilities from expected counts.
+	4. Prune vocabulary iteratively.
+		1. Score each token by how costly it is to remove (e.g., increase in NLL).
+		2. Remove a fraction of **lowest-utility** tokens (e.g., 10–20%), keep required coverage tokens (special tokens), and retain an **UNK/fallback** mechanism
+		3. Re-run EM on the reduced vocab.
+		4. Repeat until reaching target vocab size.
+
+```{note} Math
+:class: dropdown
+Notations:
+- Data:
+  - $x$: Input string.
+  - $\mathcal{V}$: Curr vocab.
+  - $\mathrm{Seg}(x)$: Set of all valid segmentations of $x$ using tokens in $\mathcal{V}$.
+- Params:
+  - $p(t)$: Unigram probability of token $t$, with $\sum_{t\in\mathcal{V}} p(t)=1$.
+- Segmentation:
+  - $s=(t_1,\dots,t_k)\in \mathrm{Seg}(x)$: A segmentation of $x$.
+  - $\text{count}(t;s)$: #times token $t$ appears in segmentation $s$.
+
+Model:
+- Segmentation probability:
+  $$
+  P(s)=\prod_{i=1}^k p(t_i)
+  $$
+- String probability (sum over all segmentations):
+  $$
+  P(x)=\sum_{s\in \mathrm{Seg}(x)} P(s)
+  =\sum_{s\in \mathrm{Seg}(x)} \prod_{i=1}^k p(t_i)
+  $$
+- Posterior over segmentations:
+  $$
+  P(s|x)=\frac{P(s)}{P(x)}
+  $$
+- Expected count of token $t$ under the posterior:
+  $$
+  \mathbb{E}[\text{count}(t)|x]
+  =\sum_{s\in \mathrm{Seg}(x)} \text{count}(t;s)\,P(s|x)
+  $$
+
+EM updates (corpus-level):
+- Let $C(t)=\sum_x \mathbb{E}[\text{count}(t)|x]$. Then:
+  $$
+  p(t)\leftarrow \frac{C(t)}{\sum_{t'\in\mathcal{V}} C(t')}
+  $$
+
+Inference (Viterbi):
+- Find the best segmentation:
+  $$
+  s^*=\arg\max_{s\in \mathrm{Seg}(x)} P(s)
+  =\arg\max_{s\in \mathrm{Seg}(x)} \sum_{i=1}^k \log p(t_i)
+  $$
+```
+
+```{attention} Q&A
+:class: dropdown
+*How is this “reverse of BPE/WordPiece,” exactly?*  
+- BPE/WordPiece: start from small units (chars/bytes) and **merge** to grow vocab.  
+- Unigram: start from huge vocab of substrings and **prune** down while optimizing likelihood.
+
+*Why do we need Forward–Backward instead of only Viterbi during training?*  
+- Viterbi uses only the single best segmentation, which can over-commit early.  
+- Forward–Backward spreads probability mass across *all* segmentations, giving smoother, more robust expected counts for EM.
+
+*What guarantees coverage at inference time?*  
+- In practice you keep a base set (often all single characters or bytes) and/or provide an UNK/fallback path, so any string can be segmented even if longer substrings were pruned.
+
+*When does Unigram tend to shine?*  
+- When you want **multiple plausible segmentations** during training (morphology-rich languages, mixed scripts, noisy text), and you’d rather not lock in merges that looked good early but age poorly as vocab grows.
+```
 
 &nbsp;
 

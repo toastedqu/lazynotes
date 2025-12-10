@@ -10,12 +10,40 @@ kernelspec:
   name: python3
 ---
 # Post-Training
-- **What**: Adapt/Align a pretrained general-purpose language model to a specific data distribution.
-- **Why**: Foundation models are pretrained on vast, general-domain corpora → Mismatch from downstream tasks
+Post-training adapts (or aligns) a pretrained general-purpose LM to a specific data distribution (or task).
 
-## PEFT
-- **Name**: Parameter-Efficient Fine-Tuning.
-- **What**: Fine-tune a small subset of params.
+Post-training is necessary because foundation models are pretrained on vast, general-domain corpora, meaning they may mismatch downstream tasks.
+
+&nbsp;
+
+## SFT
+- **What**: Supervised Fine-Tuning.
+	- Fine-tune a pretrained LM on <**input → desired output**> pairs with supervised learning objectives.
+- **Why**: SFT directly steers the model to the exact behavior spec.
+- **How**: Minimize NLL of reference answer tokens.
+
+```{attention} Q&A
+:class: dropdown
+*Pros?*
+- Simple, stable training objective.
+- Effective ← Even small curated datasets can strongly steer tone/format.
+- Typically first step before preference optimization.
+
+*Cons?*
+- **Imitation ceiling**: It can only learn what's in the dataset.
+- Overfitting if data is narrow.
+- ⬇️⬇️Generalization.
+
+*When is SFT NOT enough?*
+- **Preference trade-offs** ("helpful vs safe", "concise vs thorough") are NOT captured by "gold" responses.
+- **Policy compliance** in adversarial settings → often paired with preference optimization + red-teaming.
+```
+
+&nbsp;
+
+### PEFT
+- **What**: Parameter-Efficient Fine-Tuning.
+	- Fine-tune ONLY a small subset of params.
 - **Why**: **Adaptation** + **Efficiency**.
 	- *Why use PEFT?*
 		- Full Fine-tuning:
@@ -31,9 +59,11 @@ kernelspec:
 	2. Inject trainable adapters/modules with a small number of params.
 	3. Train the injected params.
 
-### LoRA
-- **Name**: Low-Rank Adaptation.
-- **What**: Train **low-rank** matrices for adaptation.
+&nbsp;
+
+#### LoRA
+- **What**: Low-Rank Adaptation.
+	- Train **low-rank** matrices for adaptation.
 - **Why**: #params ⬇️ → Finetuning efficiency ⬆️.
 - **How**: Inject low-rank matrices into the weights of specific layers, w/o modifying the original weights directly.
 
@@ -81,13 +111,13 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 	- ← Empirical performance
 ```
 
-#### QLoRA
+<!-- #### QLoRA
 - **Name**: LoRA for Quantized LLMs.
 - **What**: Insert learnable LoRAs into each layer of a quantized pretrained LM.
 - **Why**: Standard fine-tuning scales linearly with model size in memory → HUGE memory cost
 	- QLoRA dramatically cuts down memory WHILE preserving full-precision performance.
 - **How**:
-	1. **4-bit NormalFloat Quantization**: 
+	1. **4-bit NormalFloat Quantization**:  -->
 
 <!-- ### Adapters
 
