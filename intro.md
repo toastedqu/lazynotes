@@ -1,5 +1,7 @@
 # Lazynotes
-A minimalist AI handbook, providing a quick recap of intuition and theory.
+I aim to build (or faciliate the progress towards) Artificial Consciousness (AC).
+
+This site is a minimalist collection of as much relevant info as possible.
 
 Each concept is structured as follows:
 - Mandatory:

@@ -2,7 +2,7 @@ version: 1
 project:
   title: Lazynotes
   authors:
-    - name: Renyi Qu
+    - name: Q
   github: executablebooks/jupyter-book
   bibliography:
     - references.bib
@@ -12,6 +12,9 @@ project:
       output: exports/book.pdf
   toc:
     - file: intro.md
+    - title: Consciousness
+      children:
+        - file: ac/intro.md
     - title: DL
       children:
         - file: dl/module.md
