@@ -1,4 +1,10 @@
 # About
-I work on AI.
+I aim to build (or faciliate the progress towards) Artificial Consciousness (AC).
 
-[LinkedIn](https://www.linkedin.com/in/renyi-qu-6645a8150/) | [Google Scholar](https://scholar.google.com/citations?user=ItowkdsAAAAJ&hl=en) | [CV](https://drive.google.com/file/d/1yxepxNd5_-EvfzFQ8Gqke25g5saIP-M2/view?usp=drive_link) | [Github](https://github.com/toastedqu)
+I believe modern ML/DL is nothing but data compression. It succeeds ONLY because big data exists.
+
+"But.. but evolution provided massive training data which shaped our genomes over time, so we are born with strong built-in priors, just like foundational models!"
+
+You know the last part is cap. You know the direction of the AI industry is fundamentally flawed.
+
+If you share the same goal, reach out on [LinkedIn](https://www.linkedin.com/in/renyi-qu-6645a8150/).

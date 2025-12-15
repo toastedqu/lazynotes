@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Philosophy
+# Introduction
 Define consciousness.
 
 You can't. There's no consensus on the definition of consciousness.
