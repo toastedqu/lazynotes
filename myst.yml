@@ -15,9 +15,9 @@ project:
     # - title: Consciousness
     #   children:
     #     - file: ac/intro.md
-    - title: Math
-      children:
-        - file: math/info.md
+    # - title: Math
+    #   children:
+    #     - file: math/info.md
     - title: Archive (NOT MAINTAINED)
       children:
         - title: DL
