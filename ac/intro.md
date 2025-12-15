@@ -115,3 +115,35 @@ This page is my interpretation of {cite:t}`zelazo2007cambridge` and {cite:t}`bla
 - No supervenience for consciousness: $P\Rightarrow C$ is cap, due to the difference in $L$.
 - Organizational invariance: $P+L\Rightarrow C$ is real.
 ```
+
+&nbsp;
+
+## Representationalism
+- **What**: The phenomenal properties of conscious experience ← The experience’s representational properties.
+    - **Representational property**: "What the experience represents about the world."
+- **Why**: We already have a decent story for reducing representation to more basic stuff:
+    1. Phenomenal properties → Representational properties.
+    2. Representational properties → Informational/Teleological relations between brain states & environmental states.
+- **How**: Not every representation is conscious, and we need a special kind - **Tye’s PANIC Theory**:
+    - **PANIC** = **Poised, Abstract, Non-conceptual, Intentional Content**.
+    - A mental state is conscious iff its content is:
+        - **Intentional**: The content is always **ABOUT** something IRL.
+        - **Non-conceptual**: We don't have to have the concept for the content.
+            - e.g., You see a red stop sign, but you don't have to know its RGB.
+        - **Abstract**: The content is about **how the world is structured**, NOT about the low-level physical details of your brain → It is sharable even tho brains are physically different.
+            - e.g., You see a red stop sign, but you don't care about the exact pixels on your retina or the precise neuron firing pattern.
+        - **Poised**: The content is **ready to directly** affect **beliefs & desires**.
+            - e.g., You see a red stop sign, then you slow down and stop.
+- **Cap?**
+    - There are experiences that do NOT represent ANYTHING.
+        - e.g., Phosphenes - You feel like you see something, but you see nothing.
+        - → Feeling ≠ Representing.
+        - → Tye: "It's just **misrepresented**."
+        - → Critics: "How about you call every weird experience 'misrepresented'?"
+    - Same representational content, different phenomenal feel.
+        - e.g., 2 trees - One closer, one farther. You know they are the same trees, but one looks larger, one looks smaller.
+    - Same phenomenal feel, different representational content.
+        - e.g., Optical illusions - When you don't understand them, you get the feel. When you understand how they work, you still get the same feel.
+    - Where is the "Main Character"?
+        - Representationalism ONLY targets the **qualitative** part of experience.
+        - What about the **subjective** part of experience?
