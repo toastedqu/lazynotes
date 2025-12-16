@@ -12,32 +12,35 @@ project:
       output: exports/book.pdf
   toc:
     - file: intro.md
+    - title: Math
+      children:
+      - file: math/info.md
     # - title: Consciousness
     #   children:
     #     - file: ac/intro.md
     # - title: Math
     #   children:
     #     - file: math/info.md
+    - title: DL
+      children:
+      - file: dl/module.md
+      - file: dl/loss.md
+      - file: dl/optim.md
+      - file: dl/train.md
+      - file: dl/issues.md
+    - title: NLP
+      children:
+        - file: nlp/transformer.md
+        - file: nlp/models.md
+        - title: Training
+          children:
+            - file: nlp/training/post.md
+            - file: nlp/training/rlhf.md
+            - file: nlp/training/misc.md
+        - file: nlp/infer.md
+        - file: nlp/eval.md
     - title: Archive (NOT MAINTAINED)
       children:
-        - title: DL
-          children:
-          - file: dl/module.md
-          - file: dl/loss.md
-          - file: dl/optim.md
-          - file: dl/train.md
-          - file: dl/issues.md
-        - title: NLP
-          children:
-            - file: nlp/transformer.md
-            - file: nlp/models.md
-            - title: Training
-              children:
-                - file: nlp/training/post.md
-                - file: nlp/training/rlhf.md
-                - file: nlp/training/misc.md
-            - file: nlp/infer.md
-            - file: nlp/eval.md
         - file: dsa.md
     - file: about.md
 site:
