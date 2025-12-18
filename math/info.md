@@ -81,10 +81,9 @@ H(X)&=E_{x\sim P}[I(x)] \\
 	&=-\sum_xP(x)\log P(x) \\
 	&=-\int_{-\infty}^\infty p(x)\log p(x)dx
 \end{align*}$$
-- Properties:
-	- $H(X)\in [0,\log N]$
-	- $H(X)=\log N\ \ \ \text{iff}\ \ \ \forall x\sim P: P(x)=\frac{1}{N}$
-	- $H(X)$ is concave.
+- $H(X)\in [0,\log N]$
+- $H(X)=\log N\ \ \ \text{iff}\ \ \ \forall x\sim P: P(x)=\frac{1}{N}$
+- $H(X)$ is concave.
 
 Joint Entropy:
 
@@ -140,7 +139,60 @@ $$
 	0 & i\neq j
 	\end{cases}\leq 0
 	$$
-
 ```
 
 &nbsp;
+
+### KL Divergence
+- **What**: How wasteful it is to use distribution $Q$ to approximate the true distribution $P$ of info.
+	- If $Q$ matches $P$, we are using the optimal #bits.
+	- If $Q$ does NOT match $P$, we are spending extra bits per symbol on average.
+	- KLD = Expected # of extra bits per sample to approximate $P$ with $Q$.
+- **Why**: Distribution approximation is EXTREMELY useful in various cases (e.g., Loss functions in ML, measuring info gain, etc.)
+- **How**: Cross Entropy minus True Entropy.
+
+```{note} Math
+:class: dropdown
+Notations:
+- $P$: True distribution.
+- $Q$: Approximated distribution.
+
+KLD:
+
+$$
+D_{KL}(P||Q)=\sum_xP(x)\log\frac{P(x)}{Q(x)}
+$$
+- $D_{KL}(P||Q)\geq 0$
+- $D_{KL}(P||Q)=0\ \ \ \text{iff}\ \ \ P=Q$
+- $D_{KL}(P||Q)\neq D_{KL}(Q||P)$
+- $D_{KL}(P||Q)$ is convex.
+
+KLD (Entropy ver.):
+
+$$
+D_{KL}(P||Q)=H(P,Q)-H(P)
+$$
+- $H(P)$ is model-independent → Minimize CE = Minimize KLD.
+- $H(P,Q)$ is convex for fixed $P$.
+```
+
+```{tip} Derivation
+:class: dropdown
+*Why is KLD convex?*
+
+1. Jensen's Inequality: Let $f$ be convex and $X$ be a random variable,
+
+$$
+f(E[X])\leq E[f(X)]
+$$
+
+2. Apply it to KLD:
+
+$$\begin{align*}
+D_{KL}(P||Q)&=-E\left[\log\frac{Q(X)}{P(X)}\right] \\
+			&\geq -\log E\left[\frac{Q(X)}{P(X)}\right] \\
+			&=-\log\left(\sum_xP(x)\frac{Q(x)}{P(x)}\right) \\
+			&=-\log 1 \\
+			&=0
+\end{align*}$$
+```
