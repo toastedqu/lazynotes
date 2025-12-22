@@ -20,7 +20,9 @@ I find {cite:t}`blackmore2017consciousness`'s approach comprehensive:
 - **Qualia**: The ineffable, personal, **qualitative** "feel" of experiences.
 - **The hard problem**: How TF can subjective experience emerge from physical processes in the brain???
 
-This page is my interpretation of {cite:t}`zelazo2007cambridge` and {cite:t}`blackmore2017consciousness`.
+This page is my shallow philosophical interpretation of consciousness from Chapter 3 of {cite:t}`zelazo2007cambridge`. I do NOT intend to dig too much into philosophy because it's a waste of time compared to science.
+
+Instead, I will focus my studies heavily on how to approach Artificial Consciousness from a computational perspective.
 
 &nbsp;
 
