@@ -137,32 +137,39 @@ $$
 &nbsp;
 
 #### Conditional Entropy
-- **What**: Average surprise (i.e., inherent uncertainty) in the outcome of both random vars at once.
-	- If $(X,Y)$ can be lots of different combinations & they are all fairly likely, high joint entropy.
-	- If $(X,Y)$ are only likely to be a few pairs, low joint entropy.
-- **Why**: A system can have multiple random parts → A measure of how uncertain the full system is.
-- **How**: The expectation of information across the joint probability distribution.
+- **What**: How much uncertainty remains about a random var after learning about another random var.
+	- If $X$ tells us EVERYTHING about $Y$, $H(Y|X)=0$.
+	- If $X$ tells us NOTHING about $Y$, $H(Y|X)=H(Y)$.
+- **Why**: The measure of the "remaining uncertainty" → Super important in various topics: Compression, Learning, Causality, etc.
+- **How**: The expectation of information across the conditional probability distribution.
 
 ```{note} Math
 :class: dropdown
 Conditional Entropy:
 
 $$\begin{align*}
-H(Y|X)&=\sum_xP(x)H(Y|X=x) \\
+H(Y|X)&=\sum_xP(x)H(Y|X=x)=-\sum_{x,y}P(x,y)\log P(y|x) \\
 H(Y|X=x)&=-\sum_yP(y|x)\log P(y|x)
 \end{align*}$$
+- Conditioning ALWAYS reduces entropy: $H(Y|X)\leq H(Y)$.
+- Independence: $H(Y|X)=H(Y)$.
+- Deterministic dependence: $Y=f(X)\rightarrow H(Y|X)=0$.
 
 Chain Rule:
 
 $$
-H(X,Y)=H(X)+H(Y|X)
+H(X,Y)=H(X)+H(Y|X)=H(Y)+H(X|Y)
 $$
+- Joint uncertainty of $X,Y$ = Uncertainty of $X$ + Uncertainty of $Y$ once $X$ is known.
 ```
 
 &nbsp;
 
+### Cross Entropy
+- **What**: Total average surprise to use distribution $Q$ to approximate true distribution $P$.
+
 ### KL Divergence
-- **What**: How wasteful it is to use distribution $Q$ to approximate the true distribution $P$ of info.
+- **What**: Extra cost to use distribution $Q$ to approximate true distribution $P$.
 	- If $Q$ matches $P$, we are using the optimal #bits.
 	- If $Q$ does NOT match $P$, we are spending extra bits per symbol on average.
 	- KLD = Expected # of extra bits per sample to approximate $P$ with $Q$.
