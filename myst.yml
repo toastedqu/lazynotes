@@ -14,6 +14,7 @@ project:
     - file: intro.md
     - title: Math
       children:
+      - file: math/prob.md
       - file: math/info.md
     # - title: Consciousness
     #   children:

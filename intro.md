@@ -1,7 +1,7 @@
 # Lazynotes
-I aim to build (or faciliate the progress towards) Artificial Consciousness (AC).
+I aim to build Artificial Consciousness (AC).
 
-This site is a minimalist collection of knowledge that aids the aim.
+This site is a minimalist collection of helpful knowledge.
 
 Each concept is structured as follows:
 - Mandatory:

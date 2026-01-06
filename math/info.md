@@ -10,15 +10,7 @@ kernelspec:
   name: python3
 ---
 # Information Theory
-Consciousness depends on how internal states are organized, differentiated, integrated, and self-related. 
-
-Information theory provides the only rigorous, substrate-independent way to quantify things like how many meaningful states a system can occupy, how unified those states are, how much the system models itself, and how its internal causal structure works, all of which are plausibly necessary for subjective experience.
-
-Information theory doesn’t guarantee consciousness by itself, but without it, there’s no clear way to even define, measure, or compare the kinds of internal organization consciousness seems to require.
-
-Here are my study notes from {cite:t}`info`.
-
-&nbsp;
+Study notes from {cite:t}`info`.
 
 ## Basics
 ### Information
