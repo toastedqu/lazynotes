@@ -109,3 +109,36 @@ $$
     - It specifies how likely each event is.
     - It provides the base for random variables ← ANY random variable is defined on this space.
     - It functions as the ground truth model for a random event. We can derive everything from it.
+
+&nbsp;
+
+## Distributions
+### Random Variable
+- **What**: A variable which takes its value randomly from a subset of $\mathbb{R}$.
+- **How**:
+    - **Discrete**: Takes countable values.
+        - pmf: $p(x)=P(X=x)$
+    - **Continuous**: Takes values in intervals.
+        - pdf: $P(a\leq X\leq b)=\int_a^bf(x)dx$
+        - No probability at any point: $\forall c\in\mathbb{R}: P(X=c)=0$
+
+### Distribution
+- **What**: The probability that the random variable $X$ takes a value lower than $x$:
+$$
+F(x)=P(X\leq x)
+$$
+- **Why**: Distribution tells us everything probabilistic about a random variable.
+- **How**: 
+    - Properties:
+        1. $F(-\infty)=0, F(\infty)=1$
+        2. $F(x)$ is non-decreasing.
+        3. $F(x)$ is continuous on the right (left if defined as $P(X<x)$).
+    - Formulas:
+        - Discrete RV:
+            - $F(x)=\sum_{x_i\leq x}P(X=x_i)$
+        - Continuous RV:
+            - $F(x)=\int_{-\infty}^xf(t)dt$
+            - $F'(x)=f(x)$ if $f(x)$ is continuous.
+
+### Expected Value / Mean
+- **What**: 
