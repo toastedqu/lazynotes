@@ -112,7 +112,6 @@ $$
 
 &nbsp;
 
-## Distributions
 ### Random Variable
 - **What**: A variable which takes its value randomly from a subset of $\mathbb{R}$.
 - **How**:
@@ -124,21 +123,88 @@ $$
 
 ### Distribution
 - **What**: The probability that the random variable $X$ takes a value lower than $x$:
-$$
-F(x)=P(X\leq x)
-$$
+$$\begin{align*}
+&\text{Discrete:}   && F(x)=P(X\leq x)=\sum_{x_i\leq x}P(X=x_i) \\
+&\text{Continuous:} && F(x)=P(X\leq x)=\int_{-\infty}^xf(t)dt
+\end{align*}$$
 - **Why**: Distribution tells us everything probabilistic about a random variable.
-- **How**: 
-    - Properties:
-        1. $F(-\infty)=0, F(\infty)=1$
-        2. $F(x)$ is non-decreasing.
-        3. $F(x)$ is continuous on the right (left if defined as $P(X<x)$).
-    - Formulas:
-        - Discrete RV:
-            - $F(x)=\sum_{x_i\leq x}P(X=x_i)$
-        - Continuous RV:
-            - $F(x)=\int_{-\infty}^xf(t)dt$
-            - $F'(x)=f(x)$ if $f(x)$ is continuous.
+- **How**: Properties:
+    - $F(-\infty)=0, F(\infty)=1$
+    - $F(x)$ is non-decreasing.
+    - $F(x)$ is continuous on the right (left if defined as $P(X<x)$).
+    - $F'(x)=f(x)$ if $f(x)$ is continuous.
+
+&nbsp;
 
 ### Expected Value / Mean
-- **What**: 
+- **What**: Average outcome if repeating a random process multiple times (i.e., weigh each possible outcome by its likelihood).
+$$\begin{align*}
+&\text{Discrete:}   && E[X]=\sum_i x_ip_i \\
+&\text{Continuous:} && E[X]=\int_{-\infty}^{\infty}xf(x)dx
+\end{align*}$$
+- **How**: Properties:
+
+| Property                             | Statement                          |
+| ------------------------------------ | ---------------------------------- |
+| Linearity *(no independence needed)* | $E[aX+bY+c]=aE[X]+bE[Y]+c$         |
+| Monotonicity                         | $X\leq Y\rightarrow E[X]\leq E[Y]$ |
+| Product rule *(independence)*        | $E[XY]=E[X]E[Y]$                   |
+| Law of total expectation             | $E[X]=E[E[X\|Y]]$                   |
+
+&nbsp;
+
+### Variance
+- **What**: Average deviation between outcomes and expected value.
+$$\begin{align*}
+&\text{Discrete:}   && Var[X]=E[(X-\mu^2)]=\sum_i (x_i-\mu)^2p_i \\
+&\text{Continuous:} && Var[X]=E[(X-\mu^2)]=\int_{-\infty}^{\infty}(x-\mu)^2f(x)dx
+\end{align*}$$
+- **Why**:
+    - *Why squared?*
+        - Mathematically convenient (see **How**).
+        - Smooth/Differentiable.
+        - Punishes big surprises more.
+            - BUT WHY CARE?
+            - 1) Big misses are often disproportionately bad.
+            - 2) Big surprises dominate what we care about, in various contexts.
+    - *Why care?*
+        - It tells us how **unreliable** the expected value is.
+- **How**: Properties:
+
+| Property                         | Statement                          |
+| -------------------------------- | ---------------------------------- |
+| Scale                            | $Var[aX]=a^2 Var[X]$               |
+| Shift                            | $Var[X+c]=Var[X]$                  |
+| Sum                              | $Var[X+Y]=Var[X]+Var[Y]+2Cov[X,Y]$ |
+| Relationship with Expected Value | $Var[X]=E[X^2]-E[X]^2$             |
+| Law of total variance            | $Var[X]=E[Var[X\|Y]]+Var[E[X\|Y]]$   |
+| Chebyshev Inequality             | $\forall\lambda>0: P(\|X-\mu\|\geq \lambda\sigma)\leq\frac{1}{\lambda^2}$<br>It's very unlikely for $X$ to be farther from $\mu$ than a multiple of $\sigma$. |
+
+&nbsp;
+
+### Moment of Order $n$
+- **What**: Expected value of a random variable raised to the $n$th power.
+- **Why**: Moments let us compress an entire probability distribution into a few meaningful numbers
+    - They can summarize the shape quickly:
+        - 1st moment = average value
+        - 2nd moment = spread
+        - 3rd moment = skewness (left/right)
+        - 4th moment = kurtosis (tail/heaviness)
+    - They are super useful for approximations for complicated distributions.
+    - They connect directly to prediction & risk.
+- **How**: $E[X^n]$.
+
+## Distribution (Discrete)
+### Binomial
+- **What**:
+    - Assumptions:
+        - Only 2 events $A\ \&\ \bar{A}$ are possible.
+        - The experiment is repeated $n$ times.
+        - Probability each time: $P(A)=p, P(\bar{A})=1-p$.
+    - The probability that $A$ takes place exactly $k$ times:
+$$
+P(X_n=k)=\begin{pmatrix}
+n \\ k
+\end{pmatrix}p^k(1-p)^{n-k}
+$$
+<!-- - **Why**:  -->
