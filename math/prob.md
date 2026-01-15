@@ -144,7 +144,7 @@ $$\begin{align*}
 \end{align*}$$
 - **How**: Properties:
 
-| Property                             | Statement                          |
+| Property                             | Formula                          |
 | ------------------------------------ | ---------------------------------- |
 | Linearity *(no independence needed)* | $E[aX+bY+c]=aE[X]+bE[Y]+c$         |
 | Monotonicity                         | $X\leq Y\rightarrow E[X]\leq E[Y]$ |
@@ -171,7 +171,7 @@ $$\begin{align*}
         - It tells us how **unreliable** the expected value is.
 - **How**: Properties:
 
-| Property                         | Statement                          |
+| Property                         | Formula                          |
 | -------------------------------- | ---------------------------------- |
 | Scale                            | $Var[aX]=a^2 Var[X]$               |
 | Shift                            | $Var[X+c]=Var[X]$                  |
@@ -194,6 +194,8 @@ $$\begin{align*}
     - They connect directly to prediction & risk.
 - **How**: $E[X^n]$.
 
+&nbsp;
+
 ## Distribution (Discrete)
 ### Binomial
 - **What**:
@@ -202,9 +204,24 @@ $$\begin{align*}
         - The experiment is repeated $n$ times.
         - Probability each time: $P(A)=p, P(\bar{A})=1-p$.
     - The probability that $A$ takes place exactly $k$ times:
-$$
-P(X_n=k)=\begin{pmatrix}
+$$\begin{align*}
+&\text{PMF:} && P(X_n=k)=\begin{pmatrix}
+n \\ k
+\end{pmatrix}p^k(1-p)^{n-k} \\
+&\text{CDF:} && P(X_n\leq x)=\sum_{k=0}^{\lfloor x\rfloor}\begin{pmatrix}
 n \\ k
 \end{pmatrix}p^k(1-p)^{n-k}
-$$
-<!-- - **Why**:  -->
+\end{align*}$$
+- **Why**: Simplest model to **count how many times something happens**.
+- **How**: Properties:
+
+| Property | Formula |
+|:---------------------------------------- |:----------------------------------------------- |
+| Expected Value                           | $E[X_n]=np$ |
+| Variance                                 | $Var[X_n]=np(1-p)$    |
+| Recursion                                | $P(X_n=k+1)=\frac{n-k}{k+1}\frac{p}{q}P(X_n=k)$   |
+| Sum                                      | $X_n\sim\text{Bin}(n,p),X_m\sim\text{Bin}(m,p)\rightarrow X=X_n+X_m$  |
+| Approximation by the Normal Distribution | $\lim_{n\rightarrow\infty}P\left(\frac{X_n-E[X_n]}{Var[X_n]}\leq\lambda\right)=\frac{1}{2\pi}\int_{-\infty}^\lambda\exp{-\frac{t^2}{2}}dt$<br>Given sufficiently large $n$, binomial distribution can be approximated by a normal distribution with the same expected value & variance. |
+
+### Poisson
+- **What**: 
