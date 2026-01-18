@@ -142,7 +142,7 @@ $$\begin{align*}
 &\text{Discrete:}   && E[X]=\sum_i x_ip_i \\
 &\text{Continuous:} && E[X]=\int_{-\infty}^{\infty}xf(x)dx
 \end{align*}$$
-- **How**: Properties:
+- **How**:
 
 | Property                             | Formula                          |
 | ------------------------------------ | ---------------------------------- |
@@ -169,7 +169,7 @@ $$\begin{align*}
             - 2) Big surprises dominate what we care about, in various contexts.
     - *Why care?*
         - It tells us how **unreliable** the expected value is.
-- **How**: Properties:
+- **How**:
 
 | Property                         | Formula                          |
 | -------------------------------- | ---------------------------------- |
@@ -198,12 +198,7 @@ $$\begin{align*}
 
 ## Distribution (Discrete)
 ### Binomial
-- **What**:
-    - Assumptions:
-        - Only 2 events $A\ \&\ \bar{A}$ are possible.
-        - The experiment is repeated $n$ times.
-        - Probability each time: $P(A)=p, P(\bar{A})=1-p$.
-    - The probability that $A$ takes place exactly $k$ times:
+- **What**: Probability of #times an event $A$ happens out of a fixed number of independent, identical binary trials.
 $$\begin{align*}
 &\text{PMF:} && P(X_n=k)=\begin{pmatrix}
 n \\ k
@@ -212,16 +207,38 @@ n \\ k
 n \\ k
 \end{pmatrix}p^k(1-p)^{n-k}
 \end{align*}$$
-- **Why**: Simplest model to **count how many times something happens**.
-- **How**: Properties:
+    - $n$: #trials.
+    - $p$: $P(A)$ per trial.
+    - $k$: $A$ takes place exactly $k$ times.
+    - $P(X_n=k)$: Probability that $A$ takes place exactly $k$ times.
+- **How**:
 
 | Property | Formula |
 |:---------------------------------------- |:----------------------------------------------- |
 | Expected Value                           | $E[X_n]=np$ |
 | Variance                                 | $Var[X_n]=np(1-p)$    |
 | Recursion                                | $P(X_n=k+1)=\frac{n-k}{k+1}\frac{p}{q}P(X_n=k)$   |
-| Sum                                      | $X_n\sim\text{Bin}(n,p),X_m\sim\text{Bin}(m,p)\rightarrow X=X_n+X_m$  |
-| Approximation by the Normal Distribution | $\lim_{n\rightarrow\infty}P\left(\frac{X_n-E[X_n]}{Var[X_n]}\leq\lambda\right)=\frac{1}{2\pi}\int_{-\infty}^\lambda\exp{-\frac{t^2}{2}}dt$<br>Given sufficiently large $n$, binomial distribution can be approximated by a normal distribution with the same expected value & variance. |
+| Sum                                      | $X_n\sim\text{Bin}(n,p),X_m\sim\text{Bin}(m,p)$ <br>$\rightarrow X=X_n+X_m\sim\text{Bin}(n+m,p)$  |
+| Approximation by Normal Distribution | $X_n\sim\text{Bin}(n,p)\rightarrow \frac{X_n-\mu}{\sigma} \xRightarrow[n\to\infty]{} N(0,1)$ |
+
+&nbsp;
 
 ### Poisson
-- **What**: 
+- **What**: Probability of #times an event $A$ happens in a fixed time/space interval, given an average occurrence rate.
+$$\begin{align*}
+&\text{PMF:} && P(X=k)=\frac{\lambda^k}{k!}e^{-\lambda} \\
+&\text{CDF:} && P(X\leq x)=e^{-\lambda}\sum_{k=0}^{\lfloor x\rfloor}\frac{\lambda^k}{k!}
+\end{align*}$$
+    - $\lambda$: Avg occurrence rate.
+- **How**:
+
+| Property                                   | Formula                                                                                                                |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| Expected Value                             | $E[X]=\lambda$                                                                                                         |
+| Variance                                   | $Var[X]=\lambda$                                                                                                       |
+| Recursion                                  | $P(X=k+1)=\frac{\lambda}{k+1}P(X=k)$                                                                                   |
+| Sum                                        | $X_n\sim\text{Pois}(\lambda_n),X_m\sim\text{Pois}(\lambda_m)$<br>$\rightarrow X=X_n+X_m\sim\text{Pois}(\lambda_n+\lambda_m)$ |
+| Approximation by Binomial Distribution | $X_n\sim\text{Bin}(n,\frac{\lambda}{n})\rightarrow X_n \xRightarrow[n\to\infty]{} \text{Pois}(\lambda)$                                        |
+
+## Distribution (Continuous)
+### Normal
