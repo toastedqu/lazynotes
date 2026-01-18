@@ -12,7 +12,7 @@ kernelspec:
 # Probability Theory
 Study notes from {cite:t}`handbook_math` and {cite:t}`prob_lifesaver`.
 
-## Basics
+## Basics (Probability)
 ### Sample Space 
 - **What**: Set of all possible outcomes of a random experiment ($\Omega$).
     - e.g., Coin flip: $\Omega=\{\text{head}, \text{tail}\}$.
@@ -112,6 +112,7 @@ $$
 
 &nbsp;
 
+## Random Variables & Distributions
 ### Random Variable
 - **What**: A variable which takes its value randomly from a subset of $\mathbb{R}$.
 - **How**:
@@ -182,21 +183,108 @@ $$\begin{align*}
 
 &nbsp;
 
-### Moment of Order $n$
-- **What**: Expected value of a random variable raised to the $n$th power.
-- **Why**: Moments let us compress an entire probability distribution into a few meaningful numbers
-    - They can summarize the shape quickly:
-        - 1st moment = average value
-        - 2nd moment = spread
-        - 3rd moment = skewness (left/right)
-        - 4th moment = kurtosis (tail/heaviness)
-    - They are super useful for approximations for complicated distributions.
-    - They connect directly to prediction & risk.
-- **How**: $E[X^n]$.
+### Moment
+- **What**: Expected value of a power of a random variable.
+- **Why**:
+    - *Why was moment created?*
+        - Moments let us compress an entire probability distribution into a few meaningful numbers
+        - They can summarize the shape quickly:
+            - 1st moment = average value
+            - 2nd moment = spread
+            - 2nd central moment = variance
+            - 3rd central moment = skewness (left/right)
+            - 4th central moment = kurtosis (tail/heaviness)
+        - They are super useful for approximations for complicated distributions.
+        - They connect directly to prediction & risk.
+    - *Why the name "moment"?*
+        - In physics, "moment" measures how mass is distributed.
+        - In probability, "moment" measures how probability mass is distributed.
+- **How**:
+    - $k$th Moment: $\mu_k=E[X^k]$.
+    - $k$th Central moment: $\mu_k=E[(X-E[X])^k]$.
 
 &nbsp;
 
-## Distribution (Discrete)
+### Moment Generating Function
+- **What**: Avg exponential weighting of a random variable.
+    - → A tail-sensitive fingerprint that lets us read off moments by differentiating at 0.
+$$
+M_X(t)=E[e^{tX}]
+$$
+    - $t$: A knob that changes what values of $X$ we emphasize.
+    - $t>0$ → $M_X(t)$ grows fast for large $X$ → Highly sensitive to the **right tail**.
+    - $t<0$ → $M_X(t)$ shrinks large $X$ → Highly sensitive to the **left tail**.
+    - "If we weigh outcomes exponentially toward big/small values, what avg weight do we get?"
+- **Why**: A compression of a random variable's distribution into one smooth function.
+    - *Why exponential?*
+        - Perfect sum of independent vars: $e^{t(X+Y)}=e^{tX}e^{tY}$
+            - Who cares?
+            - ← Adding random vars is usually very hard.
+            - ← Multiplying functions is usually much easier.
+            - "Hard convolution" → "Easy multiplication".
+        - Derivatives create powers of $X$:
+            - $\frac{d}{dt}e^{tX}=Xe^{tX}$
+            - $\frac{d^2}{dt^2}e^{tX}=X^2e^{tX}$
+            - ...
+    - *Why "moment generating"?*
+        - Try differentiate at $t=0$:
+            - $M'_X(0)=E[X]$
+            - $M''_X(0)=E[X^2]$
+            - ...
+    - *Why MGF sometimes doesn't exist?*
+        - If a distribution has heavy tails, $e^{tX}$ can explode.
+        - → $E[e^{tX}]\rightarrow\infty$
+- **How**:
+
+| Property             | Formula                                  |
+| -------------------- | ---------------------------------------- |
+| Normalization        | $M_X(0)=1$                               |
+| Moment generation    | $M_X^{(k)}(0)=E[X^k]$                    |
+| Linearity            | $Y=aX+b\rightarrow M_Y(t)=e^{bt}M_X(at)$ |
+| Sum (*independence*) | $M_{\sum X_i}(t)=\prod_iM_{X_i}(t)$      |
+| Convexity            | $M_X(t)$ is convex in $t$                |
+
+&nbsp;
+
+### Characteristic Function
+- **What**: Avg of a complex rotation of a random variable.
+    - → A frequency fingerprint of the distribution that always exists.
+$$
+\varphi_X(t)=E[e^{itX}]
+$$
+    - $|e^{itX}|=1$ → CF spins around the unit circle in the complex plane.
+        - Outcome $X=x$ is an arrow of length 1 at angle $tx$.
+        - Expectation averages all arrows.
+    - If distribution is very spread out → Arrows **point in many directions & cancel out** → $\varphi_X(t)$ small.
+    - If distribution is very concentrated → Arrows **line up & don't cancel** → $\varphi_X(t)$ large.
+    - "For each frequency $t$, how much does the distribution 'line up'?" (i.e., Fourier transform)
+- **Why**:
+    - *Why does a unit circle spin uniquely determine a distribution?*
+        - CF = Fourier Transform:
+$$
+\varphi(t)=\int_{-\infty}^{\infty}e^{itx}f(x)dx
+$$
+        - Fourier Transform: "How much of each wave $e^{itx}$ is inside this function?"
+        - Fourier Transform is **one-to-one** → Knowing all freq info is enough to reconstruct the original signal.
+            - If we know the coefficient for EVERY freq $t$, we know the function's expansion in that wave-basis.
+        - → Two diff distributions can't have the exact same coordinates in a basis.
+    - *Why CF always exists?*
+        - It's just an arrow on a unit circle. It never explodes or vanishes.
+- **How**:
+
+| Property                | Formula                                                                                    |
+| ----------------------- | ------------------------------------------------------------------------------------------ |
+| Normalization           | $M_X(0)=1$                                                                                 |
+| Moment generation       | $\varphi_X^{(k)}(0)=i^kE[X^k]$                                                             |
+| Linearity               | $Y=aX+b\rightarrow \varphi_Y(t)=e^{itb}\varphi_X(at)$                                      |
+| Sum (*independence*)    | $\varphi_{\sum X_i}(t)=\prod_i\varphi_{X_i}(t)$                                            |
+| Lévy continuity theorem | $\forall t,\varphi_{X_n}(t)\rightarrow\varphi_X(t)\ \Longleftrightarrow\ X_n\Rightarrow X$ |
+| Relationship with MGF   | $M_X(t)=\varphi_X(-it)$                                                                    |
+
+
+&nbsp;
+
+## Named Distributions (Discrete)
 ### Binomial
 - **What**: Probability of #times an event $A$ happens out of a fixed number of independent, identical binary trials.
 $$\begin{align*}
@@ -211,7 +299,7 @@ n \\ k
     - $p$: $P(A)$ per trial.
     - $k$: $A$ takes place exactly $k$ times.
     - $P(X_n=k)$: Probability that $A$ takes place exactly $k$ times.
-- **How**:
+- **How**: $X_n\sim\text{Bin}(n,p)$:
 
 | Property | Formula |
 |:---------------------------------------- |:----------------------------------------------- |
@@ -230,7 +318,7 @@ $$\begin{align*}
 &\text{CDF:} && P(X\leq x)=e^{-\lambda}\sum_{k=0}^{\lfloor x\rfloor}\frac{\lambda^k}{k!}
 \end{align*}$$
     - $\lambda$: Avg occurrence rate.
-- **How**:
+- **How**: $X\sim\text{Pois}(\lambda)$:
 
 | Property                                   | Formula                                                                                                                |
 | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
@@ -240,5 +328,26 @@ $$\begin{align*}
 | Sum                                        | $X_n\sim\text{Pois}(\lambda_n),X_m\sim\text{Pois}(\lambda_m)$<br>$\rightarrow X=X_n+X_m\sim\text{Pois}(\lambda_n+\lambda_m)$ |
 | Approximation by Binomial Distribution | $X_n\sim\text{Bin}(n,\frac{\lambda}{n})\rightarrow X_n \xRightarrow[n\to\infty]{} \text{Pois}(\lambda)$                                        |
 
-## Distribution (Continuous)
-### Normal
+&nbsp;
+
+## Named Distributions (Continuous)
+### Normal/Gaussian
+- **What**: A bell shape of the sum/avg of many small, independent random outcomes.
+    - Most outcomes land near the mean.
+    - Very large/small outcomes are rare.
+$$\begin{align*}
+&\text{PDF:} && f(x)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right) \\
+&\text{CDF:} && F(x)=\int_{-\infty}^xf(t)dt=\frac{1}{2}\left[1+\text{erf}\left(\frac{x-\mu}{\sqrt{2}\sigma}\right)\right]
+\end{align*}$$
+- **How**: $X\sim N(\mu,\sigma^2)$:
+
+| Property                                   | Formula                                                                                                                |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| Expected Value                             | $E[X]=\mu$                                                                                                         |
+| Variance                                   | $Var[X]=\sigma^2$                                                                                                       |
+| Linearity                     | $a,b\in\mathbb{R},a\neq0\rightarrow aX+b\sim N(a\mu+b,a^2\sigma^2)$                                                                       |
+| Sum (*independence*)                                        | $\sum_{i=1}^{n}X_i\sim N\left(\sum_{i=1}^{n}\mu_i,\sum_{i=1}^{n}\sigma_i^2\right)$ |
+| Standardization | $Z=\frac{X-\mu}{\sigma}\sim N(0,1)$                                        |
+| Inflection Points | $f''_X(x)=0\Longleftrightarrow x=\mu\pm\sigma$ |
+| Empirical Probabilities | $P(\|X-\mu\|\leq\sigma)\approx 0.68$<br>$P(\|X-\mu\|\leq2\sigma)\approx 0.95$<br>$P(\|X-\mu\|\leq3\sigma)\approx 0.997$ |
+| Max Entropy (*among all continuous distributions*) | $h(X)=\frac{1}{2}\log(2\pi e \sigma^2)$ |
