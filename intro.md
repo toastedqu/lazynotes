@@ -1,7 +1,5 @@
 # Lazynotes
-I aim to build Artificial Consciousness (AC).
-
-This site is a minimalist collection of helpful knowledge.
+A minimalist knowledge collection for building Artificial Consciousness (AC).
 
 Each concept is structured as follows:
 - Mandatory:
