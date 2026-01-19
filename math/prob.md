@@ -155,7 +155,7 @@ $$\begin{align*}
 &nbsp;
 
 ### Variance
-- **What**: Average deviation between outcomes and expected value.
+- **What**: Average deviation between outcomes and mean.
 $$\begin{align*}
 &\text{Discrete:}   && Var[X]=E[(X-\mu^2)]=\sum_i (x_i-\mu)^2p_i \\
 &\text{Continuous:} && Var[X]=E[(X-\mu^2)]=\int_{-\infty}^{\infty}(x-\mu)^2f(x)dx
@@ -169,7 +169,7 @@ $$\begin{align*}
             - 1) Big misses are often disproportionately bad.
             - 2) Big surprises dominate what we care about, in various contexts.
     - *Why care?*
-        - It tells us how **unreliable** the expected value is.
+        - It tells us how **unreliable** the mean is.
 - **How**:
 
 | Property                         | Formula                          |
@@ -177,14 +177,14 @@ $$\begin{align*}
 | Scale                            | $Var[aX]=a^2 Var[X]$               |
 | Shift                            | $Var[X+c]=Var[X]$                  |
 | Sum                              | $Var[X+Y]=Var[X]+Var[Y]+2Cov[X,Y]$ |
-| Relationship with Expected Value | $Var[X]=E[X^2]-E[X]^2$             |
+| Relationship with Mean | $Var[X]=E[X^2]-E[X]^2$             |
 | Law of total variance            | $Var[X]=E[Var[X\|Y]]+Var[E[X\|Y]]$   |
 | Chebyshev Inequality             | $\forall\lambda>0: P(\|X-\mu\|\geq \lambda\sigma)\leq\frac{1}{\lambda^2}$<br>It's very unlikely for $X$ to be farther from $\mu$ than a multiple of $\sigma$. |
 
 &nbsp;
 
 ### Moment
-- **What**: Expected value of a power of a random variable.
+- **What**: Mean of a power of a random variable.
 - **Why**:
     - *Why was moment created?*
         - Moments let us compress an entire probability distribution into a few meaningful numbers
@@ -284,8 +284,9 @@ $$
 
 &nbsp;
 
-## Named Distributions (Discrete)
-### Binomial
+## Named Distributions
+### Discrete
+#### Binomial
 - **What**: Probability of #times an event $A$ happens out of a fixed number of independent, identical binary trials.
 $$\begin{align*}
 &\text{PMF:} && P(X_n=k)=\begin{pmatrix}
@@ -303,7 +304,7 @@ n \\ k
 
 | Property | Formula |
 |:---------------------------------------- |:----------------------------------------------- |
-| Expected Value                           | $E[X_n]=np$ |
+| Mean                           | $E[X_n]=np$ |
 | Variance                                 | $Var[X_n]=np(1-p)$    |
 | Recursion                                | $P(X_n=k+1)=\frac{n-k}{k+1}\frac{p}{q}P(X_n=k)$   |
 | Sum                                      | $X_n\sim\text{Bin}(n,p),X_m\sim\text{Bin}(m,p)$ <br>$\rightarrow X=X_n+X_m\sim\text{Bin}(n+m,p)$  |
@@ -311,7 +312,7 @@ n \\ k
 
 &nbsp;
 
-### Poisson
+#### Poisson
 - **What**: Probability of #times an event $A$ happens in a fixed time/space interval, given an average occurrence rate.
 $$\begin{align*}
 &\text{PMF:} && P(X=k)=\frac{\lambda^k}{k!}e^{-\lambda} \\
@@ -322,7 +323,7 @@ $$\begin{align*}
 
 | Property                                   | Formula                                                                                                                |
 | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| Expected Value                             | $E[X]=\lambda$                                                                                                         |
+| Mean                             | $E[X]=\lambda$                                                                                                         |
 | Variance                                   | $Var[X]=\lambda$                                                                                                       |
 | Recursion                                  | $P(X=k+1)=\frac{\lambda}{k+1}P(X=k)$                                                                                   |
 | Sum                                        | $X_n\sim\text{Pois}(\lambda_n),X_m\sim\text{Pois}(\lambda_m)$<br>$\rightarrow X=X_n+X_m\sim\text{Pois}(\lambda_n+\lambda_m)$ |
@@ -330,20 +331,21 @@ $$\begin{align*}
 
 &nbsp;
 
-## Named Distributions (Continuous)
-### Normal/Gaussian
-- **What**: A bell shape of the sum/avg of many small, independent random outcomes.
+### Continuous
+#### Normal/Gaussian
+- **What**: Probability of the sum/avg of many independent random outcomes.
     - Most outcomes land near the mean.
     - Very large/small outcomes are rare.
 $$\begin{align*}
 &\text{PDF:} && f(x)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right) \\
-&\text{CDF:} && F(x)=\int_{-\infty}^xf(t)dt=\frac{1}{2}\left[1+\text{erf}\left(\frac{x-\mu}{\sqrt{2}\sigma}\right)\right]
+&\text{CDF:} && F(x)=\Phi\left(\frac{x-\mu}{\sigma}\right)=\frac{1}{2}\left[1+\text{erf}\left(\frac{x-\mu}{\sqrt{2}\sigma}\right)\right] \\
+&\text{Standard CDF:} && \Phi(z)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^z\exp\left(-\frac{t^2}{2}\right)dt
 \end{align*}$$
 - **How**: $X\sim N(\mu,\sigma^2)$:
 
 | Property                                   | Formula                                                                                                                |
 | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| Expected Value                             | $E[X]=\mu$                                                                                                         |
+| Mean                             | $E[X]=\mu$                                                                                                         |
 | Variance                                   | $Var[X]=\sigma^2$                                                                                                       |
 | Linearity                     | $a,b\in\mathbb{R},a\neq0\rightarrow aX+b\sim N(a\mu+b,a^2\sigma^2)$                                                                       |
 | Sum (*independence*)                                        | $\sum_{i=1}^{n}X_i\sim N\left(\sum_{i=1}^{n}\mu_i,\sum_{i=1}^{n}\sigma_i^2\right)$ |
@@ -351,3 +353,39 @@ $$\begin{align*}
 | Inflection Points | $f''_X(x)=0\Longleftrightarrow x=\mu\pm\sigma$ |
 | Empirical Probabilities | $P(\|X-\mu\|\leq\sigma)\approx 0.68$<br>$P(\|X-\mu\|\leq2\sigma)\approx 0.95$<br>$P(\|X-\mu\|\leq3\sigma)\approx 0.997$ |
 | Max Entropy (*among all continuous distributions*) | $h(X)=\frac{1}{2}\log(2\pi e \sigma^2)$ |
+
+&nbsp;
+
+#### Lognormal
+- **What**: Probability of the product of many independent, **positive** random growth factors.
+    - If the **log** of a variable is **Normal**, then the variable is **Lognormal**.
+$$\begin{align*}
+&\text{PDF:} && f(x)=\frac{1}{x\sqrt{2\pi}\sigma}\exp\left(-\frac{(\log x-\mu)^2}{2\sigma^2}\right), x>0 \\
+&\text{CDF:} && F(x)=\Phi\left(\frac{\log x-\mu}{\sigma}\right), x>0
+\end{align*}$$
+- **Why**:
+    - Many quantities are made by multiplying & can't go below 0.
+    - BUT once they take a log, they behave like normal.
+- **How**:
+
+| Property | Formula                                                                                                                                                              |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mean     | $E[X]=\exp\left(\mu+\frac{\sigma^2}{2}\right)$                                                                                                                       |
+| Variance | $Var[X]=\left(e^{\sigma^2}-1\right)\exp\left(2\mu+\sigma^2\right)$                                                                                                   |
+| Scale    | $a>0\rightarrow aX\sim\text{LogNormal}(\mu+\log c,\sigma^2)$                                                                                                         |
+| Power    | $k\in\mathbb{R}\rightarrow X^r\sim\text{LogNormal}(r\mu,r^2\sigma^2)$                                                                                                |
+| Product  | $X_1\sim\text{LogNormal}(\mu_1,\sigma_1^2),X_2\sim\text{LogNormal}(\mu_2,\sigma_2^2)$<br>$\rightarrow X_1X_2\sim\text{LogNormal}(\mu_1+\mu_2,\sigma_1^2+\sigma_2^2)$ |
+| Ratio    | If independent as above, $\frac{X_1}{X_2}\sim\text{LogNormal}(\mu_1-\mu_2,\sigma_1^2+\sigma_2^2)$                                                                    |
+
+&nbsp;
+
+#### Exponential
+- **What**: Probability of the waiting time till the next event when events happen randomly at an avg rate.
+$$\begin{align*}
+&\text{PDF:} && f(x)=\lambda e^{-\lambda x}, x\geq 0 \\
+&\text{CDF:} && F(x)=1-e^{-\lambda x}, x\geq 0
+\end{align*}$$
+- **How**:
+    - Mean: $E[X]=\frac{1}{\lambda}$
+    - Variance: $Var[X]=\frac{1}{\lambda^2}$
+    - Memoryless: $P(X>s+x|X>s)=P(X>x)$<br>No matter how long you've waited, you are starting over.
