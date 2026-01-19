@@ -115,12 +115,8 @@ $$
 ## Random Variables & Distributions
 ### Random Variable
 - **What**: A variable which takes its value randomly from a subset of $\mathbb{R}$.
-- **How**:
-    - **Discrete**: Takes countable values.
-        - pmf: $p(x)=P(X=x)$
-    - **Continuous**: Takes values in intervals.
-        - pdf: $P(a\leq X\leq b)=\int_a^bf(x)dx$
-        - No probability at any point: $\forall c\in\mathbb{R}: P(X=c)=0$
+
+&nbsp;
 
 ### Distribution
 - **What**: The probability that the random variable $X$ takes a value lower than $x$:
@@ -134,6 +130,7 @@ $$\begin{align*}
     - $F(x)$ is non-decreasing.
     - $F(x)$ is continuous on the right (left if defined as $P(X<x)$).
     - $F'(x)=f(x)$ if $f(x)$ is continuous.
+    - No probability at any point for continuous distributions: $\forall c\in\mathbb{R}: P(X=c)=0$
 
 &nbsp;
 
@@ -285,9 +282,88 @@ $$
 &nbsp;
 
 ## Named Distributions
+The math of each distribution is contained in its Math block, following this structure:
+- Support & Constraints
+- Parameters (stable parameterization)
+    - How parameters affect location, spread, shape.
+- Shape & tails
+- Moments (at least Mean & Variance)
+- PDF/CDF
+- Quantiles (tail intuition)
+- Entropy trend
+- Transformations (only choose the ones that are applicable)
+    - Affine transform
+    - Recursion
+    - Sum of i.i.d. variables
+    - Product/Ratio
+    - Log/Exp
+    - Min/Max
+- Marginals/Conditionals (if multivariate)
+- Sampling recipe
+- Relationship with other distributions (including KL if applicable)
+
 ### Discrete
+#### Bernoulli
+- **What**: Description of **a random event** with ONLY 2 possible outcomes, with a fixed probability of one of them happening.
+- **Why**:
+    - "Yes/No" situations show up everywhere.
+    - Once we can model one event, we can model multiple (i.e., Binomial).
+
+```{note} Math
+:class: dropdown
+Notation:
+$$
+X\sim\text{Bern}(p)
+$$
+- Support: $x\in\{0,1\}$
+- Params: 
+    - $p=P(X=1)\in[0,1]$: Probability of $X=1$.
+
+Shape:
+- 2 points.
+    - Right point: $P(X=1)$
+    - Left point: $P(X=0)$
+
+PMF/CDF:
+$$\begin{align*}
+&\text{PMF:} && P(X=x)=p^x(1-p)^{1-x} \\
+&\text{CDF:} && F(x)=\begin{cases}
+1-p & x=0 \\
+1   & x=1
+\end{cases}
+\end{align*}$$
+
+Moments:
+| Moment | Formula |
+|:------ |:------- |
+| Mean   | $E[X]=p$ |
+| Variance | $Var[X]=p(1-p)$ |
+| MGF    | $M_X(t)=(1-p)+pe^t$ |
+
+Entropy:
+$$
+H(X)=-p\log p-(1-p)\log(1-p)
+$$
+- $\arg\max_pH(p)=\frac{1}{2}$
+- $\max_pH(p)=\log2$
+- $p\updownarrow$ $\longrightarrow$ $H(p)\rightarrow 0$
+
+Transformations:
+| Transform | Formula |
+|:-------- |:------- |
+| Sum (i.i.d.)   | $\sum_{i=1}^nX_i\sim\text{Bin}(n,p)$ |
+| Product        | $X,Y\sim\text{Bern}(p)(q)\rightarrow XY\sim\text{Bern}(pq)$ |
+
+Sampling recipe:
+1. Draw $U\sim\text{Uniform}(0,1)$.
+2. Set $X=\bm{1}\{U\leq p\}$.
+```
+
+&nbsp;
+
 #### Binomial
 - **What**: Probability of #times an event $A$ happens out of a fixed number of independent, identical binary trials.
+- **Why**: To monitor repeated chance events.
 $$\begin{align*}
 &\text{PMF:} && P(X_n=k)=\begin{pmatrix}
 n \\ k
