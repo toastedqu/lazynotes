@@ -24,7 +24,7 @@ Study notes from {cite:t}`handbook_math` and {cite:t}`prob_lifesaver`.
     - e.g., The universe ends within 60 seconds: $A=[0,60]$.
 
 ### σ-algebra
-- **What**: A menu of allowed events in the sample space with 3 conditions ($\mathcal{F}$):
+- **What**: A menu of allowed events in the sample space w/ 3 conditions ($\mathcal{F}$):
     1. **It contains the whole space**: $\Omega\in\mathcal{F}$.
     2. **It is closed under complements**: $A\in\mathcal{F}\rightarrow A^{c}=\Omega\backslash A \in\mathcal{F}$.
     3. **It is closed under countable unions**: $A_1,A_2,\cdots\in\mathcal{F}\rightarrow \bigcup_{i=1}^\infty A_i\in\mathcal{F}$.
@@ -63,7 +63,7 @@ Study notes from {cite:t}`handbook_math` and {cite:t}`prob_lifesaver`.
     - **Countable additivity**: If $A_i$ are mutually exclusive events, then $P(\bigcup_{i=1}^\infty A_i)=\sum_{i=1}^\infty P(A_i)$
 - **Why**:
     - *Why these 3 specific axioms?*
-        - These 3 axioms are the minimal rules for "measuring uncertainty as a number" to behave consistently with ordinary logic about events AND to work for infinite processes.
+        - These 3 axioms are the minimal rules for "measuring uncertainty as a number" to behave consistently w/ ordinary logic about events AND to work for infinite processes.
         - Axiom 1 ← A negative probability means "less than impossible". What?
         - Axiom 2 ← "Anything in the sample space can happen" is a certainty, so 1.
         - Axiom 3 ← If events cannot happen together, then the chance of "one of them happens" should be the sum of their chances.
@@ -174,7 +174,7 @@ $$\begin{align*}
 | Scale                            | $Var[aX]=a^2 Var[X]$               |
 | Shift                            | $Var[X+c]=Var[X]$                  |
 | Sum                              | $Var[X+Y]=Var[X]+Var[Y]+2Cov[X,Y]$ |
-| Relationship with Mean | $Var[X]=E[X^2]-E[X]^2$             |
+| Relationship w/ Mean | $Var[X]=E[X^2]-E[X]^2$             |
 | Law of total variance            | $Var[X]=E[Var[X\|Y]]+Var[E[X\|Y]]$   |
 | Chebyshev Inequality             | $\forall\lambda>0: P(\|X-\mu\|\geq \lambda\sigma)\leq\frac{1}{\lambda^2}$<br>It's very unlikely for $X$ to be farther from $\mu$ than a multiple of $\sigma$. |
 
@@ -276,20 +276,19 @@ $$
 | Linearity               | $Y=aX+b\rightarrow \varphi_Y(t)=e^{itb}\varphi_X(at)$                                      |
 | Sum (*independence*)    | $\varphi_{\sum X_i}(t)=\prod_i\varphi_{X_i}(t)$                                            |
 | Lévy continuity theorem | $\forall t,\varphi_{X_n}(t)\rightarrow\varphi_X(t)\ \Longleftrightarrow\ X_n\Rightarrow X$ |
-| Relationship with MGF   | $M_X(t)=\varphi_X(-it)$                                                                    |
+| Relationship w/ MGF   | $M_X(t)=\varphi_X(-it)$                                                                    |
 
 
 &nbsp;
 
 ## Named Distributions
 The math of each distribution is contained in its Math block, following this structure:
+- PDF/CDF
 - Support & Constraints
 - Parameters (stable parameterization)
     - How parameters affect location, spread, shape.
 - Shape & tails
 - Moments (at least Mean & Variance)
-- PDF/CDF
-- Quantiles (tail intuition)
 - Entropy trend
 - Transformations (only choose the ones that are applicable)
     - Affine transform
@@ -299,12 +298,12 @@ The math of each distribution is contained in its Math block, following this str
     - Log/Exp
     - Min/Max
 - Marginals/Conditionals (if multivariate)
-- Sampling recipe
-- Relationship with other distributions (including KL if applicable)
+- Sampling
+- Relationship w/ other distributions (including KL if applicable)
 
 ### Discrete
 #### Bernoulli
-- **What**: Description of **a random event** with ONLY 2 possible outcomes, with a fixed probability of one of them happening.
+- **What**: Description of **a random event** w/ ONLY 2 possible outcomes, w/ a fixed probability of one of them happening.
 - **Why**:
     - "Yes/No" situations show up everywhere.
     - Once we can model one event, we can model multiple (i.e., Binomial).
@@ -315,14 +314,6 @@ Notation:
 $$
 X\sim\text{Bern}(p)
 $$
-- Support: $x\in\{0,1\}$
-- Params: 
-    - $p=P(X=1)\in[0,1]$: Probability of $X=1$.
-
-Shape:
-- 2 points.
-    - Right point: $P(X=1)$
-    - Left point: $P(X=0)$
 
 PMF/CDF:
 $$\begin{align*}
@@ -332,10 +323,18 @@ $$\begin{align*}
 1   & x=1
 \end{cases}
 \end{align*}$$
+- Support: $x\in\{0,1\}$
+- Params: 
+    - $p=P(X=1)\in[0,1]$: Probability of $X=1$.
+
+Shape:
+- 2 points.
+    - Right point: $P(X=1)$
+    - Left point: $P(X=0)$
 
 Moments:
-| Moment | Formula |
-|:------ |:------- |
+|  |  |
+|------ |------- |
 | Mean   | $E[X]=p$ |
 | Variance | $Var[X]=p(1-p)$ |
 | MGF    | $M_X(t)=(1-p)+pe^t$ |
@@ -349,42 +348,213 @@ $$
 - $p\updownarrow$ $\longrightarrow$ $H(p)\rightarrow 0$
 
 Transformations:
-| Transform | Formula |
+|  |  |
 |:-------- |:------- |
 | Sum (i.i.d.)   | $\sum_{i=1}^nX_i\sim\text{Bin}(n,p)$ |
 | Product        | $X,Y\sim\text{Bern}(p)(q)\rightarrow XY\sim\text{Bern}(pq)$ |
 
-Sampling recipe:
-1. Draw $U\sim\text{Uniform}(0,1)$.
+Sampling:
+1. Draw $U\sim\text{Unif}(0,1)$.
 2. Set $X=\bm{1}\{U\leq p\}$.
+
+KLD:
+- $P=\text{Bern}(p),Q=\text{Bern}(q),p,q\in(0,1)$:
+$$
+D_{KL}(P||Q)=p\log\frac{p}{q}+(1-p)\log\frac{1-p}{1-q}
+$$
 ```
 
 &nbsp;
 
 #### Binomial
-- **What**: Probability of #times an event $A$ happens out of a fixed number of independent, identical binary trials.
+- **What**: Probability of **#times** an event occurs out of a fixed number of independent, identical binary trials.
 - **Why**: To monitor repeated chance events.
+
+```{note} Math
+:class: dropdown
+Notation:
+$$
+X\sim\text{Bin}(n,p)
+$$
+
+PMF/CDF:
 $$\begin{align*}
-&\text{PMF:} && P(X_n=k)=\begin{pmatrix}
+&\text{PMF:} && P(X=k)=\begin{pmatrix}
 n \\ k
 \end{pmatrix}p^k(1-p)^{n-k} \\
-&\text{CDF:} && P(X_n\leq x)=\sum_{k=0}^{\lfloor x\rfloor}\begin{pmatrix}
+&\text{CDF:} && P(X\leq x)=\sum_{k=0}^{\lfloor x\rfloor}\begin{pmatrix}
 n \\ k
 \end{pmatrix}p^k(1-p)^{n-k}
 \end{align*}$$
-    - $n$: #trials.
-    - $p$: $P(A)$ per trial.
-    - $k$: $A$ takes place exactly $k$ times.
-    - $P(X_n=k)$: Probability that $A$ takes place exactly $k$ times.
-- **How**: $X_n\sim\text{Bin}(n,p)$:
+- Support: $x\in\{0,\cdots,n\}$: #times the event occurs.
+- Params: 
+    - $n\in\mathbb{N}$: #trials.
+    - $p=P(X=x)\in[0,1]$: Probability that the event occurs per trial.
 
-| Property | Formula |
-|:---------------------------------------- |:----------------------------------------------- |
-| Mean                           | $E[X_n]=np$ |
-| Variance                                 | $Var[X_n]=np(1-p)$    |
-| Recursion                                | $P(X_n=k+1)=\frac{n-k}{k+1}\frac{p}{q}P(X_n=k)$   |
+Shape:
+- Unimodal (i.e., one peak):
+    - Mode: $m=\lfloor(n+1)p\rfloor$
+- Skewness:
+    - $p\leq\frac{1}{2}$: Right (mass → 0)
+    - $p>\frac{1}{2}$: Left (mass → $n$)
+
+Moments:
+|  |  |
+|:------ |:------- |
+| Mean   | $E[X]=np$ |
+| Variance | $Var[X]=np(1-p)$ |
+| MGF    | $M_X(t)=(1-p+pe^t)^n$ |
+
+Entropy:
+$$
+H(X)=-\sum_{x=0}^nP(X=x)\log P(X=x)
+$$
+- $\forall n\in\mathbb{N}: \arg\max_pH(p)=\frac{1}{2}$
+
+Transformations:
+|  |  |
+|:-------- |:------- |
+| Recursion                                | $\frac{P(X=k+1)}{P(X=k)}=\frac{n-k}{k+1}\frac{p}{1-p}$   |
 | Sum                                      | $X_n\sim\text{Bin}(n,p),X_m\sim\text{Bin}(m,p)$ <br>$\rightarrow X=X_n+X_m\sim\text{Bin}(n+m,p)$  |
-| Approximation by Normal Distribution | $X_n\sim\text{Bin}(n,p)\rightarrow \frac{X_n-\mu}{\sigma} \xRightarrow[n\to\infty]{} N(0,1)$ |
+| Approximation by Normal Distribution | $X\sim\text{Bin}(n,p)\rightarrow \frac{X-E[X]}{Var[X]} \xRightarrow[n\to\infty]{} N(0,1)$ |
+
+Sampling:
+1. Draw $n$ independent $U_i\sim\text{Unif}(0,1)$.
+2. Set $X_i=\bm{1}\{U_i\leq p\}$.
+3. Output $X=\sum_iX_i$.
+
+Relationship w/ other distributions:
+- Poisson limit:
+$$
+X_n\sim\text{Bin}(n,\frac{\lambda}{n})\longrightarrow X_n \xRightarrow[n\to\infty]{} \text{Pois}(\lambda)
+$$
+- Normal approximation (CLT):
+$$
+X\sim\text{Bin}(n,p)\rightarrow \frac{X-E[X]}{Var[X]} \xRightarrow[n\to\infty]{} N(0,1)
+$$
+
+KLD:
+- $P=\text{Bin}(n,p),Q=\text{Bin}(n,q),p,q\in(0,1)$:
+$$
+D_{KL}(P||Q)=n\left[p\log\frac{p}{q}+(1-p)\log\frac{1-p}{1-q}\right]
+$$
+```
+
+&nbsp;
+
+#### Categorical
+- **What**: Bernoulli BUT w/ >2 possible outcomes.
+- **Why**: Many random events have >2 possible outcomes, so Bernoulli isn't enough.
+
+```{note} Math
+:class: dropdown
+Notation:
+$$
+X\sim\text{Cat}(\mathbf{p})
+$$
+
+PMF/CDF:
+$$\begin{align*}
+&\text{PMF:} && P(X=k)=p_k \\
+&\text{CDF:} && F(x)=P(X\leq x)=\sum_{i=1}^{\lfloor x\rfloor}p_i
+\end{align*}$$
+- Support: $x\in\{1,\dots,K\}$
+- Params:
+    - $\mathbf{p}=(p_1,\dots,p_K)$: Probabilities for all categories. 
+        - $p_k=P(X=k)\in[0,1]$: Probability of category $k$.
+        - $\sum_i p_i=1$
+
+Shape:
+- $K$ point masses (a bar plot over categories)
+
+Moments:
+- Assume one-hot view: $Y\in\{0,1\}^K$ by $Y_k=\mathbf 1\{X=k\}$.
+
+|  |  |
+|:------ |:------- |
+| Mean   | $E[Y]=\mathbf{p}$ |
+| Variance | $Var[Y_k]=p_k(1-p_k)$ |
+| Covariance | $Cov(Y_i,Y_j)=-p_ip_j,\quad\forall i\neq j$ |
+| MGF (scalar view)    | $M_X(t)=\sum_{k=1}^Kp_ke^{tk}$ |
+
+Entropy:
+$$
+H(X)=-\sum_{k=1}^K p_k\log p_k
+$$
+
+* $\arg\max_{\mathbf p} H(\mathbf p)$ is the uniform distribution $p_k=\frac1K$.
+* $\max H=\log K$.
+* If $p_k\to 1$ & others $\to 0$, then $H\to 0$.
+
+Sampling:
+1. Draw $U\sim\text{Unif}(0,1)$.
+2. Set $X=\min\{j:\sum_{i=1}^j p_i\ge U\}$
+   - (i.e., pick the first category whose cumulative probability exceeds $U$.)
+
+KLD:
+- $P=\text{Cat}(\mathbf p),\ Q=\text{Cat}(\mathbf q)$, $p_k,q_k\in(0,1)$:
+$$
+D_{KL}(P|Q)=\sum_{k=1}^K p_k\log\frac{p_k}{q_k}
+$$
+```
+
+&nbsp;
+
+#### Multinomial
+- **What**: Binomial BUT w/ >2 possible outcomes.
+- **Why**: Many random events have >2 possible outcomes, so Binomial isn't enough.
+
+```{note} Math
+:class: dropdown
+Notation:
+$$
+\mathbf{X}\sim\text{Mult}(n,\mathbf{p})
+$$
+
+PMF/CDF:
+$$\begin{align*}
+&\text{PMF:} && P(\mathbf{X}=\mathbf{x})=\frac{n!}{\prod_{k=1}^K x_k!}\prod_{k=1}^K p_k^{x_k} \\
+&\text{CDF:} && F(\mathbf{x})=P(\mathbf{X}\le \mathbf{x})=\sum_{\substack{\mathbf{y}\in\mathbb{N}_0^K:\ \sum_k y_k=n,\forall k:\ y_k\le x_k}}\frac{n!}{\prod_{k=1}^K y_k!}\prod_{k=1}^K p_k^{y_k}
+\end{align*}$$
+- Support: $\mathbf{x}=(x_1,\dots,x_K)\in\mathbb{N}_0^K$
+    - $x_k$: #occurrences of category $k$.
+    - $\sum_{k=1}^K x_k=n$.
+- Params:
+    - $n\in\mathbb{N}$: #trials.
+    - $\mathbf{p}=(p_1,\dots,p_K)$: Probabilities for all categories.
+        - $p_k\in[0,1]$: Probability of category $k$ per trial.
+        - $\sum_i p_i=1$.
+
+Shape:
+- A distribution over $K$-dimensional count vectors (mass on $\sum_k x_k=n$)
+
+Moments:
+|  |  |
+|:------ |:------- |
+| Mean   | $E[\mathbf{X}]=n\mathbf{p}$ |
+| Variance | $Var[X_k]=np_k(1-p_k)$ |
+| Covariance | $Cov(X_i,X_j)=-np_ip_j,\quad\forall i\neq j$ |
+| MGF    | $M_{\mathbf{X}}(\mathbf{t})=\left(\sum_{k=1}^K p_k e^{t_k}\right)^n$ |
+
+Entropy:
+$$
+H(\mathbf{X})=-\sum_{\substack{\mathbf{x}\in\mathbb{N}_0^K:\ \sum_k x_k=n}} P(\mathbf{X}=\mathbf{x})\log P(\mathbf{X}=\mathbf{x})
+$$
+- $\arg\max_{\mathbf p} H(\mathbf{X})$ occurs at the uniform distribution $p_k=\frac1K$ (for fixed $n,K$).
+- No simple closed form for $\max H$.
+- If $p_k\to 1$ & others $\to 0$, $\mathbf{X}$ concentrates on $(0,\dots,n,\dots,0)$, $H\to 0$.
+
+Sampling:
+1. Draw $X^{(1)},\dots,X^{(n)}\overset{i.i.d.}{\sim}\text{Cat}(\mathbf{p})$.
+2. Set $X_k=\sum_{m=1}^n \mathbf{1}\{X^{(m)}=k\}$ for each $k$.
+   - (i.e., count how many times each category appears.)
+
+KLD:
+- $P=\text{Mult}(n,\mathbf p),\ Q=\text{Mult}(n,\mathbf q)$, $p_k,q_k\in(0,1)$:
+$$
+D_{KL}(P|Q)=n\sum_{k=1}^K p_k\log\frac{p_k}{q_k}
+$$
+```
 
 &nbsp;
 
