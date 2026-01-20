@@ -293,7 +293,7 @@ The math of each distribution is contained in its Math block, following this str
 - Transformations (only choose the ones that are applicable)
     - Affine transform
     - Recursion
-    - Sum of i.i.d. variables
+    - Sum
     - Product/Ratio
     - Log/Exp
     - Min/Max
@@ -559,21 +559,69 @@ $$
 &nbsp;
 
 #### Poisson
-- **What**: Probability of #times an event $A$ happens in a fixed time/space interval, given an average occurrence rate.
-$$\begin{align*}
-&\text{PMF:} && P(X=k)=\frac{\lambda^k}{k!}e^{-\lambda} \\
-&\text{CDF:} && P(X\leq x)=e^{-\lambda}\sum_{k=0}^{\lfloor x\rfloor}\frac{\lambda^k}{k!}
-\end{align*}$$
-    - $\lambda$: Avg occurrence rate.
-- **How**: $X\sim\text{Pois}(\lambda)$:
+- **What**: Probability of #occurrences of an event in a fixed time/space interval, given an average occurrence rate.
+- **Why**: "How many times will something happen?"
 
-| Property                                   | Formula                                                                                                                |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| Mean                             | $E[X]=\lambda$                                                                                                         |
-| Variance                                   | $Var[X]=\lambda$                                                                                                       |
-| Recursion                                  | $P(X=k+1)=\frac{\lambda}{k+1}P(X=k)$                                                                                   |
-| Sum                                        | $X_n\sim\text{Pois}(\lambda_n),X_m\sim\text{Pois}(\lambda_m)$<br>$\rightarrow X=X_n+X_m\sim\text{Pois}(\lambda_n+\lambda_m)$ |
-| Approximation by Binomial Distribution | $X_n\sim\text{Bin}(n,\frac{\lambda}{n})\rightarrow X_n \xRightarrow[n\to\infty]{} \text{Pois}(\lambda)$                                        |
+```{note} Math
+:class: dropdown
+Notation:
+$$
+X\sim\text{Pois}(\lambda)
+$$
+
+PMF/CDF:
+$$\begin{align*}
+&\text{PMF:} && P(X=k)=e^{-\lambda}\frac{\lambda^k}{k!} \\
+&\text{CDF:} && P(X\leq x)=e^{-\lambda}\sum_{k=0}^{x}\frac{\lambda^k}{k!}
+\end{align*}$$
+- Support: $x\in\{0,1,\dots\}$: #times the event occurs.
+- Params:
+    - $\lambda>0$: Avg occurrence rate.
+
+Shape:
+- For small $\lambda$, mass is concentrated near 0 & is right-skewed.
+- For large $\lambda$, it approaches Normal distribution shape.
+
+Moments:
+|  |  |
+|:------ |:------- |
+| Mean   | $E[X]=\lambda$ |
+| Variance | $Var[X]=\lambda$ |
+| MGF    | $M_X(t)=\exp(\lambda(e^t-1))$ |
+
+Transformations:
+|  |  |
+|:-------- |:------- |
+| Recursion                                | $P(X=k+1)=\frac{\lambda}{k+1}P(X=k)$   |
+| Sum (independent)         | $X_i\sim\text{Pois}(\lambda_i)\rightarrow \sum_{i=1}^nX_i\sim\text{Pois}\left(\sum_{i=1}^n\lambda_i\right)$  |
+
+Sampling:
+- Knuth's product method (for small $\lambda$):
+    1. Set $L=e^{-\lambda},k=0,P=1$.
+    2. While $P>L$:
+        1. $k\leftarrow k+1$.
+        2. $P\leftarrow PU_k,\quad U_k\sim\text{Unif}(0,1)$.
+    3. Output $X=k-1$.
+- CDF inversion:
+    1. Draw $U\sim\text{Unif}(0,1)$.
+    2. Output smallest $k$ with $F_\lambda(k)\geq U$.
+
+Relationship w/ other distributions:
+- Poisson limit for Binomial:
+$$
+X_n\sim\text{Bin}(n,\frac{\lambda}{n})\longrightarrow X_n \xRightarrow[n\to\infty]{} \text{Pois}(\lambda)
+$$
+- Normal approximation: For large $\lambda$:
+$$
+X\approx N(\lambda,\lambda)
+$$
+
+KLD:
+- $P=\text{Pois}(\lambda),Q=\text{Pois}(\mu)$:
+$$
+D_{KL}(P||Q)=\lambda\log\frac{\lambda}{\mu}+\mu-\lambda
+$$
+```
 
 &nbsp;
 
