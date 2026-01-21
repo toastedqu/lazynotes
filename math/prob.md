@@ -289,7 +289,7 @@ The math of each distribution is contained in its Math block, following this str
     - How parameters affect location, spread, shape.
 - Shape & tails
 - Moments (at least Mean & Variance)
-- Entropy trend
+- Entropy
 - Transformations (only choose the ones that are applicable)
     - Affine transform
     - Recursion
@@ -392,8 +392,7 @@ n \\ k
     - $p=P(X=x)\in[0,1]$: Probability that the event occurs per trial.
 
 Shape:
-- Unimodal (i.e., one peak):
-    - Mode: $m=\lfloor(n+1)p\rfloor$
+- Unimodal (i.e., one peak/mode) at $m=\lfloor(n+1)p\rfloor$.
 - Skewness:
     - $p\leq\frac{1}{2}$: Right (mass → 0)
     - $p>\frac{1}{2}$: Left (mass → $n$)
@@ -630,23 +629,86 @@ $$
 - **What**: Probability of the sum/avg of many independent random outcomes.
     - Most outcomes land near the mean.
     - Very large/small outcomes are rare.
+
+```{note} Math
+:class: dropdown
+Notation:
+$$
+X\sim N(\mu,\sigma^2)
+$$
+
+PDF/CDF:
 $$\begin{align*}
 &\text{PDF:} && f(x)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right) \\
-&\text{CDF:} && F(x)=\Phi\left(\frac{x-\mu}{\sigma}\right)=\frac{1}{2}\left[1+\text{erf}\left(\frac{x-\mu}{\sqrt{2}\sigma}\right)\right] \\
+&\text{CDF:} && F(x)=\Phi\left(\frac{x-\mu}{\sigma}\right) \\
 &\text{Standard CDF:} && \Phi(z)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^z\exp\left(-\frac{t^2}{2}\right)dt
 \end{align*}$$
-- **How**: $X\sim N(\mu,\sigma^2)$:
+- Support: $x\in\mathbb{R}$: A random outcome.
+- Params:
+    - $\mu\in\mathbb{R}$: Mean (center location).
+    - $\sigma>0$: Standard deviation (scale).
 
-| Property                                   | Formula                                                                                                                |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| Mean                             | $E[X]=\mu$                                                                                                         |
-| Variance                                   | $Var[X]=\sigma^2$                                                                                                       |
-| Linearity                     | $a,b\in\mathbb{R},a\neq0\rightarrow aX+b\sim N(a\mu+b,a^2\sigma^2)$                                                                       |
+Shape:
+- Unimodal at $\mu$.
+- Symmetric about $\mu$.
+- Gaussian tails:
+$$
+P(|X-\mu|\ge t)\leq 2\exp\left(-\frac{t^2}{2\sigma^2}\right)
+$$
+
+Moments:
+|  |  |
+|:------ |:------- |
+| Mean   | $E[X]=\mu$ |
+| Variance | $Var[X]=\sigma^2$ |
+| MGF    | $M_X(t)=\exp\left(\mu t+\frac{1}{2}\sigma^2t^2\right)$ |
+
+Entropy:
+$$
+h(X)=\frac{1}{2}\log(2\pi e \sigma^2)
+$$
+- Independent of $\mu$.
+- **Max** among all continuous distributions with fixed $\sigma^2$.
+
+Transformations:
+|  |  |
+|:-------- |:------- |
+| Linearity                     | $a\neq0\rightarrow aX+b\sim N(a\mu+b,a^2\sigma^2)$ |
 | Sum (*independence*)                                        | $\sum_{i=1}^{n}X_i\sim N\left(\sum_{i=1}^{n}\mu_i,\sum_{i=1}^{n}\sigma_i^2\right)$ |
 | Standardization | $Z=\frac{X-\mu}{\sigma}\sim N(0,1)$                                        |
 | Inflection Points | $f''_X(x)=0\Longleftrightarrow x=\mu\pm\sigma$ |
 | Empirical Probabilities | $P(\|X-\mu\|\leq\sigma)\approx 0.68$<br>$P(\|X-\mu\|\leq2\sigma)\approx 0.95$<br>$P(\|X-\mu\|\leq3\sigma)\approx 0.997$ |
-| Max Entropy (*among all continuous distributions*) | $h(X)=\frac{1}{2}\log(2\pi e \sigma^2)$ |
+
+Sampling:
+- Box-Muller:
+    1. Sample $U_1,U_2\sim\text{Unif}(0,1)$.
+    2. Set $Z_1=\sqrt{-2\log U_1}\cos(2\pi U_2),Z_2=\sqrt{-2\log U_1}\sin(2\pi U_2)$.
+    3. Output $Z_1,Z_2\sim N(0,1)$.
+- Sampling (after Box-Muller):
+    1. Sample $Z\sim N(0,1)$.
+    2. Output $X=\mu+\sigma Z$.
+
+Relationship w/ other distributions:
+- Chi-square:
+$$
+Z_i\overset{i.i.d.}{\sim}N(0,1)\longrightarrow\sum_{i=1}^nZ_i^2\sim\chi_n^2
+$$
+- Chi-square & Student t:
+$$
+Z\sim N(0,1),V\sim\chi_v^2\longrightarrow\frac{Z}{\sqrt{\frac{V}{v}}}\sim t_v
+$$
+- Lognormal:
+$$
+X\sim N(\mu,\sigma^2)\longrightarrow \exp(X)\sim\text{LogN}(\mu,\sigma^2)
+$$
+
+
+KLD:
+- $P=N(\mu_0,\sigma_0^2),Q=N(\mu_1,\sigma_1^2)$:
+$$
+D_{KL}(P||Q)=\log\frac{\sigma_1}{\sigma_0}+\frac{\sigma_0^2+(\mu_0-\mu_1)^2}{2\sigma_1^2}-\frac{1}{2}
+$$
+```
 
 &nbsp;
 
