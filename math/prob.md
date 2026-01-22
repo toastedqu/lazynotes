@@ -715,23 +715,61 @@ $$
 #### Lognormal
 - **What**: Probability of the product of many independent, **positive** random growth factors.
     - If the **log** of a variable is **Normal**, then the variable is **Lognormal**.
+- **Why**:
+    - Many quantities are made by multiplying & can't go below 0.
+    - BUT once they take a log, they behave like normal.
+
+```{note} Math
+:class: dropdown
+Notation:
+$$
+X\sim\text{LogN}(\mu,\sigma^2)\Leftrightarrow\log X\sim N(\mu,\sigma^2)
+$$
+
+PDF/CDF:
 $$\begin{align*}
 &\text{PDF:} && f(x)=\frac{1}{x\sqrt{2\pi}\sigma}\exp\left(-\frac{(\log x-\mu)^2}{2\sigma^2}\right), x>0 \\
 &\text{CDF:} && F(x)=\Phi\left(\frac{\log x-\mu}{\sigma}\right), x>0
 \end{align*}$$
-- **Why**:
-    - Many quantities are made by multiplying & can't go below 0.
-    - BUT once they take a log, they behave like normal.
-- **How**:
+- Support: $x\in(0,\infty)$: A random growth factor.
+- Params:
+    - $\mu\in\mathbb{R}$: Mean.
+    - $\sigma>0$: Standard deviation.
 
-| Property | Formula                                                                                                                                                              |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mean     | $E[X]=\exp\left(\mu+\frac{\sigma^2}{2}\right)$                                                                                                                       |
-| Variance | $Var[X]=\left(e^{\sigma^2}-1\right)\exp\left(2\mu+\sigma^2\right)$                                                                                                   |
-| Scale    | $a>0\rightarrow aX\sim\text{LogNormal}(\mu+\log c,\sigma^2)$                                                                                                         |
-| Power    | $k\in\mathbb{R}\rightarrow X^r\sim\text{LogNormal}(r\mu,r^2\sigma^2)$                                                                                                |
-| Product  | $X_1\sim\text{LogNormal}(\mu_1,\sigma_1^2),X_2\sim\text{LogNormal}(\mu_2,\sigma_2^2)$<br>$\rightarrow X_1X_2\sim\text{LogNormal}(\mu_1+\mu_2,\sigma_1^2+\sigma_2^2)$ |
-| Ratio    | If independent as above, $\frac{X_1}{X_2}\sim\text{LogNormal}(\mu_1-\mu_2,\sigma_1^2+\sigma_2^2)$                                                                    |
+Shape:
+- Unimodal at $\mu$.
+- Strictly right-skewed.
+
+Moments:
+|  |  |
+|:------ |:------- |
+| Mean     | $E[X]=\exp\left(\mu+\frac{\sigma^2}{2}\right)$  |
+| Variance | $Var[X]=\left(e^{\sigma^2}-1\right)\exp\left(2\mu+\sigma^2\right)$ |
+| MGF    | Non-existent |
+
+Entropy:
+$$
+h(X)=\mu+\log(\sigma\sqrt{2\pi})+\frac 1 2
+$$
+
+Transformations:
+|  |  |
+|:-------- |:------- |
+| Scale    | $a>0\rightarrow aX\sim\text{LogN}(\mu+\log c,\sigma^2)$                                                                                                         |
+| Power    | $k\in\mathbb{R}\rightarrow X^k\sim\text{LogN}(k\mu,k^2\sigma^2)$                                                                                                |
+| Product  | $X_1\sim\text{LogN}(\mu_1,\sigma_1^2),X_2\sim\text{LogN}(\mu_2,\sigma_2^2)$<br>$\rightarrow X_1X_2\sim\text{LogN}(\mu_1+\mu_2,\sigma_1^2+\sigma_2^2)$ |
+| Ratio    | If independent as above, $\frac{X_1}{X_2}\sim\text{LogN}(\mu_1-\mu_2,\sigma_1^2+\sigma_2^2)$                                                                    |
+
+Sampling:
+1. Sample $Z\sim N(0,1)$.
+2. Output $X=\exp(\mu+\sigma Z)$.
+
+KLD:
+- $P=\text{LogN}(\mu_0,\sigma_0^2),Q=\text{LogN}(\mu_1,\sigma_1^2)$:
+$$
+D_{KL}(P||Q)=D_{KL}(\log P||\log Q)
+$$
+```
 
 &nbsp;
 
