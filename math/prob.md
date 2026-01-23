@@ -775,11 +775,144 @@ $$
 
 #### Exponential
 - **What**: Probability of the waiting time till the next event when events happen randomly at an avg rate.
+- **Why**: A good match with Poisson distribution.
+    - If events happen randomly at a steady avg rate, then "no event yet" gets exponentially unlikely as time passes.
+        - Constant-rate randomness forces exponential waiting.
+        - Poisson randomness over time is memoryless.
+
+```{note} Math
+:class: dropdown
+Notation:
+$$
+X\sim\text{Exp}(\lambda)
+$$
+
+PDF/CDF:
 $$\begin{align*}
 &\text{PDF:} && f(x)=\lambda e^{-\lambda x}, x\geq 0 \\
 &\text{CDF:} && F(x)=1-e^{-\lambda x}, x\geq 0
 \end{align*}$$
-- **How**:
-    - Mean: $E[X]=\frac{1}{\lambda}$
-    - Variance: $Var[X]=\frac{1}{\lambda^2}$
-    - Memoryless: $P(X>s+x|X>s)=P(X>x)$<br>No matter how long you've waited, you are starting over.
+- Support: $x\in[0,\infty)$: Waiting time.
+- Params:
+    - $\lambda>0$: Avg event occurrence rate (i.e., time scale).
+
+Shape:
+- Unimodal at 0.
+- Strictly decreasing as $\lambda$ increases.
+
+Moments:
+|  |  |
+|:------ |:------- |
+| Mean     | $E[X]=\frac 1 \lambda$  |
+| Variance | $Var[X]=\frac 1 \lambda^2$ |
+| All moments    | $E[X^k]=\frac{k!}{\lambda^k}$ |
+| MGF | $M_X(t)=E[e^{tX}]=\frac \lambda {\lambda-t},\quad \forall t<\lambda$ |
+
+Entropy:
+$$
+h(X)=1-\log\lambda
+$$
+- Spread ↑ → Entropy ↑.
+
+Transformations:
+|  |  |
+|:-------- |:------- |
+| Scale    | $a>0\rightarrow aX\sim\text{Exp}(\frac\lambda a)$ |
+| Recursion (Memoryless)    | $P(X>s+x\|X>s)=P(X>x)$<br>No matter how long you've waited, you are starting over. |
+| Sum (*i.i.d.*) | $X_i\overset{i.i.d.}{\sim}\text{Exp}(\lambda)\rightarrow\sum_{i=1}^nX_i\sim\text{Gamma}(n,\text{rate}=\lambda)$ |
+
+Sampling:
+1. Sample $U\sim\text{Unif}(0,1)$.
+2. Output $X=\frac{-\log U}{\lambda}$.
+
+Relationship w/ other distributions:
+- Gamma special case:
+$$
+\text{Exp}(\lambda)=\text{Gamma}(1,\text{rate}=\lambda)
+$$
+- Uniform:
+$$
+U\sim\text{Unif}(0,1)\Leftrightarrow\frac{-\log U}{\lambda}\sim\text{Exp}(\lambda)
+$$
+
+KLD:
+- $P=\text{Exp}(\lambda_0),Q=\text{LogN}(\lambda_1)$:
+$$
+D_{KL}(P||Q)=\log\frac{\lambda_0}{\lambda_1}+\frac{\lambda_1}{\lambda_0}-1
+$$
+```
+
+&nbsp;
+
+#### Beta
+- **What**: Description of **uncertainty about a probability**.
+- **Why**: We don't always know the actual probabilities.
+    - We need something to monitor probabilities themselves.
+    - This thing updates cleanly when we get new info about the probability.
+    - This thing represents prior beliefs.
+
+```{note} Math
+:class: dropdown
+Notation:
+$$
+X\sim\text{Beta}(\alpha,\beta)
+$$
+
+PDF/CDF:
+$$\begin{align*}
+&\text{PDF:} && f(x)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1} \\
+&\text{CDF:} && F(x)=\frac{B(x;\alpha,\beta)}{B(\alpha,\beta)}
+\end{align*}$$
+- Support: $x\in[0,1]$: Probability.
+- Params:
+    - Standard:
+        - $\alpha>0$: Behavior control near 0.
+        - $\beta>0$: Behavior control near 1.
+    - Interpretable:
+        - $\mu=E[X]=\frac{\alpha}{\alpha+\beta}\in(0,1)$: Mean.
+        - $\kappa=\alpha+\beta>0$: Concentration.
+            - $\alpha=\mu\kappa,\quad\beta=(1-\mu)\kappa$.
+
+Shape:
+- Location: Mass sits at $\mu$.
+- Spread: For fixed $\mu$, larger $\kappa$ concentrates around $\mu$ (smaller variance).
+- Skewness: For fixed $\kappa$, moving $\mu$ toward 0 or 1 shifts skew accordingly.
+- Tail behavior:
+    - $x\rightarrow0: f(x)\propto x^{\alpha-1}$
+    - $x\rightarrow1: f(x)\propto (1-x)^{\beta-1}$
+- Typical global shapes:
+    - $\alpha>1,\beta>1$: Unimodal at $\frac{\alpha-1}{\alpha+\beta-2}$.
+    - $\alpha<1,\beta<1$: U-shaped (mass near both ends).
+    - $\alpha<1,\beta>1$: J-shaped (mass near 0).
+    - $\alpha>1,\beta<1$: Reverse J-shaped (mass near 1).
+    - $\alpha=\beta=1$: Uniform(0,1).
+
+Beta Function:
+$$\begin{align*}
+&B(\alpha,\beta)=\int_0^1t^{\alpha-1}(1-t)^{\beta-1}dt=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} \\
+&B(x;\alpha,\beta)=\int_0^xt^{\alpha-1}(1-t)^{\beta-1}dt \\
+&B(\alpha+1,\beta)=\frac{\alpha}{\alpha+\beta}B(\alpha,\beta) \\
+&B(\alpha,\beta+1)=\frac{\beta}{\alpha+\beta}B(\alpha,\beta)
+\end{align*}$$
+
+Gamma Function:
+$$\begin{align*}
+&\Gamma(x)=\int_0^\infty t^{x-1}e^{-t}dt \\
+&\Gamma(x+1)=x\Gamma(x) \\
+&\Gamma(n)=(n-1)!,\quad n\in\mathbb{Z},n>0
+\end{align*}$$
+
+Moments:
+|  |  |
+|:------ |:------- |
+| Mean     | $E[X]=\mu$  |
+| Variance | $Var[X]=\frac{\mu(1-\mu)}{\kappa+1}$ |
+| All moments    | $(a)_k=a(a+1)\cdots(a+k-1)\rightarrow E[X^k]=\frac{(\alpha)_k}{(\alpha+\beta)_k}$ |
+
+Sampling:
+- Gamma ratio:
+    1. Sample $G_1\sim\Gamma(\alpha,1),G_2\sim\Gamma(\beta,1)$.
+    2. Output $X=\frac{G_1}{G_1+G_2}$.
+
+Relationship w/ other distributions:
+```
