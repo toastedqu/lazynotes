@@ -481,9 +481,9 @@ $$
 H(X)=-\sum_{k=1}^K p_k\log p_k
 $$
 
-* $\arg\max_{\mathbf p} H(\mathbf p)$ is the uniform distribution $p_k=\frac1K$.
-* $\max H=\log K$.
-* If $p_k\to 1$ & others $\to 0$, then $H\to 0$.
+- $\arg\max_{\mathbf p} H(\mathbf p)$ is the uniform distribution $p_k=\frac1K$.
+- $\max H=\log K$.
+- If $p_k\to 1$ & others $\to 0$, then $H\to 0$.
 
 Sampling:
 1. Draw $U\sim\text{Unif}(0,1)$.
@@ -844,6 +844,86 @@ $$
 
 &nbsp;
 
+#### Gamma
+- **What**: Description of **wait time** till a certain number of random events have happened. 
+    - Exponential: till 1 occurrence.
+    - Gamma: till $k$ occurrences.
+- **Why**: Generalization of Exponential distribution.
+
+```{note} Math
+:class: dropdown
+Notation:
+$$
+X\sim\text{Gamma}(\alpha,\beta)
+$$
+
+PDF/CDF:
+$$\begin{align*}
+&\text{PDF:} && f(x)=\frac{\beta^\alpha}{\Gamma(\alpha)}x^{\alpha-1}e^{-\beta x} \\
+&\text{CDF:} && F(x)=\frac{\gamma(\alpha,\beta x)}{\Gamma(\alpha)}
+\end{align*}$$
+- Support: $x\ge 0$: Wait time.
+- Params:
+    - $\alpha>0$: Shape.
+    - $\beta>0$: Rate.
+
+Gamma Functions:
+- **Complete**: Full area under a Gamma-shaped curve.
+$$\begin{align*}
+&\Gamma(x)=\int_0^\infty t^{x-1}e^{-t}dt \\
+&\Gamma(x+1)=x\Gamma(x) \\
+&\Gamma(n)=(n-1)!,\quad n\in\mathbb{Z},n>0
+\end{align*}$$
+- **Lower incomplete**: Left.
+$$
+\gamma(\alpha,x)=\int_0^x t^{\alpha-1}e^{-t}dt
+$$
+- **Upper incomplete**: Right.
+$$
+\Gamma(\alpha,x)=\int_x^\infty t^{\alpha-1}e^{-t}dt
+$$
+- Relationship:
+$$
+\Gamma(\alpha)=\gamma(\alpha,x)+\Gamma(\alpha,x)
+$$
+
+Shape:
+- Shape w.r.t. $\alpha$:
+    - $\alpha\in(0,1)$: Blows up at 0 then decreases.
+    - $\alpha=1$: Exponential distribution.
+    - $\alpha>1$: Unimodal at $\frac{\alpha-1}{\beta}$.
+- Tail behavior:
+    - $x\rightarrow0: f(x)\propto x^{\alpha-1}$
+    - $x\rightarrow1: f(x)\approx \text{poly}(x)e^{-\beta x}$
+        - i.e., Exponential tail with rate $\beta$.
+
+Moments:
+|  |  |
+|:------ |:------- |
+| Mean     | $E[X]=\frac\alpha\beta$  |
+| Variance | $Var[X]=\frac{\alpha}{\beta^2}$ |
+| All moments    | $E[X^k]=\frac{\Gamma(\alpha+k)}{\Gamma(\alpha)}\frac{1}{\beta^k}$ |
+| MGF | $M_X(t)=\left(\frac{\beta}{\beta-t}\right)^\alpha,\quad t<\beta$ |
+
+Entropy:
+$$
+h(X)=\alpha-\log\beta+\log\Gamma(\alpha)+(1-\alpha)\varphi(\alpha)
+$$
+- $\varphi(\alpha)=\frac{\Gamma'(x)}{\Gamma(x)}$: Digamma function.
+- Rate: $\beta$↑ → $h$↓.
+- Shape: $\alpha$↑ → approximates Normal distribution.
+
+Transformations:
+|  |  |
+|:-------- |:------- |
+| Scale    | $c>0\rightarrow cX\sim\text{Gamma}(\alpha,\frac\beta c)$ |
+| Recursion (*shape increment*) | $E\sim\text{Exp}(\beta)\rightarrow X+E\sim\text{Gamma}(\alpha+1,\beta)$ |
+| Sum (*independent, common rate*) | $X_i\sim\text{Gamma}(\alpha_i,\beta)\rightarrow\sum_{i=1}^nX_i\sim\text{Gamma}(\sum_{i=1}^n\alpha_i,\beta)$ |
+| Ratio (*independent, common rate*) | $Y\sim\text{Gamma}(\gamma,\beta)\rightarrow\frac{X}{X+Y}\sim\text{Beta}(\alpha,\gamma)$ |
+```
+
+&nbsp;
+
 #### Beta
 - **What**: Description of **uncertainty about a probability**.
 - **Why**: We don't always know the actual probabilities.
@@ -873,6 +953,14 @@ $$\begin{align*}
         - $\kappa=\alpha+\beta>0$: Concentration.
             - $\alpha=\mu\kappa,\quad\beta=(1-\mu)\kappa$.
 
+Beta Function:
+$$\begin{align*}
+&B(\alpha,\beta)=\int_0^1t^{\alpha-1}(1-t)^{\beta-1}dt=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} \\
+&B(x;\alpha,\beta)=\int_0^xt^{\alpha-1}(1-t)^{\beta-1}dt \\
+&B(\alpha+1,\beta)=\frac{\alpha}{\alpha+\beta}B(\alpha,\beta) \\
+&B(\alpha,\beta+1)=\frac{\beta}{\alpha+\beta}B(\alpha,\beta)
+\end{align*}$$
+
 Shape:
 - Location: Mass sits at $\mu$.
 - Spread: For fixed $\mu$, larger $\kappa$ concentrates around $\mu$ (smaller variance).
@@ -887,21 +975,6 @@ Shape:
     - $\alpha>1,\beta<1$: Reverse J-shaped (mass near 1).
     - $\alpha=\beta=1$: Uniform(0,1).
 
-Beta Function:
-$$\begin{align*}
-&B(\alpha,\beta)=\int_0^1t^{\alpha-1}(1-t)^{\beta-1}dt=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} \\
-&B(x;\alpha,\beta)=\int_0^xt^{\alpha-1}(1-t)^{\beta-1}dt \\
-&B(\alpha+1,\beta)=\frac{\alpha}{\alpha+\beta}B(\alpha,\beta) \\
-&B(\alpha,\beta+1)=\frac{\beta}{\alpha+\beta}B(\alpha,\beta)
-\end{align*}$$
-
-Gamma Function:
-$$\begin{align*}
-&\Gamma(x)=\int_0^\infty t^{x-1}e^{-t}dt \\
-&\Gamma(x+1)=x\Gamma(x) \\
-&\Gamma(n)=(n-1)!,\quad n\in\mathbb{Z},n>0
-\end{align*}$$
-
 Moments:
 |  |  |
 |:------ |:------- |
@@ -913,6 +986,4 @@ Sampling:
 - Gamma ratio:
     1. Sample $G_1\sim\Gamma(\alpha,1),G_2\sim\Gamma(\beta,1)$.
     2. Output $X=\frac{G_1}{G_1+G_2}$.
-
-Relationship w/ other distributions:
 ```
