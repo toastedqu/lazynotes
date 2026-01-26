@@ -987,3 +987,96 @@ Sampling:
     1. Sample $G_1\sim\Gamma(\alpha,1),G_2\sim\Gamma(\beta,1)$.
     2. Output $X=\frac{G_1}{G_1+G_2}$.
 ```
+
+&nbsp;
+
+## Limit Theorems
+### Inequalities
+#### Boole's Inequality (Union Bound)
+- **What**: The probability that $\ge$1 event happens is no more than the sum of individual probabilities.
+- **Why**: Overlaps can only reduce the total.
+- **How**: For events $A_1,\dots,A_n$:
+$$
+P\left(\bigcup_i A_i\right)\leq \sum_i P(A_i)
+$$
+
+&nbsp;
+
+#### Markov's Inequality
+- **What**: A nonnegative RV can't be large often, unless its mean is large.
+- **How**: Let $X\ge0,a>0$:
+$$
+P(X\ge a)\le\frac{E[X]}{a}
+$$
+
+```{tip} Derivation
+:class: dropdown
+Let $\bm{1}_A$ be the indicator of event A.
+
+Since $X\ge a\bm{1}_{\{X\ge a\}}$,
+
+$$
+E[X]\ge E[a\bm{1}_{\{X\ge a\}}]=aP(X\ge a)
+$$
+```
+
+&nbsp;
+
+#### Chebyshev's Inequality
+- **What**: Deviations of size $a$ are rare unless STD is at least on the scale of $a$.
+- **How**: Let $\mu=E[X],\sigma^2=Var[X], a>0$:
+$$
+P(|X-\mu|\ge a)\le\frac{\sigma^2}{a^2}
+$$
+
+```{tip} Derivation
+:class: dropdown
+Apply Markov to nonnegative RV $(X-\mu)^2$:
+
+$$
+P(|X-\mu|\ge a)=P((X-\mu)^2\ge a^2)\le\frac{E[(X-\mu)^2]}{a^2}=\frac{\sigma^2}{a^2}
+$$
+```
+
+&nbsp;
+
+
+
+&nbsp;
+
+### Law of Large Numbers
+- **What**: The avg outcome gets closer to the true mean if a random process is repeated many times.
+    - **Weak LLN**: Gets close in probability (high chance).
+    - **Strong LLN**: Gets close certainly ($p=1$).
+- **Why**: Randomness cancels out when you avg lots of independent trials.
+- **How**:
+    - Define:
+        - $X_1,X_2,\dots$: i.i.d. RVs w/ $E[X_i]=\mu,\text{Var}[X_i]=\sigma^2$.
+        - $\bar{X}_n=\frac 1 n\sum_{i=1}^nX_i$: Sample mean.
+    - Weak LLN:
+$$
+\bar{X}_n\xrightarrow{P}\mu\Longleftrightarrow\forall\varepsilon>0:\lim_{n\rightarrow\infty}P(|\bar{X}_n-\mu|>\varepsilon)=0
+$$
+    - Strong LLN:
+$$
+\bar{X}_n\xrightarrow{P=1}\mu
+$$
+
+```{tip} Derivation
+:class: dropdown
+Weak LLN:
+1. Variance of sum:
+$$
+Var\left[\sum_{i=1}^nX_i\right]=\sum_{i=1}^nVar[X_i]=n\sigma^2
+$$
+
+2. Variance of sample mean:
+$$
+Var(\bar{X}_n)=Var\left(\frac 1 n\sum_{i=1}^nX_i\right)=\frac{1}{n^2}Var\left(\sum_{i=1}^nX_i\right)=\frac{\sigma^2}{n}
+$$
+
+3. Chebyshev's Inequality:
+$$
+P(|\bar{X}_n-\mu|\ge\varepsilon)\le\frac{Var[\bar{X}_n]}{\varepsilon^2}=\frac{\sigma^2}{n\varepsilon^2}
+$$
+```
