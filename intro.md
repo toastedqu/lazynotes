@@ -33,7 +33,6 @@ Common notations include (section-specific notations take priority):
 <!--  -->
 - $ m $: #samples per input batch
 - $ n $: #features per sample
-- $ c $: #classes in dataset
 - $ i $: sample index
 - $ j $: feature index
 - $ k $: class index
