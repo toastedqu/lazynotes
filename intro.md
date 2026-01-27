@@ -37,8 +37,5 @@ Common notations include (section-specific notations take priority):
 - $ i $: sample index
 - $ j $: feature index
 - $ k $: class index
-<!--  -->
-- $ \mathcal{D} $: dataset
-- $ X=[\mathbf{x}_1,\cdots,\mathbf{x}_m]^T$: input matrix of shape $(m,n)$ (append $\textbf{1}$ if bias is needed)
-- $ \mathbf{y}=[y_1,\cdots,y_{m}]^T$: output vector of shape $(m,1)$
-- $ \textbf{w}=[w_1,\cdots,w_n]$: params (append $b$ if bias is needed)
+- $ x $: input
+- $ y $: output
