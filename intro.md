@@ -1,7 +1,7 @@
 # Lazynotes
 A minimalist knowledge collection for building Artificial Consciousness (AC).
 
-NOTE: For each category, ONLY concepts deemed relevant to AC are included. This is NOT a comprehensive handbook for any single category.
+NOTE: For each category, only knowledge deemed relevant to AC are included. This is NOT a comprehensive handbook for any single category.
 
 Each concept is structured as follows:
 - Mandatory:
