@@ -14,7 +14,11 @@ project:
     - file: intro.md
     - title: Math
       children:
-      - file: math/prob.md
+      - title: Probability Theory
+        children:
+        - file: math/prob/basics.md
+        - file: math/prob/asymptotics.md
+        - file: math/prob/bayes.md
       - file: math/info.md
     # - title: Consciousness
     #   children:
