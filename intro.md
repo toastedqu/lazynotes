@@ -1,20 +1,7 @@
 # Lazynotes
-A minimalist knowledge collection for building Artificial Consciousness (AC).
+A minimalist knowledge collection for building Artificial Consciousness.
 
-NOTE: For each category, only knowledge deemed relevant to AC are included. This is NOT a comprehensive handbook for any single category.
-
-Each concept is structured as follows:
-- Mandatory:
-    - **What**: Intuition.
-    - **Why**: Problem/Motivation.
-    - **How**: Functionality.
-- Optional:
-    - Math
-    - Derivation
-    - Q&A
-    - ...
-
-Common notations include (section-specific notations take priority):
+Common notations: (section-specific notations take priority)
 - $ a $: scalar / variable
 - $ \textbf{a} $: vector
 - $ A $: matrix / random variable / upper bound
