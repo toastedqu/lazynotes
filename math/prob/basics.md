@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 # Basics
-Study notes from {cite:t}`handbook_math` and {cite:t}`prob_lifesaver`.
+Study notes from {cite:t}`math` and {cite:t}`prob_lifesaver`.
 
 ## Probability
 ### Sample Space 

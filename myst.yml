@@ -20,6 +20,7 @@ project:
         - file: math/prob/asymptotics.md
         - file: math/prob/bayes.md
       - file: math/info.md
+      - file: math/linalg.md
     # - title: Consciousness
     #   children:
     #     - file: ac/intro.md
