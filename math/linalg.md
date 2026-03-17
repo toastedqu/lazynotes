@@ -274,7 +274,7 @@ Suppose $f:V\rightarrow W$ is a mapping,
 |------|-----|---------|
 | Homomorphism | $f:V\rightarrow W$, linear | Structure-preserving map between objects of the same kind. |
 | Isomorphism | $f:V\rightarrow W$, linear + bijective | Homomorphism that shows 2 objects are structurally the same.<br>(i.e., relabelling / change of coordinates) |
-| Endomorphism | $f:V\rightarrow V$, linear | Homomorphism from an object to itself.<br>(i.e., internal transformation)
+| Endomorphism | $f:V\rightarrow V$, linear | Homomorphism from an object to itself.<br>(i.e., internal transformation) |
 | Automorphism | $f:V\rightarrow V$, linear + bijective | Isomorphism from an object to itself.<br>(i.e., internal shuffling, nothing gets changed) |
 | Identity Automorphism | $\text{id}_V:V\rightarrow V,\mathbf{x}\mapsto\mathbf{x}$ | Do nothing. |
 
