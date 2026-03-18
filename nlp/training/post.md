@@ -140,22 +140,22 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 
 ## RL
 ```{dropdown} Table: Notations
-| Concept | Notation | Intuition |
-|------|-----|------|
-| State | $s\in\mathcal{S}$ |  |
-| Action | $a\in\mathcal{A}$ |  |
-| Policy | $\pi(a_t\|s_t):\mathcal{S}\times\mathcal{A}\rightarrow[0,1]$ | How likely the agent is to choose a specific action given curr state. |
-| Reward | $r(s,a):\mathcal{S}\times\mathcal{A}\rightarrow\mathbb{R}$ | The immediate feedback from the env given curr action & state. |
-| Transition Probability | $p(s_{t+1}\|s_t,a_t)\in[0,1]$ | How likely the env is to move to a specific next state given curr action & state. |
-| Discount Factor | $\gamma\in[0,1)$ | How much the agent cares about future vs immediate rewards.<br>(1: yes; 0: no) |
-| #Steps | $T\in[0,\infty)$ ($T=\infty$ if endless) |  |
-| Trajectory | $\tau=(s_0,a_0,s_1,a_1,\dots)$ |  |
-| Discounted Return of a trajectory | $R(\tau)=G_0=\sum_{t=0}^T\gamma^tr_t$ | How good a full trajectory is. |
-| Discounted Return at a time step | $G_t=R(\tau_{t:})=\sum_{k=0}^{T-t}\gamma^kr_{t+k}$ | How good the future trajectory is from a specific moment. |
-| State Value Function | $V^\pi(s)=E_\pi[G_t\|s_t=s]$ | How good it is to be in a specific curr state, if following curr policy. |
-| Action Value Function | $Q^\pi(s,a)=E_\pi[G_t\|s_t=s,a_t=a]$ | How good it is to take a specific action in a specific curr state, if following curr policy. |
-| Advantage | $A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s)$ | How much better/worse a specific action is compared to the agent's normal performance in that state. |
-| Expected Discounted Return | $J(\pi)=E_{\tau\sim\pi}\left[R(\tau)\right]=E_{s_0\in\mathcal{S}}[V^\pi(s_0)]$ | The overall performance of a policy across all of its possible trajectories.<br>(i.e., **RL's main objective**) |
+| Concept | Notation |
+|------|-----|
+| State | $s\in\mathcal{S}$ |
+| Action | $a\in\mathcal{A}$ |
+| Policy | $\pi(a_t\|s_t):\mathcal{S}\times\mathcal{A}\rightarrow[0,1]$ |
+| Reward | $r(s,a):\mathcal{S}\times\mathcal{A}\rightarrow\mathbb{R}$ |
+| Transition Probability | $p(s_{t+1}\|s_t,a_t)\in[0,1]$ |
+| Discount Factor | $\gamma\in[0,1)$ |
+| #Steps | $T\in[0,\infty)$ ($T=\infty$ if endless) |
+| Trajectory | $\tau=(s_0,a_0,s_1,a_1,\dots)$ |
+| Discounted Return of a trajectory | $R(\tau)=G_0=\sum_{t=0}^T\gamma^tr_t$ |
+| Discounted Return at a time step | $G_t=R(\tau_{t:})=\sum_{k=0}^{T-t}\gamma^kr_{t+k}$ |
+| State Value Function | $V^\pi(s)=E_\pi[G_t\|s_t=s]$ |
+| Action Value Function | $Q^\pi(s,a)=E_\pi[G_t\|s_t=s,a_t=a]$ |
+| Advantage | $A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s)$ |
+| Expected Discounted Return | $J(\pi)=E_{\tau\sim\pi}\left[R(\tau)\right]=E_{s_0\in\mathcal{S}}[V^\pi(s_0)]$ |
 ```
 
 ```{dropdown} Table: Intuition
