@@ -172,3 +172,13 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 | Advantage | How much better/worse a specific action is compared to the agent's normal performance in that state. |
 | Expected Discounted Return | The overall performance of a policy across all of its possible trajectories.<br>(i.e., **RL's main objective**) |
 ```
+
+```{dropdown} Table: RL for LLMs
+| Concept | Notation | Intuition |
+|---------|-----------|----------|
+| State | $x$ | Input sequence |
+| Action | $y$ | Output sequence |
+| Policy | $\pi_\theta(y|x)$ | Model |
+| Reward | $r(x,y)$ |  |
+| Expected Discounted Return | $J(\theta)=E_{x\sim\mathcal{D},y\sim\pi_\theta(\cdot|x)}[r(x,y)]$ |  |
+```
