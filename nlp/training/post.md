@@ -173,12 +173,37 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 | Expected Discounted Return | The overall performance of a policy across all of its possible trajectories.<br>(i.e., **RL's main objective**) |
 ```
 
-```{dropdown} Table: RL for LLMs
-| Concept | Notation | Intuition |
-|---------|-----------|----------|
-| State | $x$ | Input sequence |
-| Action | $y$ | Output sequence |
-| Policy | $\pi_\theta(y|x)$ | Model |
-| Reward | $r(x,y)$ |  |
-| Expected Discounted Return | $J(\theta)=E_{x\sim\mathcal{D},y\sim\pi_\theta(\cdot|x)}[r(x,y)]$ |  |
+&nbsp;
+
+### REINFORCE
+- **What**:
+	- State $x$: Input token seq.
+	- Action $y$: Output token seq.
+	- Policy $\pi_\theta(y|x)$: Model, parametrized by $\theta$.
+	- Reward $r(x,y)$: Scalar reward.
+- **How**:
+	- Objective: **Expected Discounted Return**
+$$
+J(\theta)=E_{y\sim\pi_\theta(\cdot|x)}[r(x,y)]=\sum_y\pi_\theta(y|x)r(x,y)
+$$
+	- Optimization: **Policy Gradient**
+$$
+\nabla_\theta J(\theta)=E_{y\sim\pi_\theta(\cdot|x)}[\nabla_\theta\log\pi_\theta(y|x)r(x,y)]
+$$
+
+```{tip} Derivation
+:class: dropdown
+Prerequisite: **Log Derivative**
+
+$$
+\nabla_\theta\log f(\theta)=\frac{\nabla_\theta f(\theta)}{f(\theta)}
+$$
+
+Gradient:
+
+$$\begin{align*}
+\nabla_\theta J(\theta)&=\sum_y\nabla_\theta\pi_\theta(y|x)r(x,y) \\
+&=\sum_y\pi_\theta(y|x)\nabla_\theta\log\pi_\theta(y|x)r(x,y) \\
+&=E_{y\sim\pi_\theta(\cdot|x)}[\nabla_\theta\log\pi_\theta(y|x)r(x,y)]
+\end{align*}$$
 ```
