@@ -38,11 +38,7 @@ project:
       children:
         - file: nlp/transformer.md
         - file: nlp/models.md
-        - title: Training
-          children:
-            - file: nlp/training/post.md
-            - file: nlp/training/rlhf.md
-            - file: nlp/training/misc.md
+        - file: nlp/train.md
         - file: nlp/infer.md
         - file: nlp/eval.md
     - title: Archive (NOT MAINTAINED)
