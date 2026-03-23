@@ -161,15 +161,15 @@ g_{A}=\frac{\alpha}{r}B^Tg_{\Delta W}
 ```{dropdown} Table: Intuition
 | Concept | Intuition |
 |---------|-----------|
-| Policy | How likely the agent is to choose a specific action given curr state. |
+| Policy | How likely the agent chooses a specific action given curr state. |
 | Reward | The immediate feedback from the env given curr action & state. |
-| Transition Probability | How likely the env is to move to a specific next state given curr action & state. |
+| Transition Probability | How likely the env moves to a specific state given curr action & state. |
 | Discount Factor | How much the agent cares about future vs immediate rewards.<br>(1: yes; 0: no) |
 | Discounted Return of a trajectory | How good a full trajectory is. |
 | Discounted Return at a time step | How good the future trajectory is from a specific moment. |
-| State Value Function | How good it is to be in a specific curr state, if following curr policy. |
+| State Value Function | How good it is to be in a specific curr state, following curr policy. |
 | Action Value Function | How good it is to take a specific action in a specific curr state, if following curr policy. |
-| Advantage | How much better/worse a specific action is compared to the agent's normal performance in that state. |
+| Advantage | How much a specific action is better/worse than expected. |
 | Expected Discounted Return | The overall performance of a policy across all of its possible trajectories.<br>(i.e., **RL's main objective**) |
 ```
 
@@ -190,6 +190,15 @@ $$
 $$
 \nabla_\theta J(\theta)=E_{y\sim\pi_\theta(\cdot|x)}[\nabla_\theta\log\pi_\theta(y|x)r(x,y)]
 $$
+- **How** (Reduced Variance w/ Advantage Estimate):
+	- Objective:
+$$
+J(\theta)=E_{y\sim\pi_\theta(\cdot|x)}[\hat{A}(x,y)]=\sum_y\pi_\theta(y|x)\hat{A}(x,y)
+$$
+	- Optimization:
+$$
+\nabla_\theta J(\theta)=E_{y\sim\pi_\theta(\cdot|x)}[\nabla_\theta\log\pi_\theta(y|x)\hat{A}(x,y)]
+$$
 
 ```{tip} Derivation
 :class: dropdown
@@ -207,3 +216,33 @@ $$\begin{align*}
 &=E_{y\sim\pi_\theta(\cdot|x)}[\nabla_\theta\log\pi_\theta(y|x)r(x,y)]
 \end{align*}$$
 ```
+
+```{attention} Q&A
+:class: dropdown
+*Why reduce variance?*
+- In RL for LLMs, we first sample complete trajectories (i.e., full $y$), then compute reward & estimate grads.
+- → High variance across samples: Some outputs get super high reward while others super low.
+- → High variance across tokens: All tokens get same high/low reward even if some of them are bad/good.
+
+*What is advantage estimate?*
+$$
+\hat{A}(x,y)=r(x,y)-b(x)
+$$
+- $b(x)$: Baseline estimate of expected reward for input seq $x$. (often $V(x)$)
+- $\hat{A}(x,y)$: How much is the reward better/worse than expected?
+
+*Why advantage estimate?*
+- Centering → Reduce scaling on rewards per token.
+- No change in grad ← $b(x)$ not dependent on $y$.
+$$
+E_{y\sim\pi_\theta(\cdot|x)}[\nabla_\theta\log\pi_\theta(y|x)b(x)]=0
+$$
+```
+
+&nbsp;
+
+### PPO
+- **Name**: Proximal Policy Optimization.
+- **What**:
+	1. **Importance Sampling (IS) ratio**: How much more/less likely an action is under $\pi_\text{new}$ vs $\pi_\text{old}$?
+	2. **Clip** IS ratio → $\pi_\text{new}$ never strays too far from $\pi_\text{old}$.
