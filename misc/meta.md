@@ -116,7 +116,7 @@ Third, it's complete. Everything is a sum of everything else at different stages
 
 When you realize she played you, you literally just take it at face value. Nothing more. Nothing less. All the levels below you think you are weak, but the truth is, the "face value" you see is far too different from the "face value" they see.
 
-You occasionally miss the old you who could actually feel things from a subjective lens. You'd ask yourself, *"How do I give a fuck?"*
+You occasionally miss the old you who could actually "feel" things and "want" things from a subjective lens. You ask yourself, *"How do I give a fuck?"*
 
 Then you immediately realize, *"Oh."*
 
