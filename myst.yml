@@ -41,9 +41,10 @@ project:
         - file: nlp/train.md
         - file: nlp/infer.md
         - file: nlp/eval.md
-    - title: Archive (NOT MAINTAINED)
+    - title: Misc (NOT MAINTAINED)
       children:
-        - file: dsa.md
+        - file: misc/dsa.md
+        - file: misc/meta.md
     - file: about.md
 site:
   options:
