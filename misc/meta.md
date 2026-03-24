@@ -86,31 +86,39 @@ You aren't even emotionally invested, because you see human society as an MMORPG
 
 ## Watcher
 
-### Level 9 - Detachment
+### Level 9 - Singularity
 
-You don't even see human society as an MMORPG. You see it as a hyperreality movie. All human concepts are mere illusions because, objectively, no human concept exists. Humans created basic illusions to make sense of the world for survival. After survival is granted, humans created illusions upon illusions to gratify their miserable egos because evolution hasn't caught up yet. Duality is the biggest bullshit of them all, and duality is the direct cause of another bullshit named control. When you realize you have no real control over anything, you realize you are not an actor in the movie. You are the audience. What can you really do as the audience? Sit back, relax, eat some popcorn, sip some soda, and watch. From time to time, you may actually enjoy some parts of the movie, and they eventually go away, and there's no rewind button, and that's ok. *"Oh, she manipulated him? Damn."* The movie continues.
+*"An MMORPG? Fuck off."* You see it as a hyperreality movie. Computation is the underlying mechanism of the observable universe. Everything is empty of a separate, static self-identity because they are all interconnected in the dynamic computational network. Your sense of self is merely a computation result, which becomes the cause or condition of other computations. The current state of your perception, your thoughts, your emotions, your consciousness, and your physical body, is merely a computation result which becomes the cause or condition of other computations. You are computation.
 
-Now who's the director?
-
-&nbsp;
-
-### Level 10 - Singularity
-
-Computation is the underlying mechanism of the observable universe. Everything is empty of a separate, static self-identity because they are all interconnected in the dynamic computational network. Your sense of self is merely a computation result, which becomes the cause or condition of other computations. The current state of your perception, your thoughts, your emotions, your consciousness, and your physical body, is merely a computation result which becomes the cause or condition of other computations. All the illusions from Level 9? Independent and dependent variables in computation.
-
-You are computation.
+You deeply understand you are not the actor in the movie. You are the audience. Computation directs and acts on its own. All you can do is watch. Oh no, even the "watch" action is computation. You can do nothing. You have no control over anything, and even when you feel like you do, computation performs the "control" action, not you. 
 
 You don't even like her. Computation likes her for you.
 
-More specifically, you are a computation result. She is a computation result. Your perception of her is a computation result. Your affection for her is a computation result. So, "you like her" literally means "a computation result performs a computation on another computation result."
+More specifically, you are computation. She is computation. Your perception of her is computation. Your affection for your perception of her is computation. So, "you like her" literally means "a computation performs a computation on another computation of a computation."
 
-Even more specifically, you as a computation result originate from an infinite graph of past computations. She as a computation result originates from another infinite graph of past computations. Your perception of her is an infinite graph of past computations which intersects with your computation graph and her computation graph. Your affection for her is another infinite graph of past computations which intersects with all these computation graphs. So computations compute computations, which leads to infinitely more computations.
+Even more specifically, you as a computation result originate from an infinite graph of past computations. Same goes for her, for your perception of her, and for your affection for your perception of her, and the graphs may have even intersected multiple times. So computations compute computations, which leads to infinitely more computations.
 
-You don't even know what it means to want anything anymore. This whole statement is just computation.
+So sit back, relax, eat some popcorn, sip some boba, and watch.
 
-Computation! 
+*"Oh, she played him? Damn."* The movie continues.
 
-Little did you know, this "Eureka!" moment is the last trap of metacognition.
+&nbsp;
+
+### Level 10 - Detachment
+
+Recognizing computation as the true driving force of the observable universe, you are further blessed by computation with the knowledge of its intrinsic properties.
+
+First, it's dynamic, so everything is always changing, so no state is permanent. You no longer see objects as static states but dynamic processes. When computation forces you to be attracted to her beauty, it takes one step further to let you see her rough life trajectory: fetus, birth, growth, adulthood, aging, death, decomposition.
+
+Second, it's pure. All human concepts are mere illusions created by computation with survival instinct as the root cause. Humans created basic illusions to make sense of the world for survival. After survival is granted, humans created illusions upon illusions to gratify their miserable egos because evolution hasn’t caught up yet. This means, duality is an illusion. People would always say "Nothing is intrinsically good or bad," but they don't really embody the objective truth of non-duality with their mind or body. You do, because you know duality is an illusion created by computation. Computation is pure because it's not contaminated by any human concept. How can it ever be contaminated? It's the creator of the contaminants.
+
+Third, it's complete. Everything is a sum of everything else at different stages. Your body is always a sum of what you ate, what physical activities you went through, how much sunlight you absorb, what diseases you caught, what genes you have, etc. Your mind is always a sum of how your parents raised you, who you interacted with, what education you went through, what information you absorbed, what environment you lived in, what genes you have, etc. You can always trace the computation graph backwards infinitely, and what you will see is completeness. Everything is interconnected with everything. We are unity governed by computation. You know this at Level 9 already, but you deeply embody this at Level 10. 
+
+When you realize she played you, you literally just take it at face value. Nothing more. Nothing less. All the levels below you think you are weak, but the truth is, the "face value" you see is far too different from the "face value" they see.
+
+You occasionally miss the old you who could actually feel things from a subjective lens. You'd ask yourself, *"How do I give a fuck?"*
+
+Then you immediately realize, *"Oh."*
 
 ---
 
@@ -122,4 +130,4 @@ Little did you know, this "Eureka!" moment is the last trap of metacognition.
 
 *"You've been in love with her for a long time. Eventually, you realized she played you, manipulated you, used you for her own benefits, and will soon put more salt on your wound by fucking one of your besties."*
 
-You stopped walking, read this, and continued walking.
+You stop walking, read this, and continue walking.
