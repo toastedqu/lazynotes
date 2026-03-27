@@ -26,7 +26,7 @@ Imagine this:
 
 ### Level 1 - Instinct
 
-You are deeply hurt, yet you "love" her so much that you cannot let her go, so you continue chasing her like a dog. What is self-respect?
+You are deeply hurt, yet your "love" controls you. You continue chasing her like a dog.
 
 &nbsp;
 
