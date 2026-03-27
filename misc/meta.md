@@ -102,21 +102,23 @@ So sit back, relax, eat some popcorn, sip some boba, and watch.
 
 *"Oh, she played him? Damn."* The movie continues.
 
+**This is the final level where you can still "feel" and "want". Most people should feel genuinely contented here. Do NOT go deeper.**
+
 &nbsp;
 
 ### Level 10 - Detachment
 
-Recognizing computation as the true driving force of the observable universe, you are further blessed by computation with the knowledge of its intrinsic properties.
+Recognizing computation as the true driving force of the observable universe, you are further gifted with the knowledge of its intrinsic properties.
 
-First, it's dynamic, so everything is always changing, so no state is permanent. You no longer see objects as static states but dynamic processes. When computation forces you to be attracted to her beauty, it takes one step further to let you see her rough life trajectory: fetus, birth, growth, adulthood, aging, death, decomposition. Understanding impermanence, you struggle to attach yourself to anything even if you try, unless you genuinely love the entire process from its creation to its destruction.
+**Computation is dynamic**. Everything is always changing, so no state is permanent. You no longer see objects as static states but dynamic processes. When computation forces you to be attracted to her beauty, it takes one step further to let you see her rough life trajectory: fetus, birth, growth, adulthood, aging, death, decomposition. Understanding impermanence, you struggle to attach yourself to any state even if you try. *"This too shall pass."* People say this when coping with "negative" outcomes. You see this with any state, leading to the next point.
 
-Second, it's pure. All human concepts are mere illusions created by computation with survival instinct as the root cause. Humans created basic illusions to make sense of the world for survival. After survival is granted, humans created illusions upon illusions to gratify their miserable egos because evolution hasn’t caught up yet. This means, duality is an illusion. People would always say "Nothing is intrinsically good or bad," but they don't really embody the objective truth of non-duality with their mind or body. You do, because you know duality is an illusion created by computation. Computation is pure because it's not contaminated by any human concept. How can it ever be contaminated? It's the creator of the contaminants.
+**Computation is pure**. All human concepts are mere illusions created by computation with survival instinct as the root cause. Humans created basic illusions to make sense of the world for survival. After survival is granted, humans created illusions upon illusions to gratify their miserable egos because evolution hasn’t caught up yet. This means, duality is an illusion. People would always say "Nothing is intrinsically good or bad," but they don't really embody the objective truth of non-duality with their mind or body. You do, because you know duality is an illusion created by computation. Computation is pure because it's not contaminated by any human concept. How can it ever be contaminated? It's the creator of the contaminants. Therefore, every state is absolutely neutral. Happy or sad? Pleasure or pain? Positive or negative? No.
 
-Third, it's complete. Everything is a sum of everything else at different stages. Your body is always a sum of what you ate, what physical activities you went through, how much sunlight you absorb, what diseases you caught, what genes you have, etc. Your mind is always a sum of how your parents raised you, who you interacted with, what education you went through, what information you absorbed, what environment you lived in, what genes you have, etc. You can always trace the computation graph backwards infinitely, and what you will see is completeness. Everything is interconnected with everything. We are unity governed by computation. You know this at Level 9 already, but you fully embody it at Level 10. 
+**Computation is complete**. Everything is a sum of everything else at different stages. Your body is always a sum of what you ate, what physical activities you went through, how much sunlight you absorb, what diseases you caught, what genes you have, etc. Your mind is always a sum of how your parents raised you, who you interacted with, what education you went through, what information you absorbed, what environment you lived in, what genes you have, etc. You can always trace the computation graph backwards infinitely, and what you will see is completeness — everything is interconnected with everything. Objectively, we, the entire time and space scales of the universe, are unity governed by computation.
 
 All the levels below you see things from the realm of duality. Illusions, after all. You see things from the realm of reality, nothing to interpret, nothing to add.
 
-*"She played you."* This happened. Ok.
+*"She played you."* This happened.
 
 ---
 
