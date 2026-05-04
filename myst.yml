@@ -6,6 +6,8 @@ project:
   github: executablebooks/jupyter-book
   bibliography:
     - references.bib
+  numbering:
+    equation: false
   exports:
     - format: pdf
       template: plain_latex_book
@@ -29,15 +31,18 @@ project:
     #     - file: math/info.md
     - title: DL
       children:
-      - file: dl/module.md
-      - file: dl/loss.md
-      - file: dl/optim.md
-      - file: dl/train.md
-      - file: dl/issues.md
+        - file: dl/module.md
+        - file: dl/loss.md
+        - file: dl/optim.md
+        - file: dl/train.md
+        - file: dl/issues.md
+    - title: RL
+      children:
+        - file: rl/rl.md
     - title: NLP
       children:
         - file: nlp/transformer.md
-        - file: nlp/models.md
+        # - file: nlp/models.md
         - file: nlp/train.md
         - file: nlp/infer.md
         - file: nlp/eval.md
