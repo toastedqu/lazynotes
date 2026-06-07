@@ -69,10 +69,10 @@ Reward hacking is mainly caused by **imperfect training data** and/or **imperfec
 
 ## Causes
 ### Objective Compression
-**What**: Reward proxies ≠ Human intentions (info loss due to compression).
+- **What**: Reward proxies ≠ Human intentions (info loss due to compression).
 
 ### Optimization Amplification
-**What**: Overfitting ← too much optimization.
+- **What**: Overfitting ← too much optimization.
 
 ### Evaluator-Policy Co-adaptation
 

@@ -44,7 +44,7 @@ project:
         - file: nlp/transformer.md
         # - file: nlp/models.md
         - file: nlp/train.md
-        - file: nlp/rh.md
+        # - file: nlp/rh.md
         - file: nlp/infer.md
         - file: nlp/eval.md
     - title: Misc (NOT MAINTAINED)
