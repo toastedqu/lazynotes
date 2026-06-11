@@ -49,6 +49,7 @@ project:
         - file: nlp/eval.md
     - title: Misc (NOT MAINTAINED)
       children:
+        - file: misc/real.md
         - file: misc/dsa.md
         - file: misc/meta.md
     - file: about.md
