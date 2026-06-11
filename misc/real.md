@@ -218,7 +218,7 @@ As soon as you see reality, you are at peace.
 
 *"I got fired from my company for some random fucking bullshit that had nothing to do with me! THIS WORLD IS FUCKING UNFAIR! THIS UNIVERSE FUCKING HATES ME!"* **Yea that happened. Yea the anger is here.**
 
-&nbsp;
+*"I DON'T WANT TO FEEL ALL THESE NEGATIVE SHITS!!!"* **Yea the "not wanting" is here.**
 
 **No. Don't push them away. Let them be.**
 
@@ -253,9 +253,7 @@ If you don't often remember to see reality, **practice by facing difficulty**.
 
 Do things you think are difficult. Form doesn't matter. Time doesn't matter. Location doesn't matter. Mental state doesn't matter. Computation makes your mind tell you they matter. They don't. 
 
-Here's why it works - You experience the highest variety of extreme negative emotions when you do difficult things.
-
-Remember, the goal is to enhance your skill of seeing reality, so keep seeing reality while doing them.
+Here's why it works - You experience the highest variety of extreme negative emotions when you do difficult things. It will be extremely difficult for you to see through and get out of these illusions, so it's the perfect scenario for you to sharpen your skill of seeing reality.
 
 Find your difficulty level. Play. See reality. Level up. Next level. Play. See reality. Level up. Next level. If you fail, retry. If you fail, retry. Follow computation. Let computation do the work.
 
