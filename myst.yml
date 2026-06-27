@@ -23,12 +23,6 @@ project:
         - file: math/prob/bayes.md
       - file: math/info.md
       - file: math/linalg.md
-    # - title: Consciousness
-    #   children:
-    #     - file: ac/intro.md
-    # - title: Math
-    #   children:
-    #     - file: math/info.md
     - title: DL
       children:
         - file: dl/module.md
@@ -47,11 +41,12 @@ project:
         # - file: nlp/rh.md
         - file: nlp/infer.md
         - file: nlp/eval.md
-    - title: Misc (NOT MAINTAINED)
+    - title: Zen
       children:
-        - file: misc/real.md
+        - file: zen/real.md
+    - title: Misc
+      children:
         - file: misc/dsa.md
-        - file: misc/meta.md
     - file: about.md
 site:
   options:

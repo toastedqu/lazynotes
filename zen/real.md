@@ -26,7 +26,7 @@ Flower is a phenomenon.
 
 The color, shape, odor of a flower are attributes.
 
-When a white lily blooms, its physical state consists of 6 white pedals, 6 stamens with (dark) red anther & light green filament, and 1 pistil. 
+When a white lily blooms, its physical state consists of 6 white pedals, 6 stamens with (dark) red anther & light green filament, and 1 pistil.
 ```
 
 &nbsp;
@@ -45,7 +45,7 @@ Computation has 3 core properties:
     - Every phenomenon is dependent on each other, either directly or indirectly.
     - The observable universe is merely a united computational process.
     - No phenomenon can exist with a self identity separable from other phenomena.
-    - Hence, **no phenomenon exists in reality**.    
+    - Hence, **no phenomenon exists in reality**.
 - **Non-dualism**
     - All dualistic labels are human concepts created & reinforced by computation throughout evolution due to survival instinct.
     - Computation just is. It has no dualistic label by nature.
@@ -58,13 +58,13 @@ All 3 lead to the one and only true property - **Emptiness**.
 
 ```{note} Example
 - **Impermanence**
-    - A flower never "began" on its own. Sunlight pours energy into a seed. Soil, rain, air, bacteria, and a bee that pollinated some parent plant months ago all converge at one point in spacetime, and we call that convergence "a flower". It is just a node where countless threads of the computation network briefly cross. 
-    - Then, a human cuts it, a florist prices it, packs it, ships it, sells it, and the instant money changes hands the flower stops being mere biology and becomes a symbol: love at a wedding, grief at a funeral, an apology, a birthday. That meaning exists nowhere in the petals. It lives only in human minds, assigned from outside. 
-    - The flower sits in a vase, the assigned meaning fades as attention drifts elsewhere, the cells lose water, it wilts, decomposes, and returns to the soil, which becomes the condition for the next seed. 
+    - A flower never "began" on its own. Sunlight pours energy into a seed. Soil, rain, air, bacteria, and a bee that pollinated some parent plant months ago all converge at one point in spacetime, and we call that convergence "a flower". It is just a node where countless threads of the computation network briefly cross.
+    - Then, a human cuts it, a florist prices it, packs it, ships it, sells it, and the instant money changes hands the flower stops being mere biology and becomes a symbol: love at a wedding, grief at a funeral, an apology, a birthday. That meaning exists nowhere in the petals. It lives only in human minds, assigned from outside.
+    - The flower sits in a vase, the assigned meaning fades as attention drifts elsewhere, the cells lose water, it wilts, decomposes, and returns to the soil, which becomes the condition for the next seed.
     - "Birth" and "death" are just two more labels stamped onto one continuous, dependent process. Nothing was ever truly created or destroyed. The network only rearranged itself.
 - **Unity**
     - Take the flower apart and ask "where is the flower?"
-    - Pull off the petals, the stamen, the pistil, the sepals, the stem, the leaves. Point to any one piece: is that the flower? No. So keep dissecting. 
+    - Pull off the petals, the stamen, the pistil, the sepals, the stem, the leaves. Point to any one piece: is that the flower? No. So keep dissecting.
     - Each petal is just cells. Each cell is organelles, water, and proteins. Each protein is a chain of molecules. Each molecule is atoms. Each atom is a nucleus and electrons, then quarks and fields and probability.
     - At no layer do you ever find a hidden "flower-essence" sitting inside.
     - The "flower" was only ever a label we painted over a temporary arrangement of parts that are themselves arrangements of parts - labels all the way down, with no self-standing object at the bottom.
@@ -88,8 +88,8 @@ Some preliminary concepts about humans:
 Computation absolutely doesn't give a fuck about you. Here's why:
 - **Uncertainty**
     - No phenomenon has a fixed separable self identity, so a phenomenon is always changing based on far more phenomena than anyone could observe.
-    - Theoretically, at any time point, you can ALWAYS predict the next state from the current state as long as you have ALL the information. 
-    - Practically, it is impossible for you to obtain all the information because all phenomena are dependent on each other. The lack of information leads to prediction errors, which quantifies the uncertainty you often ignore in various circumstances. 
+    - Theoretically, at any time point, you can ALWAYS predict the next state from the current state as long as you have ALL the information.
+    - Practically, it is impossible for you to obtain all the information because all phenomena are dependent on each other. The lack of information leads to prediction errors, which quantifies the uncertainty you often ignore in various circumstances.
     - Hence, from your perspective, **no expectation is deterministic**, which directly threatens your survival.
 - **Uncontrollability**
     - No phenomenon has a fixed separable self identity, so a phenomenon is always changing based on far more phenomena than anyone could observe.
@@ -117,7 +117,7 @@ Computation absolutely doesn't give a fuck about you. Here's why:
 2. **Conditionality** is ingrained in your genes by your survival instinct throughout centuries of evolution.
     - You perceive different phenomena and events with different dualistic labels based on how they affect your survival.
     - Hence, your perception of life becomes purely conditioned on your experience with external phenomena.
-3. **Suffering** is the rejection of reality. 
+3. **Suffering** is the rejection of reality.
     - When you label life as "good", it's easy to accept reality because this label satisfies survival.
     - When you label life as "bad" due to your negative experience with external phenomena, you tend to reject reality because this label threatens survival.
 4. **Attachment** is the root of suffering.
@@ -140,13 +140,13 @@ As soon as you were born, your movie started, and you think you are the main cha
 ```{note} Example
 Suppose in a snippet of your movie, you applied to your dream company. You nailed every round till the final interview, and the interviewer just didn't like you for whatever unknown reason, and you got rejected. Months of preparations became obsolete. Now, what do you do? If you don't see reality, you'd probably get angry or sad or cry or curse the interviewer or facetime your family and friends to rant or whatever, or if your emotional regulation skill is strong you'd move on quickly. Doesn't matter. At this stage, you still believe you are the actor in the movie.
 
-Let's rewind the human-specific properties of computation (i.e., reality). 
+Let's rewind the human-specific properties of computation (i.e., reality).
 - **Illusory**: If you see reality, you already understand you are in an illusory movie directed (and acted) by computation. Getting rejected by your dream company is merely a computation result.
 - **Uncontrollable**: The computation result is beyond your control because you literally have no control in reality. It is not even in the control of the final interviewer. They don't even know why they didn't like you. Computation made them dislike you at that specific time point for whatever reason, probably genetics and negative life experiences. Doesn't matter.
 - **Uncertain**: You gave your best shot. You put your best possible effort to give the best possible interview performance, but personal preferences are factors that are unpredictable. The interview outcome is unpredictable from the beginning. You simply maximized your probability of getting an offer, but you can never alter reality toward a favorable outcome for you.
 
 Now, let's rewind the core properties of computation (i.e., reality).
-- **Non-dualism**: The rejection just happened. That's it. You attached a negative label to it because computation told you so. How? Computation shaped your Five Aggregates through various life events to make you perceive this company as the best possible match for you, and you perceive "not getting what you want" as negative because your survival capability is no longer optimized, all according to computation. You can also perceive the same event as positive by saying "Wow, I've learnt an incredible life lesson!" but computation didn't choose this path. You feel negative because of computation, when in reality, this event is neutral by nature. 
+- **Non-dualism**: The rejection just happened. That's it. You attached a negative label to it because computation told you so. How? Computation shaped your Five Aggregates through various life events to make you perceive this company as the best possible match for you, and you perceive "not getting what you want" as negative because your survival capability is no longer optimized, all according to computation. You can also perceive the same event as positive by saying "Wow, I've learnt an incredible life lesson!" but computation didn't choose this path. You feel negative because of computation, when in reality, this event is neutral by nature.
     - When you feel negative, the occurrence of the feeling has become part of reality as well. Therefore, you feeling negative is also neutral by nature. This reaction to a life event is called "second arrow" in Buddhism, and you can easily shoot more arrows on top of this, like "Why am I feeling negative again? I should feel positive/neutral!" Then you enter an endless spiral of thoughts and emotions.
     - When dissected this way, you might find it funny and easily manageable. However, this happens way more often than people think. We will address the solution later.
 - **Unity / Emptiness**: If you curse the interviewer, you'd understand where they come from - family stress, job stress, demographic bias, bad mood, or they really just hate you personally, whatever. They didn't choose this. Computation did. You happen to be affected by this computation result. That's it.
@@ -181,8 +181,8 @@ As soon as you see reality, you are at peace.
 Let me use "pain" to represent all negative experiences in the mind.
 
 **"Peace" does NOT mean "painless".** Absolutely not. Here's why:
-1. Your mind is a bullshit machine fostered by computation through centuries of evolution based on survival instinct. 
-2. When you feel pain, you feel pain. The pain is here. This is reality. 
+1. Your mind is a bullshit machine fostered by computation through centuries of evolution based on survival instinct.
+2. When you feel pain, you feel pain. The pain is here. This is reality.
 3. Whatever bullshit your mind adds on top of it, is also reality.
 4. If you overthink a lot, whatever bullshit your mind adds on top of the already generated bullshits, is also reality.
 5. "Peace" means, "**The pain is here. Ok. My mind is adding these and those bullshits on top of it. Ok.**"
@@ -224,7 +224,7 @@ As soon as you see reality, you are at peace.
 
 &nbsp;
 
-We can have these conversations all day. What you need to understand is, 
+We can have these conversations all day. What you need to understand is,
 
 > Whatever happened happened.
 >
@@ -243,7 +243,7 @@ As soon as you see reality, you are at peace.
 ### Practice
 **The only way to practice seeing reality, is to see reality**, anytime, anywhere, as often as you can, as long as you can, even when you have an endless spiral of thoughts and emotions.
 
-Fuck all conventional shits - meditation, exercise, healthy diets, cold showers, sleep, reading, journaling, supplements, ... - fuck all of them. 
+Fuck all conventional shits - meditation, exercise, healthy diets, cold showers, sleep, reading, journaling, supplements, ... - fuck all of them.
 
 You cannot cure the cause by treating the symptoms.
 
@@ -251,13 +251,13 @@ If you remember to see reality, pause, slow, relax, watch. Things happened. Thin
 
 If you don't often remember to see reality, **practice by facing difficulty**.
 
-Do things you think are difficult. Form doesn't matter. Time doesn't matter. Location doesn't matter. Mental state doesn't matter. Computation makes your mind tell you they matter. They don't. 
+Do things you think are difficult. Form doesn't matter. Time doesn't matter. Location doesn't matter. Mental state doesn't matter. Computation makes your mind tell you they matter. They don't.
 
 Here's why it works - You experience the highest variety of extreme negative emotions when you do difficult things. It will be extremely difficult for you to see through and get out of these illusions, so it's the perfect scenario for you to sharpen your skill of seeing reality.
 
 Find your difficulty level. Play. See reality. Level up. Next level. Play. See reality. Level up. Next level. If you fail, retry. If you fail, retry. Follow computation. Let computation do the work.
 
-Conventional shits work because they are perceived as difficult. Conventional shits don't work because they are perceived as difficult. It's never about the method. 
+Conventional shits work because they are perceived as difficult. Conventional shits don't work because they are perceived as difficult. It's never about the method.
 
 **It's about you being trapped in illusions created by computation**.
 
@@ -266,6 +266,19 @@ Conventional shits work because they are perceived as difficult. Conventional sh
 &nbsp;
 
 ### Finale
+
+> Welcome to the hyperreality show.
+>
+> You think you are the actor. You are the watcher.
+>
+> You think computation is the director. It is the actor.
+>
+> When you realize computation is the actor, it becomes the director.
+>
+> When you realize you are the watcher, you become the actor.
+>
+> Welcome to reality.
+
 What do you seek? Resilience? Strength? Discipline? Diligence? Integrity? Equanimity? Compassion? Courage? ...?
 
 You already are.
