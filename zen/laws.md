@@ -23,13 +23,24 @@ When you take nothing seriously, you enjoy everything automatically.
 
 &nbsp;
 
-If you embody this law, you can stop here.
+If you truly embody this law, stop here.
 
 If you want some meaning out of this illusion, keep reading.
 
 &nbsp;
 
-## 1. You reap what you sow.
+## 1. Your best friend is emotional resilience.
+You've been fed countless quotes from countless sources countless times. Your brain already knows what to do to maximize your long-term utility for survival on a rational level.
+
+When it comes to execution, you forget them all.
+
+Why? Because emotions consistently steer us away from awareness, clarity, and rationality.
+
+Build emotional resilience.
+
+&nbsp;
+
+## 2. You reap what you sow.
 If you take an action, you cause an effect.
 
 Depending on the uncontrollable external conditions, the effect can change in **magnitude**, but not in **direction**.
@@ -40,7 +51,7 @@ Think about your action space before execution.
 
 &nbsp;
 
-## 2. You are dying.
+## 3. You are dying.
 Time is the single most important resource for everyone and everything.
 
 You CANNOT replenish time. You are ALWAYS spending it involuntarily. You NEVER know how much time you have left.
@@ -51,7 +62,7 @@ Prioritize time management.
 
 &nbsp;
 
-## 3. You own nothing.
+## 4. You own nothing.
 **Change & Death** are the only two certainties in reality.
 
 Everything is changing and everything is dying. Everything comes and goes. You own it now, you lose it later. You own it for the rest of your life, you lose it at your death bed.
@@ -62,4 +73,4 @@ Be prepared to lose everything.
 
 &nbsp;
 
-## 4. You 
+## 5. You 
