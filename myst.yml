@@ -43,8 +43,7 @@ project:
         - file: nlp/eval.md
     - title: Zen
       children:
-        - file: zen/real.md
-        - file: zen/cheats.md
+        - file: zen/reality.md
     - title: Misc
       children:
         - file: misc/dsa.md
