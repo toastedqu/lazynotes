@@ -41,12 +41,14 @@ project:
         # - file: nlp/rh.md
         - file: nlp/infer.md
         - file: nlp/eval.md
-    - title: Zen
-      children:
-        - file: zen/reality.md
     - title: Misc
       children:
         - file: misc/dsa.md
+    - title: Life
+      children:
+        - file: life/real.md
+        - file: life/prob.md
+        - file: life/sol.md
     - file: about.md
 site:
   options:
