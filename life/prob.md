@@ -72,9 +72,9 @@ Hence, **expectation is an illusion**.
 &nbsp;
 
 ### Uncontrollability
-Something is controllable if we can make absolute predictions on the computations associated with it. We just learnt from the Uncertainty section that this is practically impossible.
+Something is controllable if we can make absolute predictions on the computations associated with it. We just learnt this is practically impossible.
 
-I want to talk about it from another angle.
+I want to talk about control from another angle.
 
 No phenomenon has a fixed separable self identity, so the changes associated with a phenomenon is always dependent on many other phenomena that we cannot always observe. That means, our direct influence on a phenomenon is likely negligible on a larger temporal-spatial scale.
 
@@ -88,9 +88,9 @@ Control gives us a sense of safety for survival. Unfortunately, for the sake of 
 
 ## Emotion
 ### Fear
-Fear is a stronger emotion than hatred because it is two-layered:
+Fear is two-layered:
 - We perceive the target as a threat to our survival.
-- We have little to no control/influence over the target.
+- We have little to no control/expectation over the target.
 
-Basically, there is a threat, and we can do nothing about it, so we fear it. Oftentimes, you'd notice your fear is gone as soon as you find a viable option to control/influence the target.
+Basically, there is a threat, and we can do nothing about it, so we fear it. Oftentimes, you'd notice your fear is gone as soon as you find a viable option to control/predict the target.
 
