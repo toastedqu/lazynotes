@@ -44,11 +44,19 @@ project:
     - title: Misc
       children:
         - file: misc/dsa.md
-    - title: Life
+    - title: Zen
       children:
-        - file: life/real.md
-        - file: life/prob.md
-        - file: life/sol.md
+        - file: zen/comp.md
+        - file: zen/self.md
+        - file: zen/prob.md
+        - title: Solution
+          file: zen/sol/tldr.md
+          children:
+            - file: zen/sol/emo.md
+            - file: zen/sol/aware.md
+            - file: zen/sol/frame.md
+            - file: zen/sol/try.md
+        - file: zen/forget.md
     - file: about.md
 site:
   options:
