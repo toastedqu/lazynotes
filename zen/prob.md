@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 # Problem
-Every human problem traces back to the same machinery:
+Every human problem results from:
 
 **The brain builds a model, then defends the model against reality.**
 

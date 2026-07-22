@@ -14,48 +14,42 @@ project:
       output: exports/book.pdf
   toc:
     - file: intro.md
-    - title: Math
-      children:
-      - title: Probability Theory
-        children:
-        - file: math/prob/basics.md
-        - file: math/prob/asymptotics.md
-        - file: math/prob/bayes.md
-      - file: math/info.md
-      - file: math/linalg.md
-    - title: DL
-      children:
-        - file: dl/module.md
-        - file: dl/loss.md
-        - file: dl/optim.md
-        - file: dl/train.md
-        - file: dl/issues.md
-    - title: RL
-      children:
-        - file: rl/rl.md
-    - title: NLP
-      children:
-        - file: nlp/transformer.md
-        # - file: nlp/models.md
-        - file: nlp/train.md
-        # - file: nlp/rh.md
-        - file: nlp/infer.md
-        - file: nlp/eval.md
-    - title: Misc
-      children:
-        - file: misc/dsa.md
+    # - title: Math
+    #   children:
+    #   - title: Probability Theory
+    #     children:
+    #     - file: math/prob/basics.md
+    #     - file: math/prob/asymptotics.md
+    #     - file: math/prob/bayes.md
+    #   - file: math/info.md
+    #   - file: math/linalg.md
+    # - title: DL
+    #   children:
+    #     - file: dl/module.md
+    #     - file: dl/loss.md
+    #     - file: dl/optim.md
+    #     - file: dl/train.md
+    #     - file: dl/issues.md
+    # - title: RL
+    #   children:
+    #     - file: rl/rl.md
+    # - title: NLP
+    #   children:
+    #     - file: nlp/transformer.md
+    #     # - file: nlp/models.md
+    #     - file: nlp/train.md
+    #     # - file: nlp/rh.md
+    #     - file: nlp/infer.md
+    #     - file: nlp/eval.md
+    # - title: Misc
+    #   children:
+    #     - file: misc/dsa.md
     - title: Zen
       children:
         - file: zen/comp.md
         - file: zen/self.md
         - file: zen/prob.md
-        - title: Solution
-          file: zen/sol/tldr.md
-          children:
-            - file: zen/sol/emo.md
-            - file: zen/sol/aware.md
-            - file: zen/sol/frame.md
-            - file: zen/sol/try.md
+        - file: zen/sol.md
         - file: zen/forget.md
     - file: about.md
 site:
