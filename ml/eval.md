@@ -14,7 +14,7 @@ How a trained model is scored. [Objectives](obj.md) are what it minimizes; metri
 
 Task-generic **offline** metrics ONLY.
 - ❌ Field-specific: NLP (BLEU/ROUGE/perplexity), CV (IoU/mAP), RL (return/regret).
-- ❌ Online metrics & A/B testing → [Overview](intro.md#online-a-b-testing).
+- ❌ Online metrics & A/B testing → [Misc](misc.md#online-a-b-testing).
 
 Default notations:
 - $m$: #samples.

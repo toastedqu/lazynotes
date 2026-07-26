@@ -75,7 +75,7 @@ $$
 :class: dropdown
 *Why doesn't low training error guarantee low test error?*
 - $\hat{R}$ is unbiased for a **fixed** $f$, but $\hat{f}$ is selected by minimizing $\hat{R}$ on the same data → the minimum is biased downward.
-- Gap grows with the capacity of $\mathcal{F}$ → [overfitting](../dl/issues.md#overfitting).
+- Gap grows with the capacity of $\mathcal{F}$ → [overfitting](misc.md#overfitting).
 
 *Assumptions?*
 - Samples i.i.d. from a fixed $P$.

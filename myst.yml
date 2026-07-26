@@ -16,12 +16,12 @@ project:
     - file: intro.md
     - title: ML
       children:
-        - file: ml/intro.md
         - file: ml/supervised.md
         - file: ml/unsupervised.md
         - file: ml/obj.md
-        - file: ml/eval.md
         - file: ml/optim.md
+        - file: ml/eval.md
+        - file: ml/misc.md
     # - title: Math
     #   children:
     #   - title: Probability Theory
