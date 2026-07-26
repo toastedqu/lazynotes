@@ -106,7 +106,7 @@ $$
 - ❌ NNs, GMM likelihood, K-Means, NMF jointly in $(W,H)$, matrix factorization, tree structure search, anything with a discrete search space.
 
 *Why care when deep learning is non-convex anyway?*
-- Every practical non-convex solver is built from convex **local** models (Newton fits a convex quadratic; trust region forces one).
+- The standard way to make a non-convex step safe is to **convexify or bound the local model** — modified Cholesky shifts $H$ until it is PD; a trust region bounds where an indefinite model is trusted.
 - $\kappa$, $L$, $\mu$ are the vocabulary for conditioning, preconditioning & LR selection.
 - Convex subproblems sit inside non-convex loops (EM's M-step, the prox step, each coordinate step).
 
@@ -182,14 +182,14 @@ $$
 ### Duality
 - **What**: Lower-bounding relaxation formed by folding constraints into the objective with multipliers.
 - **Why**: Constraints block direct descent.
-    - *Why do we need it?* A feasible-set boundary has no gradient information — move the constraints **into** the objective so ordinary calculus applies.
+    - *Why do we need it?* At a constrained optimum $\nabla f_0\neq\mathbf{0}$ — the gradient is balanced by the active constraints' normals, not by stationarity. Folding the constraints into the objective restores an unconstrained stationarity condition you can actually solve.
     - *Why does it work?* The relaxation is concave regardless of the primal, so its maximum is always a valid, computable lower bound.
 - **How**:
     1. Build the **Lagrangian**: objective + multiplier $\times$ constraint, one multiplier per constraint.
     2. Minimize over the primal vars → **dual function**, concave & $\leq$ the primal optimum for any feasible multipliers.
     3. Maximize the dual → tightest lower bound.
     4. Strong duality → gap $=0$ → solve whichever side is cheaper.
-    5. At the optimum **KKT** holds; complementary slackness reveals which constraints are active.
+    5. Under a constraint qualification (Slater in the convex case), **KKT** holds at the optimum; complementary slackness reveals which constraints are active.
 
 ```{note} Math
 :class: dropdown
@@ -223,7 +223,7 @@ $$
 d^*\leq p^*\qquad\qquad d^*=p^*
 $$
 
-KKT conditions:
+KKT conditions — necessary at a local optimum under a constraint qualification; necessary **and** sufficient when the primal is convex & Slater holds:
 
 $$
 \begin{align*}
@@ -335,13 +335,13 @@ def backtracking_line_search(f, x, p, g, c1=1e-4, rho=0.5, alpha=1.0, max_iter=5
         if f(x + alpha * p) <= f0 + c1 * alpha * slope:
             return alpha
         alpha *= rho
-    return alpha
+    raise RuntimeError("line search failed")   ## never silently return a step that failed Armijo
 
 ## Example
 f = lambda x: (x ** 2).sum()          ## bowl, minimum at 0
 x = torch.tensor([3.0, 4.0])
 g = 2 * x                             ## exact gradient
-print(backtracking_line_search(f, x, -g, g))  ## 0.25 -> full step alpha=1 would overshoot
+print(backtracking_line_search(f, x, -g, g))  ## 0.5 -> alpha=1 lands at the same height, no decrease
 ```
 ````
 
@@ -398,11 +398,12 @@ $$
 \rho_t=\frac{f(\mathbf{x}_t)-f(\mathbf{x}_t+\mathbf{p}_t)}{m_t(\mathbf{0})-m_t(\mathbf{p}_t)}
 $$
 
-Exact solution characterization — $\mathbf{p}_t$ is optimal $\Leftrightarrow\exists\lambda\geq0$:
+Exact solution characterization — $\mathbf{p}_t$ is a global solution $\Leftrightarrow$ it is feasible and $\exists\lambda\geq0$ with:
 
 $$
-(B_t+\lambda I)\mathbf{p}_t=-\mathbf{g}_t,\qquad B_t+\lambda I\succeq0,\qquad\lambda(\Delta_t-||\mathbf{p}_t||_2)=0
+(B_t+\lambda I)\mathbf{p}_t=-\mathbf{g}_t,\qquad B_t+\lambda I\succeq0,\qquad||\mathbf{p}_t||_2\leq\Delta_t,\qquad\lambda(\Delta_t-||\mathbf{p}_t||_2)=0
 $$
+- $B_t+\lambda I$ is only PSD, not PD — it is singular in the **hard case**, where $\mathbf{g}_t$ is orthogonal to the eigenspace of $\lambda_{\min}(B_t)$.
 ```
 
 ```{attention} Q&A
@@ -413,7 +414,7 @@ $$
 
 *What does $\Delta$ interpolate between?*
 - $\Delta$ small → $\lambda$ large → $(B+\lambda I)^{-1}\approx\frac{1}{\lambda}I$ → step $\approx$ scaled steepest descent.
-- $\Delta$ large → $\lambda=0$ → the full Newton step.
+- $\Delta$ large **and** $B\succ0$ → $\lambda=0$ → the full Newton step. Indefinite $B$ forces $\lambda>-\lambda_{\min}(B)>0$ no matter how large $\Delta$ is.
 
 *Trust region vs line search?*
 - LS: direction → length. TR: length budget → direction.
@@ -451,7 +452,7 @@ Notations:
 - Misc:
     - $\mathbf{p}_t$: Newton direction.
     - $\tau\geq0$: Hessian modification.
-    - $\lambda_\min(H_t)$: Smallest eigenvalue of $H_t$.
+    - $\lambda_{\min}(H_t)$: Smallest eigenvalue of $H_t$.
     - $C$: Constant depending on $||H(\mathbf{x}^*)^{-1}||$ & the Lipschitz constant of $\nabla^2f$.
 
 Local model:
@@ -469,10 +470,10 @@ $$
 Safeguard when $H_t\not\succ0$:
 
 $$
-(H_t+\tau I)\mathbf{p}_t=-\mathbf{g}_t,\qquad\tau>-\lambda_\min(H_t)
+(H_t+\tau I)\mathbf{p}_t=-\mathbf{g}_t,\qquad\tau>-\lambda_{\min}(H_t)
 $$
 
-Newton decrement (affine-invariant stopping test, $\frac{1}{2}\lambda^2$ estimates $f-f^*$):
+Newton decrement, requiring $H_t\succ0$ (affine-invariant stopping test; $\frac{1}{2}\lambda^2$ is the model's predicted decrease, a valid bound on $f-f^*$ for self-concordant $f$):
 
 $$
 \lambda(\mathbf{x}_t)^2=\mathbf{g}_t^TH_t^{-1}\mathbf{g}_t
@@ -506,14 +507,16 @@ $$
 import torch
 
 class Newton:
-    def __init__(self, f, tau=1e-8):
-        self.f, self.tau = f, tau
+    def __init__(self, f, eps=1e-8):
+        self.f, self.eps = f, eps
 
     def step(self, x):
         g = torch.autograd.functional.jacobian(self.f, x)
         H = torch.autograd.functional.hessian(self.f, x)
-        ## damping keeps H PD -> p is guaranteed to point downhill even at a saddle
-        H = H + self.tau * torch.eye(x.numel())
+        ## a FIXED shift cannot fix an indefinite H -- the shift must clear -lambda_min
+        lam_min = torch.linalg.eigvalsh(H)[0]
+        tau = max(0.0, self.eps - lam_min.item())
+        H = H + tau * torch.eye(x.numel(), dtype=x.dtype, device=x.device)
         ## solve, never invert: same O(n^3) but far better conditioned
         return x + torch.linalg.solve(H, -g)
 
@@ -595,7 +598,8 @@ $$
 ```{attention} Q&A
 :class: dropdown
 *When does it break?*
-- **Large-residual** problems (wrong model class, heavy noise) → the dropped $\sum_ir_i\nabla^2r_i$ term dominates → the rate drops from near-quadratic to linear, or it fails outright.
+- Zero residual at the solution → the dropped term vanishes → **quadratic**. Small residual → **linear with a small factor**, i.e. still fast.
+- **Large-residual** problems (wrong model class, heavy noise) → the dropped $\sum_ir_i\nabla^2r_i$ term dominates → linear with a factor near (or above) 1 → slow, or divergent.
 - Rank-deficient or ill-conditioned $J$ → $J^TJ$ singular → the step is undefined. [LM](#lm) fixes exactly this.
 
 *Why not form $J^TJ$ explicitly?*
@@ -611,7 +615,7 @@ $$
 - **Name**: Levenberg-Marquardt
 - **What**: Gauss-Newton + a damping term interpolating toward gradient descent.
 - **Why**: Gauss-Newton's step is undefined when $J^TJ$ is singular & unreliable far from the solution.
-    - Damping makes the system always solvable and implicitly bounds the step length.
+    - Damping restores solvability (as long as $D\succ0$ — a zero Jacobian column must be floored, else that direction stays unregularized) and implicitly bounds the step length.
     - → the trust-region form of Gauss-Newton, with $\lambda$ adapted instead of $\Delta$.
 - **How**:
     1. Solve $(J^TJ+\lambda D)\mathbf{p}=-J^T\mathbf{r}$.
@@ -632,11 +636,12 @@ $$
 (J^TJ+\lambda D)\mathbf{p}=-J^T\mathbf{r}
 $$
 
-Limits:
+Limits, for $J$ of full column rank:
 
 $$
 \lambda\to0\Rightarrow\mathbf{p}\to\mathbf{p}^\text{GN},\qquad\lambda\to\infty\Rightarrow\mathbf{p}\to-\frac{1}{\lambda}D^{-1}J^T\mathbf{r}
 $$
+- Rank-deficient $J$ → $\mathbf{p}^\text{GN}$ is undefined and only the damped step exists.
 ```
 
 ```{attention} Q&A
@@ -679,6 +684,9 @@ Notations:
     - $\mathbf{p}=\sigma(X\mathbf{w})$: Fitted probabilities.
     - $S=\text{diag}(p_i(1-p_i))$: Weight matrix.
     - $\mathbf{z}$: Working response.
+    - $V(\mu)$: Variance function of the family, $\text{Var}(y_i)=\phi V(\mu_i)$.
+    - $\eta_i=\mathbf{x}_i^T\mathbf{w}$: Linear predictor.
+    - $\mu_i$: Fitted mean.
 
 Newton step on the logistic log-likelihood:
 
@@ -692,13 +700,14 @@ $$
 \mathbf{w}\leftarrow(X^TSX)^{-1}X^TS\mathbf{z},\qquad\mathbf{z}=X\mathbf{w}+S^{-1}(\mathbf{y}-\mathbf{p})
 $$
 
-General GLM with canonical link — only $S$ & $\mathbf{z}$ change:
+General GLM — only $S$ & $\mathbf{z}$ change:
 
 $$
-s_i=\frac{1}{\text{Var}(y_i)},\qquad z_i=\eta_i+(y_i-\mu_i)\frac{d\eta_i}{d\mu_i}
+s_i=\frac{1}{V(\mu_i)\left(\frac{d\eta_i}{d\mu_i}\right)^2}\ \xrightarrow{\text{canonical link}}\ s_i=V(\mu_i),\qquad z_i=\eta_i+(y_i-\mu_i)\frac{d\eta_i}{d\mu_i}
 $$
-- $\eta_i=\mathbf{x}_i^T\mathbf{w}$: Linear predictor.
-- $\mu_i$: Fitted mean.
+- Bernoulli: $V=\mu(1-\mu)$ → $s_i=p_i(1-p_i)$, recovering $S$ above.
+- Poisson: $V=\mu$ → $s_i=\mu_i$.
+- Gaussian: $V=1$ → $s_i=1$, recovering plain OLS in one step.
 ```
 
 ```{tip} Derivation
@@ -713,12 +722,12 @@ $$
 ```{attention} Q&A
 :class: dropdown
 *Why does one algorithm fit every GLM?*
-- Canonical link → observed Hessian = expected Hessian (Fisher information) → Newton = **Fisher scoring**, and the weight is just the inverse variance function of the family.
+- Canonical link → observed Hessian = expected Hessian (Fisher information) → Newton = **Fisher scoring**, and the weight collapses to the family's variance function.
 - → swapping Gaussian ↔ Bernoulli ↔ Poisson changes only $s_i$ & $z_i$, never the loop.
 
 *Does it always converge?*
-- Log-likelihood concave → yes, and fast (typically <10 iterations).
-- **Except** under perfect separation: the MLE sits at infinity → $||\mathbf{w}||\to\infty$, $S\to0$, $X^TSX$ becomes singular. Fix: any penalty ([Ridge](supervised.md#ridge-regression) / Firth), or detect and report.
+- ❌ — it is undamped Newton, so it is only **locally** convergent. Concavity rules out spurious local optima, not overshoot: a full step from a far-off start can increase the deviance or diverge. Production solvers add step-halving or a Wolfe line search, after which it is globally convergent & quadratic near the optimum (typically <10 iterations).
+- It also fails under **perfect separation**: the MLE sits at infinity → $||\mathbf{w}||\to\infty$, $S\to0$, $X^TSX$ becomes singular. Fix: any penalty ([Ridge](supervised.md#ridge-regression) / Firth), or detect and report.
 
 *Why not for NNs?*
 - $X^TSX$ is $n\times n$ and is re-formed & re-factorized every iteration → $O(mn^2+n^3)$.
@@ -1051,7 +1060,7 @@ print(cg(lambda v: A @ v, b, torch.zeros(2)))  ## tensor([0.0909, 0.6364]) -> ex
 | [CG](#cg) | $O(n)$ | $O(n)$ + 1 matvec | Linear, $\frac{\sqrt{\kappa}-1}{\sqrt{\kappa}+1}$ | $\mathbf{g}$, $A\mathbf{v}$ |
 | [L-BFGS](#l-bfgs) | $O(\ell n)$ | $O(\ell n)$ | R-linear | $\mathbf{g}$ |
 | [BFGS](#bfgs) / [DFP](#dfp) | $O(n^2)$ | $O(n^2)$ | Superlinear | $\mathbf{g}$ |
-| [Gauss-Newton](#gauss-newton) / [LM](#lm) | $O(mn)$ | $O(mn^2)$ | Superlinear if small residual | $J$ |
+| [Gauss-Newton](#gauss-newton) / [LM](#lm) | $O(mn)$ | $O(mn^2)$ | Quadratic if zero residual; else linear | $J$ |
 | [Newton](#newtons-method) | $O(n^2)$ | $O(n^3)$ | Quadratic | $\mathbf{g}$, $H$ |
 
 - $\kappa$: Condition number.
@@ -1256,15 +1265,14 @@ def proximal_gradient(grad_g, prox, x0, eta, n_iter=500):
     return x
 
 ## Example: lasso, g = 0.5||y - Xw||^2, h = lam*||w||_1
-torch.manual_seed(0)
-X = torch.randn(50, 3)
+## orthogonal design (X^T X = 4I) -> the lasso solution is exactly S(X^T y, lam) / 4
+X = torch.tensor([[1.0, 1.0, 1.0], [1.0, -1.0, 1.0], [1.0, 1.0, -1.0], [1.0, -1.0, -1.0]])
 y = X @ torch.tensor([3.0, 0.0, -2.0])
-lam = 5.0
-L = torch.linalg.matrix_norm(X, 2) ** 2      ## Lipschitz constant of grad g -> eta = 1/L
+lam, L = 2.0, 4.0                            ## L = largest eigenvalue of X^T X -> eta = 1/L
 w = proximal_gradient(lambda w: X.T @ (X @ w - y),
                       lambda v, e: soft_threshold(v, e * lam),
                       torch.zeros(3), eta=1.0 / L)
-print(w.round(decimals=2))                   ## tensor([ 2.9000,  0.0000, -1.9000]) -> middle weight EXACTLY 0
+print(w)                                     ## tensor([ 2.5000,  0.0000, -1.5000]) -> middle weight EXACTLY 0
 ```
 ````
 
@@ -1337,15 +1345,13 @@ def fista(grad_g, prox, x0, eta, n_iter=500):
         x, theta = x_new, theta_new
     return x
 
-## Example: same lasso as above, far fewer iterations for the same accuracy
-torch.manual_seed(0)
-X = torch.randn(50, 3)
+## Example: same lasso as above, reaching the same exact solution
+X = torch.tensor([[1.0, 1.0, 1.0], [1.0, -1.0, 1.0], [1.0, 1.0, -1.0], [1.0, -1.0, -1.0]])
 y = X @ torch.tensor([3.0, 0.0, -2.0])
-L = torch.linalg.matrix_norm(X, 2) ** 2
 w = fista(lambda w: X.T @ (X @ w - y),
-          lambda v, e: soft_threshold(v, e * 5.0),
-          torch.zeros(3), eta=1.0 / L, n_iter=50)
-print(w.round(decimals=2))                              ## tensor([ 2.9000,  0.0000, -1.9000])
+          lambda v, e: soft_threshold(v, e * 2.0),
+          torch.zeros(3), eta=0.25, n_iter=50)
+print(w)                                                ## tensor([ 2.5000,  0.0000, -1.5000])
 ```
 ````
 
@@ -1425,7 +1431,11 @@ $$
 - Non-convex → no general guarantee; used heuristically.
 
 *Why the augmented (quadratic) term?*
-- Plain dual ascent on $\mathcal{L}$ requires $f$ strictly convex & finite for the inner min to be well-defined. Adding $\frac{\rho}{2}||\cdot||^2$ makes every subproblem strongly convex → well-posed even for piecewise-linear $f$.
+- Plain dual ascent on $\mathcal{L}$ requires $f$ strictly convex & finite for the inner min to be well-defined. Adding $\frac{\rho}{2}||\cdot||^2$ injects curvature along the constraint-coupled directions → the subproblems become well-posed even for piecewise-linear $f$, and the dual iteration converges without strict convexity.
+- Strongly convex only where $A$ (resp. $B$) has full column rank; ADMM's convergence proof needs neither.
+
+*Where does it come from?*
+- Glowinski & Marroco (1975) and Gabay & Mercier (1976), in PDE/variational analysis {cite:p}`gabay1976dual`. Boyd et al.'s 2011 survey is what brought it into ML, not its origin.
 
 *Why not just minimize the augmented Lagrangian jointly?*
 - That is the method of multipliers — correct, but the quadratic term **couples** $\mathbf{x}$ and $\mathbf{z}$, destroying separability. ADMM's single Gauss-Seidel sweep is what buys decomposability back, at the cost of a slower rate.
@@ -1485,8 +1495,8 @@ $$
 - CCCP for a difference of convex functions — linearize the concave part.
 
 *What is the cost of the free descent?*
-- The bound is loose away from $\mathbf{x}_t$ → each step is conservative → **linear** convergence at best, and it slows down further as the majorizer's curvature exceeds $f$'s.
-- Tightness of the surrogate is exactly the speed knob.
+- A loose bound → conservative steps. The rate is governed entirely by how well the surrogate's curvature matches $f$'s: the usual loose first-order majorizers give **linear** (sometimes sublinear) convergence, and it degrades further as the majorizer over-curves.
+- Tightness of the surrogate is the speed knob — a curvature-matched or higher-order majorizer can recover superlinear rates.
 
 *Minorization-Maximization?*
 - The mirror image: for maximization, use a tangent **lower** bound. Same acronym. EM is normally stated this way.
@@ -1774,7 +1784,7 @@ $$
 import torch
 
 class SimulatedAnnealing:
-    def __init__(self, f, T0=1.0, alpha=0.99, step=0.5):
+    def __init__(self, f, T0=10.0, alpha=0.999, step=1.0):
         self.f, self.T0, self.alpha, self.step = f, T0, alpha, step
 
     def run(self, x0, n_iter=5000):
@@ -1792,10 +1802,10 @@ class SimulatedAnnealing:
             T *= self.alpha
         return best, fbest
 
-## Example: many local minima, one global minimum at x = 0
+## Example: many local minima; nearest one to x=5 is at 5.64, the global one is at -0.51
 f = lambda x: (x ** 2).sum() + 10 * torch.sin(3 * x).sum()
 best, fbest = SimulatedAnnealing(f).run(torch.tensor([5.0]))
-print(best.round(decimals=1))                             ## tensor([-0.5]) -> global basin, not the nearest local one
+print(best.round(decimals=1))                             ## tensor([-0.5]) -> global basin, not the nearest one
 ```
 ````
 
@@ -1860,6 +1870,14 @@ Cost per round is constant, $n_kr_k\approx nr$ → total:
 $$
 B\approx nr\left(\lfloor\log_\eta n\rfloor+1\right)
 $$
+
+The original algorithm is the binary case ($\eta=2$): keep $\lceil\frac{|S_k|}{2}\rceil$ arms per round with
+
+$$
+r_k=\left\lfloor\frac{B}{|S_k|\lceil\log_2n\rceil}\right\rfloor
+$$
+
+The general-$\eta$ restatement above is [Hyperband](#hyperband)'s.
 ```
 
 ````{important} Code
@@ -1883,7 +1901,7 @@ import random
 random.seed(0)
 configs = [round(random.random(), 3) for _ in range(27)]
 evaluate = lambda c, b: c + random.gauss(0, 1.0 / b)  ## noise shrinks as budget grows
-print(successive_halving(configs, evaluate), max(configs))  ## 0.874 0.874
+print(successive_halving(configs, evaluate), max(configs))  ## 0.983 0.983
 ```
 ````
 
@@ -1903,6 +1921,9 @@ print(successive_halving(configs, evaluate), max(configs))  ## 0.874 0.874
 
 *Relation to bandits?*
 - It IS a fixed-budget best-arm identification algorithm: each config is an arm, each unit of budget is a pull, and the score is a noisy reward whose noise shrinks with the budget.
+
+*Halving or $\frac{1}{\eta}$?*
+- The original is literally **halving** — $\eta=2$, keep the top half. The arbitrary-$\eta$ generalization used everywhere today was introduced by [Hyperband](#hyperband), which needs it to define its brackets.
 ```
 
 &nbsp;
@@ -1914,9 +1935,9 @@ print(successive_halving(configs, evaluate), max(configs))  ## 0.874 0.874
     - Conservative (small $n$, large $r$) wins when rankings only stabilize late.
     - → grid-search **over the trade-off itself**: one SH bracket per setting.
 - **How**:
-    1. From $R$ (max budget per config) & $\eta$, get $s_\max=\lfloor\log_\eta R\rfloor$.
-    2. For $s=s_\max$ down to $0$, run one SH bracket: $n_s$ configs starting at budget $r_s$.
-    3. $s=s_\max$ → most aggressive. $s=0$ → plain [Random Search](#random-search) at full budget, i.e. the safety net.
+    1. From $R$ (max budget per config) & $\eta$, get $s_{\max}=\lfloor\log_\eta R\rfloor$.
+    2. For $s=s_{\max}$ down to $0$, run one SH bracket: $n_s$ configs starting at budget $r_s$.
+    3. $s=s_{\max}$ → most aggressive. $s=0$ → plain [Random Search](#random-search) at full budget, i.e. the safety net.
     4. Return the best config across all brackets.
 
 ```{note} Math
@@ -1927,17 +1948,17 @@ Notations:
     - $\eta$: Reduction factor, suggested 3 or 4.
 - Misc:
     - $s$: Bracket index.
-    - $s_\max$: Most aggressive bracket.
+    - $s_{\max}$: Most aggressive bracket.
     - $B$: Budget per bracket.
 
 Bracket schedule:
 
 $$
-s_\max=\lfloor\log_\eta R\rfloor,\qquad B=(s_\max+1)R
+s_{\max}=\lfloor\log_\eta R\rfloor,\qquad B=(s_{\max}+1)R
 $$
 
 $$
-n_s=\left\lceil\frac{B}{R}\cdot\frac{\eta^s}{s+1}\right\rceil=\left\lceil\frac{s_\max+1}{s+1}\eta^s\right\rceil,\qquad r_s=R\eta^{-s}
+n_s=\left\lceil\frac{B}{R}\cdot\frac{\eta^s}{s+1}\right\rceil=\left\lceil\frac{s_{\max}+1}{s+1}\eta^s\right\rceil,\qquad r_s=R\eta^{-s}
 $$
 
 Inner SH loop within bracket $s$, for $k=0,\cdots,s$:
@@ -2118,7 +2139,8 @@ class GP:
         return self.os * (1 + s5r + s5r ** 2 / 3) * torch.exp(-s5r)
 
     def fit(self, X, y):
-        self.X, self.y_mean, self.y_std = X, y.mean(), y.std().clamp(min=1e-8)
+        ## correction=0 so a single observation gives 0, not NaN (clamp cannot repair NaN)
+        self.X, self.y_mean, self.y_std = X, y.mean(), y.std(correction=0).clamp(min=1e-8)
         self.y = (y - self.y_mean) / self.y_std        ## zero-mean prior needs standardized y
         K = self._kernel(X, X) + self.noise * torch.eye(len(X))
         self.L = torch.linalg.cholesky(K)              ## O(t^3) once, O(t^2) per prediction after
@@ -2129,7 +2151,7 @@ class GP:
         Ks = self._kernel(Xs, self.X)
         mu = (Ks @ self.alpha).squeeze(-1)
         v = torch.cholesky_solve(Ks.T, self.L)
-        ## variance depends ONLY on where you looked, never on what you saw
+        ## for FIXED hyperparams, variance depends only on where you looked, not on what you saw
         var = (self._kernel(Xs, Xs).diag() - (Ks * v.T).sum(-1)).clamp(min=1e-12)
         return mu * self.y_std + self.y_mean, var.sqrt() * self.y_std
 
@@ -2137,8 +2159,8 @@ class GP:
 X = torch.tensor([[0.0], [1.0], [3.0]])
 y = torch.tensor([0.0, 1.0, 0.5])
 mu, sd = GP().fit(X, y).predict(torch.tensor([[1.0], [2.0]]))
-print(mu.round(decimals=2), sd.round(decimals=2))
-## tensor([1.0000, 0.6700]) tensor([0.0000, 0.2000]) -> sd ~0 at an observed point, larger in the gap
+print(mu.round(decimals=2))   ## tensor([1.0000, 0.8500]) -> exact at the observed point
+print(sd[0] < sd[1])          ## tensor(True) -> sd ~0 where you looked, larger in the gap
 ```
 ````
 
@@ -2168,7 +2190,8 @@ print(mu.round(decimals=2), sd.round(decimals=2))
 - Zero-mean prior + unit output scale are baked-in assumptions. Un-standardized $y$ makes the prior drag predictions toward an arbitrary $0$; un-normalized $\mathbf{x}$ makes a shared length scale meaningless.
 
 *Why does the posterior variance not depend on $\mathbf{y}$?*
-- For a Gaussian likelihood, the posterior covariance is a function of the **inputs** only. → you can update uncertainty for a pending evaluation before its result arrives, which is precisely what [Batch BO](#batch-bo) exploits.
+- For a Gaussian likelihood and **fixed** kernel hyperparams, the posterior covariance is a function of the **inputs** only. → you can update uncertainty for a pending evaluation before its result arrives, which is precisely what [Batch BO](#batch-bo) exploits.
+- Refitting hyperparams by marginal likelihood re-introduces a $\mathbf{y}$ dependence, so the property is exact only between refits.
 ```
 
 &nbsp;
@@ -2215,7 +2238,7 @@ $$
 &nbsp;
 
 #### EI
-- **Name**: Expected Improvement {cite:p}`jones1998efficient`
+- **Name**: Expected Improvement {cite:p}`mockus1978application`
 - **What**: Expected **magnitude** of improvement over the incumbent.
 - **Why**: PI throws away the size of the win.
     - Weight each improvement by how large it is → a small chance of a big gain competes fairly with a big chance of a tiny gain.
@@ -2236,7 +2259,7 @@ a_\text{EI}(\mathbf{x})=\mathbb{E}\left[\max\left(f(\mathbf{x})-f^+-\xi,\ 0\righ
 $$
 
 $$
-z=\frac{\mu(\mathbf{x})-f^+-\xi}{\sigma(\mathbf{x})},\qquad a_\text{EI}(\mathbf{x})=0\ \text{ if }\ \sigma(\mathbf{x})=0
+z=\frac{\mu(\mathbf{x})-f^+-\xi}{\sigma(\mathbf{x})},\qquad a_\text{EI}(\mathbf{x})=\max\left(\mu(\mathbf{x})-f^+-\xi,\ 0\right)\ \text{ if }\ \sigma(\mathbf{x})=0
 $$
 - Term 1: Exploit.
 - Term 2: Explore.
@@ -2251,7 +2274,7 @@ $$
 4. First piece: $(\mu-f^+)\int_{-z}^{\infty}\phi(u)\,du=(\mu-f^+)\Phi(z)$ by symmetry of $\phi$.
 5. Second piece: $\phi'(u)=-u\phi(u)$ → $\int_{-z}^{\infty}u\phi(u)\,du=\left[-\phi(u)\right]_{-z}^{\infty}=\phi(z)$ → contributes $\sigma\phi(z)$.
 6. Sum → $(\mu-f^+)\Phi(z)+\sigma\phi(z)$.
-7. $\sigma\to0$: $\phi(z)\to0$ and $\Phi(z)\to\mathbb{1}[\mu>f^+]$, both terms $\to0$ for any already-observed point → EI never re-samples a noiselessly-measured location.
+7. $\sigma\to0$: $\phi(z)\to0$, so the limit is $\max(\mu-f^+,0)$ → exactly $0$ at any noiselessly observed point (where $\mu\leq f^+$) → EI never re-samples a location it already knows.
 ```
 
 ````{important} Code
@@ -2277,7 +2300,7 @@ for _ in range(6):
     gp = GP(lengthscale=1.0).fit(X, y)
     x_next = grid[expected_improvement(gp, grid, y.max()).argmax()][None]
     X, y = torch.cat([X, x_next]), torch.cat([y, f(x_next)])
-print(X[y.argmax()].round(decimals=2))        ## tensor([2.0000]) -> found in 6 evaluations
+print((X[y.argmax()] - 2.0).abs() < 0.1)      ## tensor([True]) -> found in 6 evaluations
 ```
 ````
 
@@ -2291,11 +2314,14 @@ print(X[y.argmax()].round(decimals=2))        ## tensor([2.0000]) -> found in 6 
 
 *Cons?*
 - **Myopic** — 1-step greedy, never plans for the remaining budget.
-- Under noise, $f^+$ = best *observed* value is upward-biased by the noise → use $\max_i\mu(\mathbf{x}_i)$ ("noisy EI") instead.
+- Under noise, $f^+$ = best *observed* value is upward-biased by the noise → the cheap fix is the plug-in incumbent $\max_i\mu(\mathbf{x}_i)$; the principled one is **NEI**, which integrates EI over the posterior of the past observations {cite:p}`letham2019constrained`.
 - Numerically underflows to exactly 0 far from the data (short length scales, high $d$) → the inner optimizer sees a flat surface → use **log-EI**.
 
 *What does $\xi$ actually do?*
 - Demands a minimum margin before a point counts as an improvement → ⬆️$\xi$ → ⬆️exploration. It is scale-dependent, hence "0.01 on standardized $y$".
+
+*Who actually invented it?*
+- Mockus, Tiesis & Žilinskas (1978) introduced the criterion. Jones, Schonlau & Welch's **EGO** (1998) is what made it the field's default, by pairing it with a fitted kriging surrogate {cite:p}`jones1998efficient`.
 
 *EI vs UCB in one line?*
 - EI asks "how much better, in expectation". UCB asks "how good could it plausibly be". EI is better calibrated out of the box; UCB is the one with a regret bound.
@@ -2308,7 +2334,7 @@ print(X[y.argmax()].round(decimals=2))        ## tensor([2.0000]) -> found in 6 
 - **What**: Optimistic score $\mu+\sqrt{\beta}\sigma$.
 - **Why**: EI's trade-off is implicit and cannot be dialled.
     - "Optimism in the face of uncertainty" makes exploration a single explicit knob.
-    - And, uniquely among the common acquisitions, the right $\beta_t$ schedule yields **sublinear cumulative regret** → provably no-regret.
+    - And the right $\beta_t$ schedule yields **sublinear cumulative regret** → provably no-regret, which EI/PI lack.
 - **How**: Score every point by its optimistic upper confidence bound; take the argmax.
 
 ```{note} Math
@@ -2343,7 +2369,7 @@ $$
 :class: dropdown
 *Pros?*
 - One interpretable knob, monotone in exploration.
-- The only common acquisition with a no-regret guarantee.
+- Explicit high-probability cumulative-regret bound with a matching $\beta_t$ schedule — the strongest & most-cited guarantee among the closed-form acquisitions.
 - Extends cleanly to constraints & batches.
 
 *Cons?*
@@ -2387,7 +2413,7 @@ $$
 &nbsp;
 
 #### KG
-- **Name**: Knowledge Gradient {cite:p}`frazier2008knowledge`
+- **Name**: Knowledge Gradient {cite:p}`frazier2009knowledge`
 - **What**: Expected improvement in the **posterior optimum** after taking one more observation.
 - **Why**: EI credits a point only if that point itself turns out to be good.
     - Wrong accounting under noise, and wrong whenever the final answer will be **reported from the model** rather than from an evaluated point.
@@ -2431,7 +2457,7 @@ $$
     1. Maintain a posterior over $\mathbf{x}^*$ induced by the GP posterior.
     2. Score each candidate by the expected reduction in that distribution's entropy.
     3. Evaluate the maximizer.
-    - **PES** (Predictive Entropy Search) computes the same mutual information in the symmetric, cheaper direction: entropy of $y$ minus its entropy conditioned on $\mathbf{x}^*$.
+    - **PES** (Predictive Entropy Search) computes the same mutual information in the symmetric, cheaper direction: entropy of $y$ minus its entropy conditioned on $\mathbf{x}^*$ {cite:p}`hernandezlobato2014predictive`.
 
 ```{note} Math
 :class: dropdown
@@ -2473,7 +2499,8 @@ $$
 $$
 a_\text{MES}(\mathbf{x})=H\left[p(y|\mathcal{D}_t,\mathbf{x})\right]-\mathbb{E}_{f^*|\mathcal{D}_t}\left[H\left[p(y|\mathcal{D}_t,\mathbf{x},f^*)\right]\right]
 $$
-- Conditioning on $f^*$ truncates the posterior at $\mathbf{x}$ from above → the inner entropy is that of a truncated Gaussian → closed form.
+- Conditioning on $f^*$ truncates the **latent** posterior at $\mathbf{x}$ from above → the inner entropy is that of a truncated Gaussian → closed form.
+- Observation noise breaks the truncation (a noisy $y$ may exceed $f^*$) → the closed form becomes an approximation.
 ```
 
 ```{attention} Q&A
@@ -2492,7 +2519,7 @@ $$
 |:--|:--|:--|:--|:--|
 | [PI](#pi) | $P(\text{improve})$ | ✅ | $\xi$ (critical) | Over-exploits; ignores magnitude |
 | [EI](#ei) | $\mathbb{E}[\text{improvement}]$ | ✅ | $\xi$ (optional) | Default everywhere; myopic; noise-sensitive |
-| [UCB](#ucb) | Optimistic bound | ✅ | $\beta$ | Only one with a no-regret bound |
+| [UCB](#ucb) | Optimistic bound | ✅ | $\beta$ | Explicit no-regret bound |
 | [TS](#ts) | Posterior draw's argmax | Sampling | ❌ | Free batching; high variance |
 | [KG](#kg) | $\Delta$ posterior optimum | ❌ (MC) | ❌ | Correct under noise; expensive |
 | [Entropy Search](#entropy-search) | Info about $\mathbf{x}^*$ | ❌ (approx) | ❌ | Most principled, least practical |
@@ -2589,7 +2616,7 @@ tpe = TPE()
 for _ in range(40):
     x_next = tpe.suggest(X, y, 0.0, 1.0)[None]
     X, y = torch.cat([X, x_next]), torch.cat([y, f(x_next)])
-print(X[y.argmin()].round(decimals=2))                     ## tensor([0.3000])
+print((X[y.argmin()] - 0.3).abs() < 0.02)                   ## tensor([True])
 ```
 ````
 
@@ -2659,9 +2686,10 @@ print(X[y.argmin()].round(decimals=2))                     ## tensor([0.3000])
     - → keep Hyperband's brackets, and let a model choose *which* configs enter them.
 - **How**:
     1. Run Hyperband's bracket schedule unchanged.
-    2. Maintain a TPE-style KDE pair per budget level.
-    3. Sample new configs from the KDE of the **largest budget** that has enough observations; otherwise sample at random.
-    4. Always keep a fixed fraction of purely random samples.
+    2. Maintain a TPE-style KDE pair per budget level, fit once a level has $\geq d+2$ observations ($d$ = #hyperparams).
+    3. Sample new configs from the KDE of the **largest budget** that clears that threshold; otherwise sample at random.
+    4. Split at the top $q=15\%$ into the good KDE, and widen the fitted bandwidths by a factor of 3 to keep exploring.
+    5. Draw a fixed fraction $\rho=\frac{1}{3}$ of configs uniformly at random regardless.
 
 ```{attention} Q&A
 :class: dropdown
@@ -2686,7 +2714,7 @@ print(X[y.argmin()].round(decimals=2))                     ## tensor([0.3000])
 &nbsp;
 
 ### Constrained BO
-- **What**: BO where feasibility is itself an unknown, expensive black box.
+- **What**: BO where feasibility is itself an unknown, expensive black box {cite:p}`gardner2014bayesian`
 - **Why**: Real objectives come with constraints you cannot check without running the experiment.
     - Latency < 10ms, memory < 8GB, fairness gap < $\epsilon$ — all unknown until the model is trained & benchmarked.
     - Filtering infeasible points *after* evaluating them burns the entire budget on unusable configs.
@@ -2702,7 +2730,7 @@ Notations:
 - IO:
     - $c_k(\mathbf{x})\leq0$: Unknown constraint $k$.
 
-Constrained EI, assuming the constraints are conditionally independent given $\mathbf{x}$ {cite:p}`gardner2014bayesian`:
+Constrained EI, assuming the objective and **every** constraint have mutually independent posteriors given $\mathbf{x}$:
 
 $$
 a_\text{EIC}(\mathbf{x})=a_\text{EI}(\mathbf{x})\prod_kP\left(c_k(\mathbf{x})\leq0\ \middle|\ \mathcal{D}_t\right)
@@ -2716,7 +2744,7 @@ $$
 - $f^+$ is undefined → EI is undefined. → fall back to maximizing $\prod_kP(c_k\leq0)$ alone until the first feasible point appears.
 
 *Cons?*
-- The product assumes independent constraints; correlated ones (latency & memory) are mis-scored.
+- The product needs the objective and all constraints to be mutually independent; correlated ones (latency & memory, or accuracy & latency) are mis-scored. Otherwise the joint $\mathbb{E}[\text{improvement}\times\mathbb{1}(\text{feasible})]$ is required.
 - ❌Distinguishes "barely feasible" from "safely feasible" → for safety-critical settings use a safe-BO variant that never evaluates a point whose feasibility is uncertain.
 - Doubles-plus the surrogate fitting cost (one GP per constraint).
 
@@ -2758,7 +2786,7 @@ $$
     - Naively taking the top-$q$ acquisition values returns $q$ nearly identical points — the acquisition does not know the other $q-1$ are already pending.
     - → the batch must be selected **jointly**, with redundancy penalized.
 - **How**: Four standard routes.
-    - **qEI** {cite:p}`wilson2018maximizing`: the true joint EI of a batch, estimated by Monte Carlo + the reparameterization trick → differentiable → optimize all $q$ points together by gradient ascent.
+    - **qEI** {cite:p}`ginsbourger2010kriging`: the true joint EI of a batch. Made practical by Monte Carlo + the reparameterization trick → differentiable → all $q$ points optimized together by gradient ascent {cite:p}`wilson2018maximizing`.
     - **Fantasizing / Kriging believer**: pick greedily, then condition the posterior on a *hallucinated* outcome (usually $\mu$) before picking the next.
     - **Local penalization**: multiply the acquisition by a decaying factor around each already-chosen point.
     - **[Thompson Sampling](#ts)**: $q$ independent posterior draws → diversity with no extra machinery.
@@ -2766,8 +2794,8 @@ $$
 ```{attention} Q&A
 :class: dropdown
 *Why is fantasizing valid at all?*
-- Under a Gaussian likelihood, the GP posterior **variance depends only on the input locations**, never on the observed values.
-- → conditioning on a pending point with a made-up $y$ gives the *exactly correct* updated uncertainty, and only the mean is hallucinated.
+- Under a Gaussian likelihood and fixed kernel hyperparams, the GP posterior **variance depends only on the input locations**, never on the observed values.
+- → conditioning on a pending point with a made-up $y$ gives the *exactly correct* updated uncertainty, and only the mean is hallucinated. Refitting hyperparams mid-batch breaks the guarantee.
 
 *What does batching cost?*
 - Sample efficiency **per evaluation** drops — you commit to $q$ points before seeing any of their results — while wall-clock improves. The gap widens with $q$.
@@ -2799,7 +2827,7 @@ $$
 - Genuinely coupled dims — e.g. architecture search where every layer's width matters — → a random embedding destroys the signal it needs.
 
 *Practical alternative?*
-- Above $d\sim100$ with a cheap-ish objective, [CMA-ES](#cma-es) is frequently the stronger choice: it also learns a low-rank structure (the covariance), but scales far better in #evaluations.
+- Above $d\sim100$ with a cheap-ish objective, [CMA-ES](#cma-es) is frequently the stronger choice: it learns a **full** covariance through rank-one & rank-$\mu$ updates, and scales far better in #evaluations.
 ```
 
 &nbsp;
@@ -2967,7 +2995,7 @@ print(best.round(decimals=2), fbest.round(decimals=2))   ## tensor([0., 0.]) ten
 &nbsp;
 
 ### ES
-- **Name**: Evolution Strategies
+- **Name**: Evolution Strategies {cite:p}`rechenberg1973evolutionsstrategie`
 - **What**: Real-valued evolution by Gaussian mutation, with the mutation distribution itself adapted.
 - **Why**: GA's discrete genetic metaphor is the wrong prior for $\mathbb{R}^n$.
     - In continuous space what matters is the **step size & shape** of the search distribution, not the recombination of symbols.
@@ -2979,7 +3007,7 @@ print(best.round(decimals=2), fbest.round(decimals=2))   ## tensor([0., 0.]) ten
     3. Recombine the best $\mu$ into a new mean.
     4. Adapt $\sigma$ (and possibly $C$) from the observed pattern of successes.
     5. Repeat.
-    - **$(\mu,\lambda)$**: the next generation is drawn from offspring only → parents die → can leave a local optimum, and cannot stagnate.
+    - **$(\mu,\lambda)$**: the next generation is drawn from offspring only → parents die → can leave a local optimum, and is immune to *elitist* stagnation (though not to step-size collapse).
     - **$(\mu+\lambda)$**: parents compete with offspring → elitist → monotone but prone to stagnation.
 
 ```{note} Math
@@ -3022,7 +3050,7 @@ $$
 - Too low means most samples are thrown away → ⬇️$\sigma$. $\frac{1}{5}$ is the progress-rate optimum derived on the sphere & corridor models.
 
 *$(\mu,\lambda)$ vs $(\mu+\lambda)$?*
-- Comma discards parents → tolerates noisy fitness (a lucky evaluation cannot survive forever) and can escape local optima. Requires $\lambda>\mu$, typically $\lambda\approx7\mu$ for the classical rule.
+- Comma discards parents → tolerates noisy fitness (a lucky evaluation cannot survive forever) and can escape local optima. Requires $\lambda>\mu$; Schwefel's classical ratio is $\lambda\approx7\mu$.
 - Plus is elitist → faster on unimodal, noiseless problems; sticky on everything else.
 
 *Why rank-based rather than value-based selection?*
@@ -3086,41 +3114,64 @@ $$
 ````{important} Code
 :class: dropdown
 ```python
+import math
 import torch
 
 class CMAES:
-    ## rank-mu update only: evolution paths & step-size control omitted for readability,
-    ## so this shows covariance LEARNING but not CMA-ES's full step-size adaptation
-    def __init__(self, f, m, sigma=0.5, c_mu=None):
+    def __init__(self, f, m, sigma=0.5):
         self.f, self.m, self.sigma = f, m.clone(), sigma
-        n = m.numel()
-        self.lam = 4 + int(3 * torch.log(torch.tensor(float(n))))   ## 4 + floor(3 ln n)
+        n = self.n = m.numel()
+        ## every constant below is a published default derived from n -- nothing to tune
+        self.lam = 4 + int(3 * math.log(n))
         self.mu = self.lam // 2
-        w = torch.log(torch.tensor(self.mu + 0.5)) - torch.arange(1, self.mu + 1).log()
-        self.w = w / w.sum()                                        ## log-decreasing weights
-        self.C = torch.eye(n)
-        self.c_mu = c_mu if c_mu is not None else 1.0 / n
+        w = math.log(self.mu + 0.5) - torch.arange(1, self.mu + 1).float().log()
+        self.w = w / w.sum()                                    ## log-decreasing weights
+        mueff = self.mueff = 1 / (self.w ** 2).sum().item()     ## variance-effective mu
+        self.cs = (mueff + 2) / (n + mueff + 5)                 ## step-size path rate
+        self.ds = 1 + 2 * max(0.0, ((mueff - 1) / (n + 1)) ** 0.5 - 1) + self.cs
+        self.cc = (4 + mueff / n) / (n + 4 + 2 * mueff / n)     ## covariance path rate
+        self.c1 = 2 / ((n + 1.3) ** 2 + mueff)                  ## rank-one rate
+        self.cmu = min(1 - self.c1, 2 * (mueff - 2 + 1 / mueff) / ((n + 2) ** 2 + mueff))
+        self.chiN = n ** 0.5 * (1 - 1 / (4 * n) + 1 / (21 * n ** 2))   ## E||N(0,I)||
+        self.C, self.ps, self.pc, self.t = torch.eye(n), torch.zeros(n), torch.zeros(n), 0
 
     def step(self):
-        A = torch.linalg.cholesky(self.C)
-        z = torch.randn(self.lam, self.m.numel())
-        X = self.m + self.sigma * z @ A.T                           ## sample N(m, sigma^2 C)
-        order = self.f(X).argsort()[:self.mu]                       ## RANK only -- values unused
-        Y = (X[order] - self.m) / self.sigma                        ## normalized successful steps
-        self.m = self.m + self.sigma * (self.w[:, None] * Y).sum(0)
-        ## pull C toward the covariance of the steps that just worked
-        rank_mu = torch.einsum('i,ij,ik->jk', self.w, Y, Y)
-        self.C = (1 - self.c_mu) * self.C + self.c_mu * rank_mu
+        n, self.t = self.n, self.t + 1
+        ## eigendecomposition gives BOTH the sampling factor and the C^{-1/2} metric
+        ev, B = torch.linalg.eigh(self.C)
+        ev = ev.clamp(min=1e-30)
+        A = B @ torch.diag(ev.sqrt())
+        C_invsqrt = B @ torch.diag(ev.rsqrt()) @ B.T
+        Y = torch.randn(self.lam, n) @ A.T                      ## ~ N(0, C)
+        X = self.m + self.sigma * Y
+        order = self.f(X).argsort()[:self.mu]                   ## RANK only -- values unused
+        yw = (self.w[:, None] * Y[order]).sum(0)                ## weighted recombination
+        self.m = self.m + self.sigma * yw
+        ## conjugate path: measured in the C^{-1/2} metric so it is isotropic under randomness
+        self.ps = (1 - self.cs) * self.ps + \
+                  (self.cs * (2 - self.cs) * self.mueff) ** 0.5 * (C_invsqrt @ yw)
+        nps = self.ps.norm()
+        ## longer than a random walk -> steps too short -> grow sigma, and vice versa
+        self.sigma *= math.exp((self.cs / self.ds) * (nps / self.chiN - 1))
+        hs = float(nps / (1 - (1 - self.cs) ** (2 * self.t)) ** 0.5 / self.chiN
+                   < 1.4 + 2 / (n + 1))                         ## stall the path if sigma jumped
+        self.pc = (1 - self.cc) * self.pc + \
+                  hs * (self.cc * (2 - self.cc) * self.mueff) ** 0.5 * yw
+        rank_mu = torch.einsum('i,ij,ik->jk', self.w, Y[order], Y[order])
+        self.C = (1 - self.c1 - self.cmu) * self.C \
+                 + self.c1 * (torch.outer(self.pc, self.pc)
+                              + (1 - hs) * self.cc * (2 - self.cc) * self.C) \
+                 + self.cmu * rank_mu
         return self.m
 
-## Example: an ill-conditioned rotated ellipse -- isotropic mutation would crawl
+## Example: an axis-aligned ellipse with kappa = 100 -- isotropic mutation would crawl
 torch.manual_seed(0)
 D = torch.tensor([1.0, 100.0])
 f = lambda X: (D * X ** 2).sum(-1)
 opt = CMAES(f, torch.tensor([3.0, 3.0]))
 for _ in range(300):
     opt.step()
-print(opt.m.abs().max() < 0.1)                                      ## True
+print(opt.m.abs().max() < 1e-6)                                 ## tensor(True)
 ```
 ````
 
@@ -3155,15 +3206,15 @@ print(opt.m.abs().max() < 0.1)                                      ## True
 
 #### NES
 - **Name**: Natural Evolution Strategies {cite:p}`wierstra2014natural`
-- **What**: Gradient ascent on the expected fitness of a parameterized search distribution, preconditioned by the Fisher information.
+- **What**: Gradient ascent on the expected **fitness** $F=-f$ of a parameterized search distribution, preconditioned by the Fisher information.
 - **Why**: ES adapts its distribution by hand-designed heuristics.
-    - Writing the goal as $J(\theta)=\mathbb{E}_{p_\theta}[f]$ makes it **differentiable in $\theta$ even when $f$ is not differentiable in $\mathbf{x}$** — the log-derivative trick moves the derivative onto the density.
+    - Writing the goal as $J(\theta)=\mathbb{E}_{p_\theta}[F]$ makes it **differentiable in $\theta$ even when $F$ is not differentiable in $\mathbf{x}$** — the log-derivative trick moves the derivative onto the density.
     - Plain gradient ascent in $\theta$ depends on how the distribution happens to be parameterized → use the **natural** gradient, which follows the steepest direction in distribution space instead.
 - **How**:
     1. Sample a population from $p_\theta$.
     2. Estimate $\nabla_\theta J$ with the score-function (REINFORCE) estimator.
-    3. Precondition by $F^{-1}$ → natural gradient.
-    4. Update $\theta$ (mean & covariance), using **fitness shaping** (rank-based utilities) instead of raw $f$.
+    3. Precondition by $\mathcal{I}^{-1}$ → natural gradient.
+    4. Update $\theta$ (mean & covariance), using **fitness shaping** (rank-based utilities) instead of raw $F$.
 
 ```{note} Math
 :class: dropdown
@@ -3171,32 +3222,34 @@ Notations:
 - Params:
     - $\theta$: Params of the search distribution $p_\theta$ (e.g. $\mathbf{m},\sigma,C$).
 - Misc:
-    - $F$: Fisher information matrix of $p_\theta$.
+    - $F(\mathbf{x})=-f(\mathbf{x})$: Fitness, maximized (the page minimizes $f$).
+    - $\mathcal{I}$: Fisher information matrix of $p_\theta$.
     - $\boldsymbol{\epsilon}$: Standard normal noise.
 
-Objective — smoothed, hence differentiable in $\theta$ regardless of $f$:
+Objective — smoothed, hence differentiable in $\theta$ regardless of $F$:
 
 $$
-J(\theta)=\mathbb{E}_{\mathbf{x}\sim p_\theta}\left[f(\mathbf{x})\right]
+J(\theta)=\mathbb{E}_{\mathbf{x}\sim p_\theta}\left[F(\mathbf{x})\right]
 $$
 
 Score-function gradient:
 
 $$
-\nabla_\theta J=\mathbb{E}_{\mathbf{x}\sim p_\theta}\left[f(\mathbf{x})\nabla_\theta\log p_\theta(\mathbf{x})\right]
+\nabla_\theta J=\mathbb{E}_{\mathbf{x}\sim p_\theta}\left[F(\mathbf{x})\nabla_\theta\log p_\theta(\mathbf{x})\right]
 $$
 
 Natural gradient:
 
 $$
-\tilde{\nabla}_\theta J=F^{-1}\nabla_\theta J,\qquad F=\mathbb{E}_{p_\theta}\left[\nabla_\theta\log p_\theta\ \nabla_\theta\log p_\theta^T\right]
+\tilde{\nabla}_\theta J=\mathcal{I}^{-1}\nabla_\theta J,\qquad\mathcal{I}=\mathbb{E}_{p_\theta}\left[\nabla_\theta\log p_\theta\ \nabla_\theta\log p_\theta^T\right]
 $$
 
 Isotropic Gaussian with fixed $\sigma$ → the mean update is a smoothed finite-difference gradient:
 
 $$
-\nabla_\mathbf{m}J=\frac{1}{\sigma}\mathbb{E}_{\boldsymbol{\epsilon}\sim\mathcal{N}(\mathbf{0},I)}\left[f(\mathbf{m}+\sigma\boldsymbol{\epsilon})\,\boldsymbol{\epsilon}\right]
+\nabla_\mathbf{m}J=\frac{1}{\sigma}\mathbb{E}_{\boldsymbol{\epsilon}\sim\mathcal{N}(\mathbf{0},I)}\left[F(\mathbf{m}+\sigma\boldsymbol{\epsilon})\,\boldsymbol{\epsilon}\right]
 $$
+- Ascending this maximizes $F$ $\Leftrightarrow$ minimizes $f$.
 ```
 
 ```{attention} Q&A
@@ -3205,7 +3258,7 @@ $$
 - Population = the sample from $p_\theta$; selection = the fitness weighting; variation = the Gaussian noise. It is ES with the heuristics replaced by an explicit stochastic-gradient derivation.
 
 *Why fitness shaping?*
-- Weighting by raw $f$ makes the estimator scale-dependent and outlier-dominated (one huge $f$ swamps the batch). Replacing $f$ by a rank-based utility restores [CMA-ES](#cma-es)'s invariance to monotone transformations.
+- Weighting by raw $F$ makes the estimator scale-dependent and outlier-dominated (one huge $F$ swamps the batch). Replacing $F$ by a rank-based utility restores [CMA-ES](#cma-es)'s invariance to monotone transformations.
 
 *Pros?*
 - Scales to millions of params with a diagonal/isotropic covariance.
@@ -3239,9 +3292,9 @@ $$
 :class: dropdown
 Notations:
 - Hyperparams:
-    - $F$: Differential weight, typically $0.5$-$0.9$.
-    - $CR\in[0,1]$: Crossover rate, typically $0.9$.
-    - $\mu$: Population size.
+    - $F$: Differential weight; start at $0.5$, effective range $\approx[0.4,1]$.
+    - $CR\in[0,1]$: Crossover rate; $0.9$-$1.0$ for a fast solution, $0.1$ when that stalls.
+    - $\mu$: Population size, $5n$-$10n$.
 - Misc:
     - $r_1,r_2,r_3$: Distinct random indices, all $\neq i$.
     - $j_\text{rand}$: A coordinate forced to come from the mutant.
@@ -3278,15 +3331,20 @@ class DE:
         X = scale * (2 * torch.rand(self.mu, self.n) - 1)
         fx = self.f(X)
         for _ in range(n_gen):
-            idx = torch.stack([torch.randperm(self.mu)[:3] for _ in range(self.mu)])
-            a, b, c = X[idx[:, 0]], X[idx[:, 1]], X[idx[:, 2]]
-            V = a + self.F * (b - c)                       ## step size comes FROM the population
-            mask = torch.rand(self.mu, self.n) < self.CR
-            mask[torch.arange(self.mu), torch.randint(self.n, (self.mu,))] = True  ## >=1 gene
-            U = torch.where(mask, V, X)
-            fu = self.f(U)
-            better = fu <= fx                              ## greedy 1-to-1 -> per-slot monotone
-            X, fx = torch.where(better[:, None], U, X), torch.where(better, fu, fx)
+            Xn, fn = X.clone(), fx.clone()             ## generational: donors read the FROZEN X
+            for i in range(self.mu):
+                ## r1, r2, r3 distinct AND different from the target i
+                r = torch.randperm(self.mu - 1)[:3]
+                r = r + (r >= i).long()
+                a, b, c = X[r[0]], X[r[1]], X[r[2]]
+                V = a + self.F * (b - c)               ## step size comes FROM the population
+                mask = torch.rand(self.n) < self.CR
+                mask[torch.randint(self.n, (1,))] = True           ## >=1 gene from the mutant
+                U = torch.where(mask, V, X[i])
+                fu = self.f(U[None])[0]
+                if fu <= fx[i]:                        ## greedy 1-to-1 -> per-slot monotone
+                    Xn[i], fn[i] = U, fu
+            X, fx = Xn, fn
         return X[fx.argmin()], fx.min()
 
 ## Example: Rastrigin, global minimum at 0
@@ -3315,8 +3373,8 @@ print(best.round(decimals=2), fbest.round(decimals=3))     ## tensor([0., 0.]) t
 - → the proposal automatically matches the current spread AND orientation of the search — precisely what [CMA-ES](#cma-es) spends an entire adaptation mechanism to learn explicitly.
 
 *How to choose $F$ & $CR$?*
-- ⬆️$F$ → ⬆️exploration, ⬇️convergence speed.
-- ⬆️$CR$ → more coordinates change at once → better on **non-separable** problems, worse on separable ones.
+- ⬆️$F$ → ⬆️exploration, ⬇️convergence speed. Storn & Price start at $F=0.5$ and raise $F$ (or $\mu$) after premature convergence.
+- ⬆️$CR$ → more coordinates change at once → better on **non-separable** problems, worse on separable ones. Their advice: try $0.9$-$1.0$ first for speed, fall back to $0.1$ when that fails.
 - Self-adaptive variants (jDE, SHADE, L-SHADE) tune both online and are the modern default.
 ```
 
@@ -3382,8 +3440,8 @@ $$
 - Weaker theory than [CMA-ES](#cma-es)/[DE](#de), and typically weaker on hard multimodal benchmarks.
 
 *Why is inertia essential?*
-- w/o it ($w=0$) a particle jumps straight to a random convex combination of its two attractors → the swarm collapses in a few steps.
-- Inertia makes the trajectory **overshoot and oscillate** around the attractors, and that oscillation is the entire exploration mechanism.
+- Expanding the update with $w=0$: $\mathbf{x}^+=(1-c_1\mathbf{r}_1-c_2\mathbf{r}_2)\odot\mathbf{x}+c_1\mathbf{r}_1\odot\mathbf{p}+c_2\mathbf{r}_2\odot\mathbf{g}$ — the particle is re-placed from its two attractors every step, **discarding its entire history**. All momentum is gone and the swarm contracts onto the attractors.
+- Inertia carries the previous velocity forward → the trajectory **overshoots and oscillates** around the attractors, and that oscillation is the main exploration mechanism (the random $\mathbf{r}_1,\mathbf{r}_2$ and the neighbourhood topology supply the rest).
 ```
 
 &nbsp;
@@ -3420,7 +3478,7 @@ $$
 Crowding distance, accumulated over objectives on each sorted front:
 
 $$
-d_i\ \mathrel{+}=\ \frac{f_k(\mathbf{x}^{(i+1)})-f_k(\mathbf{x}^{(i-1)})}{f_k^\max-f_k^\min}
+d_i\ \mathrel{+}=\ \frac{f_k(\mathbf{x}^{(i+1)})-f_k(\mathbf{x}^{(i-1)})}{f_k^{\max}-f_k^{\min}}
 $$
 - Boundary solutions get $d=\infty$ → the extremes of the front are never discarded.
 
@@ -3523,7 +3581,7 @@ $$
 import torch
 
 class MAPElites:
-    def __init__(self, f, behavior, n_dim, n_cells=20, sigma=0.1):
+    def __init__(self, f, behavior, n_dim, n_cells=20, sigma=0.3):
         self.f, self.b, self.n = f, behavior, n_dim
         self.n_cells, self.sigma = n_cells, sigma
         self.elites = {}                       ## cell index -> (genome, fitness)
@@ -3542,7 +3600,8 @@ class MAPElites:
             self._add(torch.randn(self.n))
         for _ in range(n_iter):
             ## uniform over occupied cells -> implicit diversity pressure, no novelty term needed
-            parent = self.elites[list(self.elites)[torch.randint(len(self.elites), (1,))]][0]
+            cells = list(self.elites)
+            parent = self.elites[cells[torch.randint(len(cells), (1,)).item()]][0]
             self._add(parent + self.sigma * torch.randn(self.n))
         return self.elites
 
@@ -3550,7 +3609,7 @@ class MAPElites:
 f = lambda x: -(x ** 2).sum()
 behavior = lambda x: (x[0] + 3) / 6
 arch = MAPElites(f, behavior, n_dim=2).run()
-print(len(arch))            ## ~20 -> the whole behavior range is filled, each cell with its best
+print(len(arch))            ## 20 -> every behavior cell filled, each with its own best genome
 ```
 ````
 

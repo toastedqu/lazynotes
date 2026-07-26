@@ -109,7 +109,7 @@ $$
 *Is a gap between two models real?*
 - Point estimates on a finite test set are noisy → report a CI.
 - Paired bootstrap over test samples for any metric; McNemar's test for comparing two classifiers on the same set.
-- Gap smaller than the CI width → the models are indistinguishable on this data.
+- Decide on a CI for the **paired difference**: if it contains $0$, the models are indistinguishable on this data. Comparing the gap against each model's own CI width is not a valid test.
 
 *Why does the metric have to be picked before modeling?*
 - Every downstream choice (threshold, class weights, early stopping, feature set) is a selection made *on* the metric → changing it afterwards invalidates the selection.
@@ -196,7 +196,7 @@ print(confusion_matrix(y, yhat, 2))
 *How to read a multi-class one?*
 - Row $k$ = what the model does with true class $k$ → off-diagonal mass = what $k$ leaks into.
 - Column $k$ = what a predicted $k$ is really made of.
-- Big off-diagonal blocks → mergeable/ambiguous classes, not a capacity problem.
+- Big off-diagonal blocks → suspect overlapping class definitions or label noise before reaching for more capacity.
 
 *Does it depend on the threshold?*
 - Every entry does. Metrics computed from it (accuracy, P/R/F1, MCC) are **operating-point** metrics; ROC/PR sweep $\tau$ to remove that dependence.
@@ -538,7 +538,8 @@ Properties:
 ```{attention} Q&A
 :class: dropdown
 *How do you pick $\beta$?*
-- $\beta$ = how many FPs you would accept to avoid one FN.
+- From the $P$/$R$ balance you want: $F_\beta$ is indifferent between them exactly at $R=\beta P$.
+- ❌ NOT an FP-per-FN exchange rate — that rate is $\frac{\text{FP}+\beta^2(\text{TP}+\text{FN})}{\text{TP}}$, which moves with the operating point.
 - Screening (a missed case is fatal, a false alarm costs a second test) → $F_2$.
 - Auto-moderation (a wrongly deleted post is expensive) → $F_{0.5}$.
 
@@ -547,7 +548,8 @@ Properties:
 - → The squaring is what makes the plain reading ("recall is $\beta$ times as important") literally true.
 
 *Why not just use expected cost?*
-- You should, if you actually know $C_\text{FP}$ and $C_\text{FN}$. $F_\beta$ is the fallback when only their *ratio* is guessable and TN is meaningless (e.g., unbounded negative pools).
+- You should, whenever the cost **ratio** is known — $\tau^*$ needs nothing more than that ratio.
+- $F_\beta$ is the fallback when TN is not even countable (unbounded negative pools) → a per-sample expected cost is undefined.
 ```
 
 &nbsp;
@@ -721,7 +723,7 @@ print(roc_auc(y, s))   ## 0.75
 - OvO (Hand-Till): average AUC over all class pairs. $\pi$-insensitive but $O(K^2)$.
 
 *How do you pick the operating threshold from it?*
-- Max Youden's $J=\text{TPR}-\text{FPR}$ (equivalently the KS statistic) → the point furthest above the diagonal.
+- Max Youden's $J=\text{TPR}-\text{FPR}$ (the one-sided KS statistic) → the point furthest above the diagonal.
 - Or the cost-optimal $\tau^*$ if costs are known; or the $\tau$ hitting a required TPR/FPR.
 - Always on validation data.
 
@@ -754,9 +756,9 @@ $$
 $$
 
 Properties:
-- Baseline for a random ranking $=\pi$, NOT $0.5$ → the score is not comparable across datasets with different $\pi$.
+- No-skill baseline (the flat PR line at precision $\pi$) $=\pi$, NOT $0.5$ → the score is not comparable across datasets with different $\pi$.
 - ❌TN → invisible to how many negatives were correctly ignored.
-- The PR curve between two achievable points is a hyperbola, not a line → trapezoidal `auc(recall, precision)` is optimistically biased; AP is the unbiased summary.
+- The PR curve between two achievable points is a hyperbola, not a line → linear interpolation passes through operating points no threshold attains; trapezoidal `auc(recall, precision)` is invalid and usually (not always) optimistic.
 - Perfect ranking → $\text{AP}=1$; the curve's left end ($R\to0$) is estimated from a handful of samples → high variance.
 ```
 
@@ -800,7 +802,7 @@ print(round(average_precision(y, s), 3))   ## 0.833
 
 *AP vs "area under the PR curve"?*
 - AP = the step-wise sum above, and is what `average_precision_score` reports.
-- Trapezoidal integration of the PR curve interpolates through points no threshold achieves → higher, and not reproducible across libraries. Report AP.
+- Trapezoidal integration of the PR curve interpolates through points no threshold achieves → not reproducible across libraries, and it can move the number in either direction. Report AP.
 
 *Why can't PR-AUC be compared across datasets?*
 - Its floor is $\pi$. AP $=0.4$ at $\pi=0.01$ is excellent; at $\pi=0.5$ it is worse than random.
@@ -834,7 +836,7 @@ Properties:
 - Equals the $\phi$ coefficient, i.e., Pearson $r$ between the 0/1 vectors $\mathbf{y}$ and $\hat{\mathbf{y}}$.
 - Symmetric under swapping the positive class, and under swapping $y\leftrightarrow\hat{y}$.
 - Any constant predictor → a zero factor in the denominator → convention $\text{MCC}=0$.
-- $\text{FP}=\text{FN}$ → $\text{MCC}=\kappa$ exactly.
+- $\text{FP}=\text{FN}$ with nondegenerate marginals → $\text{MCC}=\kappa$ exactly.
 ```
 
 ```{attention} Q&A
@@ -898,7 +900,7 @@ Properties:
 ```{attention} Q&A
 :class: dropdown
 *Where is it actually used?*
-- Inter-annotator agreement → whether the labels themselves are trustworthy, which upper-bounds any model trained on them.
+- Inter-annotator agreement → whether the labels themselves are trustworthy. Low $\kappa$ → the task is ill-defined or the labels are noisy → every metric measured against them is unreliable.
 - Ordinal targets (quadratic weighted kappa) → severity grades, star ratings, essay scores.
 
 *Kappa paradox?*
@@ -970,21 +972,29 @@ Properties:
 
 ```{note} Math
 :class: dropdown
-Definition:
+Definition (multi-class, sum form):
 
 $$
-\text{BS}=\frac{1}{m}\sum_{i=1}^{m}\sum_{k=1}^{K}(\hat{p}_{ik}-y_{ik})^2\quad\overset{K=2}{\longrightarrow}\quad\frac{1}{m}\sum_{i=1}^{m}(s_i-y_i)^2
+\text{BS}=\frac{1}{m}\sum_{i=1}^{m}\sum_{k=1}^{K}(\hat{p}_{ik}-y_{ik})^2
 $$
 
-Murphy decomposition (binary, binned):
+Definition (binary convention):
 
 $$
-\text{BS}=\underbrace{\text{REL}}_{\text{calibration gap}}-\underbrace{\text{RES}}_{\text{discrimination}}+\underbrace{\text{UNC}}_{\pi(1-\pi)}
+\text{BS}_2=\frac{1}{m}\sum_{i=1}^{m}(s_i-y_i)^2=\frac{1}{2}\left.\text{BS}\right|_{K=2}
 $$
+- The two-class sum double-counts each error ← $(\hat{p}_{i0}-y_{i0})^2=(\hat{p}_{i1}-y_{i1})^2$.
+
+Murphy decomposition (binary, forecasts grouped by **distinct value**):
+
+$$
+\text{BS}_2=\underbrace{\text{REL}}_{\text{calibration gap}}-\underbrace{\text{RES}}_{\text{discrimination}}+\underbrace{\text{UNC}}_{\pi(1-\pi)}
+$$
+- Exact only when $s$ takes finitely many distinct values; binning genuinely different forecasts together leaves a within-bin remainder.
 
 Properties:
 - Strictly proper.
-- Bounded: $[0,1]$ for the binary form, $[0,2]$ for the multi-class sum form.
+- Bounded: $[0,1]$ for $\text{BS}_2$, $[0,2]$ for the multi-class sum form.
 - Baseline (constant $\hat{p}=\pi$) $=\pi(1-\pi)$, which is exactly UNC.
 - Quadratic penalty → far gentler than $-\log$ on confident errors.
 ```
@@ -1037,11 +1047,11 @@ $$
 Worst-case variant:
 
 $$
-\text{MCE}=\max_{b}\left|\text{acc}(\mathcal{B}_b)-\text{conf}(\mathcal{B}_b)\right|
+\text{MCE}=\max_{b:\mathcal{B}_b\neq\emptyset}\left|\text{acc}(\mathcal{B}_b)-\text{conf}(\mathcal{B}_b)\right|
 $$
 
 Properties:
-- Perfect calibration $\Leftrightarrow$ $P(y=\hat{y}\mid\text{conf}=p)=p$ for all $p$ → $\text{ECE}=0$.
+- Top-label calibration $\Leftrightarrow$ $P(y=\hat{y}\mid\text{conf}=p)=p$ for all $p$ → $\text{ECE}=0$. Strictly weaker than full multi-class calibration, which constrains all $K$ probabilities.
 - ❌proper scoring rule → minimizable without any predictive skill.
 - Only the top-label probability is checked; classwise ECE averages the same quantity over all $K$ columns.
 ```
@@ -1084,7 +1094,7 @@ print(round(ece(y, probs), 3))   ## 0.4
 - Depends only on per-bin aggregates → a model that ranks perfectly and one that ranks randomly can score the same ECE.
 
 *How do you fix a miscalibrated model?*
-- **Temperature scaling**: one scalar $T$ on the logits, fit on validation NLL. Monotone → accuracy & AUC unchanged. Default first choice.
+- **Temperature scaling**: one scalar $T$ on the logits, fit on validation NLL. Preserves the argmax → accuracy unchanged, binary AUC unchanged. Multi-class OvR AUC CAN move ← softmax renormalization is not monotone in an individual class's probability. Default first choice.
 - **Platt scaling**: logistic regression on the score (2 params) → handles a shift as well as a scale.
 - **Isotonic regression**: non-parametric monotone fit → strictly more flexible, needs far more validation data, and can overfit into a staircase.
 
@@ -1121,7 +1131,7 @@ $$
 
 Properties:
 - Same units as $y$.
-- $\text{MAE}\le\text{RMSE}\le\sqrt{m}\cdot\text{MAE}$ ← $\|\mathbf{e}\|_2\le\|\mathbf{e}\|_1\le\sqrt{m}\|\mathbf{e}\|_2$. Left equality iff all residuals are equal in magnitude; right iff exactly one is nonzero.
+- $\text{MAE}\le\text{RMSE}\le\sqrt{m}\cdot\text{MAE}$ ← $\|\mathbf{e}\|_2\le\|\mathbf{e}\|_1\le\sqrt{m}\|\mathbf{e}\|_2$. Left equality iff all residuals are equal in magnitude; right iff at most one is nonzero.
 - $\text{RMSE}^2=\bar{e}^2+\text{Var}(e)$ → decomposes the reported error into systematic bias and spread.
 - Minimized by the conditional mean $\mathbb{E}[y|\mathbf{x}]$.
 - Scale-dependent → meaningless across differently-scaled targets.
@@ -1198,7 +1208,7 @@ $$
 
 Properties:
 - Same units as $y$; reads directly as "the typical miss".
-- Every residual contributes linearly → no term can dominate.
+- Every residual contributes linearly, not quadratically → outliers pull far less than under RMSE, though a large enough one still dominates.
 - Minimized by the conditional median → gradient & MLE story in [MAE loss](obj.md#mae).
 - Median Absolute Error $=\text{median}_i|e_i|$: $50\%$ breakdown point, ignores the tail entirely.
 ```
@@ -1240,15 +1250,15 @@ $$
 Properties:
 - Scale-free → aggregates heterogeneous targets into one number.
 - Undefined at $y_i=0$ and explodes as $y_i\to0$.
-- Asymmetric: under-prediction is capped at $100\%$ ($\hat{y}=0$), over-prediction is unbounded.
-- Population minimizer = the $\frac{1}{|y|}$-weighted median → sits **below** the ordinary median.
+- Asymmetric for $y>0,\hat{y}\ge0$: under-prediction is capped at $100\%$ (at $\hat{y}=0$), over-prediction is unbounded.
+- Population minimizer (positive targets) = the $\frac{1}{y}$-weighted median → at or **below** the ordinary median.
 ```
 
 ```{attention} Q&A
 :class: dropdown
 *Why does optimizing MAPE bias forecasts low?*
-- The $\frac{1}{|y|}$ weight makes errors on small targets dominate, and over-prediction is penalized without limit while under-prediction is capped.
-- → The minimizer is a downward-shifted weighted median → systematic under-forecasting.
+- The $\frac{1}{y}$ weight makes errors on small targets dominate, and over-prediction is penalized without limit while under-prediction is capped.
+- → The minimizer is the $\frac{1}{y}$-weighted median, at or below the ordinary median → systematic under-forecasting.
 
 *Cons?*
 - Zero/near-zero truths → undefined or explosive.
@@ -1321,7 +1331,7 @@ $$
 Properties:
 - $R^2=1$ perfect; $R^2=0$ ties the mean predictor; $R^2<0$ worse than the mean — possible on held-out data.
 - $R^2=1-\frac{\text{MSE}}{\text{Var}(y)}$ → a monotone rescaling of RMSE **within** one test set → identical model ranking there.
-- $R^2=r^2$ (squared Pearson correlation between $y$ and $\hat{y}$) ONLY for an in-sample OLS fit with an intercept.
+- $R^2=r^2$ (squared Pearson correlation between $y$ and $\hat{y}$) is **guaranteed** only for an in-sample OLS fit with an intercept ← the residuals are then zero-mean and orthogonal to $\hat{y}$.
 - In-sample OLS: adding any feature cannot increase $\text{SS}_\text{res}$ → $R^2$ is monotone non-decreasing in $n$.
 ```
 
@@ -1362,7 +1372,7 @@ R^2_\text{adj}=1-(1-R^2)\frac{m-1}{m-n-1}
 $$
 
 Properties:
-- $R^2_\text{adj}\le R^2$, with equality iff $n=0$.
+- $R^2_\text{adj}\le R^2$, with equality iff $n=0$ or $R^2=1$.
 - Can be negative.
 - Adding a feature increases $R^2_\text{adj}$ iff that feature's partial $F>1$, i.e., $|t|>1$ — a much weaker bar than statistical significance ($|t|>1.96$).
 - Undefined at $m=n+1$; unstable when $n\to m$.
@@ -1418,6 +1428,56 @@ Properties:
 *When is it misleading?*
 - Large $L$ → everything scores near $0$ → no signal to compare models by.
 - → Pair it with Hamming loss and micro/macro-F1.
+```
+
+&nbsp;
+
+#### Jaccard Index
+- **What**: Label-set intersection over union, averaged over samples.
+- **Why**: Subset accuracy gives no partial credit, and Hamming loss is diluted by the many labels correctly predicted absent → neither grades a *partially* right label set.
+- **How**: Intersect the predicted & true label sets → divide by their union → average.
+
+```{note} Math
+:class: dropdown
+Notations:
+- Misc:
+    - $Y_i$: True label set of sample $i$.
+    - $\hat{Y}_i$: Predicted label set of sample $i$.
+    - $F_{1,i}$: F1 of sample $i$ over its own label set.
+
+Definition:
+
+$$
+\text{J}=\frac{1}{m}\sum_{i=1}^{m}\frac{|\hat{Y}_i\cap Y_i|}{|\hat{Y}_i\cup Y_i|}
+$$
+
+Relation to F1, per sample:
+
+$$
+\text{J}_i=\frac{F_{1,i}}{2-F_{1,i}}
+$$
+
+Properties:
+- Range $[0,1]$; $\text{J}_i=1$ iff the two sets match exactly → $\text{SA}\le\text{J}$.
+- $\text{J}_i\le F_{1,i}$ always ← $2-F_{1,i}\ge1$. The gap peaks at $F_1=2-\sqrt{2}\approx0.59$.
+- ❌TN at the label level, exactly like F1.
+- $Y_i=\hat{Y}_i=\emptyset$ → $\frac{0}{0}$ → convention-dependent ($0$ or $1$) → state which.
+```
+
+```{attention} Q&A
+:class: dropdown
+*Jaccard vs F1?*
+- Strictly monotone in each other **per sample** → identical ordering of two predictions on the same sample.
+- Jaccard is always the harsher number: $F_1=0.5\Rightarrow\text{J}=\frac{1}{3}$.
+- Averaged over samples or labels they CAN rank two models differently ← the mean of a nonlinear transform $\neq$ the transform of the mean.
+
+*Which averaging?*
+- Per sample → "how good is a typical predicted set".
+- Per label with micro/macro → "how good is a typical label".
+- Different questions, different numbers → say which one you ran.
+
+*Where does the same quantity appear under another name?*
+- Set similarity in dedup / entity matching, and IoU in detection & segmentation.
 ```
 
 &nbsp;
@@ -1578,7 +1638,7 @@ $$
 
 Properties:
 - $\text{ARI}=1$ for identical partitions (up to relabeling), $\approx0$ for independent ones, negative when agreement is worse than chance.
-- Invariant to permutations of cluster labels and to the number of clusters used by each partition.
+- Permutation-invariant, and defined when $U$ and $V$ use different numbers of clusters — but NOT invariant to changing them: refining a partition drives ARI down.
 - Symmetric in $U$ and $V$.
 ```
 
@@ -1596,12 +1656,14 @@ def ari(u, v):
     a = sum(comb(x, 2) for x in C.sum(1))
     b = sum(comb(x, 2) for x in C.sum(0))
     exp = a * b / comb(C.sum(), 2)                 ## expectation with the marginals fixed
-    return (same - exp) / (0.5 * (a + b) - exp)
+    denom = 0.5 * (a + b) - exp
+    ## denom == 0 <=> both partitions are trivial (one cluster, or all singletons)
+    return 1.0 if denom == 0 else (same - exp) / denom
 
 ## Example
 u = np.array([0, 0, 1, 1])
 print(round(ari(u, np.array([1, 1, 0, 0])), 3))   ## 1.0   <- same partition, renamed
-print(round(ari(u, np.array([0, 1, 0, 1])), 3))   ## -0.5  <- every pair disagrees
+print(round(ari(u, np.array([0, 1, 0, 1])), 3))   ## -0.5  <- agreement below chance
 ```
 ````
 
@@ -1652,7 +1714,8 @@ $$
 $$
 
 Properties:
-- $\text{NMI}\in[0,1]$: $1$ iff the two labelings are identical up to relabeling; $0$ iff independent.
+- $\text{NMI}\in[0,1]$; $0$ iff independent.
+- $\text{NMI}=1\Leftrightarrow$ identical up to relabeling holds for the arithmetic & geometric normalizers ONLY — under $\min$, any refinement of the coarser labeling also scores $1$.
 - The normalizer is a free choice — arithmetic, geometric, $\min$ or $\max$ mean — and each gives a different number → state which one.
 - Permutation-invariant and symmetric in $U,V$.
 - ❌chance-corrected → rises as $k$ grows, even for random labelings.
@@ -1661,7 +1724,8 @@ Properties:
 ```{attention} Q&A
 :class: dropdown
 *Why does NMI reward too many clusters?*
-- Splitting a cluster can only add information about $V$ → $I$ never decreases, while the entropy normalizer grows more slowly.
+- ❌chance-corrected: $\mathbb{E}[I]$ between two **random** labelings grows with $k$ → a finer random clustering scores higher for free.
+- ❌ Not because splitting always helps — under the arithmetic normalizer, splitting a perfect clustering into singletons drops NMI from $1$ to $\frac{2}{3}$.
 - → Never use NMI to select $k$. Use AMI, or fix $k$ and use it only to compare methods.
 
 *NMI vs AMI?*
