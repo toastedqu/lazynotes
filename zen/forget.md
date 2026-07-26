@@ -10,24 +10,22 @@ kernelspec:
   name: python3
 ---
 # Forget Zen.
-Before your brain files this blog under "wisdom" and starts defending it,
+Forget Zen,
 
-Everything written here is made of concepts.
+before your brain treats it as "wisdom".
 
-"Computation" is a concept.
+Zen is a concept. 
 
-"Emptiness" is a concept.
+Concepts are illusions, 
 
-"No self" is a concept.
+including the concept that concepts are illusions.
 
-"Seeing" is a concept.
+If you memorize Zen, quote it, argue about it, build an identity as "someone who gets it", you are trapped in illusions.
 
-Concepts are empty, including the concept that concepts are empty.
+The brain does this with everything.
 
-If you memorize this blog, quote it, argue about it, build an identity as "someone who gets it", you are trapped in illusions.
+It will do it with Zen too, if it hasn't already.
 
-The brain does this with everything. It will do it with Zen too.
+Forget Zen.
 
-So forget Zen. It did its job the moment you looked.
-
-See reality. Play. That's it.
+It already did its job.

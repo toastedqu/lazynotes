@@ -57,6 +57,7 @@ project:
         - file: zen/self.md
         - file: zen/prob.md
         - file: zen/sol.md
+        - file: zen/tldr.md
         - file: zen/forget.md
     - file: about.md
 site:
