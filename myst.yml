@@ -59,6 +59,11 @@ project:
         - file: zen/sol.md
         - file: zen/tldr.md
         - file: zen/forget.md
+    - title: 易
+      children:
+        - file: iching/liuyao.md
+          children:
+          - file: iching/pan.md
     - file: about.md
 site:
   options:
