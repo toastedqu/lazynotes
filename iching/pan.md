@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# 排盘
+# 六十四卦
 
 ## 1. 乾为天
 - **上下卦**：乾上乾下
