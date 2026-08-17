@@ -45,6 +45,7 @@ project:
     #     - file: nlp/transformer.md
     #     # - file: nlp/models.md
     #     - file: nlp/train.md
+    #     - file: nlp/train/rl.md
     #     # - file: nlp/rh.md
     #     - file: nlp/infer.md
     #     - file: nlp/eval.md
@@ -55,9 +56,10 @@ project:
       children:
         - file: zen/comp.md
         - file: zen/self.md
-        - file: zen/prob.md
+        - file: zen/desire.md
+        - file: zen/emo.md
         - file: zen/sol.md
-        - file: zen/tldr.md
+        - file: zen/meta.md
         - file: zen/forget.md
     - title: 易
       children:

@@ -9,11 +9,29 @@ kernelspec:
   language: python
   name: python3
 ---
+# 4. Emotion
 
-# Neediness
+The single biggest motherfucker of human experience, yet the most definitive factor of human experience.
 
+Emotions are our natural responses to the state of desire fulfillment.
 
-# Emotional Strength
+If we anticipate a desire to be fulfilled, we feel excited.
+
+If a desire is overly fulfilled, we feel ecstatic.
+
+[please list some more here]
+
+Computation is reality, so emotions are not intrinsically positive or negative. They are just computational results, which becomes causes for subsequent computations.
+
+YET, ALL HUMANS WANT TO PUSH AWAY NEGATIVE EMOTIONS!
+
+## Properties
+- Emotions are unavoidable.
+- Emotions are temporary.
+
+[please fill out this section based on the attached research report]
+
+## Emotional Strength
 Emotional Strength is the most important attribute for all humans.
 
 **What**
@@ -34,7 +52,7 @@ Emotional Strength is the most important attribute for all humans.
 
 &nbsp;
 
-## Avoidance
+### Avoidance
 Emotional Strength ≠ Avoidance.
 
 Avoidance is equivalent to skipping the gym, thus the opposite of emotional strength.
@@ -56,27 +74,3 @@ To cultivate emotional strength, do the opposite:
 - GTFO of the comfort zone
 - Indulging in emotionally painful activities
 - ...
-
-## My observed facts
-### Neediness
-Every single human issue results from a discrepancy between demand & supply.
-
-When you NEED something, especially subconsciously, everything becomes a problem.
-
-### Manipulation
-Manipulation is making people, who initially don't want to give you what you want, give you what you want.
-
-### Reality
-A lot of ideas are NOT built on reality - NO HUMAN ON EARTH is absolutely non-needy, emotionally resilient, and outcome-independent.
-
-### Emotions
-- Emotions are unavoidable.
-- Emotions are temporary.
-- Emotions are accumulated in the physical body if not released.
-
-### Silence
-Practical silence means not speaking when unnecessary.
-
-Two failure modes:
-- Speaking when unnecessary.
-- Not speaking when necessary.
