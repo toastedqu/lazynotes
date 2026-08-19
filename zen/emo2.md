@@ -28,7 +28,7 @@ Emotions are our natural responses to the state of desire fulfillment:
 - Fulfillment granted to someone else → **envy**
 - Nothing at stake → **boredom**
 
-Not one of these describes the world. Every one describes a gap.
+None of these describes the world. Every one describes a gap between supply & demand.
 
 Emotion is a consequence that arrives already configured as a cause. It tunes the body, biases attention, weights memory, and loads an action.
 

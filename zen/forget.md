@@ -10,6 +10,17 @@ kernelspec:
   name: python3
 ---
 # Forget Zen.
+
+There are 3 stages of understanding the truth.
+
+Stage 1: You understand the truth rationally.
+
+Stage 2: You understand the truth emotionally.
+
+Stage 3: You understand the truth physically.
+
+If you reach Stage 3, you are a Buddha.
+
 Forget Zen,
 
 before your brain treats it as "wisdom".
