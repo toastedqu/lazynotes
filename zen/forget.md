@@ -21,13 +21,15 @@ Stage 3: You understand the truth physically.
 
 If you reach Stage 3, you are a Buddha.
 
+---
+
 Forget Zen,
 
 before your brain treats it as "wisdom".
 
-Zen is a concept. 
+Zen is a concept.
 
-Concepts are illusions, 
+Concepts are illusions,
 
 including the concept that concepts are illusions.
 

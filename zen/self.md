@@ -15,19 +15,18 @@ kernelspec:
 &nbsp;
 
 ## Illusion
-
-### Survival Instinct
 Computation optimizes the human brain for 2 objectives: **survival** & **reproduction**.
 
-The brain is optimized for **perceived** survival. The brain receives signals, compresses them into a model of threats & resources, then optimizes the model's score.
+### Survival Instinct
+Specifically, the brain is optimized for **perceived** survival. The brain receives signals, compresses them into a model of threats & resources, then optimizes the model's score.
 
-Reality is never in the loop. Only its representation is. Evolution only demanded that the model is cheap enough to run & accurate enough to keep the genes moving, so the learned model has never seen reality.
+Reality is NEVER in the loop. Only its representation is. Evolution only demanded that the model is cheap enough to run & accurate enough to keep the genes moving, so the learned model has NEVER seen reality.
 
 When the model diverges from reality, we act against our own survival - chronic stress over imagined dangers, addiction to false rewards, self-destruction in pursuit of safety, ...
 
-At the moment, our brain only checks its prior from centuries of evolution, optimized on an illusory objective - perceived survival.
+At the moment, our brain only checks its prior from centuries of evolution, optimized on an illusory objective - **perceived survival**.
 
-In other words, we don't see reality.
+In other words, we CANNOT see reality.
 
 &nbsp;
 
@@ -42,8 +41,8 @@ This is why social rejection hurts like physical injury. To the brain, both are 
 To optimize for survival & reproduction, computation created a protagonist in the brain - something that survives & reproduces.
 
 So it draws a boundary:
-- This body, these memories, this name: **"me."**
-- Everything else: **"the world."**
+- This body, these memories, this name: **"me"**
+- Everything else: **"the world"**
 
 "Self" is a variable computation invented in the brain to track what it must protect.
 

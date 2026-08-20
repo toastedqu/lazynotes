@@ -11,9 +11,7 @@ kernelspec:
 ---
 # 3. Desire
 
-This chapter dissects desire rationally. The nastier land - emotions - comes next.
-
-&nbsp;
+Desire differs from neediness.
 
 ## Prerequisites
 
@@ -23,7 +21,9 @@ Uncertainty threatens survival, so the brain evolved to predict. For every scena
 - Something bad is coming: prepare, minimize the loss.
 - Unknown: no preparation, and the loss finds us anyway.
 
-But everything is computation, and computation means change. Every state, phenomenon, and attribute is in transition. Change is the only certainty. Everything else is uncertain by default.
+But everything is computation, and computation means change. Every state, phenomenon, and attribute is in transition. Change is the only certainty (and death - we will discuss later.)
+
+Hence, everything is uncertain by default.
 
 Theoretically, prediction works: given ALL INFO about the current state, the next state follows.
 

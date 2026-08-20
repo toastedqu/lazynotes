@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# 8. Metacognition Levels
+# 6. Metacognition Levels
 
 Suppose a high-risk high-return desire has not been fulfilled for months. Your brain is deeply obsessed with it. Then, a negative event occurs which pushes the desired outcome further away.
 

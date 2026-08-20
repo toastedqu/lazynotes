@@ -11,15 +11,15 @@ kernelspec:
 ---
 # 1. Computation
 
-Computation is the sole reality of the observable universe.
+Computation is the only reality of the observable universe.
 
 &nbsp;
 
 ## Prerequisites
-To see computation clearly, we need 6 words:
+To see computation clearly, we need 6 concepts:
 - **Phenomenon**: Anything that occurs. (e.g., a quark, a thought, a galaxy, ...)
 - **Attribute**: A distinguishable feature of a phenomenon (e.g., mass, color, duration, ...)
-- **State**: A set of phenomena & their attributes, frozen at one moment; A photograph, not the scene itself.
+- **State**: A set of phenomena & their attributes at one timestamp.
 - **Cause**: The state where a transition begins.
 - **Condition**: A state outside the cause that shapes the direction & magnitude of the transition.
 - **Consequence**: The state that results from the transition.
