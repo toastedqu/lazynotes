@@ -40,16 +40,16 @@ project:
     # - title: RL
     #   children:
     #     - file: rl/rl.md
-    - title: NLP
-      children:
-        - file: nlp/transformer.md
-        # - file: nlp/models.md
-        - file: nlp/train.md
+    # - title: NLP
+    #   children:
+    #     - file: nlp/transformer.md
+    #     # - file: nlp/models.md
+    #     - file: nlp/train.md
         - file: nlp/train/sft.md
         - file: nlp/train/rl.md
-        # - file: nlp/rh.md
-        - file: nlp/infer.md
-        - file: nlp/eval.md
+    #     # - file: nlp/rh.md
+    #     - file: nlp/infer.md
+    #     - file: nlp/eval.md
     # - title: Misc
     #   children:
     #     - file: misc/dsa.md

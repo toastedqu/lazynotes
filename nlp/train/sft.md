@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 # Supervised Post-Training
-Everything that turns a pretrained LM into an assistant using a **fixed dataset** & a **differentiable loss**: SFT, distillation, offline preference optimization, and the parameter-efficient ways to run all three.
+Everything that turns a pretrained LM into an assistant by **backprop against a known target** — no reward, no policy gradient: SFT, distillation, offline preference optimization, and the parameter-efficient ways to run all three.
 
 Policy-gradient methods live in [RL for LLMs](rl.md).
 
@@ -43,7 +43,7 @@ $r$ overrides the reward symbol used on the RL page — nothing here is trained 
 - **What**: Ordered stages, each supplying a signal the previous one cannot express.
 - **Why**: A pretrained LM completes text; it does not answer.
     - Next-token on web text → the likeliest continuation of a question is often another question.
-    - Knowledge sits in the weights, but *producing it on demand* is a behavior, ❌a fact.
+    - Knowledge sits in the weights, but producing it on demand is a behavior, ❌a fact.
     - Format, refusal, tone, tool syntax, stopping — none of it is a property of the corpus.
 - **How**: 4 stages, ordered by how far past the given data each can reach.
     1. **CPT**: Raw domain text → move the base distribution.
@@ -66,8 +66,9 @@ $r$ overrides the reward symbol used on the RL page — nothing here is trained 
 :class: dropdown
 *Why is the order fixed?*
 - Preference optimization & RL both **reweight** what the policy already emits → they need a policy that emits well-formed responses.
-- Both need $\pi_\text{ref}$ as an anchor → it has to be produced by SFT first.
+- Reference-anchored methods (DPO, IPO, KTO) additionally need $\pi_\text{ref}$, which SFT has to produce first.
 - Skipping SFT → nearly every response is malformed → uniformly bad grades → ❌signal.
+- ⚠️ ORPO is the deliberate exception: it folds the NLL term into the preference loss & runs from the base model in 1 stage.
 
 *Which of these are actually supervised?*
 - Fixed target + plain backprop, ❌reward: CPT, SFT, distillation, offline preference optimization.
@@ -103,13 +104,15 @@ $r$ overrides the reward symbol used on the RL page — nothing here is trained 
 ````{important} Code
 :class: dropdown
 ```python
-SPECIALS = {"bot": "<|im_start|>", "eot": "<|im_end|>"}  ## in the vocab, never spellable by users
+SPECIALS = {"bot": "<|im_start|>", "eot": "<|im_end|>"}  ## registered in the tokenizer's vocab
 
 def render(messages, add_generation_prompt=True):
     ## messages: [{"role": "user"|"assistant"|"system", "content": str}]
     out = []
     for m in messages:
         ## header + content + explicit terminator -> the boundary is a TOKEN, not whitespace
+        ## NOTE: this string is safe only if user content is later tokenized with special-token
+        ## parsing DISABLED -- the guarantee lives in the tokenizer, not in this function
         out.append(f"{SPECIALS['bot']}{m['role']}\n{m['content']}{SPECIALS['eot']}\n")
     if add_generation_prompt:
         ## inference-only: open the assistant turn and stop, so the model completes it
@@ -155,7 +158,7 @@ print(repr(render(msgs, add_generation_prompt=False)))
 ### Loss Masking
 - **What**: CE computed on response tokens only.
 - **Why**: Prompt tokens are given, never generated.
-    - Scoring them trains the model to *produce* user turns → capacity spent on the wrong distribution.
+    - Scoring them trains the model to generate user turns → capacity spent on the wrong distribution.
     - Multi-turn: every assistant turn is a target, every user turn is context.
 - **How**:
     1. Render the conversation; record the span of each assistant turn.
@@ -171,18 +174,19 @@ Notations:
     - $\mathcal{M}$: Set of unmasked (trainable) token positions.
 - Misc:
     - $\mathbb{1}[\cdot]$: Indicator.
-    - $Z$: Normalizer.
+    - $\ell$: Per-sample masked NLL.
+    - $N$: Per-sample #trainable tokens.
 
-Objective:
-
-$$
-\mathcal{L}(\theta)=-\frac{1}{Z}\sum_{(x,y)\in\mathcal{B}}\sum_{t=1}^{|y|}\mathbb{1}[t\in\mathcal{M}]\log\pi_\theta(y_t|x,y_{<t})
-$$
-
-$Z$ is the entire design choice:
+Per-sample loss & token count:
 
 $$
-Z=\begin{cases}1 & \text{sum loss}\\ |\mathcal{B}| & \text{sample mean}\\ \sum_{(x,y)\in\mathcal{B}}|y| & \text{token mean}\end{cases}
+\ell(x,y)=-\sum_{t=1}^{|y|}\mathbb{1}[t\in\mathcal{M}]\log\pi_\theta(y_t|x,y_{<t}),\qquad N(x,y)=\sum_{t=1}^{|y|}\mathbb{1}[t\in\mathcal{M}]
+$$
+
+Aggregation is the entire design choice:
+
+$$
+\mathcal{L}(\theta)=\begin{cases}\sum_{(x,y)\in\mathcal{B}}\ell(x,y) & \text{sum loss}\\ \frac{1}{|\mathcal{B}|}\sum_{(x,y)\in\mathcal{B}}\frac{\ell(x,y)}{N(x,y)} & \text{sample mean}\\ \frac{\sum_{(x,y)\in\mathcal{B}}\ell(x,y)}{\sum_{(x,y)\in\mathcal{B}}N(x,y)} & \text{token mean}\end{cases}
 $$
 ```
 
@@ -212,7 +216,7 @@ def sft_loss(logits, labels, reduction="token_mean"):
     if reduction == "token_mean":
         return tok.sum() / keep.sum()           ## every TOKEN weighted equally
     if reduction == "sample_mean":
-        return (tok.sum(-1) / keep.sum(-1)).mean()  ## every SAMPLE weighted equally
+        return (tok.sum(-1) / keep.sum(-1).clamp_min(1)).mean()  ## every SAMPLE weighted equally
     return tok.sum()                            ## sum loss: no denominator
 
 ## Example
@@ -274,8 +278,8 @@ print(sft_loss(torch.randn(1, 8, 50), labels).item())
 - Packing → ~100% token utilization, needs the mask plumbing.
 
 *Does packing change the objective?*
-- Token mean → yes: per-sequence token counts change, so per-sample weights shift.
-- Sum loss → no.
+- Sum & token mean → ❌. Both aggregate over the same set of live tokens however the samples are grouped.
+- Sample mean → ✅. Once packed, 1 sequence $\neq$ 1 sample, so a per-sequence mean silently reweights everything inside the pack.
 
 *Does truncation matter?*
 - Splitting a sample across two packs teaches the model to stop mid-answer & to start mid-sentence.
@@ -289,7 +293,7 @@ print(sft_loss(torch.randn(1, 8, 50), labels).item())
 - **What**: Next-token CE on curated $(x,y)$ pairs.
 - **Why**: Behavior must be **shown**, ❌described.
     - Prompting alone → format is unreliable, & the instructions burn context on every call.
-    - The target is a *distribution over responses*; the only cheap handle on a distribution is samples from it.
+    - The target is a distribution over responses; the only cheap handle on a distribution is samples from it.
 - **How**:
     1. Collect $(x,y)$ pairs — human-written, distilled, or filtered self-generated.
     2. Render w/ the chat template; mask the prompt tokens.
@@ -343,7 +347,7 @@ $$
 
 *Cons?*
 - **Imitation ceiling** ← cannot exceed the best response in $\mathcal{D}$.
-- ❌Negative signal ← the loss only pushes probability **up**; nothing says what not to do.
+- ❌Targeted negative signal ← softmax CE does lower every non-target token, but only by normalization, in proportion to its current probability. Nothing can single out a specific bad response.
 - Mode-covering → contradictory demonstrations get averaged into a blurry compromise.
 - Overfits fast on small data → memorized phrasings, ⬇️output diversity.
 
@@ -410,7 +414,7 @@ $$
 - **What**: More next-token training on a raw target-domain corpus.
 - **Why**: Some gaps are in the base distribution, ❌in the behavior.
     - Domain jargon, a new language, or a new text modality (code, legal, clinical) may be rare or absent in the original mix.
-    - SFT sets are far too small to move what the model *knows*.
+    - SFT sets are far too small to move what the model knows.
 - **How**:
     1. Collect raw domain text, orders of magnitude larger than any SFT set.
     2. **Replay** a slice of the original pretraining mix in every batch.
@@ -455,7 +459,7 @@ $$
     1. Sample $k$ responses per prompt from the curr policy at $T>0$.
     2. Keep the ones a verifier / RM accepts.
     3. Dedup — by reasoning path, ❌only by final answer.
-    4. SFT on the survivors; optionally repeat.
+    4. Fine-tune the **base** model on the survivors; optionally repeat.
 
 ```{note} Math
 :class: dropdown
@@ -478,21 +482,21 @@ $$
 \mathcal{L}_\text{RFT}(\theta)=-\mathbb{E}_{x\sim\mathcal{D},\ y\sim\pi_{\theta_\text{old}}(\cdot|x)}\left[v(x,y)\log\pi_\theta(y|x)\right]
 $$
 
-At the first update after sampling, $\pi_{\theta_\text{old}}=\pi_\theta$, so
+At the first update after sampling, $\pi_{\theta_\text{old}}=\pi_\theta$, so **if** the samples are drawn at $T=1$ & kept unfiltered by anything other than $v$,
 
 $$
 \nabla_\theta\mathcal{L}_\text{RFT}=-\mathbb{E}_{y\sim\pi_\theta}\left[v(x,y)\nabla_\theta\log\pi_\theta(y|x)\right]
 $$
 
-which is the REINFORCE gradient w/ $r=v$ & baseline $b=0$.
+which is the REINFORCE gradient w/ $r=v$ & baseline $b=0$. The published recipe breaks both conditions ($T=0.7$, then dedup), so the correspondence is an idealization, ❌an identity.
 ```
 
 ```{attention} Q&A
 :class: dropdown
 *So is this RL?*
-- The gradient coincides w/ REINFORCE **only** at the first step after sampling, w/ a binary reward and no baseline.
+- The gradient coincides w/ REINFORCE only under conditions the recipe does not meet: 1st step after sampling, $T=1$, ❌dedup, binary reward, ❌baseline.
+- In practice $T=0.7$, duplicate reasoning paths are removed, & the fine-tune restarts from the **base** model — none of which any policy-gradient method does.
 - Everything RL adds is absent: ❌baseline/advantage, ❌importance ratio, ❌KL anchor, ❌fresh rollouts per update.
-- In practice it is run as plain SFT over a frozen filtered set for multiple epochs → silently, uncorrectedly off-policy.
 - → Read it as **one policy-improvement step** (EM-style), ❌an optimization loop.
 
 *Why does it saturate?*
@@ -607,6 +611,7 @@ import torch
 import torch.nn.functional as F
 
 def kd_loss(student_logits, teacher_logits, labels, tau=2.0, alpha=0.9, ignore=-100):
+    ## logits and labels are assumed ALREADY next-token aligned (shift applied upstream)
     ## soften BOTH sides with the same temperature
     s_log = F.log_softmax(student_logits / tau, dim=-1)
     t_prob = F.softmax(teacher_logits / tau, dim=-1)
@@ -792,7 +797,7 @@ print(jsd_beta(torch.randn(B, T, V), torch.randn(B, T, V)).shape)  ## torch.Size
 ## Preference Optimization
 - **What**: Fitting a policy to pairwise comparisons w/ a supervised loss.
 - **Why**: SFT cannot express "this is better than that".
-    - Its gradient only pushes probability **up** → no mechanism to push a bad response down.
+    - CE raises the demonstrated response & drains the rest only through normalization → ❌way to name a **specific** response as the worse one.
     - Quality is unratable in absolutes but reliably rankable in pairs → the cheap label is a comparison.
     - The [RLHF](rl.md#rlhf) route buys the same signal at the cost of a second model plus a rollout loop.
 - **How**:
@@ -928,9 +933,10 @@ def dpo_loss(pol_w, pol_l, ref_w, ref_l, beta=0.1):
     return loss, acc, beta * (pol_w - ref_w).mean(), beta * (pol_l - ref_l).mean()
 
 ## Example
-pw, pl = torch.tensor([-12.0, -20.0]), torch.tensor([-15.0, -18.0])
-rw, rl = torch.tensor([-13.0, -19.0]), torch.tensor([-14.0, -19.0])
+pw, pl = torch.tensor([-13.0, -21.0]), torch.tensor([-17.0, -24.0])   ## policy log pi(y|x)
+rw, rl = torch.tensor([-12.0, -20.0]), torch.tensor([-14.0, -20.0])   ## frozen reference
 print([round(t.item(), 4) for t in dpo_loss(pw, pl, rw, rl)])
+## [0.5762, 1.0, -0.1, -0.35] -> perfect accuracy, yet BOTH rewards are negative
 ```
 ````
 
@@ -959,9 +965,10 @@ print([round(t.item(), 4) for t in dpo_loss(pw, pl, rw, rl)])
 - It also cancels prompt difficulty: a prompt where all responses are improbable does not dominate the loss.
 
 *What must $\pi_\text{ref}$ be?*
-- The derivation assumes the preference data was generated by a policy close to $\pi_\text{ref}$.
-- → Standard recipe: SFT on the chosen responses first, then use **that** checkpoint as both $\pi_\text{ref}$ & the init.
-- Using an arbitrary checkpoint silently violates the assumption.
+- The **derivation** assumes Bradley-Terry preferences, ❌anything about who generated them.
+- The **practical** requirement is distribution match: public preference sets were sampled from some $\pi_\text{SFT}$, so DPO's authors set $\pi_\text{ref}=\pi_\text{SFT}$ whenever it exists.
+- W/o an SFT model, they instead fit $\pi_\text{ref}$ by MLE on the **chosen** responses — explicitly to mitigate the shift between the true (unavailable) reference distribution & the one DPO uses.
+- → An arbitrary checkpoint is not an error in the algebra; it is an uncontrolled distribution shift.
 
 *What does $\beta$ control?*
 - The implicit-reward scale = the KL strength. ⬇️$\beta$ → more drift from $\pi_\text{ref}$; ⬆️$\beta$ → stay put.
@@ -1142,9 +1149,9 @@ $$
 ```{attention} Q&A
 :class: dropdown
 *Why odds instead of the plain probability ratio?*
-- The odds ratio grows much more slowly than the probability ratio as the two likelihoods separate.
-- → A milder repulsion: the rejected response is pushed down without collapsing everything that looks like it.
-- The probability-ratio version over-suppresses & degrades generation quality.
+- ⚠️ Not because the odds ratio is smaller — algebraically $\textbf{OR}=\textbf{PR}\cdot\frac{1-P_\theta(y_l|x)}{1-P_\theta(y_w|x)}\geq\textbf{PR}$ whenever $y_w$ leads.
+- The argument is about the **distribution of values in practice**: sampled $\log\textbf{PR}$ has far heavier tails than $\log\textbf{OR}$ → the probability ratio discriminates the disfavored response far more extremely.
+- → The odds ratio is the *stabler* penalty, which is what a term running **alongside** SFT needs; an over-extreme penalty would fight the NLL term.
 
 *Why keep the SFT term?*
 - The odds-ratio term is purely **relative** — it is satisfied by lowering $y_l$ as easily as by raising $y_w$.
@@ -1385,6 +1392,7 @@ class LoRALinear(nn.Module):
     def merge(self):
         ## fold into W0 -> zero added latency at inference
         self.base.weight += self.scale * (self.B @ self.A)
+        self.B.zero_()   ## the branch is now INSIDE W0; leaving B would double-count it
         return self.base
 
 ## Example
@@ -1597,7 +1605,7 @@ $m$ & $BA$ are trainable; $W_0$ is frozen. The normalization decouples the two u
 ## Practice
 ### Data
 - **What**: The dataset, not the loss, is the method.
-- **Why**: The objective is fixed & has no free parameters describing *behavior*.
+- **Why**: The objective is fixed & has no free parameters describing behavior.
     - SFT's optimum **is** the data distribution → whatever is in the mix becomes the model.
     - Two runs w/ identical hyperparameters & different mixes produce unrecognizably different assistants.
 - **How**: 4 levers, in descending order of impact.

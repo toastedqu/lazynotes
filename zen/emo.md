@@ -70,46 +70,14 @@ An emotion requires its cause. Replay reinstates the cause. Each replay is a fre
 
 So technically, an emotion can stick FOR THE REST OF YOUR LIFE.
 
-&nbsp;
+## Solution?
 
-### No Fingerprint
-There is no fixed signature.
+Neither works:
 
-"Anger" is not one thing with one face, one heart rate, one chemistry. The same category shows up in wildly different bodies. The same body shows up as different categories. Scan for the essence of anger and you get the same result as scanning the lily for the flower: pigments and wavelengths, no passion.
+- **Venting:** Pressure accumulates. Release discharges it. Provoked people who vent - hit something, scream, "get it out" - end up angrier & more aggressive afterward, including toward people who did nothing to them. Doing literally nothing beats venting. Venting is rehearsal, and rehearsal is rumination with a physical component.
 
-What is actually running: a continuous affective reading, plus a learned concept laid over it, plus context.
-
-The reading is real. The category is a label.
-
-So an emotion is not detected. It is **constructed** - and it inherits every property of computation. Impermanent. Unseparable from its conditions. Empty of self-identity.
-
-&nbsp;
-
-### Two Exits That Don't Exist
-Everyone reaches for one of two moves. Neither works, and both are the same mistake.
-
-**Venting.** The intuition: pressure accumulates, release discharges it. Provoked people who vent - hit something, scream, "get it out" - end up angrier & more aggressive afterward, including toward people who did nothing to them. Doing literally nothing beats venting. Venting is rehearsal, and rehearsal is rumination with a physical component.
-
-**Suppression.** Pushing the expression down does not reduce the feeling. It raises cardiovascular load, degrades memory of whatever happened while we did it, and makes the people in the room measurably more uncomfortable. Push the thought down instead, and it returns more intrusive than before.
+- **Suppression.** Pushing the expression down does not reduce the feeling. It raises cardiovascular load, degrades memory of whatever happened while we did it, and makes the people in the room measurably more uncomfortable. Push the thought down instead, and it returns more intrusive than before.
 
 Both moves treat emotion as a substance - something with volume, stored somewhere, requiring transport. It has no volume. It is a process running.
 
 You cannot drain a process. You cannot bottle one either.
-
-&nbsp;
-
-### Naming
-Here is the strange one.
-
-Putting a feeling into precise words reduces the physiological response, while not feeling like we did anything at all.
-
-- Coarse: "I feel bad."
-- Precise: "I feel resentful, and underneath it, embarrassed."
-
-The coarse label answers *what does this mean for me*. It is a verdict, issued by the self, about the self's survival. It binds.
-
-The precise label answers *what is this*. It is a measurement. It has no self in it.
-
-Both are labels. Only one keeps the character in the loop.
-
-This is the only leverage in the chapter, and it trains.
