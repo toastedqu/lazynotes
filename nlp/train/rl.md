@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# RL for LLMs
+# RL
 How RL is wired onto a pretrained LM, and how the objective evolved from REINFORCE → PPO → GRPO → its descendants.
 
 Assumes RL and LLMs are each already understood in isolation.

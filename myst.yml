@@ -40,11 +40,13 @@ project:
     # - title: RL
     #   children:
     #     - file: rl/rl.md
-    # - title: NLP
-    #   children:
+    - title: NLP
+      children:
     #     - file: nlp/transformer.md
     #     # - file: nlp/models.md
     #     - file: nlp/train.md
+      - title: Post-Training
+        children:
         - file: nlp/train/sft.md
         - file: nlp/train/rl.md
     #     # - file: nlp/rh.md
@@ -55,7 +57,6 @@ project:
     #     - file: misc/dsa.md
     - title: Zen
       children:
-        - file: zen/intro.md
         - file: zen/comp.md
         - file: zen/self.md
         - file: zen/desire.md

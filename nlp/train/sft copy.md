@@ -9,27 +9,309 @@ kernelspec:
   language: python
   name: python3
 ---
-# Supervised
+# FT
+Everything that turns a pretrained LM into an assistant by **backprop against a known target** — no reward, no policy gradient: SFT, distillation, offline preference optimization, and the parameter-efficient ways to run all three.
 
+```{dropdown} Table: Shared Notations
+| Notation | Meaning |
+|:--|:--|
+| $x$ | Prompt (input token seq) |
+| $y$ | Response (output token seq) |
+| $y_t$ | $t$-th response token |
+| $y_{<t}$ | Response tokens before position $t$ |
+| $\|y\|$ | Response length (#tokens) |
+| $\mathcal{V}$ | Vocabulary |
+| $\mathcal{D}$ | Post-training dataset |
+| $\pi_\theta$ | Policy being trained (the LM) |
+| $\pi_\text{ref}$ | Reference policy (frozen, usually the SFT checkpoint) |
+| $y_w,y_l$ | Preferred / dispreferred response |
+| $\hat{r}_\theta$ | Implicit reward (a log-ratio, ❌a learned RM) |
+| $\beta$ | Reward scale / KL coeff |
+| $\sigma$ | Logistic sigmoid |
+| $W_0$ | Frozen pretrained weight matrix |
+| $r$ | Adapter rank |
+
+$r$ overrides the reward symbol used on the RL page — nothing here is trained against a reward.
+```
+
+&nbsp;
+
+## Setup
+### Pipeline
+- **What**: Ordered stages, each supplying a signal the previous one cannot express.
+- **Why**: A pretrained LM completes text; it does not answer.
+    - Next-token on web text → the likeliest continuation of a question is often another question.
+    - Knowledge sits in the weights, but producing it on demand is a behavior, ❌a fact.
+    - Format, refusal, tone, tool syntax, stopping — none of it is a property of the corpus.
+- **How**: 4 stages, ordered by how far past the given data each can reach.
+    1. **CPT**: Raw domain text → move the base distribution.
+    2. **SFT**: $(x,y)$ demonstrations → install the response behavior.
+    3. **Preference optimization**: $(x,y_w,y_l)$ → rank behaviors that demonstrations cannot show.
+    4. **RL**: Sampled responses + grader → optimize past every demonstration.
+
+```{dropdown} Table: Stages
+| Stage | Data | Signal / sample | Past the data? | Cost driver |
+|:--|:--|:--|:--|:--|
+| Pretrain | Raw web text | Next token | ❌ | Corpus scale |
+| CPT | Raw domain text | Next token | ❌ | Corpus scale |
+| SFT | $(x,y)$ | Full target seq | ❌ Imitation ceiling | Human writing |
+| Distillation | $(x,y)$ + teacher probs | Full target distribution | ❌ Teacher ceiling | Teacher inference |
+| Preference opt | $(x,y_w,y_l)$ | 1 bit | ✅ Weakly (ranks unseen pairs) | Human comparison |
+| RL | $x$ + grader | 1 scalar / rollout | ✅ | Rollout throughput |
+```
+
+```{attention} Q&A
+:class: dropdown
+*Why is the order fixed?*
+- Preference optimization & RL both **reweight** what the policy already emits → they need a policy that emits well-formed responses.
+- Reference-anchored methods (DPO, IPO, KTO) additionally need $\pi_\text{ref}$, which SFT has to produce first.
+- Skipping SFT → nearly every response is malformed → uniformly bad grades → ❌signal.
+- ⚠️ ORPO is the deliberate exception: it folds the NLL term into the preference loss & runs from the base model in 1 stage.
+
+*Which of these are actually supervised?*
+- Fixed target + plain backprop, ❌reward: CPT, SFT, distillation, offline preference optimization.
+- RFT & on-policy distillation **sample** from the policy but still fit a fixed target → supervised loss on self-generated inputs.
+- → The line is not "does it sample?" but "is the loss weighted by a reward?".
+
+*Do you need every stage?*
+- SFT alone → usable assistant, poor at trade-offs it was never shown.
+- SFT + preference optimization → the standard open-weights recipe.
+- +RL → worth it only w/ a reliable grader (verifiable domain) or a trusted RM.
+
+*Is post-training adding capability or exposing it?*
+- **Superficial alignment hypothesis** (LIMA): nearly all knowledge & capability come from pretraining; post-training only selects a response distribution. {cite:p}`zhou2023lima`
+- ✅Evidence: ~1k curated examples produce a competitive chat model.
+- ❌Evidence: distillation on reasoning traces raises accuracy on *unseen* problems, ❌only formatting.
+- → Contested. Safest reading: SFT ≈ elicitation & format, RL ≈ sharpening, genuinely new knowledge ≈ pretraining/CPT.
+```
+
+&nbsp;
+
+### Chat Template
+- **What**: Role-tagged serialization of a conversation into one token stream.
+- **Why**: The LM sees a flat sequence, ❌structured messages.
+    - Nothing in raw text marks where the user's turn ends & the model's begins.
+    - W/o a learned boundary, text inside a user turn is indistinguishable from an instruction → injection.
+    - No token means "done" → generation never terminates.
+- **How**:
+    1. Add **special tokens** for turn boundaries & role headers to the vocab.
+    2. Serialize messages in order; each turn = header + content + end token.
+    3. Train so the end-of-turn token is predicted after every assistant turn.
+    4. At inference, append the assistant header (**generation prompt**) & decode until the end-of-turn token.
+
+````{important} Code
+:class: dropdown
+```python
+SPECIALS = {"bot": "<|im_start|>", "eot": "<|im_end|>"}  ## registered in the tokenizer's vocab
+
+def render(messages, add_generation_prompt=True):
+    ## messages: [{"role": "user"|"assistant"|"system", "content": str}]
+    out = []
+    for m in messages:
+        ## header + content + explicit terminator -> the boundary is a TOKEN, not whitespace
+        ## NOTE: this string is safe only if user content is later tokenized with special-token
+        ## parsing DISABLED -- the guarantee lives in the tokenizer, not in this function
+        out.append(f"{SPECIALS['bot']}{m['role']}\n{m['content']}{SPECIALS['eot']}\n")
+    if add_generation_prompt:
+        ## inference-only: open the assistant turn and stop, so the model completes it
+        out.append(f"{SPECIALS['bot']}assistant\n")
+    return "".join(out)
+
+## Example
+msgs = [{"role": "user", "content": "hi"}, {"role": "assistant", "content": "hello"}]
+print(repr(render(msgs[:1])))
+## '<|im_start|>user\nhi<|im_end|>\n<|im_start|>assistant\n'
+print(repr(render(msgs, add_generation_prompt=False)))
+## '<|im_start|>user\nhi<|im_end|>\n<|im_start|>assistant\nhello<|im_end|>\n'
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*What breaks if the training template ≠ the inference template?*
+- One extra/missing token puts every prompt slightly off-distribution.
+- Fails silently: the model still answers, just worse — ❌error, ❌crash.
+- → The template ships **with** the weights; it is part of the model, ❌of the serving code.
+
+*Why must the markers be special tokens instead of literal strings?*
+- Special tokens are inserted by the renderer & excluded when tokenizing user content.
+- → A user who types `<|im_end|>` gets ordinary sub-word tokens, ❌the control token.
+- Literal-string markers are forgeable → the user can open a fake assistant turn.
+
+*Why train on the end-of-turn token?*
+- It is the only token that means "stop" → masked out of the loss, the model never learns to emit it.
+- Symptom: correct answer, followed by an invented next user turn, forever.
+
+*Base vs instruct checkpoint?*
+- Base: ❌template, ❌special tokens → prompt w/ few-shot text, expect continuation.
+- Instruct: template is mandatory; prompting it as raw text is off-distribution.
+
+*Where does the system prompt go?*
+- Its own leading turn → the model learns it outranks later user turns.
+- Vary it during SFT, otherwise the behavior binds to one exact string.
+```
+
+&nbsp;
+
+### Loss Masking
+- **What**: CE computed on response tokens only.
+- **Why**: Prompt tokens are given, never generated.
+    - Scoring them trains the model to generate user turns → capacity spent on the wrong distribution.
+    - Multi-turn: every assistant turn is a target, every user turn is context.
+- **How**:
+    1. Render the conversation; record the span of each assistant turn.
+    2. Set labels to the ignore index everywhere else.
+    3. Shift labels by 1 (position $t$ predicts token $t+1$).
+    4. Aggregate the surviving token losses.
+
+```{note} Math
+:class: dropdown
 Notations:
-- $x$: Prompt (input token seq)
-- $y$: Response (output token seq)
-- $y_t$: $t$-th response token
-- $y_{<t}$: Response tokens before position $t$
-- $|y|$: Response length (#tokens)
-- $\mathcal{V}$: Vocabulary
-- $\mathcal{D}$: Dataset
-- $\pi_\theta$: LM policy (next-token distribution)
+- IO:
+    - $\mathcal{B}$: Minibatch of $(x,y)$ pairs.
+    - $\mathcal{M}$: Set of unmasked (trainable) token positions.
+- Misc:
+    - $\mathbb{1}[\cdot]$: Indicator.
+    - $\ell$: Per-sample masked NLL.
+    - $N$: Per-sample #trainable tokens.
+
+Per-sample loss & token count:
+
+$$
+\ell(x,y)=-\sum_{t=1}^{|y|}\mathbb{1}[t\in\mathcal{M}]\log\pi_\theta(y_t|x,y_{<t}),\qquad N(x,y)=\sum_{t=1}^{|y|}\mathbb{1}[t\in\mathcal{M}]
+$$
+
+Aggregation is the entire design choice:
+
+$$
+\mathcal{L}(\theta)=\begin{cases}\sum_{(x,y)\in\mathcal{B}}\ell(x,y) & \text{sum loss}\\ \frac{1}{|\mathcal{B}|}\sum_{(x,y)\in\mathcal{B}}\frac{\ell(x,y)}{N(x,y)} & \text{sample mean}\\ \frac{\sum_{(x,y)\in\mathcal{B}}\ell(x,y)}{\sum_{(x,y)\in\mathcal{B}}N(x,y)} & \text{token mean}\end{cases}
+$$
+```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+import torch.nn.functional as F
+
+IGNORE = -100  ## torch's default ignore_index
+
+def build_labels(input_ids, spans):
+    ## spans: [(start, end)] half-open token ranges of the ASSISTANT turns
+    labels = torch.full_like(input_ids, IGNORE)
+    for s, e in spans:
+        labels[s:e] = input_ids[s:e]
+    return labels
+
+def sft_loss(logits, labels, reduction="token_mean"):
+    ## next-token shift: position t predicts token t+1
+    logits, labels = logits[:, :-1], labels[:, 1:]
+    tok = F.cross_entropy(
+        logits.reshape(-1, logits.size(-1)), labels.reshape(-1),
+        ignore_index=IGNORE, reduction="none",
+    ).view(labels.shape)                        ## (B, T-1), 0 at ignored positions
+    keep = labels != IGNORE
+    if reduction == "token_mean":
+        return tok.sum() / keep.sum()           ## every TOKEN weighted equally
+    if reduction == "sample_mean":
+        return (tok.sum(-1) / keep.sum(-1).clamp_min(1)).mean()  ## every SAMPLE weighted equally
+    return tok.sum()                            ## sum loss: no denominator
+
+## Example
+ids = torch.randint(0, 50, (1, 8))
+labels = build_labels(ids[0], [(4, 8)]).unsqueeze(0)  ## first 4 tokens are the prompt
+print(labels)                                         ## [-100 x4, then real ids]
+print(sft_loss(torch.randn(1, 8, 50), labels).item())
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Is masking the prompt always right?*
+- Standard, ❌universal. Scoring the prompt is a mild regularizer on tiny datasets & harmless when prompts are in-domain text.
+- ❌ For long prompts w/ short answers: the loss becomes mostly prompt → the answer signal is drowned.
+
+*Sample mean vs token mean vs sum?*
+- Sample mean → each response contributes equally → per-token weight $\propto\frac{1}{|y|}$ → long responses down-weighted.
+- Token mean → each token equal → long responses dominate the batch.
+- Sum → each token equal, and the gradient magnitude scales w/ the batch's token count → needs a re-tuned LR.
+- Tülu 3 found sum loss beat mean loss under a matched LR sweep. {cite:p}`lambert2024tulu`
+- ⚠️ W/ gradient accumulation, a token mean taken **per micro-batch** is not the token mean of the full batch.
+
+*Why is the ignore index $-100$ and not $0$?*
+- $0$ is a valid token id → it would silently train on whatever token $0$ is.
+- $-100$ is torch's sentinel: no gradient, and the position is excluded from the denominator.
+
+*Multi-turn: train on the last turn only, or all of them?*
+- All assistant turns → more signal per forward pass.
+- Last only → correct when earlier assistant turns came from a *different* model; otherwise wasted compute.
+```
+
+&nbsp;
+
+### Packing
+- **What**: Concatenating short samples into full-length sequences.
+- **Why**: Padding is compute spent on nothing.
+    - Instruction data is short & highly length-varied → a padded batch can be mostly pad.
+    - Attention is quadratic in sequence length → padding to the batch's longest sample is doubly wasteful.
+- **How**:
+    1. Concatenate rendered samples until the context window is full.
+    2. Reset position ids at every sample boundary.
+    3. Block cross-sample attention (block-diagonal mask, or a varlen attention kernel w/ cumulative lengths).
+    4. Apply prompt masking as usual.
+
+```{attention} Q&A
+:class: dropdown
+*What happens w/o cross-sample attention blocking?*
+- Tokens attend to unrelated preceding samples → **contamination**.
+- Tolerable in pretraining (long docs, few boundaries), harmful in SFT (short samples → many boundaries per sequence).
+- Symptom: answers that leak the topic of the previous sample in the pack.
+
+*Why reset position ids?*
+- Otherwise the 5th sample in a pack is only ever trained at positions 3000+.
+- → At inference every prompt starts at position 0 → off-distribution.
+
+*Packing vs length bucketing?*
+- Bucketing (sort by length, batch similar) → ❌boundary logic, but ⬇️batch diversity & still pads.
+- Packing → ~100% token utilization, needs the mask plumbing.
+
+*Does packing change the objective?*
+- Sum & token mean → ❌. Both aggregate over the same set of live tokens however the samples are grouped.
+- Sample mean → ✅. Once packed, 1 sequence $\neq$ 1 sample, so a per-sequence mean silently reweights everything inside the pack.
+
+*Does truncation matter?*
+- Splitting a sample across two packs teaches the model to stop mid-answer & to start mid-sentence.
+- → Drop over-length samples, or keep each sample whole (best-fit packing).
+```
 
 &nbsp;
 
 ## SFT
-- **What**: Train a next-token prediction model on curated $(x,y)$ pairs.
-- **Why**: Shift probability distribution onto desired behavior.
-- **How**: Minimize NLL of response tokens.
+- **Name**: Supervised Fine-Tuning
+- **What**: Next-token CE on curated $(x,y)$ pairs.
+- **Why**: Behavior must be **shown**, ❌described.
+    - Prompting alone → format is unreliable, & the instructions burn context on every call.
+    - The target is a distribution over responses; the only cheap handle on a distribution is samples from it.
+- **How**:
+    1. Collect $(x,y)$ pairs — human-written, distilled, or filtered self-generated.
+    2. Render w/ the chat template; mask the prompt tokens.
+    3. Minimize the NLL of the response tokens under teacher forcing.
+    4. 1–3 epochs at an LR 1–2 orders below pretraining.
 
 ```{note} Math
 :class: dropdown
+Notations:
+- IO:
+    - $(x,y)\sim\mathcal{D}$: Prompt-response pair.
+- Params:
+    - $\theta$: LM params.
+
+Sequence factorization:
+
+$$
+\log\pi_\theta(y|x)=\sum_{t=1}^{|y|}\log\pi_\theta(y_t|x,y_{<t})
+$$
+
 Objective:
 
 $$
@@ -39,16 +321,16 @@ $$
 
 ```{tip} Derivation
 :class: dropdown
-*What is SFT actually minimizing?*
+*What is SFT actually minimizing, and what does that imply?*
 
 1. The dataset defines a conditional $p_\mathcal{D}(y|x)$; the model defines $\pi_\theta(y|x)$.
-2. Expand the **forward KL** from data to model:
+2. Expand the **forward** KL from data to model:
 
     $$
     \text{KL}(p_\mathcal{D}\|\pi_\theta)=\mathbb{E}_{y\sim p_\mathcal{D}}[\log p_\mathcal{D}(y|x)]-\mathbb{E}_{y\sim p_\mathcal{D}}[\log\pi_\theta(y|x)]=-H(p_\mathcal{D})+H(p_\mathcal{D},\pi_\theta)
     $$
 
-3. $H(p_\mathcal{D})$ is $\theta$-free → minimize forward KL = minimize CE = MLE.
+3. $H(p_\mathcal{D})$ is $\theta$-free → minimizing forward KL $\equiv$ minimizing CE $\equiv$ MLE.
 4. Forward KL is **mode-covering**: wherever $p_\mathcal{D}(y|x)>0$, driving $\pi_\theta(y|x)\to0$ costs $\to\infty$.
 5. → The model must place mass on **every** demonstrated response, including mutually contradictory ones.
 6. → SFT averages the demonstrations; it cannot prefer among them. That gap is exactly what preference optimization & RL fill.
@@ -57,13 +339,15 @@ $$
 ```{attention} Q&A
 :class: dropdown
 *Pros?*
-- Dense signal ← the whole target sequence is supervised.
-- Direct control over format, tone, refusal style, tool syntax, etc.
+- Stable & cheap ← 1 model in memory, ❌sampling loop, ❌reward model.
+- Dense signal ← the whole target sequence is supervised, ❌1 scalar per response.
+- Direct control over format, tone, refusal style, tool syntax.
 
 *Cons?*
-- **Imitation ceiling**: Cannot exceed the best response in $\mathcal{D}$.
-- **Mode-covering**: Contradictory demonstrations get averaged into a blurry compromise.
-- Overfitting on small data.
+- **Imitation ceiling** ← cannot exceed the best response in $\mathcal{D}$.
+- ❌Targeted negative signal ← softmax CE does lower every non-target token, but only by normalization, in proportion to its current probability. Nothing can single out a specific bad response.
+- Mode-covering → contradictory demonstrations get averaged into a blurry compromise.
+- Overfits fast on small data → memorized phrasings, ⬇️output diversity.
 
 *Why does SFT on facts the model doesn't know induce hallucination?*
 - The target is a confident assertion the model has no internal support for.
