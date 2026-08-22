@@ -31,7 +31,7 @@ This repo is **one handbook serving both**. Optimize every note for **fastest po
 | **Typical topics** | ML, and the well-trodden parts of DL/NLP/RL, DSA. Job-market surface area — often low personal value, but it *will* be asked. | Math (prob, linalg, info theory), AC, foundations. Low interview value, high personal value. |
 | **Extra content** | Gotchas, common misconceptions, pros/cons, "when does this break". | Assumptions, edge cases, *why it's true*, links to adjacent concepts, precise statements of conditions. |
 
-**Mode B is strictly more fine-grained and more informative than Mode A** — deeper derivations, stated assumptions, sharper conditions. It is **not** a license to write prose. Skimmability remains a hard constraint in both modes; the extra depth goes into **dropdowns** (§3), not into the top-level flow.
+**Mode B is strictly more fine-grained and more informative than Mode A** — deeper derivations, stated assumptions, sharper conditions. It is **not** a license to write prose.
 
 Modes are per-*concept*, not per-folder. A concept can be both — attention, backprop, and cross-entropy serve career and AC pursuit equally.
 
@@ -45,11 +45,8 @@ Modes are per-*concept*, not per-folder. A concept can be both — attention, ba
 
 - Every concept block is **self-contained**. No "as discussed above". Cross-link instead.
 - **Answer-shaped.** A block should read like a strong, direct answer — never an essay. This holds in both modes; Mode B just answers a harder question.
-- **Skimmability is a constraint, not a budget.** It governs *form*, not *coverage*. When the two seem to conflict, the fix is to **restructure** — nest it, push it into a dropdown, compress it with symbols — **never to drop relevant material**.
 - **Be as complete as the active mode demands.** If a fact would change an interview answer (A) or is needed to genuinely understand and use the concept (B), it belongs in the note. Under-coverage is as much a failure as a wall of text.
-    - You are not expected to reach textbook depth — that is out of scope for this format. You *are* expected to leave out nothing that matters for grasping, using, or defending the concept.
-- Depth lives in **collapsed dropdowns**, never in the top-level flow. This is the mechanism that resolves the tension: skimmable surface, complete depth.
-- Cut **filler**, never **content**. If a sentence adds no recallable information, compress or delete it.
+- **Skimmability governs form, not coverage.** When the two seem to conflict, **restructure** — nest it, push it into a collapsed dropdown, compress it with symbols. Never drop relevant material; cut filler instead.
 
 ---
 
@@ -86,11 +83,11 @@ Every concept — no exceptions — is a heading followed by this block:
 ```markdown
 ### <Concept Name>
 - **Name**: <full expansion of the acronym/codename> {cite:p}`bibkey`
-- **What**: <one sentence: what it IS>
-    - <optional nested bullets to augment ONLY if the one-liner is insufficient>
-- **Why**: <problem / motivation / what breaks without it>
-    - <nested bullets>
-- **How**: <intuitive, step-by-step mechanism>
+- **What**: <shortest phrase that is still exactly correct>
+    - <nested bullets ONLY if the one-liner would otherwise lose information>
+- **Why**: <the problem, and/or the motivation if there is no problem>
+    - <nested bullets ONLY if the one-liner would otherwise lose information>
+- **How**: <intuitive mechanism>
     1. <step>
     2. <step>
 ```
@@ -100,11 +97,22 @@ Every concept — no exceptions — is a heading followed by this block:
 | Section | Mandatory? | Content |
 |:--|:--|:--|
 | `**Name**` | If the heading is an **all-caps initialism** (SVM, PCA, LDA, GLM, KNN, GMM, SVD, ICA, NMF, LOF, GBDT, DBSCAN, UMAP) | Full expansion — **mandatory**, no matter how well known. Carries the citation. Omit for plain-English headings and for pronounceable/mixed-case coinages (Lasso, AdaBoost, XGBoost, LightGBM, CatBoost, Bagging, K-Means). Mixed-case acronyms still earn a line when the expansion is genuinely non-obvious (t-SNE, FP-Growth). |
-| `**What**` | **ALWAYS. Absolutely mandatory.** | The **shortest possible noun phrase**, not a sentence. "Weighted sum of features." NOT "Models the conditional mean of a continuous target as a linear function of the features." Drop articles, copulas, subordinate clauses. Never a definition of what it does *for you*. |
-| `**Why**` | Strongly preferred; omit only if no honest "why" exists | **The problem / motivation ONLY.** Benefits, pros and payoffs belong in Q&A `*Pros?*` — never here. One line if one line suffices; otherwise lead with a one-word headline and unpack in nested bullets. Nest `*Why do we need it?*` / `*Why does it work?*` sub-questions when both apply. |
+| `**What**` | **ALWAYS. Absolutely mandatory.** | The **shortest phrase that is still exactly correct** — the part-of-speech is free. Usually a noun phrase ("Weighted sum of features."); a verb phrase is equally valid when the concept is a procedure ("Train a next-token prediction model on curated $(x,y)$ pairs."). Never a multi-clause sentence: NOT "Models the conditional mean of a continuous target as a linear function of the features." Drop filler; keep every qualifier that changes the meaning. Never a definition of what it does *for you*. |
+| `**Why**` | Strongly preferred; omit only if no honest "why" exists | **The problem AND the motivation.** Lead with the problem when one exists ("OLS assumes a Gaussian, unbounded, homoskedastic response."). When the concept fixes no failure, the bare motivation *is* the answer ("Shift probability distribution onto desired behavior.", "Sparsity.", "Multiclass."). One line if one line suffices; otherwise lead with a one-word headline and unpack in nested bullets. Nest `*Why do we need it?*` / `*Why does it work?*` sub-questions when both apply. |
 | `**How**` | Strongly preferred; omit only if the concept has no mechanism (e.g., a pure definition) | Intuitive mechanism. Numbered list if sequential, bulleted if not. Sub-labels are **bold** (`**Inference**` / `**Training**`), never italic. Do NOT preview what the Math block already states. Optimize for intuition, not formality. |
 
 Never invent new top-level labels. `**What/Why/How**` (+ `**Name**`) is the fixed vocabulary. Everything that does not fit goes into an optional block below.
+
+Never ship a stub — a bare `**What**` with no `**Why**`/`**How**`/Q&A — for a concept that clearly has more to say.
+
+**Nesting test — conciseness AND accuracy, never one at the cost of the other.** Nested bullets under `**What**` / `**Why**` are neither encouraged nor banned. The single test:
+
+> Can the parent line absorb this nested bullet **without losing information**?
+
+- ✅ **Yes → collapse it.** The nesting was padding.
+- ✅ **No → keep it nested.** Deleting it would make the note *wrong* or *incomplete*, and that is never an acceptable price for a shorter block.
+
+Apply the same test recursively: shrink until the next shrink would cost a fact, then stop. Never nest to look thorough; never flatten to look terse.
 
 **Group headings** (`##` topic buckets) take a `- **What**:` bullet **only if the heading implies a concept** (e.g. `## Linear Models`). A purely organizational heading (e.g. `## Clustering` used as a filing cabinet) gets **nothing** beneath it. Never a free-floating prose line under any heading.
 
@@ -178,6 +186,7 @@ $$
 ````
 
 - **Notation groups** (use only those that apply, in this order): `IO:` → `Params:` → `Hyperparams:` → `Misc:` (or `Intermediate values:`).
+- **`Notations:` is section-specific ONLY.** It is optional, and it lists exactly the symbols this concept introduces (§6 Tier 3) — if every symbol is already declared page-level, drop `Notations:` entirely and open with the body header.
 - **One symbol per bullet.** Never pack two definitions on one line (`- $\lambda_1$: L1 weight. $\lambda_2$: L2 weight.` ❌ → two bullets ✅).
 - **Body headers** by concept type:
   - Module / layer → `Forward:` / `Backward:`
@@ -306,12 +315,12 @@ $T$⬆️ → Less probable tokens become more probable → Randomness⬆️
 ```
 
 **Rules:**
+- **Conciseness AND accuracy — never trade one for the other.** Compress until the next cut would remove a fact, then stop. A shorter block that is now incomplete or wrong is a failure, not a win.
 - Sentence fragments > full sentences. Drop articles and copulas where meaning survives.
 - One idea per bullet. Chain causality with arrows instead of "which means that".
 - **Long arrow chains get split.** Lead with a one-word headline answer, then unpack in nested bullets:
   `- **Why**: Sparsity.` → `    - Irrelevant weights set to **exactly 0**.` → `    - → regularization + automatic feature selection in one shot.`
-- **Bold** only the term being defined or the named mechanism. *Italic* only for Q&A questions.
-- **No emphasis-bolding.** Bold marks a defined term, not a word you want to shout.
+- **Bold** marks the term being defined or the named mechanism — never emphasis, never a whole sentence.
 - Prefer `&` over "and". Abbreviate freely and consistently: `param`, `grad`, `curr`, `prev`, `LR`, `NN`, `LM`, `RM`, `i.e.,`, `e.g.,`.
 - **No annotations, no fluff.** Cut anything that isn't the fact itself — parenthetical asides, difficulty labels, "which live in their own sections", "for this page", self-evident scope disclaimers.
 - **Say it once.** If the Math block states it, `**How**` doesn't preview it. If Q&A states it, `**Why**` doesn't duplicate it.
@@ -323,12 +332,43 @@ $T$⬆️ → Less probable tokens become more probable → Randomness⬆️
 
 ## 6. Notation
 
-Global notation is defined in `intro.md` and is the default:
+Three tiers, each defined exactly once, narrowest wins.
+
+### Tier 1 — Global (`intro.md`)
 
 `$a$` scalar · `$\mathbf{a}$` vector · `$A$` matrix / random variable / upper bound · `$\mathbf{A}$` tensor · `$\mathcal{A}$` set / special · `$\mathbb{A}$` number set · `$\hat{\ }$` estimator · `$m$` #samples · `$n$` #features · `$i$` sample idx · `$j$` feature idx · `$k$` class idx · `$x$` input · `$y$` output.
 
-- Section-specific notation takes priority but **must be declared** in that block's `Notations:` list.
-- Prefer the source paper's notation **only** where it does not clash with the global scheme; when it clashes, the repo scheme wins — note the mapping if a reader might be confused.
+### Tier 2 — Page-level common notations — **MANDATORY on every STEM page**
+
+Every STEM page opens with an uncollapsed `Notations:` bullet list, immediately after the `#` title (and after the 1–3 line scope statement, if the page has one), before the first `&nbsp;`:
+
+```markdown
+# Supervised
+
+Notations:
+- $x$: Prompt (input token seq)
+- $y$: Response (output token seq)
+- $y_t$: $t$-th response token
+- $\mathcal{D}$: Dataset
+- $\pi_\theta$: LM policy (next-token distribution)
+
+&nbsp;
+```
+
+Rules:
+- **Uncollapsed and plain.** A bullet list at column 0 — **NOT** a `{dropdown}`, **NOT** a table. This is the one notation block exempt from "collapse the depth".
+- **Only page-global symbols.** A symbol earns a slot only if it is used across sections. A symbol local to one concept stays in that concept's Math `Notations:`. This list is a shared prefix, not a page glossary.
+- One symbol per bullet.
+- Header wording: `Notations:` (or `Default notations:` on pages that already use it — match the page).
+- Declare any deliberate override of Tier 1 here, on its own line below the list.
+- Only exemption: a page with no math at all (e.g. a pure taxonomy page) has no symbols to declare.
+
+### Tier 3 — Section-specific (`{note} Math` → `Notations:`)
+
+- Declares **only** what Tier 1 & 2 have not. Never repeat an inherited symbol.
+- Takes priority over Tiers 1–2 where it genuinely overrides one — and the override **must be stated**.
+- Drop the whole `Notations:` sub-block when the concept introduces no new symbol.
+- Prefer the source paper's notation **only** where it does not clash with the repo scheme; when it clashes, the repo scheme wins — note the mapping if a reader might be confused.
 
 ---
 
@@ -410,7 +450,7 @@ kernelspec:
 
 **Headings** — one `#` per page, then nest by *taxonomy*, not by length:
 
-- `#` Page title + a 1–3 line scope statement. Add a "does NOT cover" line **only when there is genuine ambiguity** with a neighbouring page — never as boilerplate ("It does NOT cover neural nets or RL" on an `ml/` page is self-evident → cut it).
+- `#` Page title + a 1–3 line scope statement, then the **page-level common notations block** (§6, mandatory on every STEM page). Add a "does NOT cover" line **only when there is genuine ambiguity** with a neighbouring page — never as boilerplate ("It does NOT cover neural nets or RL" on an `ml/` page is self-evident → cut it).
 - `##` Topic group or top-level concept. Concept-bearing → `- **What**:` bullet. Purely organizational → nothing beneath it.
 - `###` Concept.
 - `####` Variant / sub-concept (e.g. `## Activation` → `### ReLU` → `#### LReLU`).
@@ -418,6 +458,7 @@ kernelspec:
 **Layout:**
 - `&nbsp;` alone on a line (blank line before and after) separates sibling concept blocks and precedes the next `##` / `###`.
 - **Indent nested bullets with 4 spaces, never tabs.** (Older files mix both — new and edited content standardizes on spaces.)
+- **Never reformat or restyle unrelated existing content** while making a targeted edit.
 - Cross-link concepts instead of repeating them: `[covariate shift](../dl/issues.md#covariate-shift)` — relative path, lowercase-hyphen anchor derived from the target heading. Verify the target heading exists.
 - Images live in `images/<section>-<page>/<name>.png` and are inserted with:
 
@@ -446,7 +487,7 @@ kernelspec:
 10. Build: `~/.virtualenvs/jb2/bin/jupyter-book build --html`. Fix any directive/citation errors.
 11. **Run the mandatory cross-provider peer review (§11).**
 
-When the user dumps a rough topic list, produce full blocks for each — do not return an outline and ask them to fill it in. That defeats the purpose of "lazynotes".
+When the user dumps a rough topic list, produce full blocks for each. That is the point of "lazynotes".
 
 ### Whole-page scope — you choose the concepts
 
@@ -496,19 +537,15 @@ The reviewer is stateless. Give it: what you changed, which files it may open, a
 
 ### Reviewer scope — hard limit
 
-**The reviewer may access ONLY: (1) the files you modified in this round, (2) `references.bib` — always, whether or not you touched it, and (3) web search. Nothing else on disk.**
-
-State this in the prompt as an explicit instruction, e.g.:
+**The reviewer may access ONLY the files you modified this round, `references.bib`, and web search.** Paste this into the prompt verbatim:
 
 > Your file access is limited to exactly these files: `<list>`, plus `references.bib`. Do NOT open, read, grep, glob, or list any other file or directory in this repository — no exploration, no "checking related pages", no reading the repo root. Everything else you need is in this prompt. You may use web search freely to verify claims against primary sources.
 
-Why: it keeps the review a genuine independent check on *the content you produced* rather than a repo-wide audit, and it keeps `zen/` and unrelated pages out of reach. `references.bib` is the standing exception because every citation check depends on it.
-
 **Consequence — you must supply the rest of the context, not the filesystem.** If the reviewer needs anything else outside the whitelist, **paste it into the prompt**:
-- The global notation block from `intro.md` when notation correctness is in play.
+- The global notation block from `intro.md`, **and the page-level common notations block**, when notation correctness is in play — a section `Notations:` list is incomplete on its own by design.
 - The target heading of any cross-link you added, so it can confirm the link resolves.
 
-You remain responsible for the checks the reviewer structurally cannot do — e.g. "does this cross-link anchor exist" stays on your pre-submit checklist (§13).
+You remain responsible for the checks the reviewer structurally cannot do — e.g. "does this cross-link anchor exist" stays on your pre-submit checklist (§12).
 
 **Instruct the reviewer to check, in priority order:**
 1. **Math** — every equation correct, dimensions/indices consistent, notation matching the declared `Notations:` and the global scheme you pasted in.
@@ -530,69 +567,28 @@ Tell it explicitly: **report only real errors with the correct fix. Do not comme
 
 ---
 
-## 12. Anti-patterns
+## 12. Pre-submit checklist
 
-Never do any of these:
-
-- ❌ Write a `**What**` as a full sentence. It is a noun phrase — the shortest one that is still correct.
-- ❌ Skip `**What**`.
-- ❌ Put a benefit, pro, or property in `**Why**`. Those are Q&A material.
-- ❌ Omit `**Name**` for an all-caps initialism heading (SVM, PCA, GLM, KNN) — those ALWAYS get expanded. Conversely, don't expand pronounceable coinages (Lasso, AdaBoost, XGBoost).
-- ❌ Put `Evaluation:` / metrics in a model's Math block. Evaluation gets its own page.
-- ❌ Annotate a Q&A question — no `(top gotcha)`, `(classic gotcha)`, `(the whole trick)`.
-- ❌ Use italics for anything other than a Q&A question (`*Inference*` → `**Inference**`).
-- ❌ Pack two symbol definitions onto one `Notations:` bullet.
-- ❌ Leave a free-floating prose line under a heading, or force a `**What**` onto a purely organizational group heading.
-- ❌ Restate in `**How**` what the Math block already says.
-- ❌ Write a boilerplate "does NOT cover" line where the exclusion is self-evident.
-- ❌ Invent top-level labels beyond `Name/What/Why/How`.
-- ❌ Put derivations, notation dumps, or long tables in the uncollapsed flow.
-- ❌ Cite the same source twice inside one concept.
-- ❌ Cite a paper for a fundamental concept, or leave a modern method uncited.
-- ❌ Emit a `{cite}` key absent from `references.bib`.
-- ❌ Write flowing paragraphs, motivational framing, or a closing summary.
-- ❌ Omit relevant material to keep a block short. Compress it or move it into a dropdown instead.
-- ❌ Drop depth from a Mode B (personal-pursuit) concept because "it won't come up in an interview".
-- ❌ Bolt a forced AC/consciousness angle onto a concept that has none.
-- ❌ Ship a stub — a bare `**What**` with no `**Why**`/`**How**`/Q&A — for a concept that clearly has more to say.
-- ❌ Return an outline, or ask which concepts to include, when asked to complete a whole page — decide and write it (§10).
-- ❌ Omit a prevalent, interviewable concept from a page you were asked to complete.
-- ❌ Restrict a whole-page build to the topic list already in the file — extend it; it's a hint, not a boundary.
-- ❌ Write a Code block for a non-programmable concept (bias-variance tradeoff, overfitting, MDP/POMDP, scaling laws).
-- ❌ Write a Code block whose *subject* is a single built-in call (`nn.Linear` in the Linear note, `nn.MultiheadAttention` in the MHA note).
-- ❌ Use `{code-cell}` — the `jb2` venv cannot execute `torch`/`numpy`, and it will break the build.
-- ❌ Report a task done without running the cross-provider peer review (§11).
-- ❌ Give the reviewer access to any local file beyond the ones you modified and `references.bib` (paste the context instead).
-- ❌ Accept a reviewer's correction you did not independently verify.
-- ❌ Use exotic symbols as prose glue.
-- ❌ Use tabs for new indentation.
-- ❌ Reformat or restyle unrelated existing content while making a targeted edit.
-- ❌ **Touch `zen/` — ever, for any reason.** Also never touch `_build/`, or any environment other than `~/.virtualenvs/jb2`.
-- ❌ Bold entire sentences, or bold a word purely for emphasis.
-
----
-
-## 13. Pre-submit checklist
-
-- [ ] `**What**` present, a noun phrase, as short as correctness allows.
-- [ ] `**Why**` carries only the problem/motivation — zero pros, benefits, or properties.
+- [ ] `**What**` present; shortest phrase that is still exactly correct (noun or verb phrase); no multi-clause sentence.
+- [ ] `**Why**` carries the problem and/or the motivation — zero pros, benefits, or properties.
+- [ ] Every nested bullet fails the collapse test (§3): its parent line cannot absorb it without losing information.
 - [ ] `**Why**` and `**How**` present, or their absence is genuinely justified.
 - [ ] `**Name**` present for every all-caps initialism heading; absent for pronounceable coinages.
 - [ ] `**How**` sub-labels bold; italics used ONLY for Q&A questions; no annotations on any Q&A question.
 - [ ] Optional blocks in order (Math → Derivation → Example → Code → Table → Q&A), all `:class: dropdown`.
 - [ ] Math block sticks to its skeleton — no `Evaluation:` / metrics.
+- [ ] Page-level common notations block present, uncollapsed, plain bullet list, page-global symbols only.
 - [ ] `Notations:` has exactly one symbol per bullet.
-- [ ] Every symbol in a Math block is defined in `Notations:` or immediately under its equation.
-- [ ] Notation consistent with `intro.md`, or the override is declared.
-- [ ] Modern concept → exactly one citation, on `**Name**` (or `**What**`); key exists in `references.bib`.
+- [ ] Math `Notations:` lists section-specific symbols ONLY — nothing already in the page-level block; dropped entirely if it would be empty.
+- [ ] Every symbol in a Math block is defined in the page-level block, in the section `Notations:`, or immediately under its equation.
+- [ ] Notation consistent with `intro.md` and the page-level block, or the override is declared.
+- [ ] Modern concept → exactly one citation, on `**Name**` (or `**What**`); key exists in `references.bib`. Fundamental concept → none.
 - [ ] Every cross-link resolves: file path correct, target heading actually exists.
-- [ ] Fundamental concept → no citation.
 - [ ] Arrows/symbols used instead of causal prose; no filler phrases, no annotations, no boilerplate scope disclaimers.
 - [ ] Nothing is said twice across `**How**` / Math / Q&A.
 - [ ] Group headings: `**What**` only if concept-bearing; otherwise nothing beneath.
-- [ ] Mode identified (A / B / both — default both); coverage meets that mode's bar.
+- [ ] Mode identified (A / B / both — default both); nothing that mode's bar demands was left out.
 - [ ] Whole-page task → every prevalent/interviewable concept present; Mode B pages also carry the less-prevalent ones; exotic ones excluded; hierarchy ordered foundational → derived.
-- [ ] Nothing an interviewer would probe, or a user would need to apply the concept, was left out.
 - [ ] 4-space indentation; `&nbsp;` separator added.
 - [ ] Heading depth matches the surrounding taxonomy.
 - [ ] Every factual claim is either settled STEM or verified against a primary source.
@@ -602,7 +598,7 @@ Never do any of these:
 
 ---
 
-## 14. Reference template
+## 13. Reference template
 
 Abridged from `nlp/train.md` — this is the house style, use it as the shape to match (not as content to reproduce):
 

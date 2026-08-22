@@ -47,8 +47,8 @@ project:
     #     - file: nlp/train.md
       - title: Post-Training
         children:
-        - file: nlp/train/sft.md
-        - file: nlp/train/rl.md
+        - file: nlp/post/sft.md
+        - file: nlp/post/rl.md
     #     # - file: nlp/rh.md
     #     - file: nlp/infer.md
     #     - file: nlp/eval.md
