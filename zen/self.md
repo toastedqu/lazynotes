@@ -10,6 +10,7 @@ kernelspec:
   name: python3
 ---
 # 2. Self
+
 "Self" is an illusion.
 
 &nbsp;
@@ -17,20 +18,22 @@ kernelspec:
 ## Illusion
 Computation optimizes the human brain for 2 objectives: **survival** & **reproduction**.
 
-### Survival Instinct
-Specifically, the brain is optimized for **perceived** survival. The brain receives signals, compresses them into a model of threats & resources, then optimizes the model's score.
+### Survival
+The brain is optimized for **perceived survival**. The brain receives signals, compresses them into a model of threats & resources, then optimizes the model's score.
 
 Reality is NEVER in the loop. Only its representation is. Evolution only demanded that the model is cheap enough to run & accurate enough to keep the genes moving, so the learned model has NEVER seen reality.
 
 When the model diverges from reality, we act against our own survival - chronic stress over imagined dangers, addiction to false rewards, self-destruction in pursuit of safety, ...
 
-At the moment, our brain only checks its prior from centuries of evolution, optimized on an illusory objective - **perceived survival**.
+At the moment, our brain only checks its prior from centuries of evolution, optimized on an illusory objective.
 
 In other words, we CANNOT see reality.
 
 &nbsp;
 
 ### Reproduction
+For some unknown reason, we consider reproduction as continued survival.
+
 The brain treats status, attractiveness, and belonging as survival variables, because for our ancestors, they were. Genes that ignored them did not propagate.
 
 This is why social rejection hurts like physical injury. To the brain, both are the same signal - **reproduction threatened**.

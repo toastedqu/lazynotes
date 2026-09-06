@@ -45,10 +45,23 @@ project:
     #     - file: nlp/transformer.md
     #     # - file: nlp/models.md
     #     - file: nlp/train.md
+      - file: nlp/token.md
+      - file: nlp/attn.md
+      - title: Pre-Training
+        children:
+        - file: nlp/pre/obj.md
       - title: Post-Training
         children:
         - file: nlp/post/sft.md
+        - file: nlp/post/peft.md
+        - file: nlp/post/po.md
         - file: nlp/post/rl.md
+        - file: nlp/post/kd.md
+      - title: Inference
+        children:
+        - file: nlp/infer/dec.md
+        - file: nlp/infer/cache.md
+      - file: nlp/eval.md
     #     # - file: nlp/rh.md
     #     - file: nlp/infer.md
     #     - file: nlp/eval.md
@@ -64,11 +77,12 @@ project:
         - file: zen/sol.md
         - file: zen/meta.md
         - file: zen/forget.md
-    - title: 易
-      children:
-        - file: iching/liuyao.md
-          children:
-          - file: iching/pan.md
+    # - title: 易
+    #   children:
+    #     - file: yi/intro.md
+    #     - file: yi/liuyao.md
+    #       children:
+    #       - file: yi/pan.md
     - file: about.md
 site:
   options:

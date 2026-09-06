@@ -46,7 +46,7 @@ kernelspec:
 
 &nbsp;
 
-### DPO
+## DPO
 - **Name**: Direct Preference Optimization {cite:p}`rafailov2023direct`
 - **What**: Preference classification w/ the LM as its own reward model.
 - **Why**: The RLHF stack is expensive & fragile.
@@ -196,7 +196,7 @@ print([round(t.item(), 4) for t in dpo_loss(pw, pl, rw, rl)])
 
 &nbsp;
 
-#### IPO
+### IPO
 - **Name**: Identity Preference Optimization {cite:p}`azar2023general`
 - **What**: Squared-loss preference matching w/ a finite target margin, ❌Bradley-Terry.
 - **Why**: DPO overfits whenever the preferences are (nearly) deterministic.
@@ -248,7 +248,7 @@ $$
 
 &nbsp;
 
-#### KTO
+### KTO
 - **Name**: Kahneman-Tversky Optimization {cite:p}`ethayarajh2024kto`
 - **What**: Preference optimization from **unpaired** binary labels.
 - **Why**: Pairing is the expensive part of preference data.
@@ -322,7 +322,7 @@ $z_0$ is estimated by shifting outputs within the microbatch to form mismatched 
 
 &nbsp;
 
-#### ORPO
+### ORPO
 - **Name**: Odds Ratio Preference Optimization {cite:p}`hong2024orpo`
 - **What**: SFT loss + an odds-ratio penalty, one stage, ❌reference model.
 - **Why**: SFT has a side effect that a second stage then has to undo.
@@ -385,7 +385,7 @@ $$
 
 &nbsp;
 
-#### SimPO
+### SimPO
 - **Name**: Simple Preference Optimization {cite:p}`meng2024simpo`
 - **What**: Length-normalized average log-prob as the reward, w/ a target margin, ❌reference model.
 - **Why**: DPO's implicit reward is not the quantity decoding actually ranks by.

@@ -29,7 +29,6 @@ This repo is **one handbook serving both**. Optimize every note for **fastest po
 | **Goal** | Recall + defend it under questioning. | Build a correct, durable mental model. |
 | **Bar** | Everything an interviewer would probe. | Everything needed to reason with the concept and connect it to others. |
 | **Typical topics** | ML, and the well-trodden parts of DL/NLP/RL, DSA. Job-market surface area — often low personal value, but it *will* be asked. | Math (prob, linalg, info theory), AC, foundations. Low interview value, high personal value. |
-| **Extra content** | Gotchas, common misconceptions, pros/cons, "when does this break". | Assumptions, edge cases, *why it's true*, links to adjacent concepts, precise statements of conditions. |
 
 **Mode B is strictly more fine-grained and more informative than Mode A** — deeper derivations, stated assumptions, sharper conditions. It is **not** a license to write prose.
 
@@ -43,10 +42,7 @@ Modes are per-*concept*, not per-folder. A concept can be both — attention, ba
 
 ### Direct consequences (these override any general writing instinct)
 
-- Every concept block is **self-contained**. No "as discussed above". Cross-link instead.
 - **Answer-shaped.** A block should read like a strong, direct answer — never an essay. This holds in both modes; Mode B just answers a harder question.
-- **Be as complete as the active mode demands.** If a fact would change an interview answer (A) or is needed to genuinely understand and use the concept (B), it belongs in the note. Under-coverage is as much a failure as a wall of text.
-- **Skimmability governs form, not coverage.** When the two seem to conflict, **restructure** — nest it, push it into a collapsed dropdown, compress it with symbols. Never drop relevant material; cut filler instead.
 
 ---
 
@@ -65,7 +61,6 @@ Modes are per-*concept*, not per-folder. A concept can be both — attention, ba
 - `_build/` is generated and gitignored. **Never edit or read it as source.**
 - A new page is invisible until registered in `myst.yml` under `project.toc`. Large parts of the TOC are currently commented out — **do not uncomment sections the user did not ask for**; if you add a page to a commented-out branch, say so.
 - `references.bib` is wired in via `myst.yml` → `project.bibliography`; it renders through `references.md`.
-- **Verify with a build before declaring done** whenever you touch `myst.yml`, add citations, or add directives.
 
 **🚫 `zen/` IS ABSOLUTELY OFF-LIMITS.** It is the user's personal Zen practice — not study notes.
 - **NEVER** create, edit, delete, rename, move, or reformat anything under `zen/`.
@@ -186,8 +181,7 @@ $$
 ````
 
 - **Notation groups** (use only those that apply, in this order): `IO:` → `Params:` → `Hyperparams:` → `Misc:` (or `Intermediate values:`).
-- **`Notations:` is section-specific ONLY.** It is optional, and it lists exactly the symbols this concept introduces (§6 Tier 3) — if every symbol is already declared page-level, drop `Notations:` entirely and open with the body header.
-- **One symbol per bullet.** Never pack two definitions on one line (`- $\lambda_1$: L1 weight. $\lambda_2$: L2 weight.` ❌ → two bullets ✅).
+- **`Notations:` is optional and governed by §6 Tier 3.**
 - **Body headers** by concept type:
   - Module / layer → `Forward:` / `Backward:`
   - Model → `Model:` / `Inference:` / `Training:`
@@ -274,18 +268,6 @@ The stress-test payload — where a concept is defended, not just stated. Italic
 
 This is also where every **benefit, drawback and property** lives — anything that evaluates the concept rather than explaining it belongs here, not in `**Why**`.
 
-````markdown
-```{attention} Q&A
-:class: dropdown
-*Pros?*
-- Smooth → Differentiable
-- Convex → Guaranteed global minimum.
-
-*Cons?*
-- Sensitive to outliers ← Outliers take too much gradient
-```
-````
-
 **Mode A questions** — `*Pros?*`, `*Cons?*`, `*Assumptions?*`, `*Why <specific design choice>?*`, `*When is X NOT enough?*`, `*When should you turn it off?*`, plus known interview gotchas and common misconceptions.
 
 **Mode B questions** — go past the interview surface: `*Why is this true?*`, `*What breaks if assumption X fails?*`, `*How does this relate to <adjacent concept>?*`, `*What's the limiting/degenerate case?*`, `*What does this tell us about intelligence/AC?*` where genuinely applicable (never force an AC angle).
@@ -315,7 +297,6 @@ $T$⬆️ → Less probable tokens become more probable → Randomness⬆️
 ```
 
 **Rules:**
-- **Conciseness AND accuracy — never trade one for the other.** Compress until the next cut would remove a fact, then stop. A shorter block that is now incomplete or wrong is a failure, not a win.
 - Sentence fragments > full sentences. Drop articles and copulas where meaning survives.
 - One idea per bullet. Chain causality with arrows instead of "which means that".
 - **Long arrow chains get split.** Lead with a one-word headline answer, then unpack in nested bullets:
@@ -332,7 +313,7 @@ $T$⬆️ → Less probable tokens become more probable → Randomness⬆️
 
 ## 6. Notation
 
-Three tiers, each defined exactly once, narrowest wins.
+Three tiers, each defined exactly once, narrowest wins. **One symbol per bullet in every tier** — never pack two definitions on one line (`- $\lambda_1$: L1 weight. $\lambda_2$: L2 weight.` ❌ → two bullets ✅).
 
 ### Tier 1 — Global (`intro.md`)
 
@@ -358,7 +339,6 @@ Notations:
 Rules:
 - **Uncollapsed and plain.** A bullet list at column 0 — **NOT** a `{dropdown}`, **NOT** a table. This is the one notation block exempt from "collapse the depth".
 - **Only page-global symbols.** A symbol earns a slot only if it is used across sections. A symbol local to one concept stays in that concept's Math `Notations:`. This list is a shared prefix, not a page glossary.
-- One symbol per bullet.
 - Header wording: `Notations:` (or `Default notations:` on pages that already use it — match the page).
 - Declare any deliberate override of Tier 1 here, on its own line below the list.
 - Only exemption: a page with no math at all (e.g. a pure taxonomy page) has no symbols to declare.
@@ -388,7 +368,6 @@ The repo maintains a loose but real BibTeX system: `references.bib` → rendered
 
 - If the concept has a `**Name**` line → citation goes at the **end of the `**Name**` line**.
 - Otherwise → citation goes at the **end of the `**What**` line**.
-- Never repeat a concept's own source anywhere else in that concept.
 - The **only** permitted extra `{cite:p}` inside a concept is a *different* work supporting a *specific* empirical claim, e.g.:
   `- (Empirically by Anthropic, ❌1&2, ✅$\beta=0.001$) {cite:p}`bai2022traininghelpfulharmlessassistant``
 
@@ -479,13 +458,9 @@ kernelspec:
 2. **Grep the repo first.** Never duplicate an existing concept — extend or cross-link it instead.
 3. Pick the page + heading level from the existing taxonomy.
 4. Research (§8). Web-search if modern or numeric.
-5. Write `**Name**` (if acronym) → `**What**` → `**Why**` → `**How**`.
-6. Add optional blocks in fixed order: Math → Derivation → Example → Code → Table → Q&A.
-7. If modern: add BibTeX to `references.bib`, cite exactly once (§7).
-8. Add the `&nbsp;` separator.
-9. Register new pages in `myst.yml`.
-10. Build: `~/.virtualenvs/jb2/bin/jupyter-book build --html`. Fix any directive/citation errors.
-11. **Run the mandatory cross-provider peer review (§11).**
+5. Register new pages in `myst.yml`.
+6. Build: `~/.virtualenvs/jb2/bin/jupyter-book build --html`. Fix any directive/citation errors.
+7. **Run the mandatory cross-provider peer review (§11).**
 
 When the user dumps a rough topic list, produce full blocks for each. That is the point of "lazynotes".
 
@@ -545,7 +520,7 @@ The reviewer is stateless. Give it: what you changed, which files it may open, a
 - The global notation block from `intro.md`, **and the page-level common notations block**, when notation correctness is in play — a section `Notations:` list is incomplete on its own by design.
 - The target heading of any cross-link you added, so it can confirm the link resolves.
 
-You remain responsible for the checks the reviewer structurally cannot do — e.g. "does this cross-link anchor exist" stays on your pre-submit checklist (§12).
+You remain responsible for the checks the reviewer structurally cannot do — e.g. "does this cross-link anchor exist".
 
 **Instruct the reviewer to check, in priority order:**
 1. **Math** — every equation correct, dimensions/indices consistent, notation matching the declared `Notations:` and the global scheme you pasted in.
@@ -562,43 +537,11 @@ Tell it explicitly: **report only real errors with the correct fix. Do not comme
 - **The reviewer is not an authority — objective fact is.** It will sometimes be wrong.
 - For every finding: verify it yourself against the math or the primary source, then either fix or reject it with a reason. STEM makes this cheap — derive it, check the dimensions, open the paper.
 - **Never accept a correction you cannot independently confirm**, and never reject one you cannot independently refute. If it stays genuinely contested, surface it to the user rather than silently picking a side.
-- Re-run the build after applying fixes.
 - Report to the user: what the reviewer flagged, what you accepted, what you rejected and why.
 
 ---
 
-## 12. Pre-submit checklist
-
-- [ ] `**What**` present; shortest phrase that is still exactly correct (noun or verb phrase); no multi-clause sentence.
-- [ ] `**Why**` carries the problem and/or the motivation — zero pros, benefits, or properties.
-- [ ] Every nested bullet fails the collapse test (§3): its parent line cannot absorb it without losing information.
-- [ ] `**Why**` and `**How**` present, or their absence is genuinely justified.
-- [ ] `**Name**` present for every all-caps initialism heading; absent for pronounceable coinages.
-- [ ] `**How**` sub-labels bold; italics used ONLY for Q&A questions; no annotations on any Q&A question.
-- [ ] Optional blocks in order (Math → Derivation → Example → Code → Table → Q&A), all `:class: dropdown`.
-- [ ] Math block sticks to its skeleton — no `Evaluation:` / metrics.
-- [ ] Page-level common notations block present, uncollapsed, plain bullet list, page-global symbols only.
-- [ ] `Notations:` has exactly one symbol per bullet.
-- [ ] Math `Notations:` lists section-specific symbols ONLY — nothing already in the page-level block; dropped entirely if it would be empty.
-- [ ] Every symbol in a Math block is defined in the page-level block, in the section `Notations:`, or immediately under its equation.
-- [ ] Notation consistent with `intro.md` and the page-level block, or the override is declared.
-- [ ] Modern concept → exactly one citation, on `**Name**` (or `**What**`); key exists in `references.bib`. Fundamental concept → none.
-- [ ] Every cross-link resolves: file path correct, target heading actually exists.
-- [ ] Arrows/symbols used instead of causal prose; no filler phrases, no annotations, no boilerplate scope disclaimers.
-- [ ] Nothing is said twice across `**How**` / Math / Q&A.
-- [ ] Group headings: `**What**` only if concept-bearing; otherwise nothing beneath.
-- [ ] Mode identified (A / B / both — default both); nothing that mode's bar demands was left out.
-- [ ] Whole-page task → every prevalent/interviewable concept present; Mode B pages also carry the less-prevalent ones; exotic ones excluded; hierarchy ordered foundational → derived.
-- [ ] 4-space indentation; `&nbsp;` separator added.
-- [ ] Heading depth matches the surrounding taxonomy.
-- [ ] Every factual claim is either settled STEM or verified against a primary source.
-- [ ] Code block present for programmable concepts (class + tiny example, static ```` ```python ````, 4-backtick outer fence); absent for non-programmable ones.
-- [ ] Build passes with `~/.virtualenvs/jb2/bin/jupyter-book build --html`.
-- [ ] **Cross-provider peer review run (§11), scoped to modified files + web search only; every finding verified, accepted or refuted, and reported to the user.**
-
----
-
-## 13. Reference template
+## 12. Reference template
 
 Abridged from `nlp/train.md` — this is the house style, use it as the shape to match (not as content to reproduce):
 

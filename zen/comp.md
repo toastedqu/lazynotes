@@ -16,21 +16,21 @@ Computation is the only reality of the observable universe.
 &nbsp;
 
 ## Prerequisites
-To see computation clearly, we need 6 concepts:
 - **Phenomenon**: Anything that occurs. (e.g., a quark, a thought, a galaxy, ...)
-- **Attribute**: A distinguishable feature of a phenomenon (e.g., mass, color, duration, ...)
-- **State**: A set of phenomena & their attributes at one timestamp.
+- **Attribute**: A distinguishable feature of a phenomenon. (e.g., mass, color, duration, ...)
+- **State**: A static set of phenomena & their attributes at one timestamp.
 - **Cause**: The state where a transition begins.
 - **Condition**: A state outside the cause that shapes the direction & magnitude of the transition.
 - **Consequence**: The state that results from the transition.
 
-Then, **computation = state transition**: State A → State B.
+&nbsp;
 
-(Alternatively, Cause + Conditions → Consequence)
+## Computation
+**Computation = state transition**: State A → State B.
+
+(Alternatively, **Cause + Conditions → Consequence**)
 
 Computation runs at any temporal-spatial scale. Smaller than a quark, larger than the observable universe. Shorter than the Planck time, longer than a cosmological decade. There is no privileged level where the real causation happens.
-
-Buddhism differentiates **intentional action** (i.e., **karma**) from **dependent origination**, but they are both computation. Karma is the special case where computation includes a mind forming intentions.
 
 ```{note} Example
 A lily is a **phenomenon**.
@@ -46,14 +46,17 @@ Bud → bloom → wilt → fall. Each step is a **computation**.
 The **temporal scale** is one lifespan. The **spatial scale** is one flower. Zoom out, and the lily is a step in the garden's computation. Zoom in, and its cells are computing too.
 ```
 
+Buddhism differentiates 2 types of computations:
+- **Dependent Origination**: The natural, universal computation.
+- **Intentional Action** (i.e., **Karma**): The computation invoked by a mind-forming intention.
+    - In reality, this is still dependent origination. For the sake of living, we make the differentiation.
+
 &nbsp;
 
 ## Impermanence
 Computation means change, a dynamic process.
 
 At every timestamp, a state dies & a new state emerges. No attribute value holds. No phenomenon holds.
-
-A state is a photograph. Reality is the scene. The photograph is static, but the scene never stops moving.
 
 **No state exists in reality.**
 
@@ -68,11 +71,11 @@ It never ends, either. It wilts, decomposes, and becomes soil—the condition fo
 &nbsp;
 
 ## Unity
-Every phenomenon is a consequence of other phenomena, and a cause of others still.
+Every phenomenon is a consequence of other phenomena, and a cause of other phenomena.
 
-Link the chains: everything affects everything, directly or indirectly. All phenomena form one computational network.
+Every phenomenon affects every phenomenon, directly or indirectly. All phenomena form one computational network.
 
-To exist on its own, a phenomenon would need a self-identity separable from the network. Nothing has one.
+To exist on its own, a phenomenon would need a self-identity separable from the network. No phenomenon has one.
 
 **No phenomenon exists in reality.**
 
@@ -87,11 +90,9 @@ Petals? No. Cells? No. Molecules, atoms, quarks? No. At no layer is there a hidd
 &nbsp;
 
 ## Non-dualism
-A dualistic label - good/bad, beautiful/ugly, sacred/ordinary - is an attribute.
+Attributes are dualistic by nature - good/bad, beautiful/ugly, sacred/ordinary.
 
-Attributes depend on computation, but computation depends on no attribute. It runs the same regardless of what we call its states.
-
-So computation admits no dualistic label. And each label is empty anyway: "beautiful" means nothing without "ugly". Opposites arise together, define each other, and dissolve together, yet none exists with a self-identity separable from the network.
+Attributes depend on computation, but computation depends on no attribute. Computation admits no dualistic label. It runs the same regardless of what we call its states. "Good" means nothing without "Bad". "Beautiful" means nothing without "Ugly". None exists with a self-identity separable from computation.
 
 **No attribute exists in reality.**
 
@@ -126,12 +127,10 @@ Similarly, "you".
 &nbsp;
 
 ## Illusion
-Every state is determined by computation. Every attribute, every phenomenon, every concept is determined by computation.
+Every state, every attribute, every phenomenon, every concept is determined by computation.
 
 But reality is empty of concepts. So everything attached to a concept is an illusion.
 
 Everything in human perception is attached to a concept.
 
 **Everything in human perception is an illusion.**
-
-Call life a movie if you like. But there is no movie, and no actor. There is only computation, running.
