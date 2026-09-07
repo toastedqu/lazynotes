@@ -53,6 +53,8 @@ Every phenomenon is dependent on every phenomenon. No phenomenon is separable fr
 
 Computation does not contain any dualistic label. No attribute value exists in reality.
 
+&nbsp;
+
 ## Emptiness
 Every concept claims a fixed, separable self-identity.
 
