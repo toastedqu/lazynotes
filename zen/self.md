@@ -9,93 +9,140 @@ kernelspec:
   language: python
   name: python3
 ---
-# 2. Self
+# Self
 
 "Self" is an illusion.
 
 &nbsp;
 
-## Illusion
-Computation optimizes the human brain for 2 objectives: **survival** & **reproduction**.
+## Illusory Objective
 
-### Survival
-The brain is optimized for **perceived survival**. The brain receives signals, compresses them into a model of threats & resources, then optimizes the model's score.
-
-Reality is NEVER in the loop. Only its representation is. Evolution only demanded that the model is cheap enough to run & accurate enough to keep the genes moving, so the learned model has NEVER seen reality.
-
-When the model diverges from reality, we act against our own survival - chronic stress over imagined dangers, addiction to false rewards, self-destruction in pursuit of safety, ...
-
-At the moment, our brain only checks its prior from centuries of evolution, optimized on an illusory objective.
-
-In other words, we CANNOT see reality.
+### Survival Instinct
+Computation optimizes the human brain for 2 objectives: **perceived survival** & **perceived reproduction**.
 
 &nbsp;
 
-### Reproduction
-For some unknown reason, we consider reproduction as continued survival.
+### Birth of "Self"
+Computation created a protagonist "self" in the brain - something that survives & reproduces.
 
-The brain treats status, attractiveness, and belonging as survival variables, because for our ancestors, they were. Genes that ignored them did not propagate.
+Computation binds "self" to external phenomena through:
+- **5 aggregates**: form, feeling, perception, mental formation, consciousness.
+- **6 senses**: eye, ear, nose, tongue, body, mind.
 
-This is why social rejection hurts like physical injury. To the brain, both are the same signal - **reproduction threatened**.
+Computation draws a boundary - "me vs the world":
+- Everything above: **me**
+- Everything else: **the world**
 
 &nbsp;
 
-### The Birth of "Self"
-To optimize for survival & reproduction, computation created a protagonist in the brain - something that survives & reproduces.
-
-So it draws a boundary:
-- This body, these memories, this name: **"me"**
-- Everything else: **"the world"**
-
-"Self" is a variable computation invented in the brain to track what it must protect.
+### Evolution
+Centuries of computation created an extremely powerful prior in our brain that prevents us from seeing reality.
 
 &nbsp;
 
 ### Conditionality
-Once "self" exists, every phenomenon gets measured against it.
+To optimize perceived survival, "self" measures every phenomenon with a dualistic label: good/bad, safe/dangerous, mine/not mine, ...
 
-The brain labels each input with a dualistic tag: good/bad, safe/dangerous, mine/not mine, all relative to the self's survival.
+Our life experience is now fully conditioned on external phenomena.
 
-Our experience of life is no longer life itself, but the stream of labels.
+&nbsp;
 
-Our perceived reality is simply the effect of reality on "me."
+### Desire
+This optimization leads to 3 poisons:
+- **Greed**: Want "good" stuff.
+- **Hatred**: Don't want "bad" stuff.
+- **Ignorance**: Mistake labels for reality.
+
+Greed & Hatred are just ignorance in motion.
+
+&nbsp;
+
+### Loss Aversion
+"Self" categorizes its desires into 2 categories:
+- **"Want"**: I am better off with them.
+- **"Need"**: I am worse off without them.
+
+A missed gain only forgoes a chance to reproduce later, BUT a loss may drop "self" below survival threshold, so brains that overweighted downside left more descendants, causing loss aversion.
+
+&nbsp;
+
+### Safety
+"Self" feels safe when its survival needs are met. "Self" feels unsafe when its survival needs are threatened.
 
 &nbsp;
 
 ### Attachment
-Attachment is what happens when a label sticks.
+Because of loss aversion, we attach to things we perceive as "needs". The perceived survival is threatened without satisfying the "needs".
 
-Computation binds "self" to external phenomena through:
-- **5 aggregates**: form, feeling, perception, mental formation, consciousness.
-- **6 sense bases**: eye, ear, nose, tongue, body, mind.
-
-In plain terms: **computation forces the "self" to give a fuck.**
-
-Attachment runs on 3 poisons:
-- **Ignorance**: Mistaking labels for reality.
-- **Greed**: Clinging to what is labeled "good."
-- **Hatred**: Pushing away what is labeled "bad."
-
-Greed & hatred are just ignorance in motion.
+We pay much more attention to these "needs" to ensure our objectives are sustained. ANY subtle signal from the "needs" gets amplified, processed, and analyzed in depth.
 
 &nbsp;
 
 ### Suffering
-Suffering is the rejection of reality.
+**Attachment is the root of suffering. Suffering is the rejection of reality.**
 
-Attachment guarantees this rejection, because reality does not obey labels:
-- We cannot get what we want.
-- We get what we do not want.
-- We lose what we love.
-- We cannot lose what we hate.
+Computation is the true reality, and computation dictates everything autonomously. 
 
-Each mismatch registers as **"survival threatened."** The brain demands reality to change. Reality does not. Computation doesn't give a fuck.
+The mismatch between computation and self needs is perceived as "survival threatened".
 
-That gap is suffering.
+Self demands reality to change, but computation does not give a fuck about the illusory self.
 
-Without genuine physical danger, we suffer for only 1 reason:
+This unfulfilled demand is suffering.
 
-**We don't see reality.**
+&nbsp;
+
+## Illusory Optimization
+### Expectation
+To optimize the objective, "self" needs to first know its current level with respect to the objective. 
+
+The brain evolved to run probability estimation (i.e., **expectation**) in various scenarios for calibration, summarizable in 3 situations:
+- **"Good" is coming**: Ok.
+- **"Bad" is coming**: Prepare to minimize the loss.
+- **Unknown**: Hard to prepare. Cannot minimize the loss if any.
+
+Computation means change, so everything changes, so everything is uncertain by default regardless of how well the brain estimates the probabilities.
+
+Theoretically, expectation works - given ALL INFO about the current state, the next state follows.
+
+Practically, ALL INFO is unreachable. We can only observe a fragment of the computation network.
+
+Missing info guarantees prediction error (i.e., **uncertainty**, quantified).
+
+Uncertainty is an inevitable major threat to the optimization process.
+
+&nbsp;
+
+### Control
+
+Control is the illusory ability to alter the direction & magnitude of computation.
+
+Control gives "self" the feeling that it can minimize uncertainty & achieve its objectives with certainty.
+
+But control is BS. Computation dictates everything.
+
+Theoretically, there are 2 types of computation:
+- **Dependent Origination**: Objective computation.
+- **Intentional Action**: Subjective computation.
+
+Anything "external" is beyond the control of "self".
+
+What "self" consistently fails to realize is - anything "internal" is ALSO beyond the control of "self".
+
+The 5 aggregates & 6 senses are beyond the control of "self". Computation dictates them since the birth of "self".
+
+If we stay in the illusory realm, the only thing "self" effectively has control over is its own action given the current state.
+
+&nbsp;
+
+### Ownership
+
+There's no loss if there's no ownership. "Self" believes it owns external phenomena to consistently satisfy its needs & desires.
+
+In reality, everything is impermanent due to computation. "Self" will certainly lose what it "owns" at some point. This fact causes 2 issues:
+- If "self" is NOT aware of this fact: When "self" loses what it owns, it feels pain.
+- If "self" IS aware of this fact: "Self" will consistently take measures to sustain the "ownership", just to lose it anyway.
+
+So ownership is a trap of pain by design.
 
 &nbsp;
 
@@ -103,26 +150,36 @@ Without genuine physical danger, we suffer for only 1 reason:
 
 ### No Self
 
-There is no fixed, separable self to find.
+"Self" is a character created by computation to optimize for the illusion of survival & reproduction.
 
-Look for it - not in the body (cells replaced), not in memories (rewritten at each recall), not in thoughts (arising & passing), ..., not in anything.
+**No "self" exists in reality.**
 
-Every candidate is a **process**, not a **thing**.
+Remove the "self" character, then EVERYTHING ABOVE falls apart - No control. No expectation. No suffering. No attachment. No loss aversion. No desire. No condition. No label. No survival or reproduction. No optimization. No objective. Nothing.
 
-**Computation is our true nature.**
-
-We are a computational process - and practically, we are our **current action**.
-
-The "self" is a character hallucinated by the computation for the game of survival. Ego, id, superego, soul, whatever the fuck - every theory of this character is one illusion explaining another.
+Computation is the true reality.
 
 &nbsp;
 
-### Self-Attachment
+### We are fucked from the beginning.
+There are ONLY 3 inevitable certainties in this survival game run by computation:
+- Uncertainty
+- Change
+- Death
 
-The root cause of every life experience is not attachment to things. It is attachment to the "self" that things are measured against.
+ALL 3 of them are threats to our optimization objectives.
 
-We believe we are the character, so we condition everything onto it - appearance, status, wealth, relationships. We defend a data structure as if it could bleed.
+The first 2 have been discussed above. The last one - Death - is the most fucked-up one.
 
-Remove the character, and the labels have nothing to stick to. No "me" to threaten. No survival score to defend. **Nothing.**
+We optimize for perceived survival & reproduction just to die in the end.
 
-The suffering was always about protecting something that was never there.
+Various religions attempt to create stories after death to attach humans to the hope that some sense of **permanence** exists, that what they are doing **means** something.
+
+No. Even the universe is impermanent. Meaning is a concept created in the process of objective optimization.
+
+Everything dies.
+
+But nothing dies. Only the "self" identity dies, which is an illusion created by computation anyway.
+
+Death is an illusion conditioned on the existence of the "self" identity.
+
+Computation is the true reality.

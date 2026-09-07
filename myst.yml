@@ -72,9 +72,7 @@ project:
       children:
         - file: zen/comp.md
         - file: zen/self.md
-        - file: zen/desire.md
-        - file: zen/emo.md
-        - file: zen/sol.md
+        - file: zen/life.md
         - file: zen/meta.md
         - file: zen/forget.md
     # - title: 易

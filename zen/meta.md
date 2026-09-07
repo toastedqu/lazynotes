@@ -9,11 +9,9 @@ kernelspec:
   language: python
   name: python3
 ---
-# 6. Metacognition Levels
+# Metacognition Levels
 
-Suppose a high-risk high-return desire has not been fulfilled for months. Your brain is deeply obsessed with it. Then, a negative event occurs which pushes the desired outcome further away.
-
-For example, she started dating your best friend.
+She started dating your best friend.
 
 ---
 
@@ -29,7 +27,7 @@ You rage. You cry. You throw a tantrum. You cannot think at all. You are fully p
 
 ### Level 2 - Ego
 
-You find the situation personal. Your ego is shattered. You scold at the entire world. You become defensive to protect your ego - *"I don't want it anyway!"* You also become offensive to protect your ego - *"WHY NOT ME?! WHAT'S WRONG WITH ME?! WHY DON'T I GET WHAT I WANT?!"*
+You find the situation personal. Your ego is shattered. You scold at the entire world. You become defensive to protect your ego - *"I don't want her anyway!"* You also become offensive to protect your ego - *"WHY NOT ME?! WHAT'S WRONG WITH ME?! WHY DON'T I GET WHAT I WANT?!"*
 
 ---
 
@@ -67,7 +65,7 @@ No inspection. You have a life to live. You failed a side quest, so there's no p
 
 ### Level 7 - Clarity
 
-You see life as a hyperreality show where computation is the sole actor. You see this event. You see your emotions and thoughts. You see everything clearly, for everything is computation.
+You see life as a hyperreality show where computation is the sole actor. You see this event. You see your emotions and thoughts. You see everything clearly, for everything is computation. *"So that's how it feels like."*
 
 ---
 

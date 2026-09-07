@@ -11,19 +11,16 @@ kernelspec:
 ---
 # Forget Zen.
 
-There are 3 stages of understanding the truth.
+3 stages of understanding reality:
+1. You understand reality rationally.
+2. You understand reality emotionally.
+3. You understand reality physically.
 
-Stage 1: You understand the truth rationally.
-
-Stage 2: You understand the truth emotionally.
-
-Stage 3: You understand the truth physically.
-
-If you reach Stage 3, you are a Buddha.
+If you reach Stage 3, you are a Buddha by definition.
 
 ---
 
-Forget Zen,
+Forget Zen, 
 
 before your brain treats it as "wisdom".
 

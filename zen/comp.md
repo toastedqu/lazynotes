@@ -9,15 +9,15 @@ kernelspec:
   language: python
   name: python3
 ---
-# 1. Computation
+# Computation
 
-Computation is the only reality of the observable universe.
+**Computation is the only reality of the observable universe.**
 
 &nbsp;
 
 ## Prerequisites
-- **Phenomenon**: Anything that occurs. (e.g., a quark, a thought, a galaxy, ...)
-- **Attribute**: A distinguishable feature of a phenomenon. (e.g., mass, color, duration, ...)
+- **Phenomenon**: Anything that occurs.
+- **Attribute**: A distinguishable feature of a phenomenon.
 - **State**: A static set of phenomena & their attributes at one timestamp.
 - **Cause**: The state where a transition begins.
 - **Condition**: A state outside the cause that shapes the direction & magnitude of the transition.
@@ -26,90 +26,43 @@ Computation is the only reality of the observable universe.
 &nbsp;
 
 ## Computation
-**Computation = state transition**: State A → State B.
+**Computation = State Transition**: State A → State B. (Alternatively, "Cause + Conditions → Consequence")
 
-(Alternatively, **Cause + Conditions → Consequence**)
+**Computation runs at any temporal-spatial scale.** Smaller than a quark, larger than the observable universe. Shorter than the Planck time, longer than a cosmological decade. There is no privileged level where the real computation happens.
 
-Computation runs at any temporal-spatial scale. Smaller than a quark, larger than the observable universe. Shorter than the Planck time, longer than a cosmological decade. There is no privileged level where the real causation happens.
-
-```{note} Example
-A lily is a **phenomenon**.
-
-Its color, shape, and scent are **attributes**.
-
-A bud - furled, green, closed - is a **state**. So is the bloom - six white petals, six stamens, one pistil.
-
-The bud is the **cause**. Sunlight, water, and warmth are **conditions**. The bloom is the **consequence**.
-
-Bud → bloom → wilt → fall. Each step is a **computation**.
-
-The **temporal scale** is one lifespan. The **spatial scale** is one flower. Zoom out, and the lily is a step in the garden's computation. Zoom in, and its cells are computing too.
-```
-
-Buddhism differentiates 2 types of computations:
+In theory, there are 2 types of computation:
 - **Dependent Origination**: The natural, universal computation.
-- **Intentional Action** (i.e., **Karma**): The computation invoked by a mind-forming intention.
-    - In reality, this is still dependent origination. For the sake of living, we make the differentiation.
+- **Intentional Action**: The computation invoked by a mind-forming intention.
+
+In reality, everything is dependent origination. We differentiate for the sake of explanations.
 
 &nbsp;
 
-## Impermanence
-Computation means change, a dynamic process.
+## Truths
+Computation leads to 3 universal truths of everything in human perception.
 
-At every timestamp, a state dies & a new state emerges. No attribute value holds. No phenomenon holds.
+### Impermanence
 
-**No state exists in reality.**
-
-```{note} Example
-The lily never began. Sunlight, soil, rain, and a bee that pollinated its parent months ago converged, and we called the convergence "a flower".
-
-It never ends, either. It wilts, decomposes, and becomes soil—the condition for the next seed.
-
-"Birth" and "death" are labels stamped on one continuous process. Nothing was created. Nothing was destroyed. The computation only continued.
-```
+No state is permanent.
 
 &nbsp;
 
-## Unity
-Every phenomenon is a consequence of other phenomena, and a cause of other phenomena.
+### Unity
 
-Every phenomenon affects every phenomenon, directly or indirectly. All phenomena form one computational network.
-
-To exist on its own, a phenomenon would need a self-identity separable from the network. No phenomenon has one.
-
-**No phenomenon exists in reality.**
-
-```{note} Example
-Take the lily apart and ask: where is the flower?
-
-Petals? No. Cells? No. Molecules, atoms, quarks? No. At no layer is there a hidden flower-essence.
-
-"Flower" is a label painted over a temporary arrangement of parts, which are themselves arrangements of parts. Labels all the way down. No self-standing object at the bottom.
-```
+No phenomenon is separable from computation.
 
 &nbsp;
 
-## Non-dualism
-Attributes are dualistic by nature - good/bad, beautiful/ugly, sacred/ordinary.
+### Non-dualism
 
-Attributes depend on computation, but computation depends on no attribute. Computation admits no dualistic label. It runs the same regardless of what we call its states. "Good" means nothing without "Bad". "Beautiful" means nothing without "Ugly". None exists with a self-identity separable from computation.
-
-**No attribute exists in reality.**
-
-```{note} Example
-A red rose means passion. A white lily means grief. A weed is a flower someone decided was unwanted.
-
-Scan the petals: you will find pigments and wavelengths, but no passion, no grief, no "wanted". The opposites live on our side, projected outward, then mistaken for properties of the thing.
-
-Strip the projections away. No two opposing things remain. Just one undivided process, which we carve into pairs for our convenience.
-```
+No attribute value exists in reality.
 
 &nbsp;
 
 ## Emptiness
 Every concept claims a fixed, separable self-identity.
 
-This violates all 3 properties of computation:
+This violates all 3 truths of computation:
 - **Impermanence**: Nothing is fixed.
 - **Unity**: Nothing is separable.
 - **Non-dualism**: Nothing has a self-identity apart from its opposite.
@@ -118,19 +71,27 @@ Reality is empty of concepts. Concepts are empty of reality.
 
 **No concept exists in reality.**
 
-```{note} Example
-The concept "flower" does not exist in reality. Yet we perceive something that fits the description.
-
-Similarly, "you".
-```
-
 &nbsp;
 
 ## Illusion
-Every state, every attribute, every phenomenon, every concept is determined by computation.
-
-But reality is empty of concepts. So everything attached to a concept is an illusion.
-
 Everything in human perception is attached to a concept.
 
 **Everything in human perception is an illusion.**
+
+&nbsp;
+
+## Example
+
+You get home hungry and tired. You are a phenomenon; so are your hunger and the thought of dinner. Your height, the tone of your voice, and the duration of that thought are attributes. A snapshot of you and your surroundings at that moment is a state.
+
+You eat, and the hunger eases. Taking your hungry state as the cause, the available food and the time to eat are conditions; your state after eating is the consequence. The transition is a computation. Deciding to cook is an intentional action. Digestion does not need that intention. Both depend on what came before and on the conditions at the time.
+
+You can follow this over the few minutes of a meal or over a whole lifetime. You can look at changes in your cells, your body, or the household you share with other people. The temporal and spatial scales depend on what you choose to follow.
+
+An old photograph makes impermanence easy to notice. You recognize yourself, but your face, habits, and concerns have changed. Even while looking at the photo, you breathe, shift in your chair, and remember something you had forgotten. Birth and death mark real changes in a human life, but neither is an isolated event. Your life depended on your parents before you were born, and what you did can still affect people after you die.
+
+Unity is harder to notice because you usually feel like a separate person. But the language you think in came from other people. Your habits owe something to your family, friends, and people you barely remember. Your body depends on food, air, and the work of people you have never met. If you try to find a self independent of all this, pointing to your body or your memories does not solve the problem. Those depend on other things too.
+
+Suppose a colleague answers you sharply. You think they are rude; a friend who knows them well thinks they are kind. "Rude" makes sense in contrast to "polite", just as "good" depends on what counts as "bad". These judgments depend on what happened, what each person knows, and what they expected. The sharp answer may still hurt. It just does not establish a permanent quality belonging to that person.
+
+Emptiness applies to the person making the judgment as well. You might say, "I'm an angry person", because you lost your temper. The anger happened, but the description leaves out the times you were patient, what set you off, and what happened afterward. "You" is useful in conversation; it does not name a fixed, independent self. The illusion is taking that familiar description for the whole person.
