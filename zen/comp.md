@@ -43,21 +43,15 @@ Computation leads to 3 universal truths of everything in human perception.
 
 ### Impermanence
 
-No state is permanent.
-
-&nbsp;
+Everything changes. No state is permanent.
 
 ### Unity
 
-No phenomenon is separable from computation.
-
-&nbsp;
+Every phenomenon is dependent on every phenomenon. No phenomenon is separable from computation.
 
 ### Non-dualism
 
-No attribute value exists in reality.
-
-&nbsp;
+Computation does not contain any dualistic label. No attribute value exists in reality.
 
 ## Emptiness
 Every concept claims a fixed, separable self-identity.
