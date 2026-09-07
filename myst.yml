@@ -14,6 +14,15 @@ project:
       output: exports/book.pdf
   toc:
     - file: intro.md
+    - title: Math
+      children:
+      - title: Probability Theory
+        children:
+        - file: math/prob/basics.md
+        # - file: math/prob/asymptotics.md
+        - file: math/prob/bayes.md
+      - file: math/info.md
+      - file: math/linalg.md
     - title: ML
       children:
         - file: ml/supervised.md
@@ -22,24 +31,18 @@ project:
         - file: ml/optim.md
         - file: ml/eval.md
         - file: ml/misc.md
-    # - title: Math
-    #   children:
-    #   - title: Probability Theory
-    #     children:
-    #     - file: math/prob/basics.md
-    #     - file: math/prob/asymptotics.md
-    #     - file: math/prob/bayes.md
-    #   - file: math/info.md
-    #   - file: math/linalg.md
-    # - title: DL
-    #   children:
-    #     - file: dl/module.md
-    #     - file: dl/optim.md
-    #     - file: dl/train.md
-    #     - file: dl/issues.md
-    # - title: RL
-    #   children:
-    #     - file: rl/rl.md
+    - title: DL
+      children:
+        - file: dl/module.md
+        - file: dl/optim.md
+        - file: dl/train.md
+        - file: dl/issues.md
+    - title: RL
+      children:
+        - file: rl/intro.md
+        - file: rl/value.md
+        - file: rl/policy.md
+        - file: rl/model.md
     - title: NLP
       children:
     #     - file: nlp/transformer.md
@@ -62,6 +65,7 @@ project:
         - file: nlp/infer/dec.md
         - file: nlp/infer/cache.md
       - file: nlp/eval.md
+      - file: nlp/harness.md
     #     # - file: nlp/rh.md
     #     - file: nlp/infer.md
     #     - file: nlp/eval.md
