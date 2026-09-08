@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Unsupervised Learning
+# Unsupervised
 Find structure in data with NO labels: group it, compress it, or flag what doesn't belong.
 
 This page covers prevalent traditional unsupervised methods ONLY.

@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Supervised Learning
+# Supervised
 Learn a mapping $f:\mathcal{X}\to\mathcal{Y}$ from labeled data $\{(\mathbf{x}_i,y_i)\}_{i=1}^m$.
 
 This page covers prevalent traditional supervised methods ONLY.

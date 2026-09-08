@@ -76,7 +76,7 @@ Everything in human perception is attached to a concept.
 
 &nbsp;
 
-## Example
+## Example (AI slop)
 
 You get home hungry and tired. You are a phenomenon; so are your hunger and the thought of dinner. Your height, the tone of your voice, and the duration of that thought are attributes. A snapshot of you and your surroundings at that moment is a state.
 

@@ -56,8 +56,6 @@ project:
       - title: Post-Training
         children:
         - file: nlp/post/sft.md
-        - file: nlp/post/peft.md
-        - file: nlp/post/po.md
         - file: nlp/post/rl.md
         - file: nlp/post/kd.md
       - title: Inference
