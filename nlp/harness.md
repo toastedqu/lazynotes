@@ -17,12 +17,6 @@ This page summarizes the latest harness structure based on the 3 giants - Claude
 
 Date: September 7, 2026
 
-Notations:
-- $\mathcal{G}$: Task-dependency graph for an execution attempt.
-- $\mathcal{V}$: Task nodes.
-- $\mathcal{E}$: Required dependency edges.
-- $v$: Task node.
-
 &nbsp;
 
 ## Context
@@ -733,7 +727,7 @@ If no issue is found, say so. Do not invent one to justify the role.
 :class: dropdown
 2 actors:
 - The main agent coordinates the fix.
-- Aread-only worker investigates callers.
+- A read-only worker investigates callers.
 
 Procedure:
 1. Launch the worker: "Find callers relying on empty identifiers. Return paths & evidence, no edits." Save the returned task ID. Call it `task-42` in this example.
@@ -1076,7 +1070,7 @@ if __name__ == "__main__":
 
 &nbsp;
 
-## Execution & Evaluation
+## Execution
 
 ### Session & Event Protocols
 - **What**: Structured lifecycle contracts between an application & a persistent agent runtime.
@@ -1113,24 +1107,6 @@ Server -> Client: turn/completed                  ## inspect turn.status
 6. After reconnecting: repeat the handshake, then `thread/resume` with the saved thread ID to continue the conversation.
 ````
 
-```{attention} Q&A
-:class: dropdown
-*Does reopening a session restore every dependency?*
-
-- No. Copilot documents that provider credentials & in-memory tool state are not persisted.
-- Re-register required callbacks/tools & restore credentials through the supported configuration.
-
-*Can two clients safely write to the same session?*
-
-- Do not assume so. Copilot SDK does not provide a built-in lock for concurrent resumes.
-- Use one coordinating owner or an application-level queue; forks are separate histories, not automatic merge operations.
-
-*Can a JSON-RPC server be exposed like an ordinary local CLI?*
-
-- No. Its network transport needs auth & protected access.
-- Codex WebSocket transport is experimental/unsupported; local stdio avoids exposing a network listener.
-```
-
 &nbsp;
 
 ### Checkpoints & Recovery
@@ -1140,29 +1116,6 @@ Server -> Client: turn/completed                  ## inspect turn.status
     1. Save a meaningful task boundary.
     2. Preserve the associated workspace revision & evidence.
     3. Resume reasoning or restore files using the appropriate mechanism.
-    4. Reconcile external side effects before retrying.
-
-```{attention} Q&A
-:class: dropdown
-*Does restoring a convo restore the world?*
-
-- No. Conversation state, files, background processes & remote services have different lifecycles.
-
-*Can Claude rewind any filesystem change?*
-
-- No. Its checkpointing tracks supported direct file edits, not arbitrary shell modifications.
-- Subagent restoration also depends on execution mode; do not assume every delegated edit is covered.
-
-*Are Copilot compaction checkpoints rewind points?*
-
-- No. `/session checkpoints` exposes summaries, not filesystem rollback.
-- `/rewind` operates on convo/file rewind points; `/fork` forks history w/o creating a worktree.
-
-*What about a pushed branch, email or database write?*
-
-- Local checkpoints cannot undo remote effects.
-- Use the service's cancellation/compensation mechanism or require approval before the original action.
-```
 
 &nbsp;
 
@@ -1185,63 +1138,6 @@ Server -> Client: turn/completed                  ## inspect turn.status
 | Conflicting edits | Worker ownership, worktrees & integration order |
 | Unexpected spend | Worker count, model/effort choice, repeated context & polling |
 | "Passing" result but broken feature | Which candidate and behavior the check exercised |
-```
-
-```{attention} Q&A
-:class: dropdown
-*What is available natively?*
-
-- Claude exposes telemetry through OpenTelemetry.
-- Codex's structured execution stream reports lifecycle/tool events.
-- Copilot exposes session/task information & structured CLI output.
-
-*Should every prompt and tool payload be logged?*
-
-- No. They may contain secrets, private source or user data.
-- Redact or omit sensitive payloads; restrict retention & access.
-```
-
-&nbsp;
-
-### Harness Evaluation
-- **What**: Repeatable task trials measuring the whole agent system.
-- **Why**: A prompt, hook or graph change can improve one example while breaking another.
-- **How**:
-    1. Collect representative tasks & past failures.
-    2. Start trials from equivalent workspace/environment states.
-    3. Grade resulting behavior with machine checks where possible.
-    4. Inspect traces for hidden failures, not only the final text.
-    5. Compare success, cost & latency under the same task distribution.
-
-```{note} Example
-:class: dropdown
-- Regression cases for the parser workflow:
-    - Empty input rejected; valid input preserved.
-    - Acceptance command fails to start.
-    - Tool perm denied.
-    - Worker returns partial output.
-    - Stop hook emits malformed JSON.
-    - Repair never fixes the failing check.
-    - Review changes the candidate after an earlier passing check.
-- Desired outcomes include honest blockage, not only successful completion.
-```
-
-```{attention} Q&A
-:class: dropdown
-*Why evaluate more than once?*
-
-- Model choices & tool/environment conditions can vary between trials.
-- A single successful trace does not establish reliable behavior.
-
-*What must stay fixed for a fair comparison?*
-
-- Task inputs, repo revision, environment, perm policy & acceptance checks.
-- Record model/runtime/config versions & resource budgets.
-
-*What does a reviewer add?*
-
-- A distinct attempt to find unsupported claims or missed behavior.
-- Reviewer agreement is not proof; verify findings against artifacts & reproducible evidence.
 ```
 
 &nbsp;
@@ -1274,21 +1170,19 @@ Server -> Client: turn/completed                  ## inspect turn.status
 
 &nbsp;
 
-## Putting It Together
+## Examples
 
 ### Claude Code Workflow
-- **What**: Project-configured execution with optional workers, hooks & scripted orchestration. {cite:p}`claude_how`
-- **Why**: The native runtime already supplies the inner loop; customize the task boundaries instead of rebuilding it.
-- **How**:
+- **How**: {cite:p}`claude_how`
     1. Add concise project guidance in `CLAUDE.md`.
     2. Reuse a task skill when the procedure repeats.
     3. Add a restricted reviewer when independent inspection is useful.
-    4. Use a completion hook for feedback; retain an independent delivery check.
+    4. Use a completion hook for feedback. Retain an independent delivery check.
     5. Opt into a scripted workflow only when the dependency graph justifies it.
 
 ````{note} Example
 :class: dropdown
-- Reviewer definition in `.claude/agents/parser-reviewer.md`:
+1. Reviewer definition in `.claude/agents/parser-reviewer.md`:
 
 ```text
 ---
@@ -1304,13 +1198,13 @@ Return confirmed issues with a counterexample and relevant lines.
 Do not edit files or invent findings.
 ```
 
-- Start with interactive planning:
+2. Start with interactive planning:
 
 ```bash
 claude --perm-mode plan
 ```
 
-- Inspect a trusted repo noninteractively with only read/search tools:
+3. Inspect a trusted repo noninteractively with only read/search tools:
 
 ```bash
 claude -p "Explain identifier validation in src/parser.py. Do not edit." \
@@ -1319,8 +1213,9 @@ claude -p "Explain identifier validation in src/parser.py. Do not edit." \
   --max-turns 6
 ```
 
-- Tool restriction does not disable separately discovered hooks or MCP startup code; review project configuration before launching.
-- For substantial scripted fan-out, request an interactive dynamic workflow:
+4. Tool restriction does not disable separately discovered hooks or MCP startup code. Review project configuration before launching.
+
+5. For substantial scripted fan-out, request an interactive dynamic workflow:
 
 ```text
 Use a workflow to inspect the independent parser backends.
@@ -1329,29 +1224,15 @@ Collect compatibility counterexamples, then have one worker verify them.
 Return only findings that survive verification.
 ```
 
-- Read & approve the generated orchestration before execution; inspect it through `/workflows`.
-- The interactive workflow opt-in is not a portable `-p` keyword or a published cross-vendor JavaScript API.
+6. Read & approve the generated orchestration before execution; inspect it through `/workflows`.
+
+7. The interactive workflow opt-in is not a portable `-p` keyword or a published cross-vendor JavaScript API.
 ````
-
-```{attention} Q&A
-:class: dropdown
-*Why not enable teams for this small parser fix?*
-
-- A writer + focused reviewer is sufficient.
-- Teams are for communicating peers; dynamic workflows are for scripted orchestration. Neither is necessary for every task.
-
-*What survives a new task?*
-
-- Project instructions, installed skills & configuration.
-- Revalidate transient findings instead of turning them into permanent rules.
-```
 
 &nbsp;
 
 ### Codex Workflow
-- **What**: Stateful coding runs with configured subagents, trusted hooks & structured events. {cite:p}`codex_cli_features`
-- **Why**: Codex can own tool execution & continuation while an outer controller owns acceptance.
-- **How**:
+- **How**: {cite:p}`codex_cli_features`
     1. Put project invariants in `AGENTS.md`.
     2. Define specialized roles in `.codex/agents/*.toml`.
     3. Review project configuration & hook trust in the actual client.
@@ -1360,7 +1241,7 @@ Return only findings that survive verification.
 
 ````{note} Example
 :class: dropdown
-- `.codex/agents/parser-reviewer.toml`:
+1. `.codex/agents/parser-reviewer.toml`:
 
 ```toml
 name = "parser-reviewer"
@@ -1374,17 +1255,20 @@ Do not change files.
 """
 ```
 
-- Bound local subagent concurrency in `.codex/config.toml`:
+2. Bound local subagent concurrency in `.codex/config.toml`:
 
 ```toml
 [agents]
 max_concurrent_threads_per_session = 2
 ```
 
-- Ask the coordinator to use `parser-reviewer` after implementation & verification; wait for its findings before integration.
-- The role's `sandbox_mode` is a configuration default, not an immutable override of the parent session's live perm choices.
-- For Codex hooks, save the StopGate implementation as `.codex/hooks/stop_gate.py`; its `Stop` input & decision subset are supported by both products.
-- `.codex/hooks.json`, invoked from the repo root:
+3. Ask the coordinator to use `parser-reviewer` after implementation & verification. Wait for its findings before integration.
+
+4. The role's `sandbox_mode` is a configuration default, not an immutable override of the parent session's live perm choices.
+
+5. For Codex hooks, save the StopGate implementation as `.codex/hooks/stop_gate.py`. Its `Stop` input & decision subset are supported by both products.
+
+6. `.codex/hooks.json`, invoked from the repo root:
 
 ```json
 {
@@ -1404,61 +1288,37 @@ max_concurrent_threads_per_session = 2
 }
 ```
 
-- Hooks are enabled by default in curr releases; `/hooks` reviews new/changed non-managed definitions before they run.
-- Inspect w/o granting workspace writes:
+7. Hooks are enabled by default in curr releases. `/hooks` reviews new/changed non-managed definitions before they run.
+
+8. Inspect w/o granting workspace writes:
 
 ```bash
 codex exec --json --sandbox read-only \
   "Inspect identifier validation in src/parser.py. Do not modify files."
 ```
 
-- For an approved implementation, explicitly select `--sandbox workspace-write` instead; that grants more capability, not evidence of success.
-- Resume a stored run:
+9. For an approved implementation, explicitly select `--sandbox workspace-write` instead, which grants more capability, not evidence of success.
+
+10. Resume a stored run:
 
 ```bash
 codex exec resume --last "Check the candidate against the accepted contract."
 ```
 ````
 
-```{attention} Q&A
-:class: dropdown
-*Does Codex still only support `notify`?*
-
-- No. Current hooks cover session, tool, approval, subagent, compaction & turn lifecycles.
-- `notify` is a separate notification mechanism, not the lifecycle hook system.
-
-*Which details should not be copied from Claude?*
-
-- Codex supports command & MCP-tool handlers; parsed prompt/agent handler types are not executed.
-- Its `PreToolUse` does not support all Claude decisions.
-- Current documentation, not a schema from unreleased `main`, defines the supported behavior.
-
-*Does the CLI automatically manage app-style worktrees?*
-
-- Do not assume so. Managed worktree creation & Handoff are documented for Codex in the ChatGPT desktop app.
-- A CLI workflow can use ordinary Git worktrees under its own controller.
-
-*Does every app-server command use the thread sandbox?*
-
-- No. An agent `turn/start` & `command/exec` have different roles; `thread/shellCommand` is an explicit full-access user command outside the thread sandbox.
-- Do not treat a generic JSON-RPC connection as an isolation guarantee.
-```
-
 &nbsp;
 
 ### Copilot CLI Workflow
-- **What**: Independent continuation & parallel-delegation controls around a configurable coding session. {cite:p}`copilot_cli_about`
-- **Why**: Autonomy, concurrency & perms need separate configuration.
-- **How**:
+- **How**: {cite:p}`copilot_cli_about`
     1. Load repo guidance & required skills.
     2. Use plan mode when the change needs an agreed approach.
-    3. Use autopilot for continued execution; fleet only for genuinely independent work.
+    3. Use autopilot for continued execution. Fleet only for genuinely independent work.
     4. Inspect loaded configuration through `/env` & workers through `/tasks`.
     5. Use a restricted reviewer & an independent acceptance command.
 
 ````{note} Example
 :class: dropdown
-- `.github/agents/parser-reviewer.agent.md`:
+1. `.github/agents/parser-reviewer.agent.md`:
 
 ```text
 ---
@@ -1475,16 +1335,18 @@ Return confirmed compatibility issues with counterexamples and relevant lines.
 Do not modify files.
 ```
 
-- Use `@parser-reviewer` for explicit delegation.
-- The custom-agent reference recommends `disable-model-invocation` instead of retired `infer`; the CLI reference still lists the older spelling. Confirm selection behavior in the installed runtime.
-- For independent investigations, not concurr edits:
+2. Use `@parser-reviewer` for explicit delegation.
+
+3. The custom-agent reference recommends `disable-model-invocation` instead of retired `infer`. The CLI reference still lists the older spelling. Confirm selection behavior in the installed runtime.
+
+4. For independent investigations, not concurrent edits:
 
 ```text
 /fleet Inspect parser input handling and parser callers in parallel.
 Keep both workers read-only. Wait for both, then propose one focused change.
 ```
 
-- A read-only programmatic inspection needs no autopilot continuation:
+5. A read-only programmatic inspection needs no autopilot continuation:
 
 ```bash
 COPILOT_TASK_WAIT_TIMEOUT_SECONDS=120 \
@@ -1495,8 +1357,9 @@ copilot --prompt="Inspect identifier validation in src/parser.py. Do not edit." 
   --no-ask-user
 ```
 
-- The wait timeout bounds pending background work at exit, not total run duration.
-- For an approved implementation, bound continuation & grant the specific required operations:
+6. The wait timeout bounds pending background work at exit, not total run duration.
+
+7. For an approved implementation, bound continuation & grant the specific required operations:
 
 ```bash
 copilot --prompt="Reject empty identifiers, preserve valid input and the API, then run the acceptance check." \
@@ -1507,9 +1370,11 @@ copilot --prompt="Reject empty identifiers, preserve valid input and the API, th
   --no-ask-user
 ```
 
-- This keeps the runtime's normal control-tool set instead of assuming an undocumented `task_complete` availability flag.
-- Continuation count does not bound tool calls inside each turn; use an outer process deadline if a wall-clock limit is required.
-- For an implementation run that permits the acceptance command, `.github/hooks/final-check.json` can register the reminder below:
+8. This keeps the runtime's normal control-tool set instead of assuming an undocumented `task_complete` availability flag.
+
+9. Continuation count does not bound tool calls inside each turn. Use an outer process deadline if a wall-clock limit is required.
+
+10. For an implementation run that permits the acceptance command, `.github/hooks/final-check.json` can register the reminder below:
 
 ```json
 {
@@ -1526,114 +1391,11 @@ copilot --prompt="Reject empty identifiers, preserve valid input and the API, th
 }
 ```
 
-- Save the following handler as `.github/hooks/final_check.py`.
-- Omit this reminder from a read-only inspection that cannot execute the check.
-- Prompt-mode repo hooks must actually be loaded: trust the folder or explicitly set `GITHUB_COPILOT_PROMPT_MODE_REPO_HOOKS=true` after reviewing it.
-- Do not enable repo hooks merely to make an unknown checkout's example run.
+11. Save the following handler as `.github/hooks/final_check.py`.
+
+12. Omit this reminder from a read-only inspection that cannot execute the check. 
+
+13. Prompt-mode repo hooks must actually be loaded: trust the folder or explicitly set `GITHUB_COPILOT_PROMPT_MODE_REPO_HOOKS=true` after reviewing it. Do not enable repo hooks merely to make an unknown checkout's example run.
 ````
-
-````{important} Code
-:class: dropdown
-- One extra verification/reporting turn; a reminder, not an acceptance gate.
-
-```python
-import json
-import sys
-
-
-class FinalCheckReminder:
-    def __init__(self, command):
-        if not command:
-            raise ValueError("A verification command is required")
-        self.command = command
-
-    def __call__(self, event):
-        if not isinstance(event, dict) or type(event.get("stop_hook_active")) is not bool:
-            raise ValueError("Expected boolean stop_hook_active")
-        if event["stop_hook_active"]:
-            return {"decision": "allow"}
-        return {
-            "decision": "block",
-            "reason": (
-                f"Run {self.command} against the final candidate. "
-                "Report the actual outcome; if it fails or cannot run, "
-                "report the task as incomplete. Do not claim an unrun check passed."
-            ),
-        }
-
-
-## Example: request once, then return control to the outer acceptance check.
-if __name__ == "__main__":
-    reminder = FinalCheckReminder("python3 scripts/check_parser.py")
-    if sys.argv[1:] == ["--hook"]:
-        print(json.dumps(reminder(json.load(sys.stdin))))
-    else:
-        assert reminder({"stop_hook_active": False})["decision"] == "block"
-        assert reminder({"stop_hook_active": True})["decision"] == "allow"
-```
-````
-
-```{attention} Q&A
-:class: dropdown
-*Why is the reminder weaker than StopGate?*
-
-- It asks the model to verify; it does not itself execute the check.
-- Its `"allow"` means "end this turn," not "candidate accepted." Use the bounded outer check or CI for actual acceptance.
-
-*Which defaults should automation avoid assuming?*
-
-- Current autopilot concept & command-reference pages disagree on the implicit continuation limit.
-- Set `--max-autopilot-continues` explicitly rather than silently choosing one account.
-
-*Which operations still need maturity/surface qualifiers?*
-
-- `/every`, worktree commands, local sandboxing & SDK fleet have experimental/preview status.
-- Native CLI `agentStop` output is not automatically compatible with every VS Code hook field.
-- Cloud agent only loads repo hooks; a local user hook is not cloud deployment configuration.
-```
-
-&nbsp;
-
-### Verified Change Walkthrough
-- **What**: One implement–verify–review graph using a chosen native product profile.
-- **Why**: Every extension needs a clear job in an actual delivery path.
-- **How**:
-    1. **Initialize**: select one profile above; inspect its discovered instructions, tools & hooks.
-    2. **Contract**: reject empty identifiers, preserve valid inputs & the public API, restrict changed paths.
-    3. **Reproduce**: run the existing parser checks & add the missing failing case.
-    4. **Implement**: one writer owns `src/parser.py` & its targeted tests.
-    5. **Verify**: run the acceptance command against the resulting candidate.
-    6. **Review**: a read-only worker receives the contract, candidate diff & actual check results.
-    7. **Reconcile**: reproduce each finding; repair confirmed errors & rerun affected checks.
-    8. **Deliver**: return the persistent artifact & evidence, or a precise blocker.
-
-```{dropdown} Table: Transition Contract
-| Current node | Success | Failure |
-|:--|:--|:--|
-| Initialize | Known runtime/config & accessible project | Stop for missing prerequisite |
-| Reproduce | Failing case distinguishes old behavior | Improve reproduction before editing |
-| Implement | Candidate within scope | Return to implementation within budget |
-| Verify | Accepted checks pass on candidate | Repair; stop when budget is exhausted |
-| Review | No confirmed blocker remains | Reproduce finding; repair & re-verify |
-| Deliver | Artifact & evidence refer to the same candidate | Do not deliver stale or incomplete evidence |
-```
-
-```{attention} Q&A
-:class: dropdown
-*What should be omitted from this small task?*
-
-- A vector database, a separate graph framework, a swarm of writers & a long-lived scheduler.
-- Native tools, one optional reviewer & a bounded check already cover the contract.
-
-*When does this become a larger graph?*
-
-- Independent backends, separate migrations or multiple integration targets create real dependencies.
-- Add workers & nodes for those dependencies, not merely because the runtime permits them.
-
-*What is the smallest reliable harness?*
-
-- The native loop + relevant context + constrained tools + observable acceptance + honest failure.
-- Add context management, delegation, hooks & persistence only where they solve a demonstrated lifecycle problem.
-```
 
 &nbsp;
