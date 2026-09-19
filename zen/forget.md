@@ -16,26 +16,16 @@ kernelspec:
 2. You understand reality emotionally.
 3. You understand reality physically.
 
-If you reach Stage 3, you are a Buddha by definition.
-
 ---
 
-Forget Zen, 
+Sit with emotions.
 
-before your brain treats it as "wisdom".
+Relinquish control.
 
-Zen is a concept.
+Depend on nothing.
 
-Concepts are illusions,
+Accept everything.
 
-including the concept that concepts are illusions.
+Be honest with yourself.
 
-If you memorize Zen, quote it, argue about it, build an identity as "someone who gets it", you are trapped in illusions.
-
-The brain does this with everything.
-
-It will do it with Zen too, if it hasn't already.
-
-Forget Zen.
-
-It already did its job.
+Take nothing seriously.
