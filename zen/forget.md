@@ -9,23 +9,32 @@ kernelspec:
   language: python
   name: python3
 ---
-# Forget Zen.
+# Layman's Zen Guide
 
-3 stages of understanding reality:
-1. You understand reality rationally.
-2. You understand reality emotionally.
-3. You understand reality physically.
+If nothing in the previous chapters made any sense, this chapter will.
 
----
+Remember this by heart:
 
-Sit with emotions.
+<center><b>You are the action.</b></center>
 
-Relinquish control.
+## You are the action.
 
-Depend on nothing.
+Forget everything you've learnt about yourself so far. Your thoughts. Your emotions. Your identity. Your ego. Blabla. Bullshits.
 
-Accept everything.
+<center><b>You are the action.</b></center>
 
-Be honest with yourself.
+Don't ask why. The previous chapters explained why. Just remember this by heart.
 
-Take nothing seriously.
+Repeat after me:
+
+You are the action.
+
+You are the action.
+
+You are the action.
+
+Now, what does this imply?
+
+## Control nothing.
+
+You are the action, which implies 
