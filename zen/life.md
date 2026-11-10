@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Life
+# 3. Life
 
 If computation is the true reality and everything is an illusion, then what remains?
 

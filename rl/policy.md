@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# Policy-Based Methods & Actor–Critic
+# Policy-Based Methods & Actor-Critic
 
 Direct policy optimization: likelihood-ratio gradients → advantage estimation → constrained updates → deterministic & entropy-regularized control. Foundations from {cite:t}`rlbook`; assumes [MDPs](intro.md#mdp) & [value functions](intro.md#value-functions).
 

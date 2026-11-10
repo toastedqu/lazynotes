@@ -70,19 +70,11 @@ project:
     # - title: Misc
     #   children:
     #     - file: misc/dsa.md
-    - title: Zen
+    - title: Life
       children:
-        - file: zen/comp.md
-        - file: zen/self.md
-        - file: zen/life.md
-        - file: zen/meta.md
-        - file: zen/forget.md
-    # - title: 易
-    #   children:
-    #     - file: yi/intro.md
-    #     - file: yi/liuyao.md
-    #       children:
-    #       - file: yi/pan.md
+        - file: life/1-comp.md
+        - file: life/2-self.md
+        - file: life/3-emo.md
     - file: about.md
 site:
   options:

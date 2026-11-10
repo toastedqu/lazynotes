@@ -9,13 +9,11 @@ kernelspec:
   language: python
   name: python3
 ---
-# Computation
+# 1. Computation
 
 **Computation is the only reality of the observable universe.**
 
-&nbsp;
-
-## Prerequisites
+Let's define our terms before moving forward:
 - **Phenomenon**: Anything that occurs.
 - **Attribute**: A distinguishable feature of a phenomenon.
 - **State**: A static set of phenomena & their attributes at one timestamp.
@@ -23,9 +21,7 @@ kernelspec:
 - **Condition**: A state outside the cause that shapes the direction & magnitude of the transition.
 - **Consequence**: The state that results from the transition.
 
-&nbsp;
-
-## Computation
+## What is computation?
 **Computation = State Transition**: State A → State B. (Alternatively, "Cause + Conditions → Consequence")
 
 **Computation runs at any temporal-spatial scale.** Smaller than a quark, larger than the observable universe. Shorter than the Planck time, longer than a cosmological decade. There is no privileged level where the real computation happens.

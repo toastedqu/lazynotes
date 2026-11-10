@@ -1,8 +1,6 @@
-# Emotions
+# 3. Emotions
 
-My Dear,
-
-The true essense of life experience is **emotions**.
+**The true essense of life experience is emotions**.
 
 Nothing matters if we cannot master emotions.
 
