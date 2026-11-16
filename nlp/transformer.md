@@ -10,638 +10,795 @@ kernelspec:
   name: python3
 ---
 # Transformer
-Transformer uses **self-attention** to model relationships between all tokens in input sequence. It excels in NLP because of **long-range dependencies** & **parallel processing** {cite:p}`vaswani2017attention`.
+The original encoder-decoder Transformer for machine translation, component by component. Study notes from {cite:t}`vaswani2017attention`.
+
+Notations:
+- $m_\text{src}$: #Source tokens
+- $m$: #Target tokens
+- $d$: Model dim (paper: $d_\text{model}$)
+- $d_{ff}$: FFN inner dim
+- $h$: #Heads
+- $d_k$: Dim per query/key head
+- $d_v$: Dim per value head
+- $N$: #Layers per stack
+- $\mathcal{V}$: Shared source-target vocab
+- $E\in\mathbb{R}^{|\mathcal{V}|\times d}$: Shared embedding matrix
+- $H$: Hidden states entering a sub-layer, one $d$-dim row per token
+- $Z\in\mathbb{R}^{m_\text{src}\times d}$: Encoder output (memory)
+- $x$: Source sequence
+- $y_t$: $t$-th target token
+- $P_\text{drop}$: Dropout rate
+
+Override: $m$ = #target tokens (global $m$ = #samples).
+
+&nbsp;
+
+## Architecture
+- **What**: Encoder-decoder seq2seq model built only from attention, position-wise FFNs, residuals & LayerNorm. {cite:p}`vaswani2017attention`
+- **Why**: RNN seq2seq is sequential.
+    - RNN: $\mathcal{O}(m)$ sequential steps per layer → ❌parallel over time → slow training.
+    - RNN/CNN: path between 2 distant tokens grows with distance → long-range deps hard to learn.
+    - Self-attention: $\mathcal{O}(1)$ sequential steps & $\mathcal{O}(1)$ path between any 2 tokens.
+- **How**:
+    1. **Encoder**: Source tokens → embedding + PE → $N$ encoder layers → memory $Z$.
+    2. **Decoder**: Target tokens shifted right → embedding + PE → $N$ decoder layers. Every layer reads $Z$ via cross-attention.
+    3. **Output**: Linear + softmax → next-token distribution.
+    - **Training**: all target positions in 1 pass. **Inference**: 1 token per step.
 
 ```{image} ../images/nlp-transformer/transformer.png
 :align: center
 :width: 500px
 ```
 
+```{note} Example
+:class: dropdown
+*Where do the base model's 65M params live?* (weights only; $d=512$, $d_{ff}=2048$, $|\mathcal{V}|\approx37000$)
 
-<!-- ````{dropdown} Input
-```{image} ../images/transformer/input.png
-:align: center
-:width: 400px
+| Block | Formula | #Params |
+|:--|:--|:--|
+| MHA | $4d^2$ | 1.05M |
+| FFN | $2dd_{ff}$ | 2.10M |
+| Encoder layer | MHA + FFN | 3.15M |
+| Decoder layer | 2 MHA + FFN | 4.19M |
+| Encoder ($\times6$) | | 18.9M |
+| Decoder ($\times6$) | | 25.2M |
+| $E$ (shared $\times3$) | $\lvert\mathcal{V}\rvert d$ | 18.9M |
+| **Total** | | **≈63.0M** |
+
+- Biases & LayerNorm add <0.1M.
+- Gap to the reported 65M ← vocab is only "about 37000" & unlisted implementation details.
+- FFN = 2/3 of every encoder layer.
+```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+import torch.nn as nn
+
+## Reuses SinusoidalPE from nlp/pos.md
+## Reuses TokenEmbedding, EncoderLayer, DecoderLayer from the sections below
+class Transformer(nn.Module):
+    def __init__(self, V, d=512, h=8, d_ff=2048, N=6, p=0.1):
+        super().__init__()
+        self.emb = TokenEmbedding(V, d)              ## ONE matrix: source, target & output
+        self.pe = SinusoidalPE(d)
+        self.drop = nn.Dropout(p)                    ## dropout on embedding + PE sums
+        self.enc = nn.ModuleList(EncoderLayer(d, h, d_ff, p) for _ in range(N))
+        self.dec = nn.ModuleList(DecoderLayer(d, h, d_ff, p) for _ in range(N))
+
+    def encode(self, src):
+        z = self.drop(self.pe(self.emb(src)))
+        for layer in self.enc:
+            z = layer(z)
+        return z                                     ## (B, m_src, d) memory
+
+    def decode(self, tgt_in, z):
+        x = self.drop(self.pe(self.emb(tgt_in)))
+        for layer in self.dec:
+            x = layer(x, z)                          ## every layer reads the SAME top-encoder z
+        return self.emb.logits(x)                    ## (B, m, |V|)
+
+    def forward(self, src, tgt_in):
+        ## padding masks omitted for brevity
+        return self.decode(tgt_in, self.encode(src))
+
+## Example
+model = Transformer(V=100, d=32, h=4, d_ff=64, N=2)
+src, tgt_in = torch.randint(0, 100, (2, 7)), torch.randint(0, 100, (2, 5))
+print(model(src, tgt_in).shape)  ## torch.Size([2, 5, 100])
 ```
 ````
 
-````{dropdown} MHA
-```{image} ../images/transformer/attention.png
-:align: center
-:width: 400px
-```
-```` -->
+```{dropdown} Table 1: Layer Types
+| Layer | Compute per layer | Sequential ops | Max path length |
+|:--|:--|:--|:--|
+| Self-attention | $\mathcal{O}(m^2d)$ | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ |
+| Recurrent | $\mathcal{O}(md^2)$ | $\mathcal{O}(m)$ | $\mathcal{O}(m)$ |
+| Convolution | $\mathcal{O}(cmd^2)$ | $\mathcal{O}(1)$ | $\mathcal{O}(\log_c m)$ |
+| Self-attention (restricted) | $\mathcal{O}(rmd)$ | $\mathcal{O}(1)$ | $\mathcal{O}(m/r)$ |
 
-## Tokenization
-- **What**: Text sequence → Token sequence
-- **Why**: Machines can only read numbers.
-
-```{attention} Q&A
-:class: dropdown
-*Why subword-level vocab? Why not whole words? Why not chars?*
-- Word-level vocab explode with out-of-vocab words.
-- Char-level vocab misses morphology.
-- Subword offers a fixed-size, open-vocab symbol set which can handle rare words while maintaining morphology.
+- $c$: Kernel size. Path $\mathcal{O}(\log_c m)$ needs dilated convolutions. Contiguous kernels need $\mathcal{O}(m/c)$ layers.
+- $r$: Neighborhood size of restricted self-attention.
 ```
 
-### BPE
-- **What**: Byte-Pair Encoding (**Frequency-based** subword tokenization).
-- **How**:
-	1. Start with single chars as tokens.
-	2. Count each pair of adjacent tokens.
-	3. Merge the **most frequent** pair into one token.
-	4. Repeat Step 2-3 till reaching vocab size.
+```{dropdown} Table 2: Hyperparams
+| | $N$ | $d$ | $d_{ff}$ | $h$ | $d_k=d_v$ | $P_\text{drop}$ | $\epsilon_{ls}$ | Steps | #Params |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| Base | 6 | 512 | 2048 | 8 | 64 | 0.1 | 0.1 | 100K | 65M |
+| Big | 6 | 1024 | 4096 | 16 | 64 | 0.3 | 0.1 | 300K | 213M |
 
-### WordPiece
-- **What**: **Likelihood-based** subword tokenization.
-- **Why**: 
-	- BPE merges by frequency → Greedy → Doesn't care about the merge's impact on the overall LM probability
-	- WordPiece aims to **maximize corpus likelihood** under a unigram LM over subword tokens.
-- **How**:
-	1. Start with single chars as tokens.
-	2. Compute **corpus likelihood gain** for each pair of adjacent tokens.
-	3. Merge the pair with the **highest likelihood gain** into one token.
-	4. Repeat Step 2-3 till reaching vocab size.
-
-```{note} Math
-:class: dropdown
-Notations:
-- IO:
-	- $w_i$: $i$th word (i.e., space-separated tokens) in training corpus.
-	- $t_{i,j}$: $j$th subtoken in word $w_i$.
-- Hyperparams:
-	- $M$: #words in training corpus.
-	- $m_{w_i}$: #subtokens in word $w_i$.
-- Params:
-	- $\mathcal{V}$: Vocab of subword tokens.
-- Misc:
-	- $L(\mathcal{V})$: Corpus likelihood given curr vocab.
-	- $a,b$: 2 selected tokens.
-	- $c$: New token if merging $ab$.
-
-Objective: Maximize Corpus Likelihood
-
-$$
-L(\mathcal{V})=\prod_{i=1}^{M}P(w_i|\mathcal{V})=\prod_{i=1}^{M}\prod_{j=1}^{m_{w_i}}t_{i,j}
-$$
-
-- Likelihood: #Counts of curr token over #Counts of all tokens in corpus from vocab:
-
-$$
-P(a)=\frac{\# a}{\sum_{b\in\mathcal{V}}\# b}
-$$
-
-Merging $a$&$b$ into $c$:
-
-$$\begin{align*}
-\# c\leftarrow \# c + \# ab \\
-\# a\leftarrow \# a - \# ab	\\
-\# b\leftarrow \# b - \# ab
-\end{align*}$$
-
-Likelihood Gain:
-
-$$
-\Delta(a,b)=\sum_{ab}\left[\log P_\mathrm{postmerge}(c)-\log P(a)-\log P(b)\right]
-$$
+- Big EN-FR used $P_\text{drop}=0.1$.
+- Hardware: 1 machine, 8 P100 GPUs. Base: 12 hours. Big: 3.5 days.
 ```
 
-### Unigram
-- **What**: Reverse of BPE/Wordpiece → Start with a **large candidate vocabulary** & Repeatedly **prune tokens** while fitting a **unigram LM** over tokens
-- **Why**: 
-	- Pruning avoids committing to early irreversible merges.
-	- Unigram explicitly models segmentation uncertainty → Produce more natural/diverse segmentations
-- **How**:
-	1. Build a large candidate vocab from training corpus.
-		- **Candidate**: Every substring up to a max length (e.g., ~10–12 for alphabetic scripts).
-		- **Large**: 10×~30× final vocab size.
-	2. Assign token probabilities via a unigram LM.
-		- Treat each token $t$ as a symbol with probability $p(t)$ ($\sum_t p(t)=1$).
-		- A string $x$ has many valid segmentations $s=(t_1,\dots,t_k)$.
-		- Each segmentation has probability $P(s)=\prod_i p(t_i)$.
-		- Use DP to compute:
-			- Training: **Forward–Backward** marginals / expected counts.
-			- Inference: **Viterbi** best segmentation.
-	3. Fit $p(t)$ with EM.
-		- **E-step**: Compute expected token counts under $P(s|x)$ across the corpus.
-		- **M-step**: Update probabilities from expected counts.
-	4. Prune vocabulary iteratively.
-		1. Score each token by how costly it is to remove (e.g., increase in NLL).
-		2. Remove a fraction of **lowest-utility** tokens (e.g., 10–20%), keep required coverage tokens (special tokens), and retain an **UNK/fallback** mechanism
-		3. Re-run EM on the reduced vocab.
-		4. Repeat until reaching target vocab size.
-
-```{note} Math
-:class: dropdown
-Notations:
-- Data:
-  - $x$: Input string.
-  - $\mathcal{V}$: Curr vocab.
-  - $\mathrm{Seg}(x)$: Set of all valid segmentations of $x$ using tokens in $\mathcal{V}$.
-- Params:
-  - $p(t)$: Unigram probability of token $t$, with $\sum_{t\in\mathcal{V}} p(t)=1$.
-- Segmentation:
-  - $s=(t_1,\dots,t_k)\in \mathrm{Seg}(x)$: A segmentation of $x$.
-  - $\text{count}(t;s)$: #times token $t$ appears in segmentation $s$.
-
-Model:
-- Segmentation probability:
-  $$
-  P(s)=\prod_{i=1}^k p(t_i)
-  $$
-- String probability (sum over all segmentations):
-  $$
-  P(x)=\sum_{s\in \mathrm{Seg}(x)} P(s)
-  =\sum_{s\in \mathrm{Seg}(x)} \prod_{i=1}^k p(t_i)
-  $$
-- Posterior over segmentations:
-  $$
-  P(s|x)=\frac{P(s)}{P(x)}
-  $$
-- Expected count of token $t$ under the posterior:
-  $$
-  \mathbb{E}[\text{count}(t)|x]
-  =\sum_{s\in \mathrm{Seg}(x)} \text{count}(t;s)\,P(s|x)
-  $$
-
-EM updates (corpus-level):
-- Let $C(t)=\sum_x \mathbb{E}[\text{count}(t)|x]$. Then:
-  $$
-  p(t)\leftarrow \frac{C(t)}{\sum_{t'\in\mathcal{V}} C(t')}
-  $$
-
-Inference (Viterbi):
-- Find the best segmentation:
-  $$
-  s^*=\arg\max_{s\in \mathrm{Seg}(x)} P(s)
-  =\arg\max_{s\in \mathrm{Seg}(x)} \sum_{i=1}^k \log p(t_i)
-  $$
+```{dropdown} Table 3: Original vs Llama-style LLM
+| Component | Original (2017) | Typical modern decoder-only LLM |
+|:--|:--|:--|
+| Stack | Encoder-decoder | Decoder-only |
+| Norm placement | Post-LN | Pre-norm |
+| Norm | [LayerNorm](../dl/module.md#layernorm) | [RMSNorm](../dl/module.md#rmsnorm) |
+| Position | Sinusoidal, added at input | [RoPE](pos.md#rope) on $\mathbf{q},\mathbf{k}$ |
+| FFN | ReLU, $d_{ff}=4d$ | Gated (SwiGLU), 3 matrices. $d_{ff}=\frac{8}{3}d$ keeps the param count of $4d$ ReLU; actual ratio is model-specific (Llama 3: 3.25–3.5) |
+| Attention | MHA | [GQA](infer/cache.md#gqa) |
+| Bias terms | Yes | Usually none |
+| Embedding | Tied ×3 | Often untied |
+| Dropout | 0.1 | Usually 0 in pretraining |
 ```
 
 ```{attention} Q&A
 :class: dropdown
-*How is this “reverse of BPE/WordPiece,” exactly?*  
-- BPE/WordPiece: start from small units (chars/bytes) and **merge** to grow vocab.  
-- Unigram: start from huge vocab of substrings and **prune** down while optimizing likelihood.
+*When is self-attention cheaper than recurrence?*
+- Table 1 compares only the mixing step: $m^2d<md^2$ ⟺ $m<d$.
+- Full MHA layer also pays $4md^2$ for the $Q,K,V,O$ projections → total ≈ $4md^2+2m^2d$. The $m^2$ term dominates only when $m\gtrsim2d$.
+- 2017 MT: subword sentences ≪ 512 tokens → attention mixing was cheap.
+- Long context: $m\gg d$ → attention dominates → [FlashAttention](attn.md#flashattention), [Sparse Attention](attn.md#sparse-attention).
 
-*Why do we need Forward–Backward instead of only Viterbi during training?*  
-- Viterbi uses only the single best segmentation, which can over-commit early.  
-- Forward–Backward spreads probability mass across *all* segmentations, giving smoother, more robust expected counts for EM.
+*Is the Transformer "attention only"?*
+- ❌. FFN holds 2/3 of encoder-layer params. Residuals & LayerNorm are needed to train the stack.
 
-*What guarantees coverage at inference time?*  
-- In practice you keep a base set (often all single characters or bytes) and/or provide an UNK/fallback path, so any string can be segmented even if longer substrings were pruned.
+*Results?*
+- WMT14 EN-DE: 28.4 BLEU (big). >2 BLEU over the best prior models, ensembles included.
+- WMT14 EN-FR: 41.8 BLEU (big), new single-model SOTA.
+    - Caveat: abstract & results table say 41.8. The results text says 41.0.
+- Base already beat all prior models on EN-DE at a fraction of their training FLOPs.
 
-*When does Unigram tend to shine?*  
-- When you want **multiple plausible segmentations** during training (morphology-rich languages, mixed scripts, noisy text), and you’d rather not lock in merges that looked good early but age poorly as vocab grows.
+*What did the ablations show?* (EN-DE dev, base = 25.8 BLEU)
+- $h=1$ → 24.9. $h=32$ → 25.4. → Too few & too many heads both hurt.
+- $d_k$⬇️ (16, 32) → worse → computing compatibility is not easy.
+- Bigger $d$, $d_{ff}$ → better. $P_\text{drop}=0$ → 24.6.
+- Learned PE instead of sinusoidal → 25.7 ≈ same.
+
+*How do BERT & GPT relate?*
+- BERT = encoder stack only, bidirectional.
+- GPT = decoder stack w/o cross-attention, causal.
+- Why decoder-only won for LLMs → [Cross Attention](attn.md#cross-attention).
 ```
 
 &nbsp;
 
-## Token Embedding
-- **What**: Tokens → Semantic vectors.
-- **Why**: 
-	- Discrete tokens $\xrightarrow{\text{map to}}$ Continuous vectors
-	- Vocab index $\xrightarrow{\text{map to}}$ Semantic meaning
-	- Vocab size $\xrightarrow{\text{reduced to}}$ hidden size
-- **How**: [Linear](../dl/module.md#linear).
-
-```{note} Math
-:class: dropdown
-Notations:
-- IO:
-	- $T=(t_1,\cdots,t_m)$: Input token sequence (after tokenization).
-    - $X\in\mathbb{R}^{m\times d_{\text{model}}}$: Output semantic vectors.
-- Params:
-    - $E\in\mathbb{R}^{V\times d_{\text{model}}}$: Embedding matrix/look-up table.
-- Hyperparams:
-    - $m$: #Tokens.
-    - $d_{\text{model}}$: Embedding dim for the model.
-    - $V$: Vocab size.
-
-Token Embedding:
-
-$$
-X=\begin{bmatrix}
-E_{t_1} \\
-\vdots \\
-E_{t_m}
-\end{bmatrix}
-$$
-```
-
-&nbsp;
-
-## Positional Encoding
-- **What**: Semantic vectors + Positional vectors → Position-aware vectors
-- **Why**:
-	- Transformers don't know positions.
-	- BUT positions matter!
-		- No PE → self-attention scores remain unchanged regardless of token orders {cite:p}`wang_positional_encoding`.
-
-### Sinusoidal PE
-- **What**: Positional vectors → Sine waves
-- **Why**:
-	- Continuous & multi-scale → Generalize to sequences of arbitrary lengths
-	- No params → Low computational cost
-	- Empirically performed as well as learned PE
-
-```{note} Math
-:class: dropdown
-Notations:
-- IO:
-	- $pos\in\mathbb{R}$: Input token position.
-- Hyperparams:
-	- $i$: Embedding dimension index.
-	- $d_{\text{model}}$: Embedding dimension.
-
-Sinusoidal PE:
-
-$$\begin{align*}
-&PE_{(pos, 2i)}=\sin\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right) \\
-&PE_{(pos, 2i+1)}=\cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)
-\end{align*}$$
-```
-
-```{attention} Q&A
-:class: dropdown
-*Cons?*
-- No params → No learning of task-specific position patterns.
-- Requires uniform token importance across the sequence. {cite:p}`vaswani2017attention`
-- Cannot capture complex, relative, or local positional relationships.
-```
-
-### RoPE
-- **What**: Rotary Postion Embedding.
-	- Encode relative positions ← Rotate each QKV pair.
-- **Why**:
-	- Absolute PE tie each token to a fixed index → NO generalization to longer sequences
-	- Learned relative PE learn one weight per distance bucket → Limit distance ranges & Add params
-	- RoPE: **Param-free, Continuous, Relative, Generalizable**.
+## Input
+### Tokenization
+- **What**: Text → subword IDs. Full topic: [Tokenization](token.md).
+- **Why**: Embedding table needs a fixed, finite vocab. Subwords → rare words split into known pieces → word-level OOV⬇️.
+    - Zero OOV needs full char/byte coverage or an UNK fallback.
 - **How**:
-	1. Project each token embedding at position index $p$ to $\mathbf{q}_p$ & $\mathbf{k}_p$.
-	2. Each query/key vector of hidden dim $d$ = $\frac{d}{2}$ two-component planes formed by even-odd feature pairs.
-	3. Assign a rotation angle $\theta_n$, which grows smoothly with two-component pair index $n$, to each token.
-	4. Define a fixed 2D rotation operator $R(\theta_n)$, which rotates every plane counterclockwise by the angle $\theta_n$.
-	5. Rotate query & key vectors.
-	6. Compute attention scores with rotated query & key vectors.
-		- The paired rotation ONLY depends on the relative offset between their positions.
+    - EN-DE: [BPE](token.md#bpe), shared source-target vocab ≈37000.
+    - EN-FR: [WordPiece](token.md#wordpiece), 32000.
+    - Shared vocab → one embedding matrix for both languages → enables [Weight Tying](#weight-tying).
+
+&nbsp;
+
+### Token Embedding
+- **What**: Row lookup in $E$, scaled by $\sqrt{d}$.
+- **Why**: Discrete IDs → dense $d$-dim vectors that attention & FFN can process.
+- **How**:
+    1. Token ID $t$ → row $E_t$.
+    2. Multiply by $\sqrt{d}$.
 
 ```{note} Math
 :class: dropdown
-I forgot everything about Complex Analysis, so I will write in the layman's way.
-
 Notations:
 - IO:
-	- $\mathbf{x}\in\mathbb{R}^d$: Input token embedding.
-- Hyperparam:
-	- $d$: Hidden dim.
-- Misc:
-	- $i,j$: Token position indices.
-	- $n\in[1,\cdots,\frac{d}{2}]$: 2D plane index.
-	- $\theta_n$: Angle assigned to plane $n$.
-	- $R_\theta$: Rotation matrix for angle $\theta$.
-	- $\mathbf{q}_i$: Query vector for $i$th token.
-	- $\mathbf{k}_j$: Key vector for $j$th token.
+    - $t_i\in\{1,\dots,|\mathcal{V}|\}$: Token ID at position $i$.
+    - $\mathbf{x}_i\in\mathbb{R}^d$: Embedding at position $i$.
 
-2D plane:
-1. The input token vector can be viewed as a sequence of consecutive pairs:
+Forward:
 
 $$
-\mathbf{x}=\left[(x_1,x_2),\cdots,(x_{d-1},x_d)\right]
+\mathbf{x}_i=\sqrt{d}\,E_{t_i}=\sqrt{d}\,E^\top\mathbf{e}_{t_i}
 $$
 
-2. Each pair $(x_{2n-1},x_{2n})$ = A point in a 2D Cartesian plane.
-3. For each pair, define a rotation angle, which is smoothly dependent on the plane index:
-
-$$
-\theta_n=10000^{-\frac{2(n-1)}{d}}
-$$
-
-4. For each pair, define a rotation matrix:
-
-$$
-R_{\theta_n}=\begin{bmatrix}
-\cos\theta_n & -\sin\theta_n \\
-\sin\theta_n & \cos\theta_n
-\end{bmatrix}
-$$
-
-5. Note the core property of rotation matrices:
-
-$$
-R_\theta^TR_\phi=R_{\phi-\theta}
-$$
-
-6. For each pair, rotate counterclockwise (i.e., Cartesian → Polar → Cartesian):
-
-$$
-\begin{bmatrix}
-x'_{2n-1} \\ x'_{2n}
-\end{bmatrix}=R_{\theta_n}\begin{bmatrix}
-x_{2n-1} \\ x_{2n}
-\end{bmatrix}=\begin{bmatrix}
-\cos\theta_n & -\sin\theta_n \\
-\sin\theta_n & \cos\theta_n
-\end{bmatrix}\begin{bmatrix}
-x_{2n-1} \\ x_{2n}
-\end{bmatrix}
-$$
-
-RoPE:
-1. For a given query vector $\mathbf{q}_i$ and key vector $\mathbf{k}_j$, apply RoPE to each 2D plane.
-	- NOTE: The angle fed into the rotation matrix is ALSO dependent on the **position**.
-
-$$\begin{align*}
-{\mathbf{q}'}_i^{(n)}&=R_{i\theta_n}\mathbf{q}_i^{(n)} \\
-{\mathbf{k}'}_j^{(n)}&=R_{j\theta_n}\mathbf{k}_j^{(n)}
-\end{align*}$$
-
-2. For each pair, compute dot product, which is ONLY dependent on the vector values and the relative distance between $i$ & $j$:
-
-$$\begin{align*}
-\left({\mathbf{q}'}_i^{(k)}\right)^T{\mathbf{k}'}_j^{(k)}&=\left(R_{i\theta_n}\mathbf{q}_i^{(n)}\right)^TR_{j\theta_n}\mathbf{k}_j^{(n)} \\
-&=\left(\mathbf{q}_i^{(n)}\right)^TR_{i\theta_n}^TR_{j\theta_n}\mathbf{k}_j^{(n)} \\
-&=\left(\mathbf{q}_i^{(n)}\right)^TR_{(j-i)\theta_n}\mathbf{k}_j^{(n)}
-\end{align*}$$
+- $\mathbf{e}_{t}$: One-hot vector of $t$. Lookup = [Linear](../dl/module.md#linear) on a one-hot input, w/o the matmul.
 ```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+import torch.nn as nn
+
+class TokenEmbedding(nn.Module):
+    def __init__(self, V, d):
+        super().__init__()
+        self.E = nn.Parameter(torch.randn(V, d) * d ** -0.5)  ## std d^-1/2, as in tensor2tensor
+        self.d = d
+
+    def forward(self, ids):
+        return self.E[ids] * self.d ** 0.5                    ## lookup, then x sqrt(d)
+
+    def logits(self, h):
+        return h @ self.E.T                                   ## tied pre-softmax linear: same E
+
+## Example
+emb = TokenEmbedding(V=100, d=8)
+ids = torch.tensor([[3, 14, 15]])
+print(emb(ids).shape, emb.logits(emb(ids)).shape)  ## torch.Size([1, 3, 8]) torch.Size([1, 3, 100])
+```
+````
 
 ```{attention} Q&A
 :class: dropdown
-*That's genius. How did they come up with this?*
-- They appreciate relative PE, but they don't appreciate the additional trainable params.
-- Let $\mathbf{q}_i$ & $\mathbf{k}_j$ be query & key vectors at positions $i$ and $j$ respectively.
-- They want their dot product to ONLY depend on the input vectors and the relative distance $i-j$:
-
-$$
-f(\mathbf{q},i)\cdot f(\mathbf{k},j) = g(\mathbf{q},\mathbf{k},i-j)
-$$
-
-- This is best achieved by rotation as explained in the Math section.
-
-*Why define the angle that way?*
-- Well, they didn't define it that way, but the OG [Sinusoidal PE](#sinusoidal-pe) did.
-- Long-term decay: This function ensures that the inner-product decays as the relative distance increases.
-- Varying granularity:
-	- Early dimensions have large angles → Rotation changes significantly even between nearby tokens → Effectively capture fine-grained relationship
-	- Late dimensions have small angles → Rotation changes very slowly, almost identical between nearby tokens → They ONLY make a significant difference with distant tokens → Effectively capture coarse-grained relationship
+*Why multiply by $\sqrt{d}$?*
+- The paper gives no reason.
+- Reference code (tensor2tensor) inits $E$ with std $d^{-1/2}$ → $\times\sqrt{d}$ → unit-scale embeddings.
+- → Same scale as PE entries in $[-1,1]$ → PE does not drown the token signal.
+- With tying, $E$ is also the output layer → small entries keep initial logits small.
 ```
 
 &nbsp;
 
-## Attention
-- **What**: Different weights for different parts.
-    - Focus on important parts & Diffuse on trivial parts.
-- **Why**: Enable models to dynamically align & retrieve most relevant parts of input sequence when generating each output token.
-
-### Self-Attention
-- **What**: Each token in the sequence pays attention to all other tokens in the same sequence, to produce **context-aware representations**.
-- **Why**: **Long-range dependencies** + **Parallel processing**
-- **How**: Information Retrieval.
-	1. All tokens $\xrightarrow{\text{convert to}}$ $Q$,$K$,$V$
-		- $Q$: What are you looking for?
-		- $K$: What are the keywords for identification?
-		- $V$: What is the content?
-	2. For each token $t$:
-        1. Multiply its query & all tokens' keys → Relevance scores
-		2. Scale & Softmax the scores → Attention weights
-		3. Weighted sum of all tokens' values → $t$'s contextual representation
-
-```{note} Math
-:class: dropdown
-Notations:
-- Input:
-	- $X\in\mathbb{R}^{m\times d_{\text{model}}}$: Input sequence
-- Params:
-	- $W_Q\in\mathbb{R}^{d_{\text{model}}\times d_K}$: Weight matrix for Q.
-	- $W_K\in\mathbb{R}^{d_{\text{model}}\times d_K}$: Weight matrix for K.
-	- $W_V\in\mathbb{R}^{d_{\text{model}}\times d_V}$: Weight matrix for V.
-- Hyperparams:
-	- $m$: #Tokens.
-	- $d_{\text{model}}$: Embedding dim of input sequence.
-	- $d_K$: Embedding dim of Q & K.
-		- Q & K share the same embedding dim for matrix multiplication.
-	- $d_V$: Embedding dim of V (practically the same as $d_K$).
-- Misc:
-	- $Q=XW_Q\in\mathbb{R}^{m\times d_K}$: Q vectors for all tokens.
-	- $K=XW_K\in\mathbb{R}^{m\times d_K}$: K vectors for all tokens.
-	- $V=XW_V\in\mathbb{R}^{m\times d_V}$: V vectors for all tokens.
-
-Scaled Dot-Product Attention:
-
-$$
-\text{Attention}(Q,K,V)=\text{softmax}\left(\frac{QK^T}{\sqrt{d_K}}\right)V
-$$
-```
-
-```{tip} Derivation (Backprop)
-:class: dropdown
-Notations:
-- $S=\frac{QK^T}{\sqrt{d_K}}$
-- $A=\text{softmax}(S)$
-- $Y=AV$
-
-Process:
-1. V:
-
-$$
-\frac{\partial\mathcal{L}}{\partial V}=A^T\frac{\partial\mathcal{L}}{\partial Y}
-$$
-
-2. A:
-
-$$
-\frac{\partial\mathcal{L}}{\partial A}=\frac{\partial\mathcal{L}}{\partial Y}V^T
-$$
-
-3. S:
-
-- Recall that for $\mathbf{a}=\text{softmax}(\mathbf{s})$:
-
-	$$
-	\frac{\partial a_i}{\partial s_j}=a_i(\delta_{ij}-a_j)
-	$$
-
-	where $\delta_{ij}=1\text{ if }i=j\text{ else }0$.
-
-- For each row $i$ of $S$:
-
-	$$\begin{align*}
-	\frac{\partial\mathcal{L}}{\partial S_{ij}}&=\sum_{k=1}^{m}\frac{\partial\mathcal{L}}{\partial A_{ik}}\frac{\partial A_{ik}}{\partial S_{ij}} \\
-	&=\frac{\partial\mathcal{L}}{\partial A_{ij}}A_{ij}-A_{ij}\frac{\partial\mathcal{L}}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k\neq j}\frac{\partial\mathcal{L}}{\partial A_{ik}}A_{ik} \\
-	&=\frac{\partial\mathcal{L}}{\partial A_{ij}}A_{ij}-A_{ij}\sum_{k=1}^{m}\frac{\partial\mathcal{L}}{\partial A_{ik}}A_{ik}
-	\end{align*}$$
-
-4. Q&K:
-
-$$\begin{align*}
-&\frac{\partial\mathcal{L}}{\partial Q}=\frac{\partial\mathcal{L}}{\partial S}\frac{K}{\sqrt{d_K}} \\
-&\frac{\partial\mathcal{L}}{\partial K}=\frac{\partial\mathcal{L}}{\partial S}^T\frac{Q}{\sqrt{d_K}}
-\end{align*}$$
-
-5. Ws:
-
-$$\begin{align*}
-&\frac{\partial\mathcal{L}}{\partial W_Q}=X^T\frac{\partial\mathcal{L}}{\partial Q}\\
-&\frac{\partial\mathcal{L}}{\partial W_K}=X^T\frac{\partial\mathcal{L}}{\partial K}\\
-&\frac{\partial\mathcal{L}}{\partial W_V}=X^T\frac{\partial\mathcal{L}}{\partial V}
-\end{align*}$$
-
-6. X:
-
-$$
-\frac{\partial\mathcal{L}}{\partial X}=\frac{\partial\mathcal{L}}{\partial Q}W_Q^T+\frac{\partial\mathcal{L}}{\partial K}W_K^T+\frac{\partial\mathcal{L}}{\partial V}W_V^T
-$$
-```
+#### Weight Tying
+- **What**: One matrix $E$ for source embedding, target embedding & pre-softmax linear. {cite:p}`press2017using`
+- **Why**: All 3 map between tokens & the same $d$-dim space → share it.
+    - Params⬇️. LM perplexity⬇️ in Press & Wolf.
+- **How**: Output logits $=\mathbf{h}E^\top$. Grads from all 3 uses update $E$.
 
 ```{attention} Q&A
 :class: dropdown
-*Cons?*
-- ⬆️ Computational cost ← $O(n^2)$ (?)
-- Fixed sequence length.
+*How much does it save in the base model?*
+- 3 matrices → 1: $2\times37000\times512\approx37.9$M params saved.
 
-*Why scale?*
-1. Dot product scales with dimension size.
-2. Assume elements follow $\mathcal{N}(0,1)$, then dot product follows $\mathcal{N}(0,d_K)$.
-3. Scaling normalizes this variance.
-	
-*Why softmax?*
-- Scores → Probability distribution
-	- All weights > 0.
-	- All weights sum to 1.
-- Score margins are amplified → More attention to relevant elements
+*Requirement?*
+- Source & target share one vocab → shared BPE.
+
+*Do modern LLMs tie?*
+- Small models often tie ← embedding = large share of params.
+- Large models often untie ← embedding share⬇️ with scale. Input & output roles can then specialize.
 ```
 
-### Masked/Causal Attention
-- **What**: Self-attention BUT each token can only see its previous tokens (and itself).
-- **Why**: Autoregressive generation.
-- **How**: For each token, mask attention scores of all future tokens to $-\infty$ before softmax.
-	- $\text{softmax}(-\infty)$=0
+&nbsp;
 
-```{note} Math
-:class: dropdown
-Causal Attention:
+### Positional Encoding
+- **What**: Fixed sinusoidal vector $\mathbf{p}_i$ added to each embedding. Full topic: [Positional Encoding](pos.md).
+- **Why**: Attention is [permutation-equivariant](pos.md#permutation-equivariance) → w/o PE, word order is invisible.
+- **How**: $\mathbf{x}_i\leftarrow\mathrm{Dropout}(\mathbf{x}_i+\mathbf{p}_i)$ at the bottom of both stacks. Formula: [Sinusoidal](pos.md#sinusoidal).
+    - Learned PE gave nearly identical BLEU. Sinusoidal was chosen because it might extrapolate to longer sequences.
 
-$$
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + M\right)V
-$$
-- $M\in\mathbb{R}^{m\times m}$: Mask matrix
-	- $M_{ij}=0\text{ if }i\geq j$ else $-\infty$
-```
+&nbsp;
 
-```{attention} Q&A
-:class: dropdown
-*Conditions?*
-- Only applicable in decoder.
-	- Encoder's goal: Convert sequence into a meaningful representation.
-	- Decoder's goal: predict next token.
-
-*Cons?*
-- Unidirectional context.
-- Limited context for early tokens.
-	- Token 1 only sees 1 token.
-	- Token 2 only sees 2 tokens.
-	- ...
-```
-
-### Cross Attention
-- **What**: Scaled Dot-Product Attention BUT
-	- K&V ← Source (e.g., Encoder)
-	- Q ← Curr sequence (i.e., Decoder)
-- **Why**: Additional source info may be helpful for predicting next token for curr sequence.
-- **How**: See [Self-Attention](#self-attention) but $K \& V$ are from Encoder.
-
+## Sub-Layers
 ### Multi-Head Attention
-- **What**: Multiple self-attention modules running in parallel.
-- **Why**:
-	- 1 attention module $\xrightarrow{\text{monitor}}$ 1 representation subspace
-	- Language is complex: morphology, syntax, semantics, context, ...
-	- $h$ attention modules $\xrightarrow{\text{monitor}}$ $h$ representation subspaces
-- **How**:
-    1. Each head takes the input token sequence and generates an output via self-attention.
-    2. Concatenate all outputs.
-    3. Linear transform to match embedding dim.
+- **What**: $h=8$ parallel scaled dot-product heads, $d_k=d_v=d/h=64$, concatenated → $W_O$. Mechanism: [Multi-Head Attention](attn.md#multi-head-attention).
+- **Why**: One head = one weighted average per token → averages away distinct relations.
+    - $h$ heads → $h$ relations at ≈ single-head cost, since $d_k$ shrinks by $h$.
+- **How**: Used 3 ways.
+    1. **Encoder self-attention**: $Q,K,V$ ← previous encoder layer. Every token sees all source tokens.
+    2. **Decoder masked self-attention**: $Q,K,V$ ← previous decoder layer. [Causal mask](attn.md#causal) blocks future tokens.
+    3. **Encoder-decoder attention**: $Q$ ← previous decoder sub-layer. $K,V$ ← encoder output $Z$. → [Cross Attention](attn.md#cross-attention).
 
 ```{note} Math
 :class: dropdown
 Notations:
+- IO:
+    - $H_q$: States that emit queries.
+    - $H_{kv}$: States that emit keys & values.
 - Params:
-	- $W_O\in\mathbb{R}^{(h\cdot d_v)\times d_{\text{model}}}$: Weight matrix to transform concatenated head outputs.
-- Hyperparams:
-	- $h$: #Heads.
-- Intermediate values:
-	- $\text{head}_i\in\mathbb{R}^{m\times d_V}$: Weighted contextual representation of input sequence from head $i$.
+    - $W_Q^{(r)},W_K^{(r)}\in\mathbb{R}^{d\times d_k}$: Query/Key projection of head $r$.
+    - $W_V^{(r)}\in\mathbb{R}^{d\times d_v}$: Value projection of head $r$.
+    - $W_O\in\mathbb{R}^{hd_v\times d}$: Output projection.
+- Misc:
+    - $r\in\{1,\dots,h\}$: Head index.
+    - $M$: Additive mask ($0$ = allowed, $-\infty$ = blocked).
 
-MHA:
+Forward:
 
 $$
-\text{MultiHead}(Q,K,V)=\text{Concat}(\text{head}_1,\cdots,\text{head}_h)W_O
+\mathrm{MHA}(H_q,H_{kv})=\mathrm{Concat}(\mathrm{head}_1,\dots,\mathrm{head}_h)\,W_O
 $$
+
+$$
+\mathrm{head}_r=\mathrm{softmax}\left(\frac{(H_qW_Q^{(r)})(H_{kv}W_K^{(r)})^\top}{\sqrt{d_k}}+M\right)H_{kv}W_V^{(r)}
+$$
+
+| Use | $H_q$ | $H_{kv}$ | $M$ |
+|:--|:--|:--|:--|
+| Encoder self-attention | $H$ | $H$ | $0$ (padding only) |
+| Decoder masked self-attention | $H$ | $H$ | Causal |
+| Encoder-decoder attention | $H$ | $Z$ | $0$ (padding only) |
 ```
 
 ```{attention} Q&A
 :class: dropdown
+*Why divide by $\sqrt{d_k}$?*
+- Components of $\mathbf{q},\mathbf{k}$ independent, mean 0, variance 1 → $\mathbf{q}\cdot\mathbf{k}$ has variance $d_k$ → softmax saturates → tiny grads. → [Derivation](attn.md#scaled-dot-product-attention)
+
+*Why does every decoder layer attend to the same $Z$?*
+- $Z$ = most refined source representation.
+- $K,V$ of $Z$ per layer are computed once per source → reused at every decode step.
+
+*What about padding?*
+- Batches mix lengths → pad tokens must be blocked as keys. The paper does not discuss it. Implementations add a key-padding mask.
+```
+
+&nbsp;
+
+### Position-wise FFN
+- **What**: 2-layer MLP with ReLU, applied to each token independently. Same weights across positions, different weights per layer.
+- **Why**: Attention = communication across tokens. FFN = computation within a token.
+    - Attention output = weighted average of value vectors → no per-feature nonlinearity on the content.
+- **How**:
+    1. Expand $d\to d_{ff}=4d$.
+    2. [ReLU](../dl/module.md#relu).
+    3. Project back $d_{ff}\to d$.
+
+```{note} Math
+:class: dropdown
+Notations:
+- IO:
+    - $\mathbf{h}\in\mathbb{R}^d$: One token's hidden state.
+- Params:
+    - $W_1\in\mathbb{R}^{d\times d_{ff}}$, $\mathbf{b}_1\in\mathbb{R}^{d_{ff}}$: Expand weights & bias.
+    - $W_2\in\mathbb{R}^{d_{ff}\times d}$, $\mathbf{b}_2\in\mathbb{R}^{d}$: Compress weights & bias.
+
+Forward:
+
+$$
+\mathrm{FFN}(\mathbf{h})=\max(0,\mathbf{h}W_1+\mathbf{b}_1)\,W_2+\mathbf{b}_2
+$$
+```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+import torch.nn as nn
+
+class FFN(nn.Module):
+    def __init__(self, d, d_ff):
+        super().__init__()
+        self.W1 = nn.Linear(d, d_ff)  ## expand
+        self.W2 = nn.Linear(d_ff, d)  ## compress
+
+    def forward(self, x):
+        ## x: (B, m, d); acts on the last dim only -> tokens never interact here
+        return self.W2(torch.relu(self.W1(x)))
+
+## Example
+print(FFN(8, 32)(torch.randn(2, 5, 8)).shape)  ## torch.Size([2, 5, 8])
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Why "position-wise"?*
+- Same function at every position, no cross-token mixing. Equivalent to 2 convolutions with kernel size 1.
+
+*Why $d_{ff}=4d$?*
+- Empirical. Ablation: $d_{ff}$⬆️ → BLEU⬆️ (1024: 25.4, 2048: 25.8, 4096: 26.2 on EN-DE dev).
+
 *Cons?*
-- ⬆️ Computational cost
-- ⬇️ Interpretability
-- Redundancy ← Some heads may learn similar patterns
+- 2/3 of layer params & most layer FLOPs at short $m$.
+```
+
+&nbsp;
+
+### Add & Norm
+- **What**: $\mathrm{LayerNorm}(H+\mathrm{Dropout}(\mathrm{Sublayer}(H)))$ around every sub-layer (**Post-LN**).
+- **Why**: Make a deep stack trainable.
+    - [Residual](../dl/module.md#residual-connection) → identity path for grads.
+    - [LayerNorm](../dl/module.md#layernorm) → stable scale per token, independent of batch & sequence length.
+- **How**:
+    1. Sub-layer output → dropout.
+    2. Add the sub-layer input.
+    3. LayerNorm over the $d$ features of each token.
+    - All sub-layers & embeddings output $d$ dims → the residual add needs no projection.
+
+```{note} Math
+:class: dropdown
+Forward:
+
+$$
+H\leftarrow\mathrm{LayerNorm}\big(H+\mathrm{Dropout}(\mathrm{Sublayer}(H))\big)
+$$
+
+Pre-LN, for comparison:
+
+$$
+H\leftarrow H+\mathrm{Dropout}\big(\mathrm{Sublayer}(\mathrm{LayerNorm}(H))\big)
+$$
+```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+import torch.nn as nn
+
+class AddNorm(nn.Module):
+    def __init__(self, d, p=0.1):
+        super().__init__()
+        self.norm = nn.LayerNorm(d)
+        self.drop = nn.Dropout(p)
+
+    def forward(self, x, sublayer):
+        ## Post-LN: normalize AFTER the residual add
+        return self.norm(x + self.drop(sublayer(x)))
+
+## Example
+## Reuses FFN from above
+x = torch.randn(2, 5, 8)
+print(AddNorm(8)(x, FFN(8, 32)).shape)  ## torch.Size([2, 5, 8])
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Post-LN vs Pre-LN?*
+- Post-LN: LayerNorm sits on the residual path → every layer rescales the identity signal.
+    - At init, expected grads of params near the output are large → large LR is unstable → needs [warmup](#lr-schedule). {cite:p}`xiong2020layer`
+- Pre-LN: residual path is a clean sum → well-behaved grads at init → warmup can be removed.
+- Modern LLMs use pre-norm. Pre-norm needs a final norm before the output layer.
+
+*Why LayerNorm, not BatchNorm?*
+- Sequences vary in length & are padded → batch statistics per position are noisy & leak padding.
+- LayerNorm uses one token's own features → same at train & test, any batch size.
 ```
 
 &nbsp;
 
 ## Encoder
-- **What**:
-    1. MHA + Residual Connection + LayerNorm
-    2. Position-wise FFN + Residual Connection + LayerNorm
-- **Why**: MHA merely forms a softmax-weighted linear blend of other tokens' value vectors → Where is non-liearity & info complexity?
-    - **Non-linearity**: Two-layer FFN with ReLU in between.
-    - **Info complexity**: Each token gets its own info processing stage: "Diffuse → Activate → Compress".
-        - A mere weighted sum of value vectors → Higher-order feature mixes.
+- **What**: $N=6$ identical layers. Each layer: self-attention → FFN, each wrapped in Add & Norm.
+- **Why**: Contextual representation of every source token. Bidirectional: each token sees the whole source.
+- **How**: Per layer:
+    1. Self-attention → gather context from all source tokens.
+    2. FFN → process each token's gathered context.
+    - Output of the top layer = memory $Z$.
+
+```{note} Math
+:class: dropdown
+Forward (one layer):
+
+$$\begin{align*}
+H&\leftarrow\mathrm{LayerNorm}\big(H+\mathrm{Dropout}(\mathrm{MHA}(H,H))\big)\\
+H&\leftarrow\mathrm{LayerNorm}\big(H+\mathrm{Dropout}(\mathrm{FFN}(H))\big)
+\end{align*}$$
+
+- Input to layer 1: $\mathrm{Dropout}(\sqrt{d}\,E_{x_i}+\mathbf{p}_i)$ per source position $i$.
+```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+import torch.nn as nn
+
+## Reuses FFN & AddNorm from above
+class EncoderLayer(nn.Module):
+    def __init__(self, d, h, d_ff, p=0.1):
+        super().__init__()
+        ## nn.MultiheadAttention = MHA from nlp/attn.md (built-in; dropout=0 on attention weights, as in the paper)
+        self.attn = nn.MultiheadAttention(d, h, batch_first=True)
+        self.ffn = FFN(d, d_ff)
+        self.add_norm1, self.add_norm2 = AddNorm(d, p), AddNorm(d, p)
+
+    def forward(self, x):
+        ## no mask: every source token sees every other one
+        x = self.add_norm1(x, lambda t: self.attn(t, t, t, need_weights=False)[0])
+        return self.add_norm2(x, self.ffn)
+
+## Example
+print(EncoderLayer(32, 4, 64)(torch.randn(2, 7, 32)).shape)  ## torch.Size([2, 7, 32])
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Why attention before FFN?*
+- Gather context first, then transform it per token. The paper gives no ablation of the order.
+
+*What breaks if PE is removed from the encoder?*
+- The encoder becomes permutation-equivariant → reordering the source only reorders $Z$'s rows.
+- Cross-attention is invariant to reordering $Z$'s rows → the decoder sees "dog bites man" = "man bites dog".
+- → Order must come from somewhere: PE, or a causal mask ([NoPE](pos.md#nope)). A bidirectional encoder has neither.
+```
+
+&nbsp;
+
+## Decoder
+- **What**: $N=6$ identical layers. Each layer: masked self-attention → encoder-decoder attention → FFN, each wrapped in Add & Norm.
+- **Why**: Generate the target autoregressively, conditioned on the source.
+    - Masked self-attention → reads target tokens generated so far.
+    - Encoder-decoder attention → reads the source.
 - **How**:
-    1. **MHA**: Immediately establish global context from input sequence BEFORE per-token processing.
-        1. **Residual Connection**: Preserve the original signal & Ensure training stability for deep stacks.
-        2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#covariate-shift).
-    2. **Position-wise FFN**: Apply FFN independently **to each token vector** → Transform features within each position's channel dimension, w/o exchanging info across positions.
-        1. **Residual Connection**: Preserve the original signal & Ensure training stability for deep stacks.
-        2. **LayerNorm**: Re-center & Rescale outputs to curb [covariate shift](../dl/issues.md#covariate-shift).
+    1. Input: target shifted right by 1 → $(\langle\text{bos}\rangle,y_1,\dots,y_{m-1})$.
+    2. Per layer: masked self-attention → encoder-decoder attention → FFN.
+    3. Position $t$ outputs a prediction of $y_t$.
+
+```{note} Math
+:class: dropdown
+Forward (one layer):
+
+$$\begin{align*}
+H&\leftarrow\mathrm{LayerNorm}\big(H+\mathrm{Dropout}(\mathrm{MHA}_\text{causal}(H,H))\big)\\
+H&\leftarrow\mathrm{LayerNorm}\big(H+\mathrm{Dropout}(\mathrm{MHA}(H,Z))\big)\\
+H&\leftarrow\mathrm{LayerNorm}\big(H+\mathrm{Dropout}(\mathrm{FFN}(H))\big)
+\end{align*}$$
+```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+import torch.nn as nn
+
+## Reuses FFN & AddNorm from above
+class DecoderLayer(nn.Module):
+    def __init__(self, d, h, d_ff, p=0.1):
+        super().__init__()
+        self.self_attn = nn.MultiheadAttention(d, h, batch_first=True)
+        self.cross_attn = nn.MultiheadAttention(d, h, batch_first=True)
+        self.ffn = FFN(d, d_ff)
+        self.add_norm = nn.ModuleList(AddNorm(d, p) for _ in range(3))
+
+    def forward(self, x, z):
+        m = x.shape[1]
+        causal = torch.triu(torch.ones(m, m, dtype=torch.bool), diagonal=1)  ## True = blocked future key
+        x = self.add_norm[0](x, lambda t: self.self_attn(t, t, t, attn_mask=causal, need_weights=False)[0])
+        ## Q from the decoder, K & V from the encoder memory z
+        x = self.add_norm[1](x, lambda t: self.cross_attn(t, z, z, need_weights=False)[0])
+        return self.add_norm[2](x, self.ffn)
+
+## Example: 5 target tokens attend over 7 source positions
+print(DecoderLayer(32, 4, 64)(torch.randn(2, 5, 32), torch.randn(2, 7, 32)).shape)  ## torch.Size([2, 5, 32])
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Why both shift-right AND a causal mask?*
+- Shift: input at position $t$ is $y_{t-1}$ → position $t$ predicts $y_t$.
+- Mask: position $t$ sees inputs $\leq t$ only, i.e., $y_{<t}$ → it cannot see its own label or later tokens.
+- Either alone leaks: no shift → input at $t$ is $y_t$ itself. No mask → $t$ sees $y_{t},\dots,y_{m-1}$.
+
+*Why self-attention before encoder-decoder attention?*
+- The paper gives no rationale.
+- With this order, the cross-attention query already carries target context → a better-informed lookup into the source.
+
+*Decoder-only LMs?*
+- Remove encoder-decoder attention → 2 sub-layers per layer → GPT-style decoder.
+```
+
+&nbsp;
+
+## Output
+- **What**: Linear (tied to $E$) + softmax → distribution over $\mathcal{V}$.
+- **Why**: Next-token prediction needs one probability per vocab entry.
+- **How**:
+    1. Top decoder state $\mathbf{h}_t$ → logits $\mathbf{h}_tE^\top\in\mathbb{R}^{|\mathcal{V}|}$.
+    2. Softmax → $p(\cdot\mid y_{<t},x)$.
+
+```{note} Math
+:class: dropdown
+Forward:
+
+$$
+p(y_t=v\mid y_{<t},x)=\mathrm{softmax}\big(\mathbf{h}_tE^\top\big)_v
+$$
+
+- $\mathbf{h}_t\in\mathbb{R}^d$: Top decoder state at position $t$.
+- No $\sqrt{d}$ factor here. The paper scales only in the embedding layers.
+```
+
+&nbsp;
+
+## Training
+### Objective
+- **What**: Token-level CE on the shifted target, all positions in 1 pass (**teacher forcing**), with [label smoothing](../ml/obj.md#label-smoothing) $\epsilon_{ls}=0.1$.
+- **Why**: MLE of $p(y\mid x)=\prod_tp(y_t\mid y_{<t},x)$.
+    - Teacher forcing + causal mask → $m$ training signals per forward pass.
+- **How**:
+    1. Batch sentence pairs by similar length. ≈25000 source + 25000 target tokens per batch.
+    2. Decoder input $(\langle\text{bos}\rangle,y_1,\dots,y_{m-1})$ → targets $(y_1,\dots,y_m)$.
+    3. CE against smoothed targets, summed over positions.
+
+```{note} Math
+:class: dropdown
+Objective:
+
+$$
+\mathcal{L}=-\sum_{t=1}^{m}\sum_{v\in\mathcal{V}}\tilde{q}_{t,v}\log p(y_t=v\mid y_{<t},x),\qquad \tilde{q}_{t,v}=\begin{cases}1-\epsilon_{ls} & v=y_t\\ \frac{\epsilon_{ls}}{|\mathcal{V}|-1} & v\neq y_t\end{cases}
+$$
+
+- The paper does not state the form. This is the reference code (tensor2tensor) convention: $\epsilon_{ls}$ spread over the wrong tokens only.
+- Szegedy form ($\epsilon_{ls}/|\mathcal{V}|$ over all tokens, [Label Smoothing](../ml/obj.md#label-smoothing)) differs negligibly at $|\mathcal{V}|\approx37000$.
+```
+
+```{attention} Q&A
+:class: dropdown
+*Label smoothing effect?*
+- Model is less confident → perplexity⬆️, accuracy & BLEU⬆️.
+- EN-DE dev: $\epsilon_{ls}=0$ → PPL 4.67, BLEU 25.3. $\epsilon_{ls}=0.1$ → PPL 4.92, BLEU 25.8.
+
+*Cons of teacher forcing?*
+- Train on gold prefixes, test on own prefixes → **exposure bias**. → [SFT](post/sft.md#sft)
+```
+
+&nbsp;
+
+### LR Schedule
+- **What**: Linear warmup for 4000 steps, then inverse-square-root decay, scaled by $d^{-1/2}$. Optimizer: [Adam](../dl/optim.md#adam-adaptive-moment-estimation).
+- **Why**: Post-LN + Adam is unstable at large early LR → [warmup](../dl/optim.md#warmup). Decay → stable convergence.
+- **How**:
+    1. Adam with $\beta_1=0.9$, $\beta_2=0.98$, $\epsilon=10^{-9}$.
+    2. Steps $\leq4000$: LR rises linearly.
+    3. Steps $>4000$: LR $\propto$ step$^{-1/2}$.
 
 ```{note} Math
 :class: dropdown
 Notations:
-- IO:
-    - $\mathbf{x}\in\mathbb{R^{d_{\text{model}}}}$: Input token vector.
-- Params:
-    - $W_1\in\mathbb{R}^{d_{\text{model}}\times d_{\text{FFN}}}, \mathbf{b}_1\in\mathbb{R}^{d_{\text{FFN}}}$: Diffuse weights & biases.
-    - $W_2\in\mathbb{R}^{d_{\text{FFN}}\times d_{\text{model}}}, \mathbf{b}_2\in\mathbb{R}^{d_{\text{model}}}$: Compress weights & biases.
+- Hyperparams:
+    - $T_w$: #Warmup steps ($4000$).
+- Misc:
+    - $\tau$: Step number, starting at 1.
 
-Position-wise FFN:
+Schedule:
 
 $$
-FFN(\mathbf{x})=\max(0,\mathbf{x}W_1+\mathbf{b}_1)W_2+\mathbf{b}_2
+\eta_\tau=d^{-0.5}\cdot\min\left(\tau^{-0.5},\ \tau\cdot T_w^{-1.5}\right)
 $$
+
+- Peak at $\tau=T_w$: $\eta=(dT_w)^{-0.5}\approx7.0\times10^{-4}$ for $d=512$.
 ```
 
-## Decoder
-- **What**:
-    1. Masked MHA + Residual Connection + LayerNorm
-    2. (Optional) Cross MHA + Residual Connection + LayerNorm
-    3. Position-wise FFN + Residual Connection + LayerNorm
-- **Why**: See [Masked MHA](#maskedcausal-attention), [Cross MHA](#cross-attention) and [Position-wise FFN](#encoder).
-    - BUT why cross after mask?
-        - The goal of decoder is Next Token Prediction.
-        - In order to predict anything, we need the context first.
-        - Masked MHA provides AR context for the target token.
-        - THEN, we can add supplementary info from Cross MHA.
-        - THEN, we do per-token processing.
+````{important} Code
+:class: dropdown
+```python
+import torch
 
-## Output
-- **What**: Embeddings → Token probability distribution.
-- **Why**: Next Token Prediction.
-- **How**: Linear + Softmax.
-    - **Linear**: Shape conversion: Embedding dim → Vocab size.
-    - **Softmax**: Logits → Probs
+class WarmupInvSqrt:
+    def __init__(self, d=512, warmup=4000):
+        self.d, self.warmup = d, warmup
 
-## References
-- [Jay Alammar's Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/)
-- [The OG transformer paper](https://arxiv.org/pdf/1706.03762)
-- [HF's LLM course](https://huggingface.co/learn/llm-course/chapter1/1?fw=pt)
-- [Yi Wang's Positional Encoding](https://wangkuiyi.github.io/positional_encoding.html)
+    def __call__(self, step):
+        step = max(step, 1)  ## avoid 0^-0.5
+        ## linear ramp until warmup, then 1/sqrt(step) decay; both branches meet at step = warmup
+        return self.d ** -0.5 * min(step ** -0.5, step * self.warmup ** -1.5)
+
+## Example
+sched = WarmupInvSqrt()
+print([round(sched(s), 6) for s in (1, 4000, 100000)])  ## [0.0, 0.000699, 0.00014]
+
+## Usage: base lr = 1 so LambdaLR returns the absolute LR
+model = torch.nn.Linear(4, 4)
+opt = torch.optim.Adam(model.parameters(), lr=1.0, betas=(0.9, 0.98), eps=1e-9)
+lr_sched = torch.optim.lr_scheduler.LambdaLR(opt, sched)
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Why scale by $d^{-0.5}$?*
+- Wider model → smaller LR. Big model ($d=1024$) gets a peak $\sqrt{2}\times$ lower than base.
+
+*Is warmup still needed with Pre-LN?*
+- Much less. Pre-LN without warmup matches Post-LN with warmup, with less tuning. {cite:p}`xiong2020layer`
+```
+
+&nbsp;
+
+### Residual Dropout
+- **What**: [Dropout](../dl/module.md#dropout) with $P_\text{drop}=0.1$ (base) at 2 places.
+- **Why**: Regularize. W/o it, EN-DE dev BLEU drops 25.8 → 24.6.
+- **How**:
+    1. On each sub-layer output, before the residual add & LayerNorm.
+    2. On embedding + PE sums, at the bottom of both stacks.
+
+&nbsp;
+
+## Inference
+### Autoregressive Decoding
+- **What**: Encode the source once. Decode 1 token at a time, feeding outputs back as inputs.
+- **Why**: Target is unknown at test time → no teacher forcing.
+- **How**:
+    1. $Z\leftarrow$ encoder($x$), once.
+    2. Start with $\langle\text{bos}\rangle$.
+    3. Each step: decoder($y_{<t}$, $Z$) → $p(y_t)$ → choose token → append.
+    4. Stop at $\langle\text{eos}\rangle$ or at max length = source length + 50.
+    - Paper: [Beam Search](infer/dec.md#beam-search), beam size 4, length penalty $\alpha=0.6$.
+    - Production: cache past keys & values instead of recomputing the prefix → [KV Cache](infer/cache.md#kv-cache).
+
+```{note} Math
+:class: dropdown
+Notations:
+- Hyperparams:
+    - $\alpha$: Length penalty strength.
+
+Beam score with GNMT length penalty {cite:p}`wu2016google`:
+
+$$
+\mathrm{score}(Y)=\frac{\log p(Y\mid x)}{\mathrm{lp}(Y)},\qquad \mathrm{lp}(Y)=\frac{(5+|Y|)^\alpha}{(5+1)^\alpha}
+$$
+
+- $|Y|$: Hypothesis length.
+- $\alpha=0$ → raw log-prob → favors short outputs. $\alpha$⬆️ → longer outputs.
+```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+
+## Reuses Transformer from the Architecture section
+class GreedyDecoder:
+    def __init__(self, model, bos, eos, max_extra=50):
+        self.model, self.bos, self.eos, self.max_extra = model, bos, eos, max_extra
+
+    @torch.no_grad()
+    def __call__(self, src):
+        z = self.model.encode(src)                         ## encoder runs ONCE
+        y = torch.full((src.shape[0], 1), self.bos)
+        done = torch.zeros(src.shape[0], 1, dtype=torch.bool)
+        for _ in range(src.shape[1] + self.max_extra):     ## max len = source len + 50
+            ## no KV cache: the whole prefix is recomputed every step
+            nxt = self.model.decode(y, z)[:, -1].argmax(-1, keepdim=True)
+            nxt = nxt.masked_fill(done, self.eos)          ## finished rows keep emitting EOS
+            y = torch.cat([y, nxt], dim=1)
+            done |= nxt == self.eos
+            if done.all():
+                break
+        return y
+
+## Example
+model = Transformer(V=100, d=32, h=4, d_ff=64, N=2).eval()
+out = GreedyDecoder(model, bos=1, eos=2)(torch.randint(0, 100, (2, 7)))
+print(out.shape[0], out.shape[1] <= 1 + 7 + 50)  ## 2 True
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Why is training parallel but inference sequential?*
+- Training: all $y_{<t}$ are known → 1 pass for all $t$.
+- Inference: $y_t$ depends on the model's own $y_{t-1}$ → $m$ sequential decoder passes.
+
+*What is cached per step?*
+- Decoder self-attention: $K,V$ of past target tokens, per layer.
+- Encoder-decoder attention: $K,V$ of $Z$, per layer, computed once per source.
+```
+
+&nbsp;
+
+### Checkpoint Averaging
+- **What**: Average the weights of the last checkpoints → 1 model.
+    - Base: last 5 checkpoints, saved at 10-min intervals. Big: last 20.
+- **Why**: Smooths noise at the end of training → ensemble-like gain at single-model cost.
+- **How**: Element-wise mean of each parameter tensor.
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+
+class CheckpointAverager:
+    def __call__(self, state_dicts):
+        ## element-wise mean of every tensor across checkpoints
+        return {k: torch.stack([sd[k].float() for sd in state_dicts]).mean(0) for k in state_dicts[0]}
+
+## Example
+sds = [{"w": torch.full((2,), float(i))} for i in range(5)]
+print(CheckpointAverager()(sds)["w"])  ## tensor([2., 2.])
+```
+````
+
+&nbsp;

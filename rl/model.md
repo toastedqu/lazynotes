@@ -29,8 +29,10 @@ Notations:
 - $\hat M_\psi$: Learned joint simulator for next state, reward & termination.
 - $d_t$: True-termination indicator for the transition after $a_t$.
 - $c_t$: Episode/rollout boundary indicator, including artificial cutoffs.
-- $H$: Planning or model-rollout horizon; distinct from task terminal time $T$.
+- $H$: Planning/model-rollout horizon (#model steps); ≠ episode length.
 - $\hat V(s)$: Leaf value estimate at a nonterminal planning cutoff.
+- $o_t$: Observation at time $t$.
+- $z_t$: Learned latent state at time $t$.
 
 Override: $a$ denotes an RL action, possibly vector-valued, rather than a generic scalar.
 
@@ -40,12 +42,12 @@ Override: $a$ denotes an RL action, possibly vector-valued, rather than a generi
 
 ### Model-Based RL
 - **Name**: Model-Based Reinforcement Learning
-- **What**: Control using action-conditioned predictions of future consequences.
-- **Why**: Real interaction can be costly; hypothetical experience can inform decisions.
+- **What**: Control via action-conditioned predictions of future outcomes.
+- **Why**: Real interaction is costly → plan/learn from hypothetical experience instead.
 - **How**:
-    1. Obtain a model: known rules/physics/simulator, learned predictions, or a combination.
-    2. Use predictions to improve values/policies, search from the current state, or optimize action sequences.
-    3. Act in the environment; update learned components from the observed outcome.
+    1. Get a model: known rules/physics/simulator, learned predictor, or both.
+    2. Use it: improve values/policies, search from the curr state, or optimize action sequences.
+    3. Act in the real env → update learned parts from the real outcome.
 
 ```{dropdown} Table: Model Usage
 | Approach | Model access | Computation | Deployed action selection |
@@ -56,35 +58,41 @@ Override: $a$ denotes an RL action, possibly vector-valued, rather than a generi
 | Expectimax | Enumerable model outcomes | Decision/chance lookahead | Root action |
 | MCTS with UCT | Generative simulator | Selective sampled lookahead | Root visit counts |
 | MPC / PETS | Known / learned dynamics | Optimize a finite action sequence | First action, then replan |
-| MBPO | Learned probabilistic ensemble | Short simulated data → actor-critic | Actor; no online search required |
+| MBPO | Learned probabilistic ensemble | Short simulated data → actor-critic | Actor; ❌online search |
+| Dreamer | Learned latent dynamics | Backprop value grads through imagined latent rollouts | Actor; ❌online search |
 | AlphaZero / MuZero | Known rules / learned latent dynamics | Search + policy/value learning | Search, optionally distilled policy |
 ```
 
 ```{attention} Q&A
 :class: dropdown
-*Planning versus learning?*
+*Planning vs learning?*
 
-- **Planning**: Improve decisions using a model; learning a model is not required.
-- **Learning**: Improve estimates from experience; a predictive model is not required.
-- Known-model planning can involve no learning. Model-based RL can combine model learning, planning & direct value/policy learning.
+- **Planning**: Model → better decisions. ❌Learning required.
+- **Learning**: Experience → better estimates. ❌Model required.
+- Model-based RL can combine model learning, planning & direct value/policy learning.
 
 *Does training in a simulator make an algorithm model-based?*
 
-- Not automatically. A simulator used only as the environment still supports model-free learning.
-- Model-based usage queries hypothetical consequences for planning or synthetic updates; a generative model can start from specified states without consuming real interaction.
-- A software simulator may be exact for its game yet inaccurate for the physical system it approximates.
+- ❌Not automatically. Simulator used only as the env → still model-free.
+- Model-based = query hypothetical outcomes for planning or synthetic updates.
+- Generative model → start from any chosen state w/o real interaction.
+- Exact game simulator ≠ accurate model of the physical system it imitates.
 
 *What counts as a model?*
 
-- A full probability table, a sample generator, deterministic physics, or action-conditioned latent dynamics.
-- A value function alone predicts return, not counterfactual transitions.
-- No requirement for differentiability, observation reconstruction, or an explicit density.
+- Probability table, sample generator, deterministic physics, or action-conditioned latent dynamics.
+- ❌Value function alone ← predicts return, ❌counterfactual transitions.
+- ❌Differentiability, ❌observation reconstruction, ❌explicit density required.
 
-*Pros & cons?*
+*Pros?*
 
-- Reuse dynamics across policies or reward functions; trade extra computation for fewer real interactions.
-- No universal sample-efficiency advantage: model misspecification, fitting cost & planning cost can dominate.
-- Separately learned reward functions can change while dynamics stay reusable; task-specific latent models may not transfer.
+- Dynamics reusable across policies & reward functions.
+- Extra compute → fewer real interactions.
+
+*Cons?*
+
+- ❌Universal sample-efficiency gain ← model error, fitting cost & planning cost can dominate.
+- Task-specific latent models (e.g., MuZero) may not transfer to a new reward.
 ```
 
 &nbsp;
@@ -92,13 +100,13 @@ Override: $a$ denotes an RL action, possibly vector-valued, rather than a generi
 ## Learning Environment Models
 
 ### Transition, Reward & Termination Models
-- **What**: Supervised predictors of action-conditioned environment outcomes.
-- **Why**: Planning needs consequences unavailable from a value estimate alone.
+- **What**: Supervised predictors of action-conditioned env outcomes.
+- **Why**: Planning needs consequences. A value estimate alone gives none.
 - **How**:
-    1. Collect $(s_t,a_t,r_{t+1},s_{t+1},d_t)$ across visited states/actions.
+    1. Collect $(s_t,a_t,r_{t+1},s_{t+1},d_t)$ over visited states/actions.
     2. Fit deterministic outcomes or conditional distributions.
-    3. Query hypothetical transitions; retain known reward/termination rules instead of relearning them.
-    4. Collect fresh real data where the evolving controller operates.
+    3. Query hypothetical transitions. Keep known reward/termination rules; ❌relearn them.
+    4. Collect fresh real data where the curr controller operates.
 
 ```{note} Math
 :class: dropdown
@@ -114,8 +122,8 @@ $$
 - $d$: True termination after that action.
 - $\hat p_\psi$: Learned conditional probability mass/density.
 
-- The joint outcome model preserves dependencies between next state, reward & termination.
-- Separate reward & termination heads assume conditional independence given their inputs; include additional conditioning when that assumption fails.
+- Joint outcome model → keeps dependencies among next state, reward & termination.
+- Separate reward & termination heads → assume conditional independence given their inputs. Add conditioning if it fails.
 
 Training:
 
@@ -125,7 +133,8 @@ $$
 \log\hat M_\psi(s_i',r_i',d_i|s_i,a_i)
 $$
 
-- Categorical next state → cross-entropy; tabular maximum likelihood → empirical transition frequencies.
+- Categorical next state → cross-entropy.
+- Tabular maximum likelihood → empirical transition frequencies.
 - Deterministic continuous next state/reward → squared error:
 
 $$
@@ -157,15 +166,15 @@ $$
 
 - $\sigma_{\psi,j}^2$: Predicted conditional variance for state coordinate $j$.
 - Constant $\frac12\log(2\pi)$ per coordinate omitted.
-- Stochastic reward → analogous scalar Gaussian loss or an appropriate categorical/distributional model.
-- Fixed Gaussian variance → squared error; learned variance also pays the log-variance term.
+- Stochastic reward → analogous scalar Gaussian loss, or a categorical/distributional model.
+- Fixed Gaussian variance → squared error. Learned variance → also pays the log-variance term.
 
 $$
 \operatorname{BCE}(d,q)=-d\log q-(1-d)\log(1-q)
 $$
 
 - $q$: Predicted probability of true termination.
-- Time-limit or rollout cutoff: $c_t=1$ need not imply $d_t=1$.
+- Time limit / rollout cutoff → $c_t=1$ w/ $d_t=0$ possible.
 ```
 
 ````{important} Code
@@ -228,45 +237,48 @@ assert model.sample(s, a)[0].shape == (2, 2)
 :class: dropdown
 *When is deterministic regression wrong?*
 
-- Squared-error regression learns a conditional mean, not a representative sampled outcome.
-- Two possible next positions on opposite sides of an obstacle → their mean can lie inside it.
-- Gaussian heads capture state-dependent spread, not arbitrary multimodality; use mixtures, categorical outcomes or richer generators when needed.
-- In the code, `stochastic=False` gives deterministic state/reward predictions; termination remains Bernoulli. Variance heads then have no statistical interpretation.
+- Squared error → conditional mean, ❌representative sampled outcome.
+- 2 possible next positions on opposite sides of an obstacle → their mean can lie inside it.
+- Gaussian head → state-dependent spread, ❌arbitrary multimodality. Use mixtures, categorical outcomes or richer generators.
+- Code: `stochastic=False` → deterministic state & reward. Termination stays Bernoulli. Variance heads then have ❌statistical meaning.
 
 *Must rewards be sampled?*
 
-- For risk-neutral expected return with a Markov state, the correct conditional mean reward suffices.
-- Risk-sensitive criteria or reward-dependent state inference require more than its mean.
-- If reward & termination remain dependent given $(s,a,s')$, the code's separate heads cannot reproduce their joint distribution.
+- Risk-neutral expected return + Markov state → correct conditional mean reward suffices.
+- Risk-sensitive criteria or reward-dependent state inference → need more than the mean.
+- Reward & termination dependent given $(s,a,s')$ → code's separate heads cannot reproduce their joint.
 
 *Why learn termination?*
 
-- Missing termination → fictitious future reward after failure/success; premature termination → suppressed future value.
-- Use true termination labels, not generic `done` flags merging termination & truncation.
-- For autoresetting environments, store the final observation, not the next episode's reset observation.
-- A genuine finite-horizon task needs remaining time in the state; its endpoint is task termination, not merely a collector cutoff.
+- Missing termination → fictitious future reward after failure/success.
+- Premature termination → suppressed future value.
+- Use true termination labels. ❌Generic `done` flags that merge termination & truncation.
+- Autoreset envs → store the final observation, ❌the next episode's reset observation.
+- True finite-horizon task → remaining time belongs in the state. Its endpoint = task termination, ❌collector cutoff.
 
-*What should be checked before trusting a model?*
+*What to check before trusting a model?*
 
-- Held-out one-step likelihood/error, reward error & termination calibration; also free-running multi-step predictions from real states.
-- Split correlated data by trajectories/time, not only shuffled adjacent transitions.
-- Check coverage of proposed actions, rare terminal events & constraints; low average prediction error does not imply good control.
-- Partial observability → model an adequate history/belief/latent state, not an aliased observation as if it were Markov.
+- Held-out one-step likelihood/error, reward error & termination calibration.
+- Free-running multi-step predictions from real states.
+- Split correlated data by trajectory/time, ❌only shuffled adjacent transitions.
+- Coverage of proposed actions, rare terminal events & constraints.
+- Low avg prediction error ≠ good control.
+- Partial observability → model a sufficient history/belief/latent state. ❌Treat an aliased observation as Markov.
 ```
 
 &nbsp;
 
 ### Model Error & Uncertainty
-- **What**: Mismatch between predicted consequences & the real environment.
-- **Why**: A planner optimizes model predictions, including their mistakes.
+- **What**: Mismatch between predicted & real consequences.
+- **Why**: Planner optimizes model predictions, incl. their errors.
 - **How**:
-    1. Separate random outcomes from uncertainty about the dynamics.
-    2. Diagnose errors on states/actions the current planner actually proposes.
-    3. Restrict unsupported predictions; refresh real data & shorten untrusted rollouts.
+    1. Separate outcome randomness from uncertainty about the dynamics.
+    2. Diagnose errors on states/actions the curr planner proposes.
+    3. Restrict unsupported predictions. Refresh real data. Shorten untrusted rollouts.
 
 ```{note} Math
 :class: dropdown
-- Fixed action sequence; same initial state; deterministic dynamics $L$-Lipschitz in state; uniform one-step error at most $\varepsilon$:
+- **Compounding error**: fixed action seq, same start state, deterministic dynamics $L$-Lipschitz in state, one-step error $\le\varepsilon$:
 
 $$
 e_{h+1}\le L e_h+\varepsilon,\qquad
@@ -280,9 +292,9 @@ $$
 - $e_h$: State-prediction error after $h$ simulated steps; $e_0=0$.
 - $L\ge0$: Lipschitz constant of the true transition function in state.
 - $\varepsilon$: Uniform one-step state error.
-- Feedback actions require a bound on the composed closed-loop dynamics, not just fixed-action dynamics.
+- Feedback actions → need a bound on closed-loop dynamics, ❌fixed-action dynamics only.
 
-- Finite discounted MDPs; same reward bound $|r|,|\hat r|\le R_{\max}$; termination represented by an absorbing zero-reward state:
+- **Simulation lemma**: finite discounted MDPs, same reward bound $|r|,|\hat r|\le R_{\max}$, termination = absorbing zero-reward state:
 
 $$
 \begin{align*}
@@ -300,8 +312,8 @@ $$
 - $\hat r$: Learned expected reward after marginalizing modeled outcomes.
 - $\hat p$: Learned transition kernel including absorbing-state entry.
 - $\varepsilon_r$: Worst-case reward error.
-- $\varepsilon_p$: Worst-case transition error in $\ell_1$; twice total variation.
-- $\hat V^\pi$: Policy value in the learned model, not a leaf approximator.
+- $\varepsilon_p$: Worst-case transition error in $\ell_1$ (= 2 × total variation).
+- $\hat V^\pi$: Policy value in the learned model; ≠ leaf approximator $\hat V$.
 - $\Delta$: Uniform policy-value error bound.
 
 $$
@@ -310,9 +322,10 @@ $$
 
 - $V^*$: True optimal value.
 - $\hat\pi$: Exactly optimal policy in the learned model.
-- Approximate planning adds its model-space suboptimality; dataset-average errors do not establish these uniform bounds.
+- Approximate planning → add its model-space suboptimality.
+- Dataset-avg errors ❌establish these uniform bounds.
 
-- Ensemble prediction of one scalar output at a fixed state/action:
+- **Uncertainty decomposition**: ensemble prediction of 1 scalar output at fixed $(s,a)$:
 
 $$
 \operatorname{Var}(Z)
@@ -322,7 +335,8 @@ $$
 
 - $Z$: Predicted scalar outcome.
 - $E$: Random ensemble-member index.
-- First term: Within-model noise; second: Between-model disagreement.
+- 1st term: Within-model noise.
+- 2nd term: Between-model disagreement.
 ```
 
 ```{tip} Derivation
@@ -348,46 +362,58 @@ $$
     \le\varepsilon_r+\frac{\gamma\varepsilon_pR_{\max}}{1-\gamma}.
     $$
 
-3. Compare the true-optimal policy with the model-optimal policy. Each value translation costs at most $\Delta$; model optimality makes the middle difference nonpositive.
+3. Split via the true-optimal policy $\pi^*$:
+
+    $$
+    V^*-V^{\hat\pi}
+    =\underbrace{(V^{\pi^*}-\hat V^{\pi^*})}_{\le\Delta}
+    +\underbrace{(\hat V^{\pi^*}-\hat V^{\hat\pi})}_{\le0}
+    +\underbrace{(\hat V^{\hat\pi}-V^{\hat\pi})}_{\le\Delta}.
+    $$
+
+    - Middle term $\le0$ ← $\hat\pi$ is optimal in the learned model.
 ```
 
 ```{attention} Q&A
 :class: dropdown
-*Epistemic versus aleatoric uncertainty?*
+*Epistemic vs aleatoric uncertainty?*
 
-- **Epistemic**: Uncertainty about dynamics/rewards from limited data; reducible with informative observations.
-- **Aleatoric**: Outcome randomness conditional on the modeled information; persists even with the correct conditional distribution.
-- Hidden state can appear as randomness under insufficient observations; richer state information may reduce it.
-- Ensemble disagreement is a proxy, not calibrated Bayesian certainty; all members can share the same bias.
+- **Epistemic**: Uncertainty about dynamics/rewards ← limited data. Reducible w/ informative data.
+- **Aleatoric**: Outcome randomness given the modeled info. Persists even w/ the true conditional distribution.
+- Hidden state can look like randomness → richer state info can ⬇️ it.
+- Ensemble disagreement = proxy, ❌calibrated Bayesian uncertainty. All members can share one bias.
 
 *Why does small one-step error become a bad policy?*
 
-- Prediction errors shift the next input away from the training distribution; later predictions then rely on unsupported inputs.
-- Optimization selects overestimated trajectories: false rewards, impossible shortcuts, or missing termination.
-- More search can exploit model errors more effectively. More simulations remove sampling error, not model bias.
+- Prediction error → next input leaves the training distribution → later predictions unsupported.
+- Optimization selects overestimated trajectories: false rewards, impossible shortcuts, missing termination.
+- More search → exploits model errors more effectively.
+- More simulations ⬇️ sampling error, ❌model bias.
 
 *What helps?*
 
-- Known reward/termination/constraint rules when available; recent real data; bootstrap ensembles; short horizons; conservative treatment of unsupported actions.
-- Penalize epistemic uncertainty when caution is appropriate; high aleatoric variance alone is not evidence that collecting more data will help.
-- Short rollouts reduce accumulated error, not first-step out-of-distribution error.
-- A reward model correct on the dataset can still be exploited outside it; a wrong task reward is a separate specification problem.
+- Known reward/termination/constraint rules, recent real data, bootstrap ensembles, short horizons, conservative handling of unsupported actions.
+- Penalize epistemic uncertainty when caution matters.
+- High aleatoric variance alone ≠ evidence that more data helps.
+- Short rollouts ⬇️ accumulated error, ❌first-step out-of-distribution error.
+- Reward model correct on the data can still be exploited off the data.
+- Wrong task reward = separate specification problem.
 ```
 
 &nbsp;
 
 #### PETS
 - **Name**: Probabilistic Ensembles with Trajectory Sampling {cite:p}`chua2018deep`
-- **What**: Ensemble dynamics + particle-based model predictive control.
-- **Why**: A mean trajectory discards uncertainty relevant to action choice.
+- **What**: Probabilistic ensemble dynamics + particle-based MPC.
+- **Why**: Mean trajectory → discards uncertainty relevant to action choice.
 - **How**:
-    1. Train probabilistic dynamics models on bootstrap-resampled real datasets.
+    1. Train probabilistic dynamics models on bootstrap resamples of real data.
     2. Propagate particles through candidate action sequences.
-    3. Optimize mean predicted return with [CEM](#cem); execute the first action & replan.
+    3. Optimize mean predicted return w/ [CEM](#cem). Execute the 1st action → replan.
 
 ```{note} Math
 :class: dropdown
-Process:
+Objective:
 
 $$
 \hat J(\mathbf{u})=\frac1P\sum_{i=1}^{P}
@@ -396,8 +422,8 @@ $$
 
 - $\mathbf{u}$: Candidate open-loop action sequence.
 - $P$: Number of trajectory particles.
-- $r_{h+1}^{(i)}$: Particle $i$ reward; zero after its termination.
-- Fixed-member propagation: select one ensemble member per particle, then sample fresh transition noise at each step.
+- $r_{h+1}^{(i)}$: Particle $i$ reward; 0 after its termination.
+- **TS∞** propagation: 1 ensemble member per particle for the whole rollout; fresh transition noise each step.
 ```
 
 ````{important} Code
@@ -428,7 +454,7 @@ class ParticleReturns:
             returns.append(total + (0.0 if done else discount * self.leaf(s)))
         return mean(returns)
 
-## Example: model callbacks return (next_state, reward, true_termination), without mutating state.
+## Example: callbacks return (next_state, reward, true_termination) & never mutate state.
 score = ParticleReturns([lambda s, a: (s + a, a, False)], particles=2, gamma=0.9)
 assert abs(score(0, [1, 1]) - 1.9) < 1e-12
 ```
@@ -438,27 +464,32 @@ assert abs(score(0, [1, 1]) - 1.9) < 1e-12
 :class: dropdown
 *Does particle sampling make control risk-averse?*
 
-- No. Averaging returns optimizes an estimated expectation, not a safety guarantee.
-- The code supplies a generic fixed-member particle evaluator; learned callbacks can wrap `EnvironmentModel.sample`.
-- Leaf bootstrapping is optional here, not required by PETS.
+- ❌. Avg over particles → optimizes an estimated expectation, ❌safety guarantee.
+
+*How does the code map to PETS?*
+
+- `ParticleReturns` = TS∞ particle evaluator. Learned callbacks can wrap `EnvironmentModel.sample`.
+- `leaf` bootstrap = optional extension, ❌part of PETS.
 
 *Must the ensemble member stay fixed?*
 
-- PETS studies both resampling each step & retaining one member throughout a particle trajectory.
-- Retaining a member preserves one dynamics hypothesis over time; neither choice guarantees calibrated uncertainty.
+- PETS tests both: **TS1** (resample member each step) & **TS∞** (fixed member per particle).
+- TS∞ keeps 1 dynamics hypothesis per trajectory.
+- Neither guarantees calibrated uncertainty.
 ```
 
 &nbsp;
 
 ## Learning from Simulated Experience
+- **What**: Background planning: model → simulated transitions → value/policy updates.
 
 ### Dyna-Q
-- **What**: Q-learning from real experience & a learned simulator {cite:p}`sutton1990integrated`.
-- **Why**: A real transition can improve decisions beyond its single direct update.
+- **What**: Q-learning on real experience + learned-simulator experience {cite:p}`sutton1990integrated`.
+- **Why**: 1 real transition → only 1 direct update. A model → many more updates from the same data.
 - **How**:
-    1. Act & apply a real [Q-learning](value.md#q-learning) update.
+    1. Act → apply a real [Q-learning](value.md#q-learning) update.
     2. Update the transition/reward/termination model.
-    3. Sample previously observed state-action pairs; generate modeled outcomes.
+    3. Sample previously observed state-action pairs → generate modeled outcomes.
     4. Apply the same update to each simulated transition.
 
 ```{note} Math
@@ -474,8 +505,9 @@ $$
 - $r'$: Real or modeled immediate reward.
 - $d$: True termination of the corresponding transition.
 - $a'$: Candidate next action.
-- Terminal transition → target $r'$; artificial simulation cutoff alone does not remove the bootstrap.
-- Planning budget $N_{\text{plan}}$: Number of simulated backups per real transition.
+- Terminal transition → target $r'$.
+- Artificial simulation cutoff alone → keep the bootstrap.
+- $N_{\text{plan}}$: #simulated backups per real transition.
 ```
 
 ````{important} Code
@@ -525,31 +557,34 @@ assert abs(agent.q[0][0] - 0.9) < 1e-12
 :class: dropdown
 *Is Dyna-Q model-based or model-free?*
 
-- Model-based architecture using a model-free update rule; direct & simulated learning share $Q$.
-- The learned controller can act without consulting the model online.
+- Model-based architecture w/ a model-free update rule.
+- Direct & simulated learning share 1 $Q$.
+- Learned controller acts w/o consulting the model online.
 
-*How is this different from experience replay?*
+*How is it different from experience replay?*
 
-- Replay reuses recorded outcomes; Dyna generates outcomes from a model.
-- A deterministic last-observation table can make sampled Dyna updates numerically identical to replaying those entries.
-- A probabilistic model can generate alternative outcomes or average over them; learned function approximation can generalize to unseen pairs.
+- Replay reuses recorded outcomes. Dyna generates outcomes from a model.
+- Deterministic last-observation table → sampled Dyna updates = replay of those entries.
+- Probabilistic model → can generate alternative outcomes or average over them.
+- Function-approximation model → can generalize to unseen pairs.
 
 *What breaks in the compact implementation?*
 
-- Assumes stationary deterministic outcomes, hashable states & the same finite legal action set at every nonterminal state.
-- Stochastic environments require outcome counts/distributions or a generative model; overwriting one random outcome is not a transition-distribution estimator.
-- Planning reuses knowledge, not new evidence. Unknown shortcuts need real exploration; stale models need new observations.
+- Assumes stationary deterministic outcomes, hashable states & 1 finite legal action set at every nonterminal state.
+- Stochastic env → need outcome counts/distributions or a generative model. Overwriting 1 random outcome ≠ transition-distribution estimate.
+- Planning reuses knowledge, ❌new evidence.
+- Unknown shortcuts → need real exploration. Stale model → need new observations.
 ```
 
 &nbsp;
 
 #### Prioritized Sweeping
-- **What**: Model-based backups ordered by value-change impact {cite:p}`moore1993prioritized`.
-- **Why**: Uniform planning spends updates on already settled estimates.
+- **What**: Model-based backups ordered by Bellman-residual size {cite:p}`moore1993prioritized`.
+- **Why**: Uniform planning wastes updates on settled estimates.
 - **How**:
-    1. Queue state-action pairs with large model Bellman residuals.
+    1. Queue state-action pairs w/ large model Bellman residuals.
     2. Back up the highest-priority pair.
-    3. Reconsider predecessor pairs whose targets depend on the changed state's value.
+    3. Re-queue predecessor pairs whose targets depend on the changed state's value.
 
 ```{note} Math
 :class: dropdown
@@ -569,7 +604,8 @@ $$
 - $d$: Modeled true termination.
 - $u$: Predecessor state.
 - $\operatorname{Pred}(s)$: State-action pairs whose continuing outcomes can reach $s$.
-- Enqueue residuals above threshold $\eta>0$; stochastic models use expected backups or suitable estimates.
+- Enqueue only residuals above threshold $\eta>0$.
+- Stochastic models → expected backups or suitable estimates.
 ```
 
 ````{important} Code
@@ -624,29 +660,30 @@ assert abs(agent.q[0][0] - 0.9) < 1e-12
 
 ```{attention} Q&A
 :class: dropdown
-*Prioritized sweeping versus prioritized replay?*
+*Prioritized sweeping vs prioritized replay?*
 
-- Sweeping uses model predecessor structure to propagate consequences backward.
-- Prioritized replay resamples stored transitions by learning priority; no predecessor model required.
+- Sweeping: model predecessor structure → propagate consequences backward.
+- Prioritized replay: resample stored transitions by learning priority. ❌Predecessor model.
 
 *Costs & limits?*
 
-- Maintain reverse dependencies & a queue; changing model edges must remove obsolete predecessors.
-- Compact code permits duplicate heap entries & recomputes targets on pop; duplicates consume budget. An indexed priority queue avoids that overhead at scale.
-- No direct real backup in this variant: observations enter the queue first. A zero planning budget therefore performs no value update.
+- Maintain reverse dependencies & a queue. Changed model edges → remove obsolete predecessors.
+- Compact code allows duplicate heap entries & recomputes targets on pop → duplicates consume budget.
+- Indexed priority queue → avoids that overhead at scale.
+- ❌Direct real backup in this variant: observations enter the queue first → zero planning budget = ❌value update.
 ```
 
 &nbsp;
 
 ### MBPO
 - **Name**: Model-Based Policy Optimization {cite:p}`janner2019trust`
-- **What**: Off-policy actor-critic learning from real data & short branched model rollouts.
-- **Why**: Full-episode imagination couples long tasks to unreliable model horizons.
+- **What**: Off-policy actor-critic on real data + short branched model rollouts.
+- **Why**: Full-episode imagination → model error compounds over long task horizons.
 - **How**:
     1. Fit a probabilistic ensemble on real transitions.
     2. Start short model rollouts from states sampled from real replay.
-    3. Sample actions from the current policy; place imagined transitions in model replay.
-    4. Train [SAC](policy.md#sac) on a mixture of real & model data; refresh both model & synthetic data.
+    3. Sample actions from the curr policy → store imagined transitions in model replay.
+    4. Train [SAC](policy.md#sac) on a real + model data mix. Refresh model & synthetic data.
 
 ```{note} Math
 :class: dropdown
@@ -659,9 +696,9 @@ a_h\sim\pi(\cdot|s_h),\qquad
 \quad 0\le h<H.
 $$
 
-- Here $s_0$ is a replay branch point, not necessarily an episode-initial state.
-- End on $d_h=1$ or at horizon $H$; the latter has $c_h=1$ but $d_h=0$.
-- At a nonterminal model cutoff, critic targets retain their next-state bootstrap.
+- $s_0$: Replay branch point; ≠ episode-initial state in general.
+- End on $d_h=1$ or at horizon $H$. Horizon end → $c_h=1$, $d_h=0$.
+- Nonterminal model cutoff → critic targets keep their next-state bootstrap.
 ```
 
 ````{important} Code
@@ -691,7 +728,7 @@ class BranchedRollouts:
                 s = sp
         return data
 
-## Example: a one-step branch ends collection, not the underlying task.
+## Example: 1-step branch → collection ends, task does not.
 rollout = BranchedRollouts([lambda s, a: (s + a, 1.0, False)],
                           policy=lambda s: 1, horizon=1)
 sample = rollout([0, 4], branches=1)[0]
@@ -701,30 +738,218 @@ assert sample[-2:] == (False, True)
 
 ```{attention} Q&A
 :class: dropdown
-*What makes it different from online MPC?*
+*MBPO vs online MPC?*
 
-- The model supplies training transitions; the actor selects deployed actions without solving a planning problem.
-- The snippet implements branching only; model fitting, replay mixing & SAC updates are separate components.
+- MBPO: model → training transitions. Actor selects deployed actions w/o solving a planning problem.
+- MPC: model → online optimization at every real step.
+- Code covers branching only. Model fitting, replay mixing & SAC updates are separate parts.
 
-*Why not make the rollouts arbitrarily long?*
+*Why not make rollouts arbitrarily long?*
 
-- More synthetic transitions also mean greater accumulated model bias.
-- Short branches reduce state drift; new policy actions can still leave the model's support immediately.
-- Branch horizon & synthetic-data ratio are control knobs, not universal defaults.
+- More synthetic transitions → more accumulated model bias.
+- Short branches ⬇️ state drift. New policy actions can still leave the model's support at step 1.
+- Branch horizon & synthetic-data ratio = tuning knobs, ❌universal defaults.
+```
+
+&nbsp;
+
+### Dreamer
+- **What**: Actor-critic trained by backprop through imagined latent-model rollouts {cite:p}`hafner2020dream`.
+- **Why**:
+    - *Why do we need it?*
+        - Online latent planning (e.g., PlaNet's CEM) → costly per step & blind beyond $H$.
+        - Model-generated data for model-free updates → ignores the model's gradients.
+    - *Why does it work?*
+        1. Latent state → compact → many parallel imagined trajectories, ❌pixel generation.
+        2. Critic bootstraps beyond $H$ → long-horizon credit w/ short imagination.
+        3. Differentiable dynamics + reparameterized actions → analytic value grads for the actor.
+- **How**:
+    1. **World model**: Learn latent dynamics from replayed real sequences (reconstruction, reward & KL terms).
+    2. **Imagine**: From posterior latents of real data, roll out $H$ steps w/ actor & latent transition.
+    3. **Critic**: Regress values toward λ-returns of the imagined trajectory.
+    4. **Actor**: Maximize λ-returns by backprop through rewards, values & dynamics. World model frozen.
+    5. **Act**: Encode the real history → actor action (+ exploration noise) → add data to $\mathcal{D}$.
+
+```{note} Math
+:class: dropdown
+Notations:
+- Params:
+    - $\theta$: Actor params.
+    - $\phi$: Critic params.
+- Hyperparams:
+    - $\lambda\in[0,1]$: λ-return mixing coeff.
+    - $\beta$: KL weight.
+- Misc:
+    - Paper → page: model $\theta$ → $\psi$, actor $\phi$ → $\theta$, critic $\psi$ → $\phi$.
+
+Model:
+
+$$
+\begin{align*}
+z_t&\sim q_\psi(z_t|z_{t-1},a_{t-1},o_t),\\
+\hat z_t&\sim\hat p_\psi(\hat z_t|z_{t-1},a_{t-1}),\\
+\hat r_t&\sim\hat p_\psi(r_t|z_t),\\
+\hat o_t&\sim\hat p_\psi(o_t|z_t).
+\end{align*}
+$$
+
+- $q_\psi$: Representation model (posterior; sees $o_t$).
+- $\hat p_\psi(\hat z_t|\cdot)$: Transition model (prior; ❌sees $o_t$). Used for imagination.
+- $\hat p_\psi(r_t|z_t)$: Reward model.
+- $\hat p_\psi(o_t|z_t)$: Observation decoder; training signal only.
+- $r_t$: Reward received w/ $o_t$, i.e., after $a_{t-1}$.
+
+Training:
+
+$$
+\mathcal{J}_\text{WM}(\psi)
+=\mathbb{E}\Big[\sum_t
+\ln\hat p_\psi(o_t|z_t)
++\ln\hat p_\psi(r_t|z_t)
+-\beta\operatorname{KL}\big(q_\psi(z_t|z_{t-1},a_{t-1},o_t)\,\big\|\,\hat p_\psi(z_t|z_{t-1},a_{t-1})\big)
+\Big]
+$$
+
+- Maximize. Expectation over real sequences from $\mathcal{D}$ & posterior samples.
+
+Imagination from a posterior latent $\hat z_0=z_t$:
+
+$$
+a_h\sim\pi_\theta(\cdot|\hat z_h),\qquad
+\hat z_{h+1}\sim\hat p_\psi(\cdot|\hat z_h,a_h),\qquad
+\hat r_{h+1}=\mathbb{E}\big[r\,|\,\hat z_{h+1}\big],
+\quad 0\le h<H.
+$$
+
+$$
+G^\lambda_h
+=\hat r_{h+1}+\gamma\Big[(1-\lambda)v_\phi(\hat z_{h+1})+\lambda G^\lambda_{h+1}\Big],
+\qquad G^\lambda_H=v_\phi(\hat z_H).
+$$
+
+- $G^\lambda_h$: λ-return at imagined step $h$.
+- $v_\phi$: Critic.
+- $\lambda=0$ → 1-step TD target. $\lambda=1$ → $H$-step model return + bootstrap at $\hat z_H$.
+- Paper attaches reward $r_\tau$ to the state $s_\tau$ that emits it. Same recursion, shifted reward index.
+- Early-termination tasks → model also predicts a discount per latent; cumulative product weights each step.
+
+Objective:
+
+$$
+\max_\theta\ \mathbb{E}\Big[\sum_{h=0}^{H}G^\lambda_h\Big],
+\qquad
+\min_\phi\ \mathbb{E}\Big[\sum_{h=0}^{H}\tfrac12\big(v_\phi(\hat z_h)-\operatorname{sg}(G^\lambda_h)\big)^2\Big]
+$$
+
+- $\operatorname{sg}$: Stop-gradient.
+- Actor grad flows through $\hat r$, $v_\phi$ & $\hat p_\psi$ via reparameterized actions & latents. Only $\theta$ updates.
+```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+from torch import nn
+
+class DreamerBehavior(nn.Module):
+    def __init__(self, latent_dim, action_dim, horizon, gamma, lam):
+        super().__init__()
+        ## World-model parts: trained by J_WM elsewhere, frozen during behavior learning.
+        self.dynamics = nn.Linear(latent_dim + action_dim, latent_dim)  ## deterministic stand-in for RSSM
+        self.reward = nn.Linear(latent_dim, 1)
+        self.dynamics.requires_grad_(False)
+        self.reward.requires_grad_(False)
+        self.actor = nn.Linear(latent_dim, 2 * action_dim)
+        self.critic = nn.Linear(latent_dim, 1)
+        self.horizon, self.gamma, self.lam = horizon, gamma, lam
+
+    def imagine(self, z):
+        latents, rewards = [z], []
+        for _ in range(self.horizon):
+            mean, log_std = self.actor(z).chunk(2, -1)
+            ## Reparameterized tanh-Gaussian -> action stays differentiable w.r.t. actor params.
+            a = torch.tanh(mean + log_std.exp() * torch.randn_like(mean))
+            z = self.dynamics(torch.cat((z, a), -1)).tanh()
+            latents.append(z)
+            rewards.append(self.reward(z).squeeze(-1))  ## r_{h+1} from z_{h+1}
+        return torch.stack(latents, 1), torch.stack(rewards, 1)
+
+    def lambda_returns(self, rewards, values):
+        ## Backward recursion; bootstrap from the critic at the horizon.
+        g = values[:, -1]
+        returns = [g]
+        for h in reversed(range(self.horizon)):
+            g = rewards[:, h] + self.gamma * ((1 - self.lam) * values[:, h + 1] + self.lam * g)
+            returns.append(g)
+        return torch.stack(returns[::-1], 1)
+
+    def forward(self, z0):
+        latents, rewards = self.imagine(z0)
+        returns = self.lambda_returns(rewards, self.critic(latents).squeeze(-1))
+        actor_loss = -returns.sum(1).mean()
+        ## Critic sees detached latents & targets -> its graph is independent of the actor's.
+        values = self.critic(latents.detach()).squeeze(-1)
+        critic_loss = 0.5 * (values - returns.detach()).square().sum(1).mean()
+        return actor_loss, critic_loss
+
+## Example
+agent = DreamerBehavior(latent_dim=4, action_dim=2, horizon=3, gamma=0.9, lam=0.95)
+actor_loss, critic_loss = agent(torch.randn(5, 4))  ## 5 posterior start latents
+actor_loss.backward(inputs=list(agent.actor.parameters()))  ## actor update ignores critic grads
+critic_loss.backward()
+print(agent.actor.weight.grad.shape, agent.critic.weight.grad.shape)  ## torch.Size([4, 4]) torch.Size([1, 4])
+print(agent.dynamics.weight.grad)  ## None
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Dreamer vs MBPO?*
+
+- MBPO: model → synthetic transitions → model-free SAC. Grads ❌pass through the dynamics.
+- Dreamer: analytic value grads through learned latent dynamics.
+- MBPO imagines in env state space. Dreamer imagines in a learned latent space.
+
+*Dreamer vs PlaNet / MPC?*
+
+- PlaNet: CEM search in latent space at every real step → compute per action ⬆️.
+- Dreamer: amortized actor → 1 actor forward pass per action, ❌search.
+- Reward-only imagination over $H$ → shortsighted. Dreamer's critic covers rewards beyond $H$.
+
+*Why λ-returns?*
+
+- Bias-variance tradeoff.
+- $\lambda$⬇️ → more critic reliance → critic bias.
+- $\lambda$⬆️ → more imagined-reward reliance → model error & variance over the horizon.
+
+*Why freeze the world model during behavior learning?*
+
+- Actor grads would otherwise reshape the model toward high predicted value, ❌toward accurate predictions.
+
+*Discrete actions?*
+
+- Reparameterization ❌applies directly. Dreamer uses straight-through gradients.
+
+*Failure modes?*
+
+- Actor ascends model grads → can exploit latent-dynamics errors.
+- Long backprop chains through dynamics → exploding/vanishing grads.
+- Reconstruction objective spends capacity on task-irrelevant pixels.
 ```
 
 &nbsp;
 
 ## Decision-Time Search
+- **What**: Planning from the curr state at action time → 1 action choice.
 
 ### Lookahead & Expectimax
-- **What**: Finite-horizon decision/chance expansion with leaf-value bootstrapping.
-- **Why**: Full-state planning is unnecessary when only the current action is needed.
+- **What**: Finite-depth decision/chance tree expansion w/ leaf-value bootstrap.
+- **Why**: Only the curr action is needed → full-state planning is wasted work.
 - **How**:
     1. Expand legal actions at each decision node.
-    2. Average possible environment outcomes at chance nodes.
-    3. Stop at termination or planning depth; use zero or a leaf value respectively.
-    4. Back up expected returns; select the maximizing root action.
+    2. Average env outcomes at chance nodes.
+    3. Stop at termination (value 0) or at planning depth (leaf value).
+    4. Back up expected returns → pick the maximizing root action.
 
 ```{note} Math
 :class: dropdown
@@ -744,14 +969,15 @@ $$
 - $Q_h$: Depth-limited planned action value.
 - $r'$: Immediate modeled reward.
 - $d$: Modeled true termination.
-- All terminal-state values are zero, including $V_0$; the incoming terminal reward is counted once.
+- Terminal-state values = 0 at every depth, incl. $V_0$. Incoming terminal reward counted once.
 
 $$
 \|V_H-V^*\|_\infty\le\gamma^H\|\hat V-V^*\|_\infty
 $$
 
 - $V^*$: Optimal value in an exact known model.
-- Assumes exact maximization/expectation & bounded leaf error; learned dynamics add model error.
+- Assumes exact max/expectation & bounded leaf error.
+- Learned dynamics → add model error.
 ```
 
 ````{important} Code
@@ -780,7 +1006,7 @@ class Expectimax:
             raise ValueError("Need positive depth and a nonterminal state")
         return max(legal, key=lambda a: self.q(s, a, depth))
 
-## Example: expectation over outcomes, not maximization over lucky outcomes.
+## Example: expectation over outcomes → "safe" wins; max over outcomes would pick "risky".
 outcomes = {
     "safe": [(1.0, "end", 0.6, True)],
     "risky": [(0.5, "end", 1.0, True), (0.5, "end", 0.0, True)]
@@ -793,37 +1019,39 @@ assert planner.act("start", depth=2) == "safe"
 
 ```{attention} Q&A
 :class: dropdown
-*Why maximize actions but average outcomes?*
+*Why max over actions but avg over outcomes?*
 
-- Actions are controlled; environment randomness is not.
-- Maximizing chance outcomes assumes control over luck. Minimizing them instead changes the objective to a worst-case problem.
-- Adversarial two-player search introduces opponent decisions; ordinary single-agent RL does not alternate reward signs.
+- Agent controls actions. Agent ❌controls env randomness.
+- Max over chance outcomes → assumes control over luck.
+- Min over chance outcomes → different objective (worst case).
+- Adversarial 2-player search adds opponent decisions. Single-agent RL ❌alternates reward signs.
 
-*Why not evaluate a single fixed action sequence?*
+*Why not evaluate 1 fixed action sequence?*
 
-- Expectimax permits later actions to depend on the observed successor state.
-- A fixed sequence is open-loop; it cannot adapt within its hypothetical future.
-- Deterministic dynamics remove chance branching, not the distinction between task termination & a search cutoff.
+- Expectimax: later actions depend on the observed successor state.
+- Fixed sequence = open-loop → ❌adapts within its hypothetical future.
+- Deterministic dynamics → ❌chance branching. Task termination ≠ search cutoff still holds.
 
 *What limits exhaustive search?*
 
-- With at most $A$ actions & $B$ outcomes per action, an unmerged depth-$H$ tree has exponential growth $O((AB)^H)$.
-- Memoization over state & remaining depth can share repeated subproblems when the model is fixed.
-- Better leaf values trade learned approximation for shallower search; omitted tails are not automatically zero.
+- $\le A$ actions & $\le B$ outcomes per action → unmerged depth-$H$ tree = $O((AB)^H)$.
+- Fixed model → memoize over (state, remaining depth) to share repeated subproblems.
+- Better leaf values → shallower search, at the cost of learned approximation.
+- Omitted tails ≠ 0 automatically.
 ```
 
 &nbsp;
 
 ### MCTS with UCT
 - **Name**: Monte Carlo Tree Search with Upper Confidence bounds applied to Trees {cite:p}`kocsis2006bandit`
-- **What**: Adaptive sampled lookahead using bandit-guided action selection.
-- **Why**: Exhaustive decision/chance expansion spends computation on every branch.
+- **What**: Sampled lookahead tree grown by bandit-guided action selection.
+- **Why**: Exhaustive expansion spends equal compute on every branch, incl. bad ones.
 - **How**:
-    1. **Selection**: Choose actions using value estimates + exploration bonuses.
-    2. **Chance sampling**: Draw an actual model outcome after each chosen action.
-    3. **Expansion**: Add a newly reached decision node; estimate its continuation by rollout or leaf value.
+    1. **Selection**: Pick actions by value estimate + exploration bonus.
+    2. **Chance sampling**: Draw 1 model outcome after each chosen action.
+    3. **Expansion**: Add the newly reached decision node → estimate its continuation by rollout or leaf value.
     4. **Backup**: Propagate discounted sampled returns through visited decision edges.
-    5. Select a root action by visit count; the exploration bonus guides search, not execution.
+    5. **Act**: Pick the root action by visit count. Exploration bonus guides search, ❌execution.
 
 ```{note} Math
 :class: dropdown
@@ -837,10 +1065,10 @@ a=\arg\max_{a\in\mathcal{A}(s)}
 $$
 
 - $\bar Q(s,a)$: Mean backed-up return for a decision edge.
-- $C>0$: Search exploration coefficient; depends on return scale.
+- $C>0$: Search exploration coeff; scale depends on return scale.
 - $N(s)$: Decision-node visits.
 - $N(s,a)$: Visits to the action edge.
-- Unvisited actions are tried before applying the finite-count expression.
+- Unvisited actions → tried first, before the finite-count formula applies.
 
 $$
 g_h=r_{h+1}+\gamma(1-d_h)g_{h+1},\qquad
@@ -849,10 +1077,10 @@ g_h=r_{h+1}+\gamma(1-d_h)g_{h+1},\qquad
 $$
 
 - $g_h$: Sampled return from search depth $h$.
-- $g_H$: Leaf estimate at a nonterminal cutoff; zero after true termination.
+- $g_H$: Leaf estimate at a nonterminal cutoff; 0 after true termination.
 - Counts increment before the running-mean update.
-- Decision node → action edge → sampled chance outcome → next decision node.
-- The same action can reach multiple outcome children; outcome probabilities are respected by simulator sampling.
+- Tree: decision node → action edge → sampled chance outcome → next decision node.
+- 1 action can reach many outcome children. Simulator sampling → respects outcome probabilities.
 ```
 
 ````{important} Code
@@ -923,7 +1151,7 @@ class UCT:
         return max(self.root["edges"],
                    key=lambda a: tuple(self.root["edges"][a][:2]))
 
-## Example: independent stochastic terminal rewards; no adversarial sign flip.
+## Example: independent stochastic terminal rewards; ❌adversarial sign flip.
 rng = random.Random(1)
 planner = UCT(
     actions=lambda s: ("safe", "risky"),
@@ -938,25 +1166,27 @@ assert planner.act("start", simulations=2000) == "safe"
 *What does the code assume?*
 
 - Finite legal actions, finite/hashable state outcomes & a stationary Markov generative model.
-- Callbacks return fresh outcomes without changing the real environment; empty legal-action sets denote terminal states.
-- Outcomes share a continuation node by next state; sampled rewards remain edge-specific returns, not cached deterministic rewards.
-- Continuous unique next states can prevent revisits; this compact finite-outcome tree is not a continuous-state search solution.
+- Callbacks return fresh outcomes w/o changing the real env.
+- Empty legal-action set = terminal state.
+- Outcomes share a continuation node by next state. Sampled rewards stay edge-specific returns, ❌cached deterministic rewards.
+- Continuous unique next states → ❌revisits → this finite-outcome tree ❌fits continuous states.
 
 *What can more simulations guarantee?*
 
-- Under finite-horizon finite-action bounded-return assumptions, UCT consistency concerns the supplied model & leaf objective.
-- Finite-budget search may miss delayed rewards; guarantees are not practical runtime bounds.
-- Incorrect model/leaf values remain incorrect with unlimited sampling.
+- Finite-horizon, finite-action, finite-outcome (revisitable tree), bounded-return model → UCT root choice converges to optimal for the supplied model & leaf objective.
+- Finite budget → can miss delayed rewards. Asymptotic guarantees ≠ practical runtime bounds.
+- Wrong model/leaf values stay wrong w/ unlimited sampling.
 
 *Why no sign changes?*
 
-- All returns use the same single-agent reward convention.
-- Two-player zero-sum values expressed from the player-to-move perspective need consistent perspective conversion, but that is a different backup convention.
+- All returns use 1 single-agent reward convention.
+- 2-player zero-sum search from the player-to-move perspective → needs sign conversion. Different backup convention.
 
 *How do policy/value networks help?*
 
-- Policy priors guide action exploration; value heads replace or shorten random rollouts.
-- Prior-guided search is not identical to the UCT formula above; AlphaZero uses a different exploration bonus.
+- Policy priors → guide action exploration.
+- Value heads → replace or shorten random rollouts.
+- Prior-guided search ≠ the UCT formula above. AlphaZero uses a different exploration bonus.
 ```
 
 &nbsp;
@@ -965,13 +1195,13 @@ assert planner.act("start", simulations=2000) == "safe"
 
 ### MPC
 - **Name**: Model Predictive Control
-- **What**: Repeated finite-horizon optimization with first-action execution.
-- **Why**: A long open-loop plan cannot correct deviations after it starts.
+- **What**: Repeated finite-horizon optimization w/ 1st-action execution.
+- **Why**: Long open-loop plan → ❌corrects deviations after it starts.
 - **How**:
-    1. Observe the current state; optimize a candidate future action sequence.
-    2. Execute only its first action.
-    3. Observe the actual successor; shift/warm-start the proposal & solve again.
-    4. Learn the model from new transitions if dynamics are unknown.
+    1. Observe the curr state → optimize a candidate future action sequence.
+    2. Execute only its 1st action.
+    3. Observe the actual successor → shift/warm-start the proposal → solve again.
+    4. Unknown dynamics → learn the model from new transitions.
 
 ```{note} Math
 :class: dropdown
@@ -995,58 +1225,60 @@ $$
 - $\mathbf{u}=(u_0,\ldots,u_{H-1})$: Open-loop action sequence; actions may be vectors.
 - $u_h$: Proposed action at relative time $h$.
 - $w_h$: Survival indicator before predicted step $h$.
-- Known simulators replace $\hat M_\psi$ directly.
-- Action bounds restrict every $u_h$; state constraints require predicted-state checks or an explicit constrained formulation.
+- Known simulator → replaces $\hat M_\psi$ directly.
+- Action bounds → restrict every $u_h$.
+- State constraints → need predicted-state checks or an explicit constrained formulation.
 ```
 
 ```{note} Example
 :class: dropdown
-- Plan two pushes to place an object at a target.
-- Execute the first; friction leaves it short.
-- Replan from the measured position rather than blindly applying the old second push.
-- A wrong friction model can still mislead each solve; replanning is correction, not model-error elimination.
+- Plan 2 pushes to move an object to a target.
+- Execute the 1st. Friction leaves the object short.
+- Replan from the measured position. ❌Apply the old 2nd push blindly.
+- Wrong friction model → still misleads each solve. Replanning = correction, ❌model-error removal.
 ```
 
 ```{attention} Q&A
 :class: dropdown
-*Is MPC itself a learning algorithm?*
+*Is MPC a learning algorithm?*
 
-- No. Known dynamics + repeated optimization require no training.
-- Learned dynamics make it a model-based RL/control component.
-- The solve may use gradients, quadratic programming or sampling; model-based does not mean differentiable.
-- The [CEM implementation](#cem) below includes the first-action/replanning loop.
+- ❌. Known dynamics + repeated optimization → ❌training.
+- Learned dynamics → MPC becomes a model-based RL/control component.
+- Solver: gradients, quadratic programming or sampling. Model-based ≠ differentiable.
+- 1st-action & replanning loop in code → [CEM](#cem).
 
 *Open-loop optimization but closed-loop control?*
 
-- Within one solve, a candidate sequence does not adapt to hypothetical outcomes.
-- Across real steps, state feedback changes the next solve.
-- Under stochastic dynamics, this is generally not equivalent to optimizing all contingent future policies.
+- Within 1 solve: candidate sequence ❌adapts to hypothetical outcomes.
+- Across real steps: state feedback changes the next solve.
+- Stochastic dynamics → ≠ optimizing over all contingent future policies in general.
 
 *How long should the horizon be?*
 
-- Longer → more delayed consequences considered, more optimization cost & accumulated model error.
-- Shorter → easier search & less drift, greater dependence on the terminal value.
-- A leaf value must match the reward/discount convention; setting it to zero deliberately truncates the objective.
+- Longer → more delayed consequences, ⬆️optimization cost, ⬆️accumulated model error.
+- Shorter → easier search, ⬇️drift, ⬆️dependence on the terminal value.
+- Leaf value must match the reward/discount convention. Leaf = 0 → truncated objective.
 
 *Do replanning or penalties guarantee safety/stability?*
 
-- No. Action clipping enforces only action bounds, not state constraints.
-- Soft penalties trade violations against reward; finite candidate sampling can miss feasible/safe solutions.
-- Hard guarantees need suitable model/uncertainty assumptions, constrained optimization, feasibility handling & often terminal conditions or a verified fallback.
-- Delayed computation & state-estimation errors also break idealized instantaneous-replanning assumptions.
+- ❌. Action clipping enforces only action bounds, ❌state constraints.
+- Soft penalties → trade violations against reward.
+- Finite candidate sampling → can miss feasible/safe solutions.
+- Hard guarantees need: suitable model/uncertainty assumptions, constrained optimization, feasibility handling, often terminal conditions or a verified fallback.
+- Compute delay & state-estimation error → break the instant-replanning idealization.
 ```
 
 &nbsp;
 
 #### CEM
 - **Name**: Cross-Entropy Method {cite:p}`rubinstein1999cross`
-- **What**: Iterative proposal-distribution fitting to high-scoring samples.
-- **Why**: Nonlinear action-sequence objectives may lack useful derivatives.
+- **What**: Iterative refit of a proposal distribution to high-scoring samples.
+- **Why**: Nonlinear action-sequence objectives → useful derivatives may not exist.
 - **How**:
     1. Sample candidate sequences from a proposal distribution.
-    2. Score them with model rollouts; retain an elite subset.
-    3. Refit proposal parameters to elites; repeat within the planning budget.
-    4. Return a candidate's first action; re-optimize after the real observation.
+    2. Score them w/ model rollouts → keep an elite subset.
+    3. Refit proposal params to the elites. Repeat within the planning budget.
+    4. Return the best candidate's 1st action. Re-optimize after the real observation.
 
 ```{note} Math
 :class: dropdown
@@ -1071,10 +1303,11 @@ $$
 (\mathbf{u}^{(i)}-\mathbf{m}_{\text{new}})^{\odot2}
 $$
 
-- $\mathbf{m}$: Diagonal-Gaussian proposal mean; not the behavior policy $\mu$.
+- $\mathbf{m}$: Diagonal-Gaussian proposal mean.
 - $\boldsymbol{\sigma}^2$: Coordinatewise proposal variance.
 - $\odot2$: Elementwise square.
-- These are unconstrained Gaussian maximum-likelihood updates; clipping bounded actions then matching moments is a practical heuristic, not exact truncated-Gaussian maximum likelihood.
+- Above = unconstrained Gaussian maximum-likelihood updates.
+- Clip bounded actions → match moments = practical heuristic, ❌exact truncated-Gaussian maximum likelihood.
 ```
 
 ````{important} Code
@@ -1117,7 +1350,7 @@ class CEMMPC:
         self.mean = center[1:] + [(self.low + self.high) / 2]
         return best[0]  ## Execute ONE scalar action, never the entire optimized sequence.
 
-## Example: scalar-action control; budgets illustrate the code, not recommended defaults.
+## Example: scalar-action control; budgets are illustrative, ❌recommended defaults.
 def physics(s, a):
     sp = s + a
     return sp, -sp * sp, False
@@ -1138,22 +1371,25 @@ print(round(state, 2))
 
 ```{attention} Q&A
 :class: dropdown
-*Random shooting versus CEM?*
+*Random shooting vs CEM?*
 
-- Random shooting samples once from a fixed proposal; CEM adapts the proposal using elites.
-- Scalar code above generalizes coordinatewise to vector actions; the proposal's diagonal covariance ignores correlations.
+- Random shooting: sample once from a fixed proposal.
+- CEM: adapt the proposal toward elites, over iterations.
+- Scalar code → generalizes coordinatewise to vector actions. Diagonal covariance ignores correlations.
 
 *Why the name cross-entropy?*
 
-- Fit the proposal toward a distribution concentrated on elite events by maximizing their log likelihood.
-- No supervised classification problem or actor network is required.
+- Fit the proposal toward a distribution concentrated on elite events ← maximize their log-likelihood (= minimize cross-entropy).
+- ❌Supervised classification, ❌actor network.
 
 *Failure modes?*
 
-- Premature variance collapse, multimodal optima & high-dimensional sequences; a variance floor preserves local sampling, not global coverage.
-- No global-optimality guarantee for a finite population/budget.
-- Noisy model scores can select lucky candidates; use enough particles & re-evaluate finalists when needed.
-- Clipping creates mass on action bounds; state feasibility remains the caller's separate responsibility.
+- Premature variance collapse, multimodal optima, high-dimensional sequences.
+- Variance floor → keeps local sampling, ❌global coverage.
+- Finite population/budget → ❌global-optimality guarantee.
+- Noisy model scores → lucky candidates win. Use enough particles; re-evaluate finalists.
+- Clipping → probability mass piles on action bounds.
+- State feasibility = the caller's separate job.
 ```
 
 &nbsp;
@@ -1162,12 +1398,12 @@ print(round(state, 2))
 
 ### AlphaZero
 - **What**: Self-play policy/value learning guided by known-rule tree search {cite:p}`silver2018general`.
-- **Why**: Search can improve a learned policy; its decisions can then train the network.
+- **Why**: Search improves on the raw policy → its decisions become training targets for the network.
 - **How**:
     1. Use exact game rules for transitions, legal moves & terminal outcomes.
-    2. Guide search with policy priors & neural leaf values.
+    2. Guide search w/ policy priors & neural leaf values.
     3. Store search visit distributions & self-play outcomes.
-    4. Train policy/value predictions toward those targets; repeat.
+    4. Train policy/value heads toward those targets → repeat.
 
 ```{note} Math
 :class: dropdown
@@ -1182,12 +1418,12 @@ $$
 
 - $v_\phi$: Predicted game outcome value.
 - $\phi$: Value-head params.
-- $z$: Self-play outcome from the player-to-move perspective at stored state $s$.
+- $z$: Self-play outcome from the player-to-move perspective at stored state $s$. Paper notation; overrides page latent $z_t$ locally.
 - $\pi_{\text{search}}$: Normalized root-visit target, optionally temperature-adjusted.
 - $\theta$: Policy-head params.
 - $\vartheta$: All shared/network params.
-- $\lambda$: Weight-decay coefficient.
-- Board-game outcome prediction is episodic & undiscounted; it is not the discounted leaf target assumed elsewhere on this page.
+- $\lambda$: Weight-decay coeff.
+- Board-game outcome prediction = episodic & undiscounted. ≠ discounted leaf targets elsewhere on this page.
 ```
 
 ````{important} Code
@@ -1218,7 +1454,7 @@ class SearchDistillation(nn.Module):
         penalty = l2 * sum(p.square().sum() for p in self.parameters())
         return policy_loss + F.mse_loss(value, outcome.detach()) + penalty
 
-## Example: the distillation loss only; game simulation & prior-guided search are separate.
+## Example: distillation loss only; game simulation & prior-guided search are separate.
 learner = SearchDistillation(feature_dim=2, n_actions=3)
 loss = learner.loss(torch.zeros(1, 2), torch.tensor([[3., 1., 0.]]),
                     torch.tensor([1.]), torch.tensor([[True, True, False]]))
@@ -1231,21 +1467,41 @@ assert torch.isfinite(loss)
 :class: dropdown
 *Does AlphaZero learn the game dynamics?*
 
-- No. It learns policy/value predictions; search uses known transitions & legal moves.
-- Its exploration uses policy priors, not plain UCT; the compact code implements distillation, not the complete search system.
-- Outcome signs follow the stored player's perspective; do not copy that convention into single-agent backups.
+- ❌. Learns policy/value only. Search uses known transitions & legal moves.
+
+*Why train toward visit counts, ❌the raw policy?*
+
+- Search = policy-improvement operator → visit distribution beats the prior.
+- Distill visits → stronger prior → stronger search → loop.
+
+*How does its search differ from UCT?*
+
+- PUCT-style bonus ∝ prior $\pi_\theta(a|s)$ × $\sqrt{N(s)}/(1+N(s,a))$ → prior steers exploration.
+- Value head replaces random rollouts.
+- Code covers distillation only, ❌the full search system.
+
+*AlphaGo vs AlphaGo Zero vs AlphaZero?*
+
+- AlphaGo: human expert data + RL + rollouts.
+- AlphaGo Zero: self-play from scratch, ❌human data, ❌rollouts; Go only.
+- AlphaZero: same recipe for chess, shogi & Go. ❌Go-specific symmetry augmentation. 1 continually updated network, ❌evaluator gating.
+
+*Sign convention?*
+
+- Outcome sign follows the stored player's perspective.
+- ❌Copy that convention into single-agent backups.
 ```
 
 &nbsp;
 
 ### MuZero
-- **What**: Search-guided policy/value/reward learning through latent dynamics {cite:p}`schrittwieser2020mastering`.
-- **Why**: Exact dynamics may be unavailable; reconstructing every observation detail is unnecessary for planning.
+- **What**: Search-guided policy/value/reward learning through learned latent dynamics {cite:p}`schrittwieser2020mastering`.
+- **Why**: Exact dynamics often unavailable. Planning ❌needs every observation detail.
 - **How**:
-    1. Encode observation history into a latent root state.
+    1. Encode observation history → latent root state.
     2. Apply candidate actions to recurrent latent dynamics.
-    3. Search using predicted rewards, policy priors & values.
-    4. Unroll real action sequences; train against observed rewards, return targets & search policies.
+    3. Search w/ predicted rewards, policy priors & values.
+    4. Unroll real action sequences → train on observed rewards, return targets & search policies.
 
 ```{note} Math
 :class: dropdown
@@ -1260,7 +1516,8 @@ z_t^0&=h_\psi(o_{\le t}),\\
 $$
 
 - $o_{\le t}$: Observation history through time $t$.
-- $z_t^j$: Latent state after $j$ hypothetical actions from root $t$; overrides the page's generic feature index $j$ locally.
+- $z_t^j$: Latent state after $j$ hypothetical actions from root $t$; $z_t^0$ = page's $z_t$.
+- $j$: Unroll step; overrides Tier-1 feature idx locally.
 - $h_\psi$: Representation network.
 - $g_\psi$: Latent dynamics/reward network.
 - $f_\psi$: Policy/value prediction network.
@@ -1280,14 +1537,14 @@ $$
 +\lambda\|\psi\|_2^2.
 $$
 
-- $K$: Number of training unroll steps; not necessarily search horizon $H$.
+- $K$: #training unroll steps; ≠ search horizon $H$ in general.
 - $v^{\text{target}}_{t+j}$: Observed return or bootstrapped value target.
 - $\pi^{\text{search}}_{t+j}$: Search-derived policy target.
 - $\ell_v$: Value prediction loss.
 - $\ell_\pi$: Policy cross-entropy.
 - $\ell_r$: Reward prediction loss.
-- $\lambda$: Regularization coefficient.
-- Targets stop/mask or use absorbing-state conventions past true termination.
+- $\lambda$: Regularization coeff.
+- Past true termination → stop/mask targets or use absorbing-state conventions.
 ```
 
 ````{important} Code
@@ -1320,7 +1577,7 @@ class LatentModel(nn.Module):
         reward_seq = torch.stack(rewards, 1) if rewards else z.new_empty((z.shape[0], 0))
         return torch.stack(policies, 1), torch.stack(values, 1), reward_seq
 
-## Example: recurrent prediction core, not a full MuZero agent; no observation decoder.
+## Example: recurrent prediction core only; ❌full agent, ❌observation decoder.
 model = LatentModel(observation_dim=4, latent_dim=8, n_actions=3)
 logits, values, rewards = model(torch.zeros(2, 4), torch.tensor([[0, 1], [1, 2]]))
 assert logits.shape == (2, 3, 3)
@@ -1330,22 +1587,28 @@ assert values.shape == (2, 3) and rewards.shape == (2, 2)
 
 ```{attention} Q&A
 :class: dropdown
-*AlphaZero versus MuZero?*
+*AlphaZero vs MuZero?*
 
-- AlphaZero: known-state transitions & game rules; learn policy/value.
-- MuZero: learned latent transitions & rewards; learn representation/policy/value jointly.
-- MuZero does not require pixel reconstruction or literal physical-state semantics.
+- AlphaZero: known transitions & game rules → learn policy/value.
+- MuZero: learned latent transitions & rewards → learn representation/policy/value jointly.
+- MuZero ❌requires pixel reconstruction or physically meaningful latent states.
+
+*MuZero vs Dreamer?*
+
+- Both: learned latent dynamics, ❌observation-space rollouts.
+- MuZero: latent trained only by reward/value/policy targets → tree search at action time.
+- Dreamer: latent trained by reconstruction + reward + KL → amortized actor, ❌search.
 
 *Is the latent model a calibrated stochastic simulator?*
 
-- Not necessarily. Original MuZero uses deterministic latent dynamics; no explicit chance-outcome distribution.
-- Good prediction on trained action sequences does not guarantee all counterfactuals.
-- Root legal-action masking uses environment information; original MuZero does not apply rule-based legal-action masks at internal nodes.
+- ❌Not necessarily. Original MuZero: deterministic latent dynamics, ❌explicit chance-outcome distribution.
+- Good predictions on trained action sequences ❌guarantee all counterfactuals.
+- Root legal-action masking uses env info. Original MuZero ❌applies rule-based legal-action masks at internal nodes.
 
 *Does training differentiate through the tree search?*
 
-- No requirement: backpropagate through the recurrent prediction unroll toward search-generated targets.
-- Search generates supervision; latent predictions remain subject to model error & limited coverage.
+- ❌. Backprop through the recurrent prediction unroll toward search-generated targets.
+- Search → supervision. Latent predictions still suffer model error & limited coverage.
 ```
 
 &nbsp;

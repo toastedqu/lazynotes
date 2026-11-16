@@ -2068,5 +2068,3 @@ $$
 - Each connected component converges to its initial arithmetic mean.
 - Connectedness describes a relation graph, NOT a measure or proof of consciousness.
 ```
-
-&nbsp;

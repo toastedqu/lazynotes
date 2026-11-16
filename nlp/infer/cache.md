@@ -481,7 +481,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 def rope(x, start=0):
-    ## Minimal RoPE over positions in dim -2 (see nlp/transformer.md#rope).
+    ## Minimal RoPE over positions in dim -2 (see nlp/pos.md#rope).
     ## `start` = #tokens already cached, else a decode step would rotate at position 0.
     T, D = x.shape[-2], x.shape[-1]
     pos = torch.arange(start, start + T, device=x.device).unsqueeze(-1)

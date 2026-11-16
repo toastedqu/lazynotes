@@ -11,7 +11,7 @@ kernelspec:
 ---
 # Value-Based Methods
 
-Estimate return → improve actions: exact backups, sampled backups, then neural approximation. Foundations follow {cite:t}`rlbook`; assumes [MDPs, returns & Bellman equations](intro.md#bellman-equations).
+Estimate return → act greedily w.r.t. the estimate. Order: exact backups → sampled backups → neural approximation. Study notes from {cite:t}`rlbook`; prerequisite: [MDPs, returns & Bellman equations](intro.md#bellman-equations).
 
 Notations:
 - $s_t$: State at decision $t$.
@@ -19,54 +19,53 @@ Notations:
 - $r_{t+1}$: Reward after $a_t$.
 - $\mathcal{S}$: State space.
 - $\mathcal{A}$: Discrete action space.
-- $p(s'|s,a)$: Transition distribution.
+- $p(s'|s,a)$: Transition probability.
 - $r(s,a)$: Expected immediate reward.
 - $\pi(a|s)$: Target policy.
 - $\mu(a|s)$: Behavior policy.
 - $\gamma$: Discount factor; $0\leq\gamma<1$ unless stated otherwise.
-- $\alpha$: Learning rate.
+- $\alpha$: Step size.
 - $\epsilon$: Epsilon-greedy exploration probability.
 - $T$: Terminal time.
 - $G_t$: Discounted return from $t$.
 - $V^\pi$: True state value under $\pi$.
 - $Q^\pi$: True action value under $\pi$.
+- $V^*$: Optimal state value.
+- $Q^*$: Optimal action value.
 - $V$: Current state-value estimate.
 - $Q$: Current action-value estimate.
-- $d_t$: True-termination indicator after $a_t$, not an artificial time cutoff.
-- $\delta_t$: Temporal-difference error.
+- $\mathcal{T}^\pi$: [Bellman expectation operator](intro.md#bellman-equations).
+- $\mathcal{T}^*$: Bellman optimality operator.
+- $d_t$: True-termination indicator after $a_t$; $0$ at a time-limit cutoff.
+- $\delta_t$: TD error.
 - $\phi$: Value-network params.
 - $\bar\phi$: Target-network params.
-- $\mathcal{D}$: Experience dataset/replay buffer.
+- $\mathcal{D}$: Replay buffer.
 
-RL overrides: $a$ denotes an action; $V/Q$ denote scalar-valued functions. Code rewards at index `t` mean $r_{t+1}$; `terminated` means $d_t$.
+RL overrides: $a$ = action; $r$ = reward; $V/Q$ = scalar-valued functions, not matrices.
+Code: reward at index `t` = $r_{t+1}$; `terminated` = $d_t$.
 
 &nbsp;
 
 ## Planning with a Known Model
 
 ### Dynamic Programming
-- **What**: Solving a decision problem through repeated model-based Bellman backups.
-- **Why**: Shared future subproblems make explicit trajectory enumeration wasteful.
-- **How**: Store values → combine immediate reward with successor values → reuse updated estimates.
+- **What**: Repeated Bellman backups w/ a known model.
+- **Why**: Trajectory enumeration repeats work ← many trajectories share the same successor states.
+- **How**: Store one value per state → back up reward + discounted successor values → reuse the updated values.
 
 ```{note} Math
 :class: dropdown
-Notations:
-- IO:
-    - $P_{sas'}$: Probability of transition to nonterminal $s'$ from $(s,a)$.
-    - $R_{sa}$: Expected immediate reward.
-
 Process:
 
 $$
-Q_V(s,a)=R_{sa}+\gamma\sum_{s'}P_{sas'}V(s')
+Q_V(s,a)=r(s,a)+\gamma\sum_{s'}p(s'|s,a)V(s')
 $$
 
-- $Q_V$: One-step action lookahead using continuation estimate $V$.
-- $P$ can be substochastic: missing row mass is terminal probability, with continuation value $0$.
-- Terminal rewards remain included in $R$.
-- Evaluation backup: $V_{\mathrm{new}}(s)=\sum_a\pi(a|s)Q_V(s,a)$.
-- Optimality backup: $V_{\mathrm{new}}(s)=\max_a Q_V(s,a)$.
+- $Q_V$: One-step lookahead from estimate $V$.
+- Terminal $s'$ → $V(s')=0$.
+- Evaluation backup: $V(s)\leftarrow\sum_a\pi(a|s)Q_V(s,a)$.
+- Optimality backup: $V(s)\leftarrow\max_aQ_V(s,a)$.
 ```
 
 ````{important} Code
@@ -81,12 +80,12 @@ class TabularModel:
         self.gamma = gamma
 
     def __call__(self, value):
-        ## Terminal transition mass is omitted from p, not from r.
+        ## p omits terminal mass -> terminal continuation = 0; r keeps terminal reward
         return self.r + self.gamma * np.einsum("sat,t->sa", self.p, value)
 
 ## Example
 model = TabularModel([[[0.0], [0.0]]], [[1.0, 2.0]], gamma=0.9)
-print(model(np.zeros(1)))  ## [[1., 2.]]
+print(model(np.zeros(1)))  ## [[1. 2.]]
 ```
 ````
 
@@ -94,40 +93,45 @@ print(model(np.zeros(1)))  ## [[1., 2.]]
 :class: dropdown
 *Is DP model-free RL?*
 
-- No. It plans using known transitions/rewards; no sampled experience is required.
-- The same backup underlies model-free sampled updates.
+- No. DP plans w/ known $p$ & $r$. It needs no sampled experience.
+- TD & Q-learning use the same backup w/ one sample instead of the expectation.
 
-*What limits it?*
+*Limits?*
 
-- Dense backup cost $O(|\mathcal{S}|^2|\mathcal{A}|)$ per sweep; sparsity can reduce it.
-- State enumeration is the main obstacle in large/continuous problems.
+- Dense sweep cost: $O(|\mathcal{S}|^2|\mathcal{A}|)$. Sparse $p$ ⬇️ cost.
+- #states grows exponentially w/ #state variables → enumeration fails for large or continuous spaces.
+- Wrong model → wrong values. DP has no data to correct the model.
 ```
 
 &nbsp;
 
 ### Policy Evaluation
-- **What**: Computing the value of a fixed policy.
-- **Why**: Policy improvement needs an estimate of its current consequences.
-- **How**: Average lookahead over policy actions; repeat until consistent or solve the linear system.
+- **What**: Compute $V^\pi$ for a fixed $\pi$.
+- **Why**: Policy improvement needs the value of the curr policy.
+- **How**: Repeat evaluation backups until values stop changing, or solve the linear Bellman system.
 
 ```{note} Math
 :class: dropdown
+Process:
+
 $$
-\begin{align*}
-P^\pi_{ss'}&=\sum_a\pi(a|s)P_{sas'},&
-\mathbf{r}^\pi_s&=\sum_a\pi(a|s)R_{sa},\\
-\mathbf{v}^\pi&=\mathbf{r}^\pi+\gamma P^\pi\mathbf{v}^\pi,&
-(I-\gamma P^\pi)\mathbf{v}^\pi&=\mathbf{r}^\pi.
-\end{align*}
+P^\pi_{ss'}=\sum_a\pi(a|s)p(s'|s,a),\qquad
+\mathbf{r}^\pi_s=\sum_a\pi(a|s)r(s,a)
 $$
 
-- $P_{sas'}$: Nonterminal continuation kernel.
-- $R_{sa}$: Expected immediate reward.
-- $P^\pi$: Policy-induced continuation matrix.
-- $\mathbf{r}^\pi$: Policy-induced reward vector.
-- $\mathbf{v}^\pi$: Vector of state values.
+- $P^\pi$: Policy-induced transition matrix over nonterminal states.
+- $\mathbf{r}^\pi$: Policy-induced expected reward vector.
+
+$$
+\mathbf{v}^\pi=\mathbf{r}^\pi+\gamma P^\pi\mathbf{v}^\pi
+\quad\Leftrightarrow\quad
+(I-\gamma P^\pi)\mathbf{v}^\pi=\mathbf{r}^\pi
+$$
+
+- $\mathbf{v}^\pi$: Vector of $V^\pi(s)$ over states.
 - $I$: Identity matrix.
-- $\gamma<1$ → unique solution for finite spaces; solve rather than explicitly invert.
+- $\gamma<1$ → $I-\gamma P^\pi$ is invertible → unique solution. Solve the system; do not form the inverse.
+- Iterative form: $\mathbf{v}\leftarrow\mathcal{T}^\pi\mathbf{v}$. Each sweep shrinks the max error by a factor of at least $\gamma$.
 ```
 
 ````{important} Code
@@ -141,8 +145,10 @@ class PolicyEvaluation:
         self.model = model
 
     def __call__(self, policy):
+        ## Average dynamics & rewards over the policy -> one Markov chain
         p = np.einsum("sa,sat->st", policy, self.model.p)
         r = (policy * self.model.r).sum(axis=1)
+        ## Exact solve of (I - gamma P) v = r
         return np.linalg.solve(np.eye(len(r)) - self.model.gamma * p, r)
 
 ## Example
@@ -155,39 +161,44 @@ print(PolicyEvaluation(model)(np.array([[1.0, 0.0]])))  ## [2.]
 :class: dropdown
 *Iterative vs. exact evaluation?*
 
-- Linear solve: cubic dense cost in state count, up to numerical precision.
-- Iteration: cheaper individual sweeps; stops at a chosen residual tolerance.
-- Approximate evaluation may suffice for improvement; it is not an exact policy-value solution.
+- Linear solve: $O(|\mathcal{S}|^3)$ for dense $P^\pi$. Exact up to float precision.
+- Iteration: $O(|\mathcal{S}|^2)$ per dense sweep. Stop at a residual tolerance.
+- Improvement often needs only approximate values → truncated evaluation (modified policy iteration).
 ```
 
 &nbsp;
 
 ### Policy Iteration
-- **What**: Alternating policy evaluation & greedy policy improvement.
-- **Why**: A one-step improvement over correct continuation values improves the full policy.
+- **What**: Alternate policy evaluation & greedy policy improvement.
+- **Why**: Reach an optimal policy through a sequence of policies that never get worse.
 - **How**:
-    1. Evaluate the current policy.
-    2. Choose maximizing lookahead actions.
-    3. Repeat until the policy no longer changes.
+    1. Evaluate the curr policy.
+    2. In each state, choose the action w/ the largest lookahead value.
+    3. Repeat until the policy stops changing.
 
 ```{note} Math
 :class: dropdown
+Process:
+
 $$
 \pi'(s)\in\arg\max_a Q^\pi(s,a)
-\quad\Longrightarrow\quad V^{\pi'}(s)\geq V^\pi(s)
+\quad\Longrightarrow\quad V^{\pi'}(s)\geq V^\pi(s)\ \ \forall s
 $$
 
-- $\pi'$: Greedily improved deterministic policy.
-- More generally, $\mathbb{E}_{a\sim\pi'}Q^\pi(s,a)\geq V^\pi(s)$ for every state suffices.
-- **Generalized policy iteration**: Evaluation & improvement interact even when neither is completed exactly.
+- $\pi'$: Greedy deterministic policy w.r.t. $Q^\pi$.
+- Weaker sufficient condition: $\mathbb{E}_{a\sim\pi'(\cdot|s)}Q^\pi(s,a)\geq V^\pi(s)$ for every $s$.
+- **Generalized policy iteration**: Evaluation & improvement interact, even if neither step is exact.
 ```
 
 ```{tip} Derivation
 :class: dropdown
-1. Improvement gives $\mathcal{T}^{\pi'}V^\pi\geq V^\pi$.
-2. Bellman evaluation is monotone → repeated application preserves & propagates the inequality.
-3. Contraction gives $(\mathcal{T}^{\pi'})^\ell V^\pi\to V^{\pi'}$.
-4. Therefore $V^{\pi'}\geq V^\pi$; a policy greedy w.r.t. its own value satisfies the optimality equation.
+*Why does greedy improvement never decrease value?*
+
+1. $\pi'$ is greedy w.r.t. $Q^\pi$ → $\mathcal{T}^{\pi'}V^\pi\geq V^\pi$.
+2. $\mathcal{T}^{\pi'}$ is monotone: $u\geq v$ → $\mathcal{T}^{\pi'}u\geq\mathcal{T}^{\pi'}v$.
+3. Apply $\mathcal{T}^{\pi'}$ $\ell$ times & induct → $(\mathcal{T}^{\pi'})^\ell V^\pi\geq V^\pi$ for every $\ell$.
+4. $\mathcal{T}^{\pi'}$ is a $\gamma$-contraction → $(\mathcal{T}^{\pi'})^\ell V^\pi\to V^{\pi'}$ → $V^{\pi'}\geq V^\pi$.
+5. Policy stops changing → $\mathcal{T}^*V^\pi=\mathcal{T}^{\pi'}V^\pi=V^\pi$ → $V^\pi=V^*$.
 ```
 
 ````{important} Code
@@ -205,6 +216,7 @@ class PolicyIteration:
         states, actions = self.model.r.shape
         choice = np.zeros(states, dtype=int)
         while True:
+            ## One-hot rows -> deterministic policy matrix
             value = self.evaluate(np.eye(actions)[choice])
             ## Fixed tie-breaking prevents cycling among equal policies.
             improved = self.model(value).argmax(axis=1)
@@ -222,39 +234,42 @@ print(PolicyIteration(model)())  ## (array([3.]), array([1]))
 :class: dropdown
 *When does exact policy iteration terminate?*
 
-- Finite discounted MDP, exact evaluation & consistent tie-breaking → finitely many deterministic policies.
-- Approximate evaluation or numerical noise can spoil exact monotonicity.
+- Finite discounted MDP + exact evaluation + consistent tie-breaking → finite termination.
+    - ← Finitely many deterministic policies & no policy repeats: each change strictly improves some state or is a one-time tie-break.
+- Approximate evaluation or numerical noise → monotonic improvement can fail.
 
-*Why not improve using immediate reward alone?*
+*Why not improve w/ immediate reward alone?*
 
-- The lookahead must retain the evaluated continuation value.
 - Greedy immediate reward ignores delayed consequences.
+- The lookahead must keep the evaluated continuation value.
 ```
 
 &nbsp;
 
 ### Value Iteration
 - **What**: Repeated Bellman optimality backups.
-- **Why**: Avoid fully evaluating each intermediate policy.
-- **How**: Improve & evaluate one step at a time; extract a greedy policy from the resulting values.
+- **Why**: Full policy evaluation in every iteration is expensive.
+- **How**: Apply one optimality backup per sweep → stop at a small residual → extract the greedy policy.
 
 ```{note} Math
 :class: dropdown
 Process:
 
 $$
-V_{\mathrm{new}}(s)
-=\max_a\left[r(s,a)+\gamma\sum_{s'}p(s'|s,a)V(s')\right]
+V(s)\leftarrow\max_a\left[r(s,a)+\gamma\sum_{s'}p(s'|s,a)V(s')\right]
 $$
 
 $$
 \|V-V^*\|_\infty
-\leq\frac{\|\mathcal{T}^*V-V\|_\infty}{1-\gamma}
+\leq\frac{\|\mathcal{T}^*V-V\|_\infty}{1-\gamma},
+\qquad
+\|V^{\pi_V}-V^*\|_\infty\leq\frac{2\gamma\|V-V^*\|_\infty}{1-\gamma}
 $$
 
-- $\mathcal{T}^*$: Bellman optimality operator.
-- $V^*$: Optimal value.
-- Residual → value-error certificate for exact finite discounted backups.
+- $\|\cdot\|_\infty$: Largest absolute statewise error.
+- $\pi_V$: Greedy policy w.r.t. $V$.
+- Left bound: residual → certified value error for exact finite discounted backups.
+- Right bound: small value error → near-optimal greedy policy. The bound grows as $\gamma\to1$.
 ```
 
 ````{important} Code
@@ -270,15 +285,16 @@ class ValueIteration:
     def __call__(self):
         value = np.zeros(len(self.model.r))
         while True:
-            q = self.model(value)
-            updated = q.max(axis=1)
+            ## One optimality backup for every state
+            updated = self.model(value).max(axis=1)
             if np.max(np.abs(updated - value)) <= self.tolerance:
+                ## Greedy policy from the final values
                 return updated, self.model(updated).argmax(axis=1)
             value = updated
 
 ## Example
 model = TabularModel([[[1.0], [0.0]]], [[1.0, 3.0]], gamma=0.5)
-print(ValueIteration(model, tolerance=1e-8)())  ## values [3.], action [1]
+print(ValueIteration(model, tolerance=1e-8)())  ## (array([3.]), array([1]))
 ```
 ````
 
@@ -286,19 +302,19 @@ print(ValueIteration(model, tolerance=1e-8)())  ## values [3.], action [1]
 :class: dropdown
 *Synchronous vs. asynchronous updates?*
 
-- Synchronous sweeps use a frozen previous value vector.
-- In-place/asynchronous backups reuse fresher values; convergence needs every relevant state updated sufficiently often.
+- Synchronous: every backup reads the frozen previous value vector.
+- In-place/asynchronous: backups read fresher values. Convergence needs every state updated infinitely often.
 
-*What about finite horizons?*
+*Finite horizon?*
 
-- Start with $V_T=0$; back up $V_{T-1},\ldots,V_0$ once each.
-- The optimal action depends on remaining time; no infinite fixed-point iteration is needed.
+- Start w/ $V_T=0$. Back up $V_{T-1},\ldots,V_0$ once each.
+- The optimal action depends on the remaining time. No fixed-point iteration is necessary.
 
-*Which DP method should I choose?*
+*Policy iteration vs. value iteration?*
 
-- Policy iteration spends more per iteration but often needs fewer improvement rounds.
-- Value iteration uses cheap optimality sweeps.
-- Modified policy iteration performs several evaluation sweeps between improvements.
+- Policy iteration: expensive iterations, often few improvement rounds.
+- Value iteration: cheap sweeps, often many of them.
+- Modified policy iteration: a few evaluation sweeps between improvements → interpolates between the two.
 ```
 
 &nbsp;
@@ -306,9 +322,9 @@ print(ValueIteration(model, tolerance=1e-8)())  ## values [3.], action [1]
 ## Learning from Returns
 
 ### Monte Carlo Prediction
-- **What**: Value estimation by averaging sampled complete returns.
-- **Why**: Estimate consequences without a transition model or a learned bootstrap target.
-- **How**: Finish an episode → compute returns backward → average returns at visited states.
+- **What**: Value estimate = average of sampled complete returns.
+- **Why**: Estimate value w/o a model & w/o bootstrapping.
+- **How**: Finish an episode → compute returns backward → average them at each visited state.
 
 ```{note} Math
 :class: dropdown
@@ -318,10 +334,10 @@ $$
 V(s)\leftarrow V(s)+\frac{1}{N(s)}[G_t-V(s)]
 $$
 
-- $N(s)$: Number of included return observations for $s$, including this one.
-- **First visit**: Include only the earliest visit to $s$ within each episode.
-- **Every visit**: Include all visits; within-episode observations are correlated.
-- Constant $\alpha$ instead of $1/N(s)$ gives recency weighting, not the arithmetic sample mean.
+- $N(s)$: Count of return observations for $s$, including this one.
+- **First visit**: Use only the first visit to $s$ in each episode.
+- **Every visit**: Use all visits. Returns from one episode are correlated.
+- Constant $\alpha$ instead of $1/N(s)$ → recency-weighted average, not the sample mean.
 ```
 
 ````{important} Code
@@ -337,9 +353,11 @@ class MonteCarlo:
         returns = self.returns(rewards)
         seen = set()
         for key, ret in zip(keys, returns):
+            ## First visit only: skip later visits in the same episode
             if key in seen:
                 continue
             seen.add(key)
+            ## Incremental sample mean
             self.count[key] = self.count.get(key, 0) + 1
             old = self.value.get(key, 0.0)
             self.value[key] = old + (ret - old) / self.count[key]
@@ -355,26 +373,27 @@ print(mc.value["s"])  ## 3.0: first visit, not last visit
 :class: dropdown
 *Why high variance?*
 
-- Targets include all later reward/transition randomness.
-- No bootstrap bias, but long trajectories can have noisy returns.
+- The target includes all later reward & transition randomness.
+- No bootstrap bias. Long trajectories → noisy returns.
 
-*Does the estimator require a Markov state?*
+*Does MC need a Markov state?*
 
-- Return averaging can estimate conditional returns for a fixed sampling distribution without Markov structure.
-- Treating those estimates as a sufficient state for control still requires an adequate state representation.
+- No for estimation. Return averages estimate conditional returns under a fixed sampling distribution.
+- Control: the state can omit decision-relevant information → the best policy over it can be poor.
+- MC is less hurt by non-Markov states than TD ← no bootstrap from successor estimates.
 
-*Can MC handle nonterminal rollout cutoffs?*
+*Can MC handle a rollout cutoff before termination?*
 
 - Pure MC needs the complete return.
-- Appending an estimated continuation value makes the target bootstrapped, not pure MC.
+- Add an estimated continuation value → bootstrapped target, not pure MC.
 ```
 
 &nbsp;
 
 #### Monte Carlo Control
-- **What**: Return-based action-value estimation interleaved with policy improvement.
-- **Why**: Without a model, state values alone cannot rank untried actions.
-- **How**: Average returns for visited $(s,a)$ pairs → improve an exploratory policy → collect another episode.
+- **What**: MC action-value estimation alternated w/ policy improvement.
+- **Why**: W/o a model, state values cannot rank actions.
+- **How**: Average returns per visited $(s,a)$ → make the policy epsilon-greedy w.r.t. $Q$ → collect another episode.
 
 ```{note} Math
 :class: dropdown
@@ -387,9 +406,10 @@ Q(s_t,a_t)\leftarrow Q(s_t,a_t)
 $$
 
 - Hold the policy fixed during each episode.
-- $\alpha=1/N(s,a)$ gives the first-visit sample average used below; constant $\alpha$ instead tracks changing values.
-- $N(s,a)$: Number of first-visit return observations for the pair, including the current one.
-- Exploring starts assume access to all required initial state–action pairs; epsilon-soft policies avoid that reset assumption.
+- $\alpha=1/N(s,a)$ → first-visit sample average (code below). Constant $\alpha$ → tracks changing values.
+- $N(s,a)$: Count of first-visit return observations for $(s,a)$, including this one.
+- **Exploring starts**: Start episodes from every $(s,a)$ pair. Needs a resettable environment.
+- **Epsilon-soft policy**: Every action keeps probability $\geq\epsilon/|\mathcal{A}|$ → no exploring starts necessary.
 ```
 
 ````{important} Code
@@ -403,6 +423,7 @@ class MonteCarloControl(MonteCarlo):
         self.select = EpsilonGreedy(epsilon)
 
     def __call__(self, state):
+        ## Keys are (state, action) pairs -> MC averages give Q
         q = [self.value.get((state, a), 0.0) for a in range(self.actions)]
         return self.select(q)
 
@@ -415,18 +436,18 @@ print(agent("s"))  ## 0
 
 ```{attention} Q&A
 :class: dropdown
-*Why not become fully greedy immediately?*
+*Why not become fully greedy at once?*
 
-- Unvisited actions can retain incorrect values forever.
-- Fixed epsilon keeps exploration but evaluates an exploratory policy, not necessarily an optimal deterministic one.
-- GLIE is a standard exploration requirement; it alone is not a blanket convergence proof for every MC-control variant.
+- Unvisited actions keep wrong values forever.
+- Fixed $\epsilon$ → keeps exploration, but learns the best epsilon-soft policy, not $\pi^*$.
+- **GLIE** (greedy in the limit w/ infinite exploration): standard exploration condition. It alone does not prove convergence for every MC-control variant.
 ```
 
 &nbsp;
 
 ### Importance Sampling
-- **What**: Reweighting behavior-policy returns to estimate a target-policy expectation.
-- **Why**: Logged trajectories may come from a different policy.
+- **What**: Reweight behavior-policy returns to estimate a target-policy expectation.
+- **Why**: Logged trajectories often come from a different policy.
 - **How**: Multiply action-probability ratios over the relevant trajectory suffix.
 
 ```{note} Math
@@ -436,9 +457,9 @@ w_{t:T-1}
 =\prod_{\ell=t}^{T-1}\frac{\pi(a_\ell|s_\ell)}{\mu(a_\ell|s_\ell)}
 $$
 
-- $w_{t:T-1}$: Trajectory-suffix importance weight.
-- Shared initial state & environment → transition likelihoods cancel.
-- For $Q^\pi(s_t,a_t)$, condition on the initial action too → product starts at $t+1$.
+- $w_{t:T-1}$: Importance weight of the trajectory suffix.
+- Same environment under both policies → transition probabilities cancel.
+- For $Q^\pi(s_t,a_t)$: $a_t$ is given → product starts at $t+1$.
 
 $$
 \hat V_{\mathrm{ordinary}}(s)=\frac1m\sum_{i=1}^m w_iG_i,
@@ -446,20 +467,23 @@ $$
 \hat V_{\mathrm{weighted}}(s)=\frac{\sum_{i=1}^m w_iG_i}{\sum_{i=1}^m w_i}
 $$
 
-- $w_i$: Weight for sampled suffix $i$ starting at $s$.
+- $w_i$: Weight of sampled suffix $i$ that starts at $s$.
 - $G_i$: Return of sampled suffix $i$.
-- $m$: Number of sampled suffixes, using the global sample-count notation.
-- Ordinary IS is unbiased with coverage & integrable returns; variance can be enormous or infinite.
-- Self-normalized/weighted IS has finite-sample bias but is consistent under suitable sampling/integrability conditions.
+- Ordinary IS: unbiased w/ coverage & integrable returns. Variance can be very large or infinite.
+- Weighted IS: biased for finite $m$, consistent under suitable conditions, usually much lower variance.
 ```
 
 ```{tip} Derivation
 :class: dropdown
-1. Write $\mathbb{E}_\pi[G]=\sum_\tau p_\pi(\tau)G(\tau)$.
+*Why do only policy ratios remain?*
+
+1. $\mathbb{E}_\pi[G]=\sum_\tau p_\pi(\tau)G(\tau)$.
 2. Multiply & divide by $p_\mu(\tau)$ wherever $p_\pi(\tau)>0$.
-3. Recognize $\mathbb{E}_\mu[(p_\pi/p_\mu)G]$.
-4. The same environment kernel appears in both trajectory distributions; only policy ratios remain.
-5. Per-decision IS weights reward $r_{\ell+1}$ only through decisions $t,\ldots,\ell$, avoiding irrelevant later ratios.
+3. → $\mathbb{E}_\mu[(p_\pi/p_\mu)G]$.
+4. Both trajectory probabilities contain the same factors $p(s_{\ell+1}|s_\ell,a_\ell)$ → they cancel → only policy ratios remain.
+5. Per-decision IS: weight $r_{\ell+1}$ only by ratios for decisions $t,\ldots,\ell$. Later ratios have expectation 1 → dropping them keeps the estimate unbiased & can ⬇️ variance.
+- $\tau$: Trajectory.
+- $p_\pi(\tau)$: Probability of $\tau$ under $\pi$.
 ```
 
 ````{important} Code
@@ -473,6 +497,7 @@ class ImportanceSampling:
 
     def __call__(self, returns, weights):
         returns, weights = np.asarray(returns), np.asarray(weights)
+        ## Weighted IS normalizes by total weight; ordinary IS by sample count
         denominator = weights.sum() if self.weighted else len(weights)
         if denominator <= 0:
             raise ValueError("No usable target-policy mass in this batch")
@@ -485,17 +510,17 @@ print(ImportanceSampling(True)([2.0, 6.0], [1.0, 3.0]))  ## 5.0
 
 ```{attention} Q&A
 :class: dropdown
-*What cannot be corrected?*
+*What can IS not correct?*
 
 - Missing support: $\mu(a|s)=0$ where $\pi(a|s)>0$.
-- Wrong/missing behavior propensities.
-- Unobserved confounding in logged decisions; a state that omits decision-relevant information can invalidate the assumed ratios.
+- Wrong or missing behavior probabilities.
+- Unobserved confounders: the logged state omits information that drove the logged decision.
 
 *Why not use full-trajectory ratios everywhere?*
 
-- Products amplify variance with horizon.
-- Log-space products prevent some numerical overflow/underflow, not statistical variance.
-- Clipping weights trades bias for stability; weighted IS does not repair missing support.
+- Products of ratios → variance grows w/ horizon.
+- Log-space products prevent overflow/underflow. They do not reduce variance.
+- Weight clipping trades bias for lower variance. Weighted IS does not fix missing support.
 ```
 
 &nbsp;
@@ -504,9 +529,9 @@ print(ImportanceSampling(True)([2.0, 6.0], [1.0, 3.0]))  ## 5.0
 
 ### TD Learning
 - **Name**: Temporal-Difference Learning
-- **What**: Value learning from sampled rewards plus estimated continuation values.
-- **Why**: Update before an episode ends; reuse what is already known about successor states.
-- **How**: Compare the current prediction with a one-step-ahead target.
+- **What**: Value update toward sampled reward + estimated next value.
+- **Why**: MC must wait until the episode ends & ignores known successor values.
+- **How**: Compare the curr prediction w/ a one-step target → move the prediction toward it.
 
 ```{note} Math
 :class: dropdown
@@ -518,15 +543,15 @@ $$
 V(s_t)\leftarrow V(s_t)+\alpha\delta_t
 $$
 
-- This is **TD(0)**: One-step state-value prediction.
-- Sample trajectories from $\pi$ to evaluate $V^\pi$ with this uncorrected update.
+- **TD(0)**: This one-step state-value update.
+- Sample trajectories from $\pi$ → the update estimates $V^\pi$.
 ```
 
 ```{note} Example
 :class: dropdown
 - $V(s_t)=2$, reward $1$, $V(s_{t+1})=4$, $\gamma=0.5$ → target $3$, error $1$.
 - $\alpha=0.1$ → updated value $2.1$.
-- If the transition terminates, target $1$ → updated value $1.9$ instead.
+- Terminal transition → target $1$ → updated value $1.9$.
 ```
 
 ````{important} Code
@@ -540,6 +565,7 @@ class TDLearning:
         self.alpha, self.gamma = alpha, gamma
 
     def step(self, s, reward, next_s, terminated):
+        ## True termination -> no bootstrap; a time-limit cutoff still bootstraps
         continuation = 0.0 if terminated else self.value[next_s]
         delta = reward + self.gamma * continuation - self.value[s]
         self.value[s] += self.alpha * delta
@@ -555,29 +581,30 @@ print(td.value[0])  ## 2.1
 
 ```{attention} Q&A
 :class: dropdown
-*Why is the target biased?*
+*Why is the TD target biased?*
 
-- Until $V=V^\pi$, the bootstrap generally differs from true continuation value.
-- It usually removes much of the variance from waiting for the full return.
-- With exact $V^\pi$, the one-step target is conditionally unbiased for $V^\pi(s_t)$.
+- $V\neq V^\pi$ → the bootstrap differs from the true continuation value.
+- Exact $V^\pi$ → the target is conditionally unbiased for $V^\pi(s_t)$.
+- Cost of the bias: much lower variance than the full return.
 
 *When does tabular TD(0) converge?*
 
-- Fixed policy, finite suitable task, bounded reward/noise conditions, sufficient state visits & per-state step sizes satisfying $\sum\alpha=\infty$, $\sum\alpha^2<\infty$.
-- Constant step sizes can track changes but do not generally converge exactly.
+- Fixed policy, finite MDP, bounded rewards, every state visited infinitely often.
+- Per-state step sizes w/ $\sum\alpha=\infty$ & $\sum\alpha^2<\infty$.
+- Constant step size → tracks change, but does not converge exactly.
 
-*Model vs. bootstrap: the same thing?*
+*TD vs. DP?*
 
-- No. TD bootstraps from a value estimate without predicting a next state.
-- DP bootstraps too, but takes an expectation using a model.
+- Both bootstrap from a value estimate.
+- DP takes an expectation w/ a model. TD uses one sampled transition & no model.
 ```
 
 &nbsp;
 
 ### N-Step Returns
-- **What**: Several sampled rewards followed by a value bootstrap.
-- **Why**: Trade delayed noisy evidence against an imperfect continuation estimate.
-- **How**: Wait for a short segment → accumulate rewards → bootstrap unless the segment truly terminates.
+- **What**: $h$ sampled rewards + a value bootstrap.
+- **Why**: One-step TD trusts an imperfect estimate. MC waits for noisy complete returns.
+- **How**: Wait $h$ steps → sum the discounted rewards → bootstrap unless the episode truly ends.
 
 ```{note} Math
 :class: dropdown
@@ -589,8 +616,8 @@ $$
 
 - $h$: Backup length; positive integer.
 - $G_t^{(h)}$: $h$-step return target.
-- Reaching $T$ → sum only observed rewards through $r_T$ & omit the bootstrap.
-- An artificial cutoff before $T$ retains a bootstrap from the last pre-reset state.
+- Episode ends before $t+h$ → sum rewards through $r_T$ & omit the bootstrap.
+- Time-limit cutoff before $T$ → bootstrap from the last observed state.
 ```
 
 ````{important} Code
@@ -604,6 +631,7 @@ class NStepReturn:
     def __call__(self, rewards, next_value, terminated):
         if len(rewards) == 0:
             raise ValueError("A backup needs at least one transition")
+        ## Discounted rewards + gamma^h * bootstrap, unless truly terminated
         bootstrap = 0.0 if terminated else next_value
         return self.returns(rewards, bootstrap)[0]
 
@@ -615,7 +643,7 @@ print(NStepReturn(0.5)([1, 2], next_value=4, terminated=False))  ## 3.0
 ```{dropdown} Table: Backup Families
 | Method | Environment model | Sampled reward depth | Bootstrap |
 |:--|:--|:--|:--|
-| DP | Required | Full expectation at each backup | Yes |
+| DP | Required | None; full expectation | Yes |
 | TD(0) | No | One step | Yes |
 | $h$-step TD | No | $h$ steps or termination | At nonterminal endpoint |
 | Monte Carlo | No | Complete episode | No |
@@ -623,25 +651,26 @@ print(NStepReturn(0.5)([1, 2], next_value=4, terminated=False))  ## 3.0
 
 ```{attention} Q&A
 :class: dropdown
-*What changes as the backup gets longer?*
+*What changes as $h$ increases?*
 
-- Bootstrap error is multiplied by $\gamma^h$ before termination.
-- More sampled randomness & more delay before an update.
-- Bias/variance trends are useful intuition, not a universal monotonic theorem.
+- Bootstrap error is scaled by $\gamma^h$ → less bias from $V$.
+- More sampled randomness → more variance.
+- Longer wait before each update.
+- This bias/variance trend is intuition, not a monotonic theorem. The best $h$ is task-dependent.
 
-*What about off-policy multi-step backups?*
+*Off-policy multi-step backups?*
 
-- Intermediate sampled actions follow the behavior policy.
-- A final max does not retroactively make that path an on-policy optimal continuation.
-- Valid off-policy corrections or explicitly biased approximations are required.
+- Intermediate actions follow $\mu$, not $\pi$.
+- A final $\max$ does not make the intermediate path greedy.
+- Correct w/ IS ratios or trace cutting, or accept the bias (e.g., Rainbow's uncorrected $h$-step targets).
 ```
 
 &nbsp;
 
 ### Eligibility Traces
-- **What**: Decaying memory that distributes TD errors to recently visited states or features.
-- **Why**: Propagate delayed evidence online without storing every backup length separately.
-- **How**: Mark the current state → apply its TD error to active traces → decay traces over time.
+- **What**: Decaying memory of recently visited states that receives each TD error.
+- **Why**: Spread delayed credit online w/o storing $h$-step returns for every $h$.
+- **How**: Mark the curr state → apply the TD error to all marked states in proportion to their trace → decay all traces.
 
 ```{note} Math
 :class: dropdown
@@ -659,20 +688,21 @@ G_t^\lambda
 +\lambda^{T-t-1}G_t
 $$
 
-- $G_t^\lambda$: Episodic forward-view lambda-return.
-- $G_t^{(h)}$: $h$-step return with fixed continuation estimates.
-- Last term keeps the remaining mixture mass; $\lambda=1$ gives MC, $\lambda=0$ gives one-step TD.
+- **Forward view**: $G_t^\lambda$ = episodic $\lambda$-return.
+- $G_t^{(h)}$: [$h$-step return](#n-step-returns) w/ fixed values.
+- Last term: all remaining weight goes to the full return. $\lambda=1$ → MC. $\lambda=0$ → TD(0).
 
 $$
 \begin{align*}
 e_t(s)&=\gamma\lambda e_{t-1}(s)+\mathbf{1}[s=s_t],\\
 \delta_t&=r_{t+1}+\gamma(1-d_t)V(s_{t+1})-V(s_t),\\
-V(s)&\leftarrow V(s)+\alpha\delta_t e_t(s).
+V(s)&\leftarrow V(s)+\alpha\delta_t e_t(s)\quad\forall s.
 \end{align*}
 $$
 
-- Reset traces at an episode boundary; don't carry eligibility into a reset episode.
-- Accumulating traces add visits; replacing traces set visited-state eligibility to $1$.
+- **Backward view**: Online trace updates above.
+- Reset traces at each episode boundary.
+- **Accumulating trace**: Adds $1$ per visit. **Replacing trace**: Sets the visited state's trace to $1$.
 ```
 
 ````{important} Code
@@ -690,8 +720,10 @@ class TDLambda(TDLearning):
     def step(self, s, reward, next_s, terminated, episode_end):
         continuation = 0.0 if terminated else self.value[next_s]
         delta = reward + self.gamma * continuation - self.value[s]
+        ## Decay old credit, then mark the curr state (accumulating trace)
         self.trace *= self.gamma * self.lam
         self.trace[s] += 1
+        ## One TD error updates every state in proportion to its trace
         self.value += self.alpha * delta * self.trace
         if terminated or episode_end:
             self.trace.fill(0)
@@ -701,22 +733,22 @@ class TDLambda(TDLearning):
 td = TDLambda(2, alpha=1.0, gamma=1.0, lam=0.5)
 td.step(0, 0, 1, False, False)
 td.step(1, 2, None, True, True)
-print(td.value)  ## [1., 2.]
+print(td.value)  ## [1. 2.]
 ```
 ````
 
 ```{attention} Q&A
 :class: dropdown
-*Are forward & backward views exactly identical?*
+*Are the forward & backward views identical?*
 
-- Frozen values over an episode + accumulated offline updates give the classic equivalence.
-- Conventional online TD(lambda) changes values during the episode → not exactly that fixed-value forward view.
-- True-online variants address a different, online forward-view equivalence.
+- Offline updates (values frozen during the episode, applied at the end) → exact equivalence.
+- Online TD($\lambda$) changes values during the episode → only approximately equivalent.
+- True online TD($\lambda$) gives exact equivalence to an online forward view.
 
 *Can plain traces be used off-policy?*
 
-- Not generally. Behavior actions can invalidate the continuation being credited.
-- Off-policy trace corrections/cutting are needed; do not blindly combine accumulating traces with a max backup.
+- Not in general. Exploratory actions break the continuation being credited.
+- Use off-policy corrections or cut traces after non-greedy actions (e.g., Watkins's Q($\lambda$)).
 ```
 
 &nbsp;
@@ -725,9 +757,9 @@ print(td.value)  ## [1., 2.]
 
 ### SARSA
 - **Name**: State–Action–Reward–State–Action
-- **What**: On-policy TD control using the next action actually selected.
-- **Why**: Learn consequences of the exploratory policy that will actually act.
-- **How**: Select the next action → bootstrap from its Q estimate → update the current pair.
+- **What**: On-policy TD control that bootstraps from the next action actually selected.
+- **Why**: Learn the value of the exploratory policy that acts.
+- **How**: Select the next action → bootstrap from its $Q$ → update the curr pair.
 
 ```{note} Math
 :class: dropdown
@@ -739,8 +771,8 @@ $$
 Q(s_t,a_t)\leftarrow Q(s_t,a_t)+\alpha\delta_t
 $$
 
-- Draw $a_{t+1}$ from the same policy being evaluated/improved.
-- When continuing the episode, execute that selected next action rather than resampling after the update.
+- Draw $a_{t+1}$ from the policy being evaluated & improved.
+- Execute that same $a_{t+1}$ next. Do not resample it after the update.
 ```
 
 ````{important} Code
@@ -754,6 +786,7 @@ class SARSA:
         self.alpha, self.gamma = alpha, gamma
 
     def step(self, s, a, reward, next_s, next_a, terminated):
+        ## Bootstrap from the action the policy will actually take
         continuation = 0.0 if terminated else self.q[next_s, next_a]
         delta = reward + self.gamma * continuation - self.q[s, a]
         self.q[s, a] += self.alpha * delta
@@ -769,25 +802,25 @@ print(agent.q[0, 0])  ## 2.0, using the chosen action's value 2
 
 ```{attention} Q&A
 :class: dropdown
-*Why does SARSA take a safer cliff-walking route?*
+*Why does SARSA take the safer cliff-walking route?*
 
-- Persistent exploration can accidentally step off the cliff.
-- SARSA values include those future exploratory mistakes.
-- This is sensitivity to the behavior policy, not an explicit risk-sensitive objective.
+- Persistent exploration sometimes steps off the cliff.
+- SARSA values include these future exploratory mistakes → path near the edge looks worse.
+- This is sensitivity to the behavior policy, not a risk-sensitive objective.
 
-*Convergence to optimal Q?*
+*Does SARSA converge to $Q^*$?*
 
-- Finite suitable task, bounded rewards, infinite state–action coverage, diminishing per-pair steps & GLIE.
-- Fixed epsilon generally learns an exploratory-policy control solution, not $Q^*$.
+- Yes, under: finite MDP, bounded rewards, every pair visited infinitely often, decaying per-pair steps & GLIE.
+- Fixed $\epsilon$ → learns epsilon-greedy values, not $Q^*$.
 ```
 
 &nbsp;
 
 #### Expected SARSA
 - **Name**: Expected State–Action–Reward–State–Action
-- **What**: TD control averaging the next action under a specified target policy.
-- **Why**: Remove next-action sampling noise when the action sum is tractable.
-- **How**: Replace the sampled next Q with its policy-weighted expectation.
+- **What**: TD control that averages next-action values under a target policy.
+- **Why**: The sampled next action adds variance.
+- **How**: Replace $Q(s',a')$ w/ its expectation under $\pi$.
 
 ```{note} Math
 :class: dropdown
@@ -798,8 +831,8 @@ $$
 \sum_{a'}\pi(a'|s_{t+1})Q(s_{t+1},a')-Q(s_t,a_t)
 $$
 
-- $\pi=\mu$ → on-policy; a different target policy gives an off-policy version.
-- Greedy target → one-step Q-learning.
+- $\pi=\mu$ → on-policy. $\pi\neq\mu$ → off-policy, w/o importance ratios for one step.
+- Greedy $\pi$ → one-step Q-learning.
 ```
 
 ````{important} Code
@@ -808,6 +841,7 @@ $$
 ## Reuses SARSA from rl/value.md.
 class ExpectedSARSA(SARSA):
     def step(self, s, a, reward, next_s, next_policy, terminated):
+        ## Policy-weighted next value replaces the sampled next action
         continuation = (
             0.0 if terminated else self.q[next_s] @ next_policy
         )
@@ -828,15 +862,19 @@ print(agent.q[0, 0])  ## 2.75
 *What variance remains?*
 
 - Reward & transition randomness.
-- Computing the full action expectation removes only conditional next-action sampling variance.
+- The expectation removes only the next-action sampling variance.
+
+*Cost?*
+
+- One sum over $|\mathcal{A}|$ per update. ❌ for large or continuous action spaces w/o a closed form.
 ```
 
 &nbsp;
 
 ### Q-Learning
-- **What**: Off-policy TD control with a greedy next-action target.
-- **Why**: Learn optimal continuation values while behavior remains exploratory.
-- **How**: Sample any adequately covered pair → bootstrap from the largest next Q → improve the greedy policy.
+- **What**: Off-policy TD control w/ a greedy next-action target.
+- **Why**: Learn optimal values while the behavior policy still explores.
+- **How**: Take any action w/ adequate coverage → bootstrap from the largest next $Q$ → act greedily w.r.t. the learned $Q$.
 
 ```{note} Math
 :class: dropdown
@@ -853,8 +891,7 @@ $$
 \sum_{\text{visits}}\alpha(s,a)^2<\infty
 $$
 
-- These per-pair step-size conditions + infinite coverage, bounded rewards & a finite discounted MDP give tabular convergence to $Q^*$.
-- $Q^*$: Optimal action value.
+- Per-pair step-size conditions + every pair visited infinitely often + bounded rewards + finite discounted MDP → tabular convergence to $Q^*$.
 ```
 
 ````{important} Code
@@ -863,6 +900,7 @@ $$
 ## Reuses SARSA's table initialization from rl/value.md.
 class QLearning(SARSA):
     def step(self, s, a, reward, next_s, terminated):
+        ## Greedy target, independent of the next behavior action
         continuation = 0.0 if terminated else self.q[next_s].max()
         delta = reward + self.gamma * continuation - self.q[s, a]
         self.q[s, a] += self.alpha * delta
@@ -886,28 +924,29 @@ print(agent.q[0, 0])  ## 5.0, regardless of the behavior's next action
 
 ```{attention} Q&A
 :class: dropdown
-*Why is Q-learning off-policy even with epsilon-greedy behavior?*
+*Why is Q-learning off-policy, even w/ epsilon-greedy behavior?*
 
-- The backup assumes greedy continuation; epsilon-greedy behavior is different.
-- The current sampled action need not maximize Q.
+- The target assumes greedy continuation. Epsilon-greedy behavior is a different policy.
+- The sampled action $a_t$ need not maximize $Q$.
 
 *Does convergence mean safe training?*
 
-- No. An exploratory behavior policy can incur large losses before values are learned.
-- An asymptotic theorem says nothing about a finite interaction budget.
+- No. Exploration can cause large losses before $Q$ is accurate.
+- Asymptotic convergence says nothing about a finite interaction budget.
 
 *Why can the max overestimate?*
 
-- For unbiased noisy estimates, $\mathbb{E}[\max_a\hat Q(a)]\geq\max_a\mathbb{E}[\hat Q(a)]$.
-- Selection favors positive errors; not every approximation error or state must be an overestimate.
+- Unbiased noisy estimates → $\mathbb{E}[\max_a\hat Q(a)]\geq\max_a\mathbb{E}[\hat Q(a)]$ (Jensen; $\max$ is convex).
+- The max selects positive errors. This is **maximization bias**.
+- Not every estimate is too high; the bias is a tendency.
 ```
 
 &nbsp;
 
 #### Double Q-Learning
-- **What**: Two-estimator Q-learning that separates action selection from evaluation. {cite:p}`hasselt2010double`
-- **Why**: Reusing the same noisy estimate for both introduces maximization bias.
-- **How**: Update one table using its maximizing action & the other table's value; alternate tables.
+- **What**: Q-learning w/ 2 estimators: one selects the next action, the other evaluates it. {cite:p}`hasselt2010double`
+- **Why**: One noisy estimate for both selection & evaluation → maximization bias.
+- **How**: Update one table w/ its own argmax & the other table's value. Choose the updated table at random.
 
 ```{note} Math
 :class: dropdown
@@ -922,7 +961,7 @@ $$
 - $Q_1$: First action-value estimator.
 - $Q_2$: Second action-value estimator.
 - $a^*$: Action selected by the estimator being updated.
-- Swap roles for updates to $Q_2$; behavior can be epsilon-greedy w.r.t. $Q_1+Q_2$.
+- Swap roles to update $Q_2$. Behavior: e.g., epsilon-greedy w.r.t. $Q_1+Q_2$.
 ```
 
 ````{important} Code
@@ -937,10 +976,12 @@ class DoubleQLearning:
         self.rng = np.random.default_rng(seed)
 
     def step(self, s, a, reward, next_s, terminated):
+        ## Pick which table to update; the other one evaluates
         update = int(self.rng.integers(2))
         own, other = self.q[update], self.q[1 - update]
         continuation = 0.0
         if not terminated:
+            ## Select w/ own table (random ties), evaluate w/ the other table
             ties = np.flatnonzero(own[next_s] == own[next_s].max())
             best = self.rng.choice(ties)
             continuation = other[next_s, best]
@@ -957,10 +998,15 @@ print(agent.q[:, 0, 1].sum())  ## 3.0
 
 ```{attention} Q&A
 :class: dropdown
-*Does double estimation guarantee unbiased values?*
+*Does double estimation give unbiased values?*
 
-- No. It targets selection/evaluation coupling, not every source of error.
-- Can underestimate; correlation between estimators weakens the separation.
+- No. It removes the selection/evaluation coupling only.
+- It can underestimate.
+- Correlated estimators → weaker effect.
+
+*Cost?*
+
+- 2× memory. Each table sees about half the updates → slower learning per table.
 ```
 
 &nbsp;
@@ -968,9 +1014,9 @@ print(agent.q[:, 0, 1].sum())  ## 3.0
 ## Function Approximation
 
 ### Semi-Gradient Value Learning
-- **What**: Fitting a parametric value estimate while treating its bootstrap target as fixed.
-- **Why**: Tabular values cannot generalize across large state spaces.
-- **How**: Build a target from observed rewards & continuation estimates; differentiate only the current prediction.
+- **What**: Fit a parametric value function; treat the bootstrap target as a constant.
+- **Why**: Tables cannot generalize to unseen states or scale to large state spaces.
+- **How**: Build a target from reward + next-state estimate → differentiate only the curr prediction.
 
 ```{note} Math
 :class: dropdown
@@ -980,7 +1026,7 @@ $$
 V_\phi(s)=\phi^\top\mathbf{x}(s)
 $$
 
-- $\mathbf{x}(s)$: State-feature vector; a neural network can replace the linear model.
+- $\mathbf{x}(s)$: State-feature vector. A neural network can replace the linear model.
 
 Training:
 
@@ -992,9 +1038,9 @@ y_t&=r_{t+1}+\gamma(1-d_t)V_\phi(s_{t+1}),\\
 \end{align*}
 $$
 
-- $y_t$: Bootstrap regression target, using the global output notation.
-- $\operatorname{stopgrad}$: Preserve value but block its derivative.
-- The update is not the full gradient of a squared Bellman residual.
+- $y_t$: Bootstrap regression target.
+- $\operatorname{stopgrad}$: Keep the value; block its gradient.
+- The update is not the gradient of any fixed objective → "semi-gradient".
 ```
 
 ````{important} Code
@@ -1013,6 +1059,7 @@ class SemiGradientTD(nn.Module):
         return x @ self.weight
 
     def loss(self, x, reward, next_x, terminated):
+        ## no_grad = stopgrad: the target is a constant label
         with torch.no_grad():
             target = reward + self.gamma * (~terminated).float() * self(next_x)
         return 0.5 * (self(x) - target).square().mean()
@@ -1028,49 +1075,66 @@ print(value.weight.grad)  ## tensor([-0.5000, -0.5000])
 
 ```{attention} Q&A
 :class: dropdown
-*What is lost compared with a table?*
+*What is lost vs. a table?*
 
-- Updating one state changes others through shared params.
-- The representable value functions may exclude $V^\pi$ or $Q^*$.
-- Optimization, approximation & distribution mismatch become separate error sources.
+- An update at one state changes other states through shared params.
+- The function class may not contain $V^\pi$ or $Q^*$.
+- 3 separate error sources: optimization, approximation & distribution mismatch.
 
 *Why not backpropagate through the target?*
 
-- That defines a different objective/update, not the intended TD semi-gradient.
-- An unbiased gradient of a squared expected Bellman residual generally needs independent next-state samples for the same pair: the double-sampling problem.
+- Full gradient through one sampled target → naive residual gradient: minimizes squared TD error, not Bellman error → wrong values in stochastic environments.
+- An unbiased gradient of the squared expected Bellman residual needs 2 independent next-state samples from the same $(s,a)$: the **double-sampling problem**.
+
+*Does linear on-policy semi-gradient TD converge?*
+
+- Yes, under standard conditions, to the TD fixed point.
+- That fixed point is not the best linear fit to $V^\pi$.
+- Bound: $\overline{\mathrm{VE}}(\phi_{\mathrm{TD}})\leq\frac{1}{1-\gamma}\min_\phi\overline{\mathrm{VE}}(\phi)$.
+- $\overline{\mathrm{VE}}$: Mean squared value error, weighted by the on-policy state distribution.
 ```
 
 &nbsp;
 
 ### Deadly Triad
-- **What**: Potential instability from combining approximation, bootstrapping & off-policy learning.
-- **Why**: Shared predictions can reinforce unsupported targets under a mismatched sampling distribution.
-- **How**: An erroneous value becomes another target → updates propagate & amplify the error.
+- **What**: Possible divergence from function approximation + bootstrapping + off-policy training.
+- **Why**: Each element is useful alone. The combination explains divergence that no single element causes.
+- **How**: Errors feed back.
+    - Shared params → one update changes many values.
+    - Bootstrapping → those wrong values become new targets.
+    - Off-policy update distribution → projected Bellman backup need not be a contraction → errors can grow, even if every state gets updates.
 
 ```{attention} Q&A
 :class: dropdown
-*Does combining all three always diverge?*
+*Does the combination always diverge?*
 
-- No. The combination permits divergence; it does not force it in every task.
-- Even linear off-policy TD can diverge.
-- On-policy linear TD has convergence results under appropriate assumptions; arbitrary nonlinear control does not inherit them.
+- No. It permits divergence; it does not force it.
+- Linear off-policy TD can diverge (e.g., Baird's counterexample).
+- On-policy linear TD converges under standard assumptions. Nonlinear control does not inherit this result.
 
-*Do replay & target networks solve the theorem?*
+*How to avoid it?*
 
-- They reduce correlation & target drift, not prove general convergence.
-- Track value magnitudes, target errors, coverage & actual return separately.
+- Remove one element: tabular values, MC targets, or on-policy sampling.
+- Linear off-policy prediction: gradient-TD methods (true gradient of the projected Bellman error) converge w/ all 3 elements.
+
+*Do replay & target networks remove the triad?*
+
+- No. They ⬇️ sample correlation & target drift. They do not prove convergence.
+- Monitor value magnitudes, TD errors, state coverage & actual return separately.
 ```
 
 &nbsp;
 
 ### DQN
 - **Name**: Deep Q-Network {cite:p}`mnih2015human`
-- **What**: Neural Q-learning with experience replay & a delayed target network.
-- **Why**: Correlated transitions & rapidly moving bootstrap targets destabilize neural Q-learning.
+- **What**: Neural Q-learning w/ experience replay & a delayed target network.
+- **Why**: Neural Q-learning is unstable.
+    - Consecutive transitions are correlated → correlated updates → inefficient, unstable SGD.
+    - Each update moves the bootstrap target → regression toward a moving label.
 - **How**:
-    1. Act epsilon-greedily; store transitions.
-    2. Sample replay minibatches; regress selected-action Q toward frozen targets.
-    3. Periodically copy online weights into the target network.
+    1. Act epsilon-greedily; store transitions in $\mathcal{D}$.
+    2. Sample minibatches from $\mathcal{D}$; regress $Q(s_t,a_t)$ toward targets from the frozen target network.
+    3. Copy online weights into the target network every fixed number of updates.
 
 ```{note} Math
 :class: dropdown
@@ -1089,10 +1153,10 @@ y_t=r_{t+1}+\gamma(1-d_t)\max_{a'}Q_{\bar\phi}(s_{t+1},a'),
 \left[\ell_\kappa(Q_\phi(s_t,a_t)-\operatorname{stopgrad}(y_t))\right]
 $$
 
-- $y_t$: Frozen Q-learning target.
-- $\ell_\kappa$: Huber loss; squared near zero, linear in large residual magnitude.
-- $\kappa$: Positive Huber transition threshold.
-- Only the selected action is regressed; outputs are values, not class probabilities.
+- $y_t$: Q-learning target from the frozen target network.
+- $\ell_\kappa$: Huber loss. Squared for $|\cdot|\leq\kappa$, linear above.
+- $\kappa$: Positive Huber threshold.
+- One forward pass outputs all action values. Only the taken action gets a loss.
 ```
 
 ````{important} Code
@@ -1107,6 +1171,7 @@ import torch.nn.functional as F
 
 class DQN:
     def __init__(self, q, gamma, lr, capacity, sync_every):
+        ## Target network: frozen copy that supplies labels
         self.q, self.target = q, deepcopy(q).requires_grad_(False).eval()
         self.gamma, self.sync_every = gamma, sync_every
         self.optimizer = torch.optim.Adam(q.parameters(), lr=lr)
@@ -1120,6 +1185,7 @@ class DQN:
     def step(self, batch_size):
         if len(self.replay) < batch_size:
             raise ValueError("Collect a full replay batch before updating")
+        ## Uniform replay sample breaks temporal correlation
         s, a, r, next_s, terminal = zip(*random.sample(self.replay, batch_size))
         s, next_s = torch.stack(s), torch.stack(next_s)
         device = s.device
@@ -1132,12 +1198,14 @@ class DQN:
             ## Never evaluate a terminal placeholder as a next state.
             if active.any():
                 target[active] += self.gamma * self.bootstrap(next_s[active])
+        ## Regress only the taken action's Q
         prediction = self.q(s).gather(1, a[:, None]).squeeze(1)
         loss = F.smooth_l1_loss(prediction, target)
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
         self.updates += 1
+        ## Periodic hard copy -> labels stay fixed between syncs
         if self.updates % self.sync_every == 0:
             self.target.load_state_dict(self.q.state_dict())
         return loss.item()
@@ -1153,38 +1221,38 @@ print(isinstance(agent.step(batch_size=2), float))  ## True
 
 ```{attention} Q&A
 :class: dropdown
-*Why two networks?*
+*Why 2 networks?*
 
-- Online Q changes every optimizer step; target Q supplies temporarily stationary labels.
-- Delayed copying trades target freshness for slower feedback.
+- Online $Q$ changes every step. Target $Q$ gives labels that stay fixed between syncs.
+- Slower sync → more stable labels, but slower value propagation.
 - A target network alone is not [Double DQN](#double-dqn).
 
 *Why replay?*
 
-- Reuse expensive transitions & reduce sequential sample correlation.
-- Store immutable observations, action, reward, next pre-reset observation & true termination.
-- A mixed replay distribution can become stale; replay does not guarantee independent samples or coverage.
+- Reuse expensive transitions → ⬆️ sample efficiency.
+- Random minibatches → ⬇️ correlation between consecutive samples.
+- Store observation, action, reward, next observation & true termination flag.
+- Old transitions come from old policies → replay requires an off-policy method (e.g., Q-learning). It does not guarantee coverage.
 
-*What belongs around the update kernel?*
+*Atari-specific tricks in the original DQN?*
 
-- Epsilon-greedy collection, environment reset handling & replay warm-up.
-- Match observation preprocessing between collection & updates.
-- The snippet uses vector observations, CPU or a consistent device, and no dropout/batch normalization.
-- Huber threshold & example hyperparams illustrate an update, not tuned defaults.
+- Stack the last 4 frames → partial observability ⬇️ (e.g., velocity).
+- Clip rewards to $[-1,1]$ → one LR across games. Cost: the agent cannot tell large rewards from small ones.
+- Anneal $\epsilon$ from 1 to a small final value.
 
 *Why not softmax the outputs?*
 
-- Q values are unrestricted expected returns; softmax would erase their scale.
-- Discrete actions allow an explicit max. Continuous actions require inner optimization or an actor.
+- Q values are unbounded expected returns. Softmax removes their scale.
+- Discrete actions → explicit $\max$. Continuous actions need an inner optimization or an actor (e.g., [DDPG](policy.md#ddpg)).
 ```
 
 &nbsp;
 
 #### Double DQN
 - **Name**: Double Deep Q-Network {cite:p}`hasselt2016deep`
-- **What**: DQN selecting next actions online & evaluating them with the target network.
-- **Why**: A delayed target still overselects its own positive estimation errors.
-- **How**: Keep replay & target synchronization; split the target's selection and evaluation roles.
+- **What**: DQN that selects the next action w/ the online network & evaluates it w/ the target network.
+- **Why**: DQN's target network still selects & evaluates w/ the same estimates → overestimation.
+- **How**: Keep replay & target sync. Change only the target: online argmax, target value.
 
 ```{note} Math
 :class: dropdown
@@ -1195,8 +1263,8 @@ y_t=r_{t+1}+\gamma(1-d_t)
 Q_{\bar\phi}\!\left(s_{t+1},\arg\max_{a'}Q_\phi(s_{t+1},a')\right)
 $$
 
-- $y_t$: Double-DQN regression target.
-- Online & target networks are correlated; bias reduction is not guaranteed unbiasedness.
+- $y_t$: Double DQN regression target.
+- Online & target networks are correlated → bias ⬇️, not removed.
 ```
 
 ````{important} Code
@@ -1209,6 +1277,7 @@ import torch.nn as nn
 class DoubleDQN(DQN):
     @torch.no_grad()
     def bootstrap(self, next_s):
+        ## Online net selects, target net evaluates
         action = self.q(next_s).argmax(dim=1, keepdim=True)
         return self.target(next_s).gather(1, action).squeeze(1)
 
@@ -1221,19 +1290,24 @@ print(agent.bootstrap(torch.zeros(3, 2)).shape)  ## torch.Size([3])
 
 ```{attention} Q&A
 :class: dropdown
+*Why not train a second independent network as in Double Q-learning?*
+
+- The target network already exists → no extra network, no extra params.
+- Cost: the 2 networks are not independent.
+
 *Double vs. dueling?*
 
 - Double changes the bootstrap target.
-- Dueling changes the network parameterization.
-- They can be combined.
+- Dueling changes the network architecture.
+- They are compatible.
 ```
 
 &nbsp;
 
 #### Dueling Networks
-- **What**: Q parameterization with state-value & centered action-advantage streams. {cite:p}`wang2016dueling`
-- **Why**: Many actions share most of their value through the state itself.
-- **How**: Learn shared state features; split into scalar value & per-action scores; center scores before adding.
+- **What**: Q network w/ a state-value stream & a centered action-advantage stream. {cite:p}`wang2016dueling`
+- **Why**: In many states, the action barely matters. One shared value is easier to learn than $|\mathcal{A}|$ separate ones.
+- **How**: Shared features → scalar value head + per-action score head → center the scores → add.
 
 ```{note} Math
 :class: dropdown
@@ -1246,8 +1320,9 @@ $$
 
 - $v_\phi$: Scalar value stream.
 - $u_\phi$: Raw action-score stream.
-- Centering removes the additive ambiguity between streams.
-- $v_\phi$ is the uniform action mean of represented Q, not automatically $V^\pi$ for a nonuniform policy.
+- Centering removes the ambiguity ← adding a constant to $v_\phi$ & subtracting it from $u_\phi$ gives the same $Q$.
+- $v_\phi(s)$ = mean of $Q_\phi(s,\cdot)$ over actions; it is $V^\pi$ only for a uniform policy.
+- Paper also tests max-centering: then $v_\phi(s)=\max_aQ_\phi(s,a)$. Mean-centering was more stable.
 ```
 
 ````{important} Code
@@ -1266,6 +1341,7 @@ class DuelingQ(nn.Module):
     def forward(self, x):
         h = self.body(x)
         advantage = self.advantage(h)
+        ## Mean-center scores -> v & u are identifiable
         return self.value(h) + advantage - advantage.mean(dim=-1, keepdim=True)
 
 ## Example
@@ -1275,38 +1351,51 @@ print(DuelingQ(2, 8, 3)(torch.zeros(2, 2)).shape)  ## torch.Size([2, 3])
 
 ```{attention} Q&A
 :class: dropdown
-*Does the advantage stream itself have zero mean?*
+*Does the advantage head output zero-mean values?*
 
-- Raw outputs need not; the centered contribution does.
-- Centering under a uniform action average differs from the policy-weighted $A^\pi$ identity.
+- Raw outputs: no. The centered term: yes.
+- Uniform-mean centering differs from the $\pi$-weighted identity $\mathbb{E}_{a\sim\pi}A^\pi(s,a)=0$.
+
+*What does each update gain?*
+
+- Every update trains $v_\phi$, whatever action was taken → shared state value learns faster.
+- No change to the target or the loss.
 ```
 
 &nbsp;
 
 #### Prioritized Replay
-- **What**: Replay sampling biased toward transitions with large learning errors. {cite:p}`schaul2015prioritized`
-- **Why**: Uniform replay spends equal effort on transitions with unequal learning signal.
-- **How**: Sample using priorities → weight losses for sampling bias → refresh priorities after updates.
+- **What**: Replay that samples transitions w/ large TD errors more often. {cite:p}`schaul2015prioritized`
+- **Why**: Uniform replay spends equal compute on transitions w/ unequal learning signal.
+- **How**: Sample by priority → weight each loss to correct the sampling bias → update priorities from new TD errors.
 
 ```{note} Math
 :class: dropdown
+Notations:
+- Hyperparams:
+    - $\eta$: Prioritization exponent; paper's $\alpha$.
+    - $\zeta$: Importance-correction exponent; paper's $\beta$.
+    - $\varepsilon_p$: Positive priority floor.
+
 Process:
 
 $$
 p_i=|\delta_i|+\varepsilon_p,\qquad
 P(i)=\frac{p_i^\eta}{\sum_jp_j^\eta},\qquad
-w_i=\left(\frac{1}{N P(i)}\right)^\zeta
+\tilde w_i=\left(|\mathcal{D}|\,P(i)\right)^{-\zeta},\qquad
+w_i=\frac{\tilde w_i}{\max_j\tilde w_j}
 $$
 
-- $p_i$: Positive transition priority.
-- $\delta_i$: Current TD residual for replay item $i$.
-- $\varepsilon_p$: Positive priority floor.
-- $P(i)$: Sampling probability of item $i$.
-- $\eta$: Prioritization exponent; $0$ gives uniform replay.
-- $N$: Buffer size.
-- $\zeta$: Importance-correction exponent; $1$ corrects to a uniform-buffer expectation before normalization.
-- $w_i$: Loss weight; treat priorities/weights as fixed during the value update.
-- Here $j$ indexes replay items rather than features.
+- $p_i$: Priority of replay item $i$. **Proportional** variant.
+- $\delta_i$: Latest TD error of item $i$.
+- $P(i)$: Sampling probability of item $i$. $\eta=0$ → uniform.
+- $\tilde w_i$: IS weight. $\zeta=1$ → full correction to the uniform-replay expectation.
+- $w_i$: Normalized loss weight; $\leq1$ → weights only scale updates down.
+- $j$: Replay-item index here, not a feature index.
+- **Rank-based** variant: $p_i=1/\operatorname{rank}(i)$, rank by $|\delta_i|$.
+- New transitions get the max priority so far → high chance of early replay.
+- Anneal $\zeta$ linearly from $\zeta_0$ to $1$ → full correction by the end of training.
+- Paper defaults: $\eta=0.6$, $\zeta_0=0.4$ (proportional); $\eta=0.7$, $\zeta_0=0.5$ (rank-based).
 ```
 
 ````{important} Code
@@ -1320,32 +1409,246 @@ class PrioritizedSampler:
         self.rng = np.random.default_rng(seed)
 
     def __call__(self, td_errors, batch_size):
+        ## Proportional priority, sharpened by the exponent
         priority = (np.abs(td_errors) + self.floor) ** self.exponent
         probability = priority / priority.sum()
         index = self.rng.choice(len(priority), batch_size, p=probability)
+        ## IS weights undo the non-uniform sampling
         weight = (len(priority) * probability[index]) ** (-self.correction)
-        return index, weight
+        ## Divide by the buffer's largest weight -> weights <= 1
+        max_weight = (len(priority) * probability.min()) ** (-self.correction)
+        return index, weight / max_weight
 
 ## Example
 sampler = PrioritizedSampler(exponent=0.0, correction=1.0, floor=1e-6)
 index, weight = sampler(np.array([1.0, 5.0]), batch_size=2)
-print(weight)  ## [1., 1.]
+print(weight)  ## [1. 1.]
 ```
 ````
 
 ```{attention} Q&A
 :class: dropdown
-*How does this integrate with DQN?*
+*How does PER plug into DQN?*
 
-- Replace uniform indices with prioritized samples.
-- Use unreduced per-item Huber losses, multiply by $w_i$, then average.
-- Refresh sampled priorities from detached absolute TD errors; retain a positive chance of replaying every item.
+- Replace uniform indices w/ prioritized samples.
+- Compute per-item Huber losses, multiply by $w_i$, then average.
+- Write back $|\delta_i|$ of sampled items as new priorities. Keep $\varepsilon_p>0$ → every item keeps a chance.
+- Use a sum-tree for $O(\log|\mathcal{D}|)$ sampling & updates. The reference sampler scans the buffer in $O(|\mathcal{D}|)$.
 
-*Does it fix off-policy learning?*
+*Proportional vs. rank-based?*
 
-- Weights correct prioritized sampling toward the uniform replay objective, not toward the current policy's trajectory distribution.
-- Large TD errors can be irreducible noise; stale priorities can misallocate updates.
-- The reference sampler scans the buffer; tree-based sampling matters only when buffer scale warrants it.
+- Proportional: uses the TD-error magnitude directly → sensitive to outliers.
+- Rank-based: uses only the order → expected to be robust to outliers & error scale.
+- On Atari, the 2 variants usually give similar results.
+
+*Does PER fix off-policy learning?*
+
+- No. $w_i$ corrects toward uniform replay, not toward the curr policy's state distribution.
+- Large TD errors can be irreducible noise in stochastic environments.
+- Stale priorities can misdirect updates.
+```
+
+&nbsp;
+
+#### C51
+- **Name**: Categorical DQN w/ 51 atoms {cite:p}`bellemare2017distributional`
+- **What**: DQN that predicts a categorical return distribution for each action.
+- **Why**: Expected return discards the rest of the return distribution.
+    - The distribution gives a richer training signal.
+    - Better control performance on Atari; the reason for the gain is not settled.
+- **How**:
+    1. Fix $N$ return atoms on $[V_{\min},V_{\max}]$.
+    2. Output one softmax over atoms for each action.
+    3. Shift & shrink the next-state atoms by reward & $\gamma$ → project them back onto the fixed atoms.
+    4. Minimize cross-entropy to the projected target.
+    5. Act greedily w.r.t. the distribution mean.
+
+```{note} Math
+:class: dropdown
+Notations:
+- Hyperparams:
+    - $N$: #atoms; $51$ in the paper.
+    - $V_{\min}$: Lowest atom; $-10$ on Atari.
+    - $V_{\max}$: Highest atom; $10$ on Atari.
+- Misc:
+    - $\ell$: Atom index, $0\leq\ell\leq N-1$.
+    - $\rho_\ell(s,a)$: Online-net probability of atom $\ell$.
+    - $\bar\rho_\ell(s,a)$: Target-net probability of atom $\ell$.
+
+Model:
+
+$$
+z_\ell=V_{\min}+\ell\,\Delta z,\qquad
+\Delta z=\frac{V_{\max}-V_{\min}}{N-1},\qquad
+Q_\phi(s,a)=\sum_{\ell}z_\ell\,\rho_\ell(s,a)
+$$
+
+- $z_\ell$: Fixed return atom.
+- $\Delta z$: Atom spacing.
+
+Training:
+
+$$
+\begin{align*}
+a^*&=\arg\max_{a'}\sum_\ell z_\ell\,\bar\rho_\ell(s_{t+1},a'),\\
+\hat z_\ell&=\operatorname{clip}\!\left(r_{t+1}+\gamma(1-d_t)z_\ell,\;V_{\min},\;V_{\max}\right),\\
+\tilde\rho_{\ell'}&=\sum_\ell\left[1-\frac{|\hat z_\ell-z_{\ell'}|}{\Delta z}\right]_0^1\bar\rho_\ell(s_{t+1},a^*),\\
+\mathcal{L}(\phi)&=-\sum_{\ell'}\tilde\rho_{\ell'}\log\rho_{\ell'}(s_t,a_t).
+\end{align*}
+$$
+
+- $\hat z_\ell$: Shifted, shrunk & clipped atom.
+- $\tilde\rho_{\ell'}$: Projected target probability of atom $\ell'$.
+- $[\cdot]_0^1$: Clip to $[0,1]$ → each $\hat z_\ell$ splits its mass between its 2 nearest atoms by linear interpolation.
+- Cross-entropy = $\mathrm{KL}(\tilde\rho\,\|\,\rho)$ + a constant in $\phi$.
+```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+import torch.nn as nn
+
+class C51(nn.Module):
+    def __init__(self, features, actions, atoms=51, v_min=-10.0, v_max=10.0):
+        super().__init__()
+        self.actions, self.atoms = actions, atoms
+        self.net = nn.Linear(features, actions * atoms)
+        self.register_buffer("z", torch.linspace(v_min, v_max, atoms))
+
+    def forward(self, x):
+        ## One log-softmax over atoms per action: [B, A, N]
+        logits = self.net(x).view(-1, self.actions, self.atoms)
+        return logits.log_softmax(dim=-1)
+
+    def q(self, x):
+        ## Greedy actions use the distribution mean
+        return (self(x).exp() * self.z).sum(dim=-1)
+
+    @torch.no_grad()
+    def target(self, reward, next_x, terminated, gamma):
+        ## Call on the target network in practice
+        z, dz = self.z, self.z[1] - self.z[0]
+        best = self.q(next_x).argmax(dim=1)
+        rows = torch.arange(len(best), device=best.device)
+        p = self(next_x).exp()[rows, best]  ## [B, N]
+        ## Shift & shrink every atom, then clip to the support
+        tz = reward[:, None] + gamma * (~terminated).float()[:, None] * z
+        b = (tz.clamp(float(z[0]), float(z[-1])) - z[0]) / dz
+        lo, hi = b.floor().long(), b.ceil().long()
+        proj = torch.zeros_like(p)
+        ## Split mass between the 2 neighbors; exact hit (lo == hi) keeps all
+        proj.scatter_add_(1, lo, p * (hi - b + (lo == hi).float()))
+        proj.scatter_add_(1, hi, p * (b - lo))
+        return proj
+
+    def loss(self, x, a, target_probs):
+        log_p = self(x)[torch.arange(len(a), device=a.device), a]
+        return -(target_probs * log_p).sum(dim=-1).mean()
+
+## Example
+net = C51(features=2, actions=2, atoms=3, v_min=-1.0, v_max=1.0)
+proj = net.target(torch.tensor([0.5]), torch.zeros(1, 2),
+                  torch.tensor([True]), gamma=0.9)
+print(proj)  ## tensor([[0.0000, 0.5000, 0.5000]]): 0.5 splits between z=0 & z=1
+print(net.loss(torch.zeros(1, 2), torch.tensor([0]), proj).shape)  ## torch.Size([])
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Why project?*
+
+- $r+\gamma z_\ell$ moves atoms off the fixed support.
+- Cross-entropy needs both distributions on the same support → project.
+
+*Why cross-entropy & not the Wasserstein metric?*
+
+- Distributional evaluation operator: a $\gamma$-contraction in the maximal Wasserstein metric. It is not a contraction in KL or total variation.
+- Wasserstein loss from sampled transitions has biased gradients → paper uses projected cross-entropy.
+- Result: a gap between the theory & the algorithm.
+
+*Does distributional control converge?*
+
+- Evaluation: yes, in the maximal Wasserstein metric.
+- Control: the distributional optimality operator is not a contraction in general. The mean still contracts like $\mathcal{T}^*$.
+
+*How to choose $[V_{\min},V_{\max}]$?*
+
+- Returns outside the range are clipped → biased mean.
+- Atari works w/ $\pm10$ because rewards are clipped to $[-1,1]$.
+- Wider range w/ fixed $N$ → coarser atoms.
+
+*Why does the distribution help if the policy uses only the mean?*
+
+- Not settled. The paper reports large Atari gains & suggests a richer learning signal.
+```
+
+&nbsp;
+
+#### Rainbow
+- **What**: DQN + 6 extensions: Double, prioritized replay, dueling, multi-step, distributional & Noisy Nets. {cite:p}`hessel2018rainbow`
+- **Why**: The extensions were developed separately → unclear if their gains combine.
+- **How**:
+    1. Build a [C51](#c51) target from an [$h$-step return](#n-step-returns).
+    2. Select the bootstrap action w/ the online net; evaluate it w/ the target net (Double).
+    3. Use a dueling architecture w/ distributional outputs.
+    4. Prioritize replay by the KL loss.
+    5. Explore w/ Noisy Nets (learned param noise) instead of epsilon-greedy.
+
+```{note} Math
+:class: dropdown
+Notations:
+- Hyperparams:
+    - $h$: Multi-step length, as in [N-Step Returns](#n-step-returns).
+    - $V_{\min}$: Lowest atom, as in [C51](#c51).
+    - $V_{\max}$: Highest atom, as in C51.
+- Misc:
+    - $z_\ell$: Fixed return atom, as in C51.
+    - $\bar\rho_\ell$: Target-net probability of atom $\ell$, as in C51.
+
+Training:
+
+$$
+\begin{align*}
+a^*&=\arg\max_{a'}Q_\phi(s_{t+h},a'),\\
+\hat z_\ell&=\operatorname{clip}\!\left(\sum_{u=0}^{h-1}\gamma^ur_{t+u+1}+\gamma^hz_\ell,\;V_{\min},\;V_{\max}\right).
+\end{align*}
+$$
+
+- $a^*$: Online-net greedy action (Double).
+- $u$: Step offset inside the $h$-step window.
+- Episode ends inside the window → drop the $\gamma^hz_\ell$ term.
+- Project $\hat z_\ell$ w/ target-net probabilities $\bar\rho_\ell(s_{t+h},a^*)$; then use the [C51](#c51) loss.
+- Paper settings: $h=3$, $51$ atoms on $[-10,10]$, priority exponent $0.5$, IS exponent annealed $0.4\to1$.
+```
+
+```{dropdown} Table: Rainbow Components
+| Component | Fixes | Effect of removing it (median, 57 Atari games) |
+|:--|:--|:--|
+| Prioritized replay | Uniform replay wastes updates | Large drop; one of the 2 most important |
+| Multi-step ($h=3$) | Slow 1-step value propagation | Large drop, early & final; one of the 2 most important |
+| Distributional | Mean-only target | 3rd most important; no difference for the first 40M frames, then lags |
+| Noisy Nets | Undirected epsilon-greedy exploration | Worse in aggregate; large drops in some games |
+| Dueling | Separate value per action | No significant aggregate difference |
+| Double | Overestimation | Limited median difference |
+```
+
+```{attention} Q&A
+:class: dropdown
+*Why did Double matter little?*
+
+- Authors' hypothesis: value clipping to $[-10,10]$ counteracts overestimation.
+- Wider support → Double can matter more.
+
+*Is the $h$-step target off-policy correct?*
+
+- No. Rainbow uses uncorrected $h$-step returns from replay → targets mix in the behavior policy's actions.
+
+*Why prioritize by KL loss, not TD error?*
+
+- KL is what the distributional agent minimizes.
+- Authors' hypothesis: KL is more robust to stochastic returns, since it can still decrease when returns are not deterministic.
 ```
 
 &nbsp;

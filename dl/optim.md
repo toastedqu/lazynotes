@@ -102,7 +102,7 @@ $$\begin{align*}
 2. Param update:
 
 $$\begin{align*}
-&\text{EWMA & Accumulation} &&w_t \leftarrow w_{t-1} - \eta v_t \\
+&\text{EWMA \& Accumulation} &&w_t \leftarrow w_{t-1} - \eta v_t \\
 &\text{Direct} &&w_t \leftarrow w_{t-1} - v_t 
 \end{align*}$$
 ```

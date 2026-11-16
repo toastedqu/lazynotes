@@ -16,13 +16,14 @@ project:
     - file: intro.md
     - title: Math
       children:
+      - file: math/calc.md
+      - file: math/linalg.md
       - title: Probability Theory
         children:
         - file: math/prob/basics.md
         # - file: math/prob/asymptotics.md
         - file: math/prob/bayes.md
       - file: math/info.md
-      - file: math/linalg.md
     - title: ML
       children:
         - file: ml/supervised.md
@@ -37,6 +38,7 @@ project:
         - file: dl/optim.md
         - file: dl/train.md
         - file: dl/issues.md
+        - file: dl/diffusion.md
     - title: RL
       children:
         - file: rl/intro.md
@@ -45,11 +47,12 @@ project:
         - file: rl/model.md
     - title: NLP
       children:
-    #     - file: nlp/transformer.md
-    #     # - file: nlp/models.md
+      - file: nlp/transformer.md
     #     - file: nlp/train.md
       - file: nlp/token.md
+      - file: nlp/pos.md
       - file: nlp/attn.md
+      - file: nlp/models.md
       - title: Pre-Training
         children:
         - file: nlp/pre/obj.md
