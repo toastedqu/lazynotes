@@ -1,16 +1,20 @@
-# 3. Emotions
+# 3. Emotional Strength
 
-**The true essense of life experience is emotions**.
+**Life experience is only emotions.**
 
-Nothing matters if we cannot master emotions.
+**Your life quality is only dependent on how grounded you are amid emotions.**
 
-Notice the word "master", not "control" or "resolve".
+AKA **Emotional Strength**.
 
-This page dedicates to the mastery of emotions.
+If the previous 2 chapters are too philosophical or sophisticated, this chapter is purely practical. It is the most important text I've written throughout my entire life.
+
+Assuming your fundamental human needs are satisfied, emotional strength is all you need in life.
 
 &nbsp;
 
-## Parent-Child Relationship
+## 3.1 Emotions
+
+### Parent-Child Relationship
 
 There are 2 cognitive systems in the human brain:
 - System 1: the fast, intuitive, unconcious, and emotional.
@@ -24,13 +28,11 @@ Bad parenting means you get reactive toward the child. You become emotional like
 
 Good parenting means you don't get reactive toward the child. You stay calm. You listen to the child and understand what exactly they are dealing with. You tell the child what's the best thing to do and explain why in detail. The child may react even harder, and it is your job to stay rock solid.
 
-In order to successfully guide your child, you need to harness two skills in one basket:
-
-**Face your emotions directly without losing your frame.**
+So essentially, you need to **face your emotions directly without losing your frame**.
 
 &nbsp;
 
-## Emotional Strength
+### Emotional Strength
 Emotional strength means "face your emotions directly". The common mistake many parents make when their children become super emotional is to either get emotional themselves or neglect those emotions, both stemming from one crucial weakness - **emotional reactivity**.
 
 Emotional strength is the direct opposite of emotional reactivity. The less you tend to react to emotions, the stronger you are emotionally. This is quite different from emotional numbness, because numbness itself is an emotion - feeling fed up or exhausted, just wanting things to end. Trying to be indifferent or emotionless is also weakness - avoiding reality at all costs. A person with true emotional strength feels the ongoing emotions directly & fully without any additional reaction.

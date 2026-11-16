@@ -83,22 +83,22 @@ There are levels to desires. "Self" typically separates desires into 2 main cate
 
 "Need" is typically unhealthy, depending on the exact target. If success, we gain. If failure, we lose. It's a positive-negative situation.
 
-A missed gain only forgoes a chance to reproduce later, BUT a loss may drop "self" below survival threshold. Throughout centuries of evolution, brains that overweighted downside left more descendants, causing loss aversion.
+Loss aversion is, by definition, associated with "needs", not "wants". A missed gain only forgoes a chance to reproduce later, BUT a loss may drop "self" below survival threshold. Throughout centuries of evolution, brains that overweighted downside left more descendants, causing loss aversion.
 
-In fact, loss aversion is so deeply ingrained in our DNA that it pretty much dictates our perception of value.
-
-How can a person get out of the friend zone? Walk away.
+In fact, loss aversion is so deeply ingrained in our DNA, it has a critical impact on our perception of value. We can take one thing for granted and only truly realize our deep-rooted need for it when we lose it. Throw you in the middle of Sahara Desert, now you finally recognize how valuable water was. Your bestie just got a partner, now you finally recognize how valuable they were. Loss is the only way for a person to switch from "I don't give a fuck" to "I give a fuck".
 
 &nbsp;
 
 ### Attachment
-Because of loss aversion, we attach to things we perceive as "needs". The perceived survival is threatened without satisfying the "needs".
+This is a critical distinction. We only give a fuck about things we give a fuck about. We don't give a fuck about things we don't give a fuck about. How does the "self" distinguish the two? Of course, it varies by person, but humans share a common pool of fundamental needs - food, water, sleep, fitness, etc. We give a fuck about the things we perceive as "needs". The perceived survival is threatened without satisfying the needs, so the "self" constantly seeks methods to satisfy the needs, till they are satisfied. 
 
-We pay much more attention to these "needs" to ensure our objectives are sustained. ANY subtle signal from the "needs" gets amplified, processed, and analyzed in depth.
+This, is **attachment**. We pay much more attention to these needs. Fear of loss comes into play. ANY subtle signal from the needs gets amplified, processed, and analyzed in depth. As these needs continuously don't get satisfied, we gradually form stronger and stronger emotional attachment to them, causing obsession and ultimately giving up control of our emotions to them.
 
 &nbsp;
 
 ### Suffering
+(TBD)
+
 **Attachment is the root of suffering. Suffering is the rejection of reality.**
 
 Computation is the true reality, and computation dictates everything autonomously. 
@@ -111,7 +111,7 @@ This unfulfilled demand is suffering.
 
 &nbsp;
 
-## Illusory Optimization
+## 2.2 Illusory Optimization
 ### Expectation
 To optimize the objective, "self" needs to first know its current level with respect to the objective. 
 
