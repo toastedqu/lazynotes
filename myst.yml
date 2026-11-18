@@ -18,12 +18,29 @@ project:
       children:
       - file: math/calc.md
       - file: math/linalg.md
-      - title: Probability Theory
+      - file: math/diffeq.md
+      - title: Probability & Statistics
         children:
         - file: math/prob/basics.md
-        # - file: math/prob/asymptotics.md
+        - file: math/prob/dist.md
+        - file: math/prob/limits.md
+        - file: math/prob/stats.md
+        - file: math/prob/process.md
         - file: math/prob/bayes.md
+        - file: math/prob/sampling.md
       - file: math/info.md
+      - file: math/decision.md
+      - file: math/compute.md
+      - title: Geometry
+        children:
+        - file: math/geo/topology.md
+        - file: math/geo/manifold.md
+        - file: math/geo/data.md
+        - file: math/geo/highdim.md
+        - file: math/geo/info.md
+        - file: math/geo/ot.md
+        - file: math/geo/symmetry.md
+        - file: math/geo/repr.md
     - title: ML
       children:
         - file: ml/supervised.md
@@ -34,11 +51,33 @@ project:
         - file: ml/misc.md
     - title: DL
       children:
-        - file: dl/module.md
-        - file: dl/optim.md
-        - file: dl/train.md
-        - file: dl/issues.md
-        - file: dl/diffusion.md
+        - title: Basics
+          children:
+            - file: dl/basics/nn.md
+            - file: dl/basics/module.md
+            - file: dl/basics/activation.md
+        - title: Training
+          children:
+            - file: dl/train/optim.md
+            - file: dl/train/schedule.md
+            - file: dl/train/train.md
+            - file: dl/train/reg.md
+            - file: dl/train/issues.md
+        - file: dl/sys.md
+        - file: dl/theory.md
+        - title: Representation
+          children:
+            - file: dl/repr/ssl.md
+            - file: dl/repr/interp.md
+        - title: Generative
+          children:
+            - file: dl/gen/gen.md
+            - file: dl/gen/vae.md
+            - file: dl/gen/gan.md
+            - file: dl/gen/flow.md
+            - file: dl/gen/ebm.md
+            - file: dl/gen/diffusion.md
+        - file: dl/compress.md
     - title: RL
       children:
         - file: rl/intro.md
@@ -67,9 +106,13 @@ project:
         - file: nlp/infer/cache.md
       - file: nlp/eval.md
       - file: nlp/harness.md
+      - file: nlp/ssm.md
     #     # - file: nlp/rh.md
-    #     - file: nlp/infer.md
-    #     - file: nlp/eval.md
+    - title: CV
+      children:
+        - file: cv/image.md
+        - file: cv/cnn.md
+        - file: cv/vit.md
     # - title: Misc
     #   children:
     #     - file: misc/dsa.md

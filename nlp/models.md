@@ -233,7 +233,7 @@ $$
     2. Pretrain w/ [span corruption](pre/obj.md#span-corruption) on C4 (~750GB of cleaned Common Crawl).
     3. Finetune (or multitask train) w/ the same CE loss on target text.
     4. Block details:
-        - Pre-norm w/ a scale-only LayerNorm (❌mean subtraction, ❌bias) ≈ [RMSNorm](../dl/module.md#rmsnorm).
+        - Pre-norm w/ a scale-only LayerNorm (❌mean subtraction, ❌bias) ≈ [RMSNorm](../dl/foundation/module.md#rmsnorm).
         - **Relative position bias**: 1 learned scalar per (bucket, head) added to attention logits; shared across layers.
     5. Sizes: 60M, 220M, 770M, 3B, 11B.
 
@@ -539,7 +539,7 @@ $$
 - **What**: The dominant open-LLM block since 2023: pre-RMSNorm residual → GQA w/ RoPE → pre-RMSNorm residual → SwiGLU or MoE FFN; ❌bias terms.
     - A reference design, ❌universal: e.g., Gemma uses GeGLU & extra post-norms, gpt-oss keeps some biases, OLMo 2 moves the norm.
 - **Why**: Each change vs the 2017/GPT-2 block fixes 1 problem at scale.
-    - Stability at depth → [pre-norm](#pre-norm) + [RMSNorm](../dl/module.md#rmsnorm).
+    - Stability at depth → [pre-norm](#pre-norm) + [RMSNorm](../dl/foundation/module.md#rmsnorm).
     - Quality per FLOP → [SwiGLU](#swiglu).
     - Relative position & length extension → [RoPE](pos.md#rope).
     - Decode memory → [GQA](infer/cache.md#gqa) / [MLA](infer/cache.md#mla).
@@ -669,7 +669,7 @@ print(final_norm(x).shape)  ## torch.Size([2, 5, 16]) -> extra norm before the L
     - Shazeer tested GLU, Bilinear, ReGLU, GEGLU & SwiGLU vs ReLU/GELU/Swish FFNs in T5 → GEGLU & SwiGLU had the best perplexity.
 - **How**:
     1. 2 parallel projections up: **gate** & **up**.
-    2. Apply [SiLU](../dl/module.md#silu) to the gate; multiply elementwise w/ up.
+    2. Apply [SiLU](../dl/foundation/activation.md#silu) to the gate; multiply elementwise w/ up.
     3. Project down.
     4. Shrink $d_\text{ff}$ to $\frac{2}{3}$ ← 3 matrices instead of 2 → same param count. Llama: $d_\text{ff}=\frac{2}{3}\cdot4d$.
 
@@ -1360,7 +1360,7 @@ $$
 &nbsp;
 
 ### Mamba Hybrids
-- **What**: Stacks of mostly Mamba-family SSM layers w/ a few attention layers. {cite:p}`lieber2024jamba`
+- **What**: Stacks of mostly [Mamba](ssm.md#mamba)-family SSM layers w/ a few attention layers. {cite:p}`lieber2024jamba`
 - **Why**: Same logic as the [Hybrid Stack](attn.md#hybrid-stack): constant-size state for most layers, exact recall from a few attention layers.
 - **How**:
     - **Jamba** (2024): first production-scale hybrid (attention : Mamba-1 = 1:7) + MoE.

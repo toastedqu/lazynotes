@@ -137,7 +137,7 @@ print(model(src, tgt_in).shape)  ## torch.Size([2, 5, 100])
 |:--|:--|:--|
 | Stack | Encoder-decoder | Decoder-only |
 | Norm placement | Post-LN | Pre-norm |
-| Norm | [LayerNorm](../dl/module.md#layernorm) | [RMSNorm](../dl/module.md#rmsnorm) |
+| Norm | [LayerNorm](../dl/foundation/module.md#layernorm) | [RMSNorm](../dl/foundation/module.md#rmsnorm) |
 | Position | Sinusoidal, added at input | [RoPE](pos.md#rope) on $\mathbf{q},\mathbf{k}$ |
 | FFN | ReLU, $d_{ff}=4d$ | Gated (SwiGLU), 3 matrices. $d_{ff}=\frac{8}{3}d$ keeps the param count of $4d$ ReLU; actual ratio is model-specific (Llama 3: 3.25–3.5) |
 | Attention | MHA | [GQA](infer/cache.md#gqa) |
@@ -209,7 +209,7 @@ $$
 \mathbf{x}_i=\sqrt{d}\,E_{t_i}=\sqrt{d}\,E^\top\mathbf{e}_{t_i}
 $$
 
-- $\mathbf{e}_{t}$: One-hot vector of $t$. Lookup = [Linear](../dl/module.md#linear) on a one-hot input, w/o the matmul.
+- $\mathbf{e}_{t}$: One-hot vector of $t$. Lookup = [Linear](../dl/foundation/module.md#linear) on a one-hot input, w/o the matmul.
 ```
 
 ````{important} Code
@@ -339,7 +339,7 @@ $$
     - Attention output = weighted average of value vectors → no per-feature nonlinearity on the content.
 - **How**:
     1. Expand $d\to d_{ff}=4d$.
-    2. [ReLU](../dl/module.md#relu).
+    2. [ReLU](../dl/foundation/activation.md#relu).
     3. Project back $d_{ff}\to d$.
 
 ```{note} Math
@@ -396,8 +396,8 @@ print(FFN(8, 32)(torch.randn(2, 5, 8)).shape)  ## torch.Size([2, 5, 8])
 ### Add & Norm
 - **What**: $\mathrm{LayerNorm}(H+\mathrm{Dropout}(\mathrm{Sublayer}(H)))$ around every sub-layer (**Post-LN**).
 - **Why**: Make a deep stack trainable.
-    - [Residual](../dl/module.md#residual-connection) → identity path for grads.
-    - [LayerNorm](../dl/module.md#layernorm) → stable scale per token, independent of batch & sequence length.
+    - [Residual](../dl/foundation/module.md#residual-connection) → identity path for grads.
+    - [LayerNorm](../dl/foundation/module.md#layernorm) → stable scale per token, independent of batch & sequence length.
 - **How**:
     1. Sub-layer output → dropout.
     2. Add the sub-layer input.
@@ -637,8 +637,8 @@ $$
 &nbsp;
 
 ### LR Schedule
-- **What**: Linear warmup for 4000 steps, then inverse-square-root decay, scaled by $d^{-1/2}$. Optimizer: [Adam](../dl/optim.md#adam-adaptive-moment-estimation).
-- **Why**: Post-LN + Adam is unstable at large early LR → [warmup](../dl/optim.md#warmup). Decay → stable convergence.
+- **What**: Linear warmup for 4000 steps, then inverse-square-root decay, scaled by $d^{-1/2}$. Optimizer: [Adam](../dl/train/optim.md#adam-adaptive-moment-estimation).
+- **Why**: Post-LN + Adam is unstable at large early LR → [warmup](../dl/train/schedule.md#warmup). Decay → stable convergence.
 - **How**:
     1. Adam with $\beta_1=0.9$, $\beta_2=0.98$, $\epsilon=10^{-9}$.
     2. Steps $\leq4000$: LR rises linearly.
@@ -698,7 +698,7 @@ lr_sched = torch.optim.lr_scheduler.LambdaLR(opt, sched)
 &nbsp;
 
 ### Residual Dropout
-- **What**: [Dropout](../dl/module.md#dropout) with $P_\text{drop}=0.1$ (base) at 2 places.
+- **What**: [Dropout](../dl/foundation/module.md#dropout) with $P_\text{drop}=0.1$ (base) at 2 places.
 - **Why**: Regularize. W/o it, EN-DE dev BLEU drops 25.8 → 24.6.
 - **How**:
     1. On each sub-layer output, before the residual add & LayerNorm.

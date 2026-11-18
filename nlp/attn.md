@@ -351,6 +351,12 @@ print(attn(torch.randn(2, 5, 64)).shape)  ## torch.Size([2, 5, 64])
 &nbsp;
 
 ## Head Sharing
+
+```{image} ../images/nlp-attn/head-sharing.svg
+:align: center
+:width: 100%
+```
+
 - **What**: Fewer KV heads $n_g$ than query heads $h$, or one shared low-rank KV latent.
 - **Why**: [Decode](infer/cache.md#decode) is bandwidth-bound. Bytes moved scale with $n_g$; FLOPs scale with $h$.
     - MHA loads $2hd_k$ cached elements per cached token per layer for $\mathcal{O}(hd_k)$ FLOPs → ≈1 FLOP/byte in FP16 → GPU idles.
@@ -358,7 +364,7 @@ print(attn(torch.randn(2, 5, 64)).shape)  ## torch.Size([2, 5, 64])
 - **How**: One axis, 3 points.
     - **MQA**: $n_g=1$. All query heads share 1 K/V head.
     - **GQA**: $1<n_g<h$. 1 K/V head per group of $h/n_g$ query heads.
-    - **MLA**: cache 1 low-rank latent per token; up-project it to all $h$ heads on the fly.
+    - **MLA**: cache 1 low-rank latent per token; up-project it to all $h$ heads. At inference, up-projections fold into $W_Q,W_O$ → per-head K/V never materialized.
 
 ```{dropdown} Table: Head-Sharing Variants
 | Variant | KV heads | Cache elements / token / layer | Ships in |

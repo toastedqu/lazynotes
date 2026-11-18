@@ -14,7 +14,7 @@ Search for the params &/or hyperparams minimizing an objective.
 
 An [objective](obj.md) states *what* is good; optimization is the only thing that turns that statement into a fitted model.
 
-This page covers solvers applicable across models & objectives. Model-specific solvers (e.g. SMO for [SVM](supervised.md#svm)) live on the model's page, and [Gradient Descent & family](../dl/optim.md) has its own.
+This page covers solvers applicable across models & objectives. Model-specific solvers (e.g. SMO for [SVM](supervised.md#svm)) live on the model's page, and [Gradient Descent & family](../dl/train/optim.md) has its own.
 
 Study notes from {cite:t}`nocedal2006numerical`, {cite:t}`garnett2023bayesian` & {cite:t}`eiben2015introduction`.
 
@@ -360,7 +360,7 @@ print(backtracking_line_search(f, x, -g, g))  ## 0.5 -> alpha=1 lands at the sam
 
 *Why is line search rare in deep learning?*
 - Every trial is another forward pass, and on a mini-batch $f$ is a noisy estimate → the deterministic decrease test is not even well-posed.
-- A tuned [LR schedule](../dl/optim.md#lr-scheduler) costs zero extra passes.
+- A tuned [LR schedule](../dl/train/schedule.md#lr-scheduler) costs zero extra passes.
 ```
 
 &nbsp;
@@ -934,7 +934,7 @@ print(x.norm() < 1e-6)                           ## True
 *Why does mini-batch noise destroy it?*
 - $\mathbf{y}_t=\mathbf{g}_{t+1}-\mathbf{g}_t$ is a **difference** of two noisy vectors → the noise dominates the curvature signal.
 - Worse, the two gradients come from different batches → $\mathbf{y}_t\neq\mathbf{0}$ even when $\mathbf{x}$ does not move.
-- → this, not memory, is why deep learning uses [Adam](../dl/optim.md) instead.
+- → this, not memory, is why deep learning uses [Adam](../dl/train/optim.md) instead.
 
 *L-BFGS-B?*
 - Same recursion + box constraints $\mathbf{l}\leq\mathbf{x}\leq\mathbf{u}$: a gradient-projection step identifies the active bounds, then L-BFGS minimizes over the free subspace. The default behind `scipy.optimize.minimize`.
@@ -1056,7 +1056,7 @@ print(cg(lambda v: A @ v, b, torch.zeros(2)))  ## tensor([0.0909, 0.6364]) -> ex
 ```{dropdown} Table: Second-Order Methods
 | Method | Memory | Per-iteration | Local rate | Needs |
 |:--|:--|:--|:--|:--|
-| [Gradient Descent](../dl/optim.md) | $O(n)$ | $O(n)$ | Linear, $\frac{\kappa-1}{\kappa+1}$ | $\mathbf{g}$ |
+| [Gradient Descent](../dl/train/optim.md) | $O(n)$ | $O(n)$ | Linear, $\frac{\kappa-1}{\kappa+1}$ | $\mathbf{g}$ |
 | [CG](#cg) | $O(n)$ | $O(n)$ + 1 matvec | Linear, $\frac{\sqrt{\kappa}-1}{\sqrt{\kappa}+1}$ | $\mathbf{g}$, $A\mathbf{v}$ |
 | [L-BFGS](#l-bfgs) | $O(\ell n)$ | $O(\ell n)$ | R-linear | $\mathbf{g}$ |
 | [BFGS](#bfgs) / [DFP](#dfp) | $O(n^2)$ | $O(n^2)$ | Superlinear | $\mathbf{g}$ |
@@ -1365,7 +1365,7 @@ print(w)                                                ## tensor([ 2.5000,  0.0
 - Very ill-conditioned + few iterations → the oscillation can dominate. **Adaptive restart** (reset $\theta\leftarrow1$ when $f$ rises) fixes it.
 
 *Relation to Nesterov momentum in deep learning?*
-- Same extrapolation, same $\theta$ recursion; FISTA adds the prox and requires convexity + exact gradients. [NAG](../dl/optim.md#nag-nesterov-accelerated-gradient) is the $h=0$, stochastic-gradient cousin.
+- Same extrapolation, same $\theta$ recursion; FISTA adds the prox and requires convexity + exact gradients. [NAG](../dl/train/optim.md#nag-nesterov-accelerated-gradient) is the $h=0$, stochastic-gradient cousin.
 ```
 
 &nbsp;

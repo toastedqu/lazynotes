@@ -11,6 +11,23 @@ kernelspec:
 ---
 # Basics
 Study notes from {cite:t}`math` and {cite:t}`prob_lifesaver`.
+Probability space → random variables → joint behavior → summaries → transforms.
+Named distributions live in [Distributions](dist.md).
+
+Notations:
+- $\Omega$: Sample space.
+- $\mathcal{F}$: σ-algebra of events.
+- $P$: Probability measure.
+- $A$: Event.
+- $B$: Second event.
+- $X$: Random variable.
+- $Y$: Second random variable.
+- $F$: CDF.
+- $f$: PDF (continuous) or PMF (discrete).
+- $\mu=E[X]$: Mean.
+- $\sigma^2=Var[X]$: Variance.
+
+&nbsp;
 
 ## Probability
 ### Sample Space 
@@ -78,8 +95,8 @@ Study notes from {cite:t}`math` and {cite:t}`prob_lifesaver`.
 | Boole's Inequality (union bound) | $P\left(\bigcup_i A_i\right)\leq \sum_i P(A_i)$                                                                      |
 | Mutual exclusivity (disjoint)    | $A\cap B=\varnothing\rightarrow P(A\cap B)=0$                                                                        |
 | Independence                     | $P(A\cap B)=P(A)P(B)$                                                                                                |
-| Continuity from above            | $A_1\subseteq A_2\subseteq\cdots\rightarrow P!\left(\bigcup_{i=1}^\infty A_i\right)=\lim_{i\rightarrow\infty}P(A_i)$ |
-| Continuity from below            | $A_1\supseteq A_2\supseteq\cdots\rightarrow P!\left(\bigcap_{i=1}^\infty A_i\right)=\lim_{i\rightarrow\infty}P(A_i)$ |
+| Continuity from below            | $A_1\subseteq A_2\subseteq\cdots\rightarrow P\left(\bigcup_{i=1}^\infty A_i\right)=\lim_{i\rightarrow\infty}P(A_i)$ |
+| Continuity from above            | $A_1\supseteq A_2\supseteq\cdots\rightarrow P\left(\bigcap_{i=1}^\infty A_i\right)=\lim_{i\rightarrow\infty}P(A_i)$ |
 
 &nbsp;
 
@@ -101,6 +118,145 @@ $$
 
 &nbsp;
 
+### Independence
+- **What**: Joint probability = product of individual probabilities.
+    - Events: $P(A\cap B)=P(A)P(B)$.
+    - RVs: joint CDF factorizes, $F_{X,Y}(x,y)=F_X(x)F_Y(y)\ \forall x,y$.
+- **Why**: Factorization.
+    - Knowing $B$ does not change belief in $A$: $P(A\mid B)=P(A)$ if $P(B)>0$.
+    - Joint → product of marginals → iid likelihood = product → log-likelihood = sum.
+- **How**: 4 levels:
+    - **Pairwise**: every pair of events factorizes.
+    - **Mutual**: every finite subfamily factorizes. Mutual → pairwise. ❌ Converse.
+    - **Conditional** ($A\perp B\mid C$): factorization under $P(\cdot\mid C)$.
+    - **RVs**: every event about $X$ is independent of every event about $Y$ ⇔ joint CDF/PDF/PMF factorizes.
+
+```{note} Math
+:class: dropdown
+Notations:
+- Misc:
+    - $A_i$: $i$-th event; $i$ = event idx (overrides sample idx).
+    - $n$: #events (overrides #features).
+    - $\mathcal{I}$: Subset of event indices.
+    - $C$: Conditioning event w/ $P(C)>0$.
+    - $Z$: Third RV.
+    - $\mathcal{S}$: Borel set for $X$.
+    - $\mathcal{T}$: Borel set for $Y$.
+    - $\perp$: "is independent of".
+
+Events:
+
+$$
+\begin{align*}
+&\text{Pairwise:} && P(A_i\cap A_{i'})=P(A_i)P(A_{i'})\quad\forall i\neq i' \\
+&\text{Mutual:} && P\left(\bigcap_{i\in\mathcal{I}}A_i\right)=\prod_{i\in\mathcal{I}}P(A_i)\quad\forall\mathcal{I}\subseteq\{1,\ldots,n\},\ |\mathcal{I}|\geq 2 \\
+&\text{Conditional:} && P(A\cap B\mid C)=P(A\mid C)P(B\mid C)
+\end{align*}
+$$
+
+- Mutual: $2^n-n-1$ equations. Pairwise: $\binom{n}{2}$ equations.
+
+RVs:
+
+$$
+\begin{align*}
+X\perp Y
+&\Leftrightarrow P(X\in\mathcal{S},Y\in\mathcal{T})=P(X\in\mathcal{S})P(Y\in\mathcal{T})\quad\forall\mathcal{S},\mathcal{T} \\
+&\Leftrightarrow F_{X,Y}(x,y)=F_X(x)F_Y(y)\quad\forall x,y \\
+&\Leftrightarrow f_{X,Y}(x,y)=f_X(x)f_Y(y)\quad\text{(PMF: }\forall x,y\text{; PDF: almost everywhere)}
+\end{align*}
+$$
+
+$$
+X\perp Y\mid Z\Leftrightarrow f(x,y\mid z)=f(x\mid z)f(y\mid z)
+$$
+
+- Joint & conditional densities: [Joint, Marginal & Conditional Distributions](#joint-marginal-conditional-distributions).
+- $X\perp Y$ → $g(X)\perp h(Y)$ for any measurable $g,h$.
+- $X\perp Y$ (w/ finite means) → $E[XY]=E[X]E[Y]$; w/ finite variances → $Var[X+Y]=Var[X]+Var[Y]$.
+```
+
+```{tip} Derivation
+:class: dropdown
+*Why does $A\perp B$ give $A\perp B^c$?*
+
+1. $A$ = disjoint union of $A\cap B$ & $A\cap B^c$:
+
+$$
+P(A\cap B^c)=P(A)-P(A\cap B)
+$$
+
+2. Use $A\perp B$:
+
+$$
+P(A\cap B^c)=P(A)-P(A)P(B)=P(A)(1-P(B))=P(A)P(B^c)
+$$
+
+*Why does a factorized CDF give a factorized PDF?*
+
+1. $f_{X,Y}=\frac{\partial^2F_{X,Y}}{\partial x\,\partial y}$.
+2. $F_{X,Y}(x,y)=F_X(x)F_Y(y)$ → $\frac{\partial^2}{\partial x\,\partial y}\left[F_X(x)F_Y(y)\right]=f_X(x)f_Y(y)$.
+```
+
+```{note} Example
+:class: dropdown
+Setup: 2 fair coin flips.
+- $A$: 1st flip = H.
+- $B$: 2nd flip = H.
+- $C$: Both flips equal.
+- $P(A)=P(B)=P(C)=\frac{1}{2}$.
+
+**Pairwise ✅, mutual ❌:**
+- $P(A\cap B)=P(A\cap C)=P(B\cap C)=P(HH)=\frac{1}{4}$ → every pair independent.
+- $P(A\cap B\cap C)=P(HH)=\frac{1}{4}\neq\frac{1}{8}$ → not mutually independent.
+
+**Independent ✅, conditionally independent ❌** (explaining away):
+- $A\perp B$, but given $C$: $P(A\cap B\mid C)=\frac{1/4}{1/2}=\frac{1}{2}$.
+- $P(A\mid C)P(B\mid C)=\frac{1}{2}\cdot\frac{1}{2}=\frac{1}{4}\neq\frac{1}{2}$.
+- Given "both equal", the 1st flip determines the 2nd.
+
+**Conditionally independent ✅, independent ❌** (common cause):
+- Pick coin 1 ($P(H)=0.9$) or coin 2 ($P(H)=0.1$) w/ prob $\frac{1}{2}$ each. Flip it twice.
+- Given the coin: flips independent.
+- Unconditionally: $P(A)=P(B)=0.5$, but $P(A\cap B)=\frac{1}{2}(0.81)+\frac{1}{2}(0.01)=0.41\neq 0.25$.
+- 1st H → coin 1 more likely → 2nd H more likely.
+```
+
+```{attention} Q&A
+:class: dropdown
+*Independent vs mutually exclusive?*
+
+- Disjoint w/ $P(A),P(B)>0$ → $P(A\cap B)=0\neq P(A)P(B)$ → dependent.
+- Knowing $A$ happened → $B$ did not happen. Maximal dependence.
+
+*Can an event be independent of itself?*
+
+- $P(A)=P(A)^2$ → only if $P(A)\in\{0,1\}$.
+
+*Is pairwise independence enough?*
+
+- No. 2 coins + "both equal" (Example) → pairwise ✅, mutual ❌.
+- Pairwise independence still gives $Var[\sum_iX_i]=\sum_iVar[X_i]$ ← only pairwise covariances appear.
+
+*Does independence imply conditional independence, or the reverse?*
+
+- Neither.
+- Independent causes + observed common effect → dependent given the effect (explaining away).
+- Common cause → dependent unconditionally, independent given the cause.
+
+*Uncorrelated vs independent?*
+
+- Independent → uncorrelated (finite 2nd moments). ❌ Converse. See [Covariance & Correlation](#covariance-correlation).
+
+*Where does ML use independence?*
+
+- iid data → likelihood factorizes → sum of per-sample losses.
+- [Naive Bayes](../../ml/supervised.md#naive-bayes): features conditionally independent given the class.
+- [Bayesian networks](bayes.md#bayesian-networks): graph structure encodes conditional independences.
+```
+
+&nbsp;
+
 ### Probability Space
 - **What**: $(\Omega,\mathcal{F},P)$
 - **Why**:
@@ -119,7 +275,7 @@ $$
 &nbsp;
 
 ### Distribution
-- **What**: The probability that the random variable $X$ takes a value lower than $x$:
+- **What**: The probability that the random variable $X$ takes a value at most $x$:
 $$\begin{align*}
 &\text{Discrete:}   && F(x)=P(X\leq x)=\sum_{x_i\leq x}P(X=x_i) \\
 &\text{Continuous:} && F(x)=P(X\leq x)=\int_{-\infty}^xf(t)dt
@@ -131,6 +287,312 @@ $$\begin{align*}
     - $F(x)$ is continuous on the right (left if defined as $P(X<x)$).
     - $F'(x)=f(x)$ if $f(x)$ is continuous.
     - No probability at any point for continuous distributions: $\forall c\in\mathbb{R}: P(X=c)=0$
+
+&nbsp;
+
+### Joint, Marginal & Conditional Distributions
+- **What**: Distributions of ≥2 RVs.
+    - **Joint** $f(x,y)$: all RVs together.
+    - **Marginal** $f(x)$: a subset; other RVs summed/integrated out.
+    - **Conditional** $f(y\mid x)$: one RV w/ the other fixed.
+- **Why**: 1 RV at a time misses dependence.
+    - Joint = full model. Marginalize & condition = the 2 basic operations of inference.
+- **How**:
+    1. **Marginalize**: sum/integrate the joint over unwanted RVs.
+    2. **Condition**: slice the joint at the observed value → renormalize by the marginal.
+    3. **Flip** w/ [Bayes' rule](bayes.md#bayes-rule): $f(x\mid y)\propto f(y\mid x)f(x)$.
+    4. **Factorize** w/ the chain rule: joint = product of conditionals.
+
+```{note} Math
+:class: dropdown
+Notations:
+- Misc:
+    - $F_{X,Y}$: Joint CDF.
+    - $f_{X,Y}$: Joint PDF/PMF.
+    - $f_X$: Marginal PDF/PMF of $X$.
+    - $f_{Y\mid X}$: Conditional PDF/PMF of $Y$ given $X$.
+    - $X_j$: $j$-th of $n$ RVs.
+
+Joint:
+
+$$
+F_{X,Y}(x,y)=P(X\leq x,Y\leq y),\qquad
+f_{X,Y}(x,y)=\begin{cases}
+P(X=x,Y=y) & \text{discrete}\\
+\frac{\partial^2F_{X,Y}(x,y)}{\partial x\,\partial y} & \text{continuous}
+\end{cases}
+$$
+
+- Continuous: $P((X,Y)\in\mathcal{S})=\iint_{\mathcal{S}}f_{X,Y}(x,y)\,dx\,dy$ for a region $\mathcal{S}\subseteq\mathbb{R}^2$.
+- Subscripts dropped when the args identify the RVs: $f(y\mid x)=f_{Y\mid X}(y\mid x)$.
+
+Marginal:
+
+$$
+\begin{align*}
+&\text{Discrete:}   && f_X(x)=\sum_yf_{X,Y}(x,y) \\
+&\text{Continuous:} && f_X(x)=\int_{-\infty}^{\infty}f_{X,Y}(x,y)\,dy
+\end{align*}
+$$
+
+Conditional:
+
+$$
+f_{Y\mid X}(y\mid x)=\frac{f_{X,Y}(x,y)}{f_X(x)},\qquad f_X(x)>0
+$$
+
+Bayes' rule:
+
+$$
+f_{X\mid Y}(x\mid y)=\frac{f_{Y\mid X}(y\mid x)f_X(x)}{\int f_{Y\mid X}(y\mid x')f_X(x')\,dx'}
+$$
+
+- $x'$: Integration dummy. Discrete: sum instead of integral.
+
+Chain rule:
+
+$$
+f(x_1,\ldots,x_n)=\prod_{j=1}^{n}f(x_j\mid x_1,\ldots,x_{j-1})
+$$
+
+- Every ordering of the $X_j$ gives a valid factorization.
+```
+
+```{tip} Derivation
+:class: dropdown
+*Why is $f(y\mid x)$ a valid conditional density if $P(X=x)=0$?*
+
+1. Condition on a thin slab w/ positive prob:
+
+$$
+P(Y\leq y\mid x\leq X\leq x+h)=\frac{\int_x^{x+h}\int_{-\infty}^{y}f(s,t)\,dt\,ds}{\int_x^{x+h}f_X(s)\,ds}
+$$
+
+- $s,t$: Integration dummies.
+- $h>0$: Slab width.
+
+2. $h\to 0$, $f$ continuous → numerator ≈ $h\int_{-\infty}^{y}f(x,t)\,dt$, denominator ≈ $hf_X(x)$.
+3. → $\int_{-\infty}^{y}\frac{f(x,t)}{f_X(x)}\,dt$ → differentiate in $y$ → $\frac{f(x,y)}{f_X(x)}$.
+
+- Caveat: on a prob-0 event, the answer depends on the limit procedure (Borel–Kolmogorov paradox). Different slab shapes can give different conditionals.
+```
+
+```{note} Example
+:class: dropdown
+Joint PMF of $X,Y\in\{0,1\}$:
+
+| | $Y=0$ | $Y=1$ | $f_X$ |
+|:--|:--|:--|:--|
+| $X=0$ | 0.4 | 0.1 | 0.5 |
+| $X=1$ | 0.2 | 0.3 | 0.5 |
+| $f_Y$ | 0.6 | 0.4 | 1 |
+
+- Marginals = row/column sums.
+- Conditional: $f(Y=1\mid X=1)=\frac{0.3}{0.5}=0.6$.
+- Bayes: $f(X=1\mid Y=1)=\frac{0.6\cdot 0.5}{0.4}=0.75=\frac{0.3}{0.4}$ ✅.
+- Dependent: $f(1,1)=0.3\neq f_X(1)f_Y(1)=0.2$.
+```
+
+```{attention} Q&A
+:class: dropdown
+*Do the marginals determine the joint?*
+
+- No. $X,Y\sim\text{Bernoulli}(\frac{1}{2})$: $Y=X$ & $X\perp Y$ have the same marginals.
+- Missing piece = dependence structure → **copula** (Sklar's theorem).
+- Exception: [independence](#independence) → joint = product of marginals.
+
+*Is $f(y\mid x)$ a density in $x$?*
+
+- In $y$: yes, $\int f(y\mid x)\,dy=1$.
+- In $x$: no. As a function of $x$ (or a parameter) it is a **likelihood**. Its integral need not be 1.
+
+*Why is marginalization expensive?*
+
+- Sum over all joint values of the removed RVs → exponential in #discrete RVs.
+- Fixes: exploit factorization (dynamic programming, e.g., [HMM](process.md#hmm) forward algorithm), sampling, variational bounds.
+
+*Which chain-rule order to use?*
+
+- All orders give the same joint.
+- Order matters for modeling: autoregressive LMs use $p(y)=\prod_tp(y_t\mid y_{<t})$ for token sequence $y$ → each factor = one softmax.
+
+*Mixed discrete & continuous RVs?*
+
+- PMF in the discrete arg, PDF in the continuous arg.
+- e.g., mixture model: $f(x)=\sum_kP(k)f(x\mid k)$ w/ discrete component $k$.
+```
+
+&nbsp;
+
+### Change of Variables
+- **What**: Density of $Y=g(X)$ from the density of $X$.
+- **Why**: Mass conservation.
+    - Density = probability per unit length/volume.
+    - $g$ stretches/compresses space → density must shrink/grow by the same factor.
+- **How**:
+    1. Invert: $x=g^{-1}(y)$.
+    2. Evaluate $f_X$ at $x$.
+    3. Divide by the local volume stretch $|\det J_g(x)|$ (1-D: $|g'(x)|$).
+    4. $g$ not injective → sum steps 1–3 over all preimages of $y$.
+
+```{note} Math
+:class: dropdown
+Notations:
+- IO:
+    - $\mathbf{X}\in\mathbb{R}^n$: Random vector.
+    - $\mathbf{Y}=g(\mathbf{X})\in\mathbb{R}^n$: Transformed random vector.
+- Misc:
+    - $g$: Transformation.
+    - $J_g(\mathbf{x})=\frac{\partial g(\mathbf{x})}{\partial\mathbf{x}}\in\mathbb{R}^{n\times n}$: Jacobian of $g$ at $\mathbf{x}$.
+
+1-D, $g$ strictly monotone & differentiable:
+
+$$
+f_Y(y)=f_X(g^{-1}(y))\left|\frac{dg^{-1}(y)}{dy}\right|=\frac{f_X(x)}{|g'(x)|},\qquad x=g^{-1}(y)
+$$
+
+Multivariate, $g$ bijective & differentiable w/ differentiable inverse:
+
+$$
+f_{\mathbf{Y}}(\mathbf{y})=f_{\mathbf{X}}(g^{-1}(\mathbf{y}))\left|\det J_{g^{-1}}(\mathbf{y})\right|=\frac{f_{\mathbf{X}}(\mathbf{x})}{\left|\det J_g(\mathbf{x})\right|},\qquad\mathbf{x}=g^{-1}(\mathbf{y})
+$$
+
+Non-injective, 1-D, finitely many preimages w/ $g'(x)\neq 0$:
+
+$$
+f_Y(y)=\sum_{x:\,g(x)=y}\frac{f_X(x)}{|g'(x)|}
+$$
+
+Log form (normalizing flows), $g=g_L\circ\cdots\circ g_1$:
+
+$$
+\log f_{\mathbf{Y}}(\mathbf{y})=\log f_{\mathbf{X}}(\mathbf{x}_0)-\sum_{\ell=1}^{L}\log\left|\det J_{g_\ell}(\mathbf{x}_{\ell-1})\right|
+$$
+
+- $\mathbf{x}_\ell=g_\ell(\mathbf{x}_{\ell-1})$: Output of layer $\ell$; $\mathbf{x}_0=\mathbf{x}$, $\mathbf{x}_L=\mathbf{y}$.
+- $L$: #layers.
+```
+
+```{tip} Derivation
+:class: dropdown
+*1-D:*
+
+1. $g$ increasing: $F_Y(y)=P(g(X)\leq y)=P(X\leq g^{-1}(y))=F_X(g^{-1}(y))$.
+2. Differentiate: $f_Y(y)=f_X(g^{-1}(y))\frac{dg^{-1}(y)}{dy}$.
+3. $g$ decreasing: $F_Y(y)=P(X\geq g^{-1}(y))=1-F_X(g^{-1}(y))$ → $f_Y(y)=-f_X(g^{-1}(y))\frac{dg^{-1}(y)}{dy}$.
+4. Decreasing → $\frac{dg^{-1}}{dy}<0$ → both cases = $f_X(g^{-1}(y))\left|\frac{dg^{-1}(y)}{dy}\right|$.
+5. Inverse function theorem: $\frac{dg^{-1}(y)}{dy}=\frac{1}{g'(x)}$.
+
+*Multivariate:*
+
+1. For any region $\mathcal{S}$:
+
+$$
+P(\mathbf{Y}\in\mathcal{S})=P(\mathbf{X}\in g^{-1}(\mathcal{S}))=\int_{g^{-1}(\mathcal{S})}f_{\mathbf{X}}(\mathbf{x})\,d\mathbf{x}
+$$
+
+2. Substitute $\mathbf{x}=g^{-1}(\mathbf{y})$, $d\mathbf{x}=\left|\det J_{g^{-1}}(\mathbf{y})\right|d\mathbf{y}$:
+
+$$
+P(\mathbf{Y}\in\mathcal{S})=\int_{\mathcal{S}}f_{\mathbf{X}}(g^{-1}(\mathbf{y}))\left|\det J_{g^{-1}}(\mathbf{y})\right|d\mathbf{y}
+$$
+
+3. True for every $\mathcal{S}$ → the integrand is $f_{\mathbf{Y}}$.
+4. $J_{g^{-1}}(\mathbf{y})=J_g(\mathbf{x})^{-1}$ → $\det J_{g^{-1}}(\mathbf{y})=\frac{1}{\det J_g(\mathbf{x})}$.
+
+*Non-injective:* split the domain into pieces where $g$ is monotone → apply the 1-D formula per piece → add the contributions.
+```
+
+```{note} Example
+:class: dropdown
+**Affine**: $Y=aX+b$, $a\neq 0$ → $f_Y(y)=\frac{1}{|a|}f_X\left(\frac{y-b}{a}\right)$.
+
+**Square** (non-injective): $X\sim\mathcal{N}(0,1)$, $Y=X^2$.
+- Preimages of $y>0$: $\pm\sqrt{y}$. $|g'(\pm\sqrt{y})|=2\sqrt{y}$.
+- $f_Y(y)=2\cdot\frac{1}{\sqrt{2\pi}}e^{-y/2}\cdot\frac{1}{2\sqrt{y}}=\frac{e^{-y/2}}{\sqrt{2\pi y}}$ → $\chi^2_1$ ✅.
+
+**Exp** (mode moves): $X\sim\mathcal{N}(0,1)$, $Y=e^X$.
+- $f_Y(y)=\frac{1}{y}\cdot\frac{1}{\sqrt{2\pi}}e^{-(\log y)^2/2}$ → lognormal.
+- Mode of $X$ = 0, but mode of $Y$ = $e^{-1}\neq e^0$ ← the $\frac{1}{y}$ Jacobian factor.
+```
+
+````{important} Code
+:class: dropdown
+```python
+import torch
+from torch.autograd.functional import jacobian
+from torch.distributions import MultivariateNormal
+
+class TransformedDensity:
+    def __init__(self, base, g, g_inv):
+        ## base: distribution of X; Y = g(X), g bijective
+        self.base, self.g, self.g_inv = base, g, g_inv
+
+    def log_prob(self, y):
+        ## y: (n,) one point; pull back to its unique preimage
+        x = self.g_inv(y)
+        J = jacobian(self.g, x)                          ## (n, n) = dg/dx at x
+        ## mass conservation: divide density by local volume stretch |det J|
+        return self.base.log_prob(x) - torch.linalg.slogdet(J).logabsdet
+
+## Example: X ~ N(0, I), Y = W X + b  ->  Y ~ N(b, W W^T); det W = 2
+W = torch.tensor([[2.0, 0.0], [1.0, 1.0]])
+b = torch.tensor([1.0, -1.0])
+base = MultivariateNormal(torch.zeros(2), torch.eye(2))
+T = TransformedDensity(base, lambda x: W @ x + b, lambda y: torch.linalg.solve(W, y - b))
+y = torch.tensor([0.3, 0.7])
+print(T.log_prob(y))                                 ## tensor(-4.6935)
+print(MultivariateNormal(b, W @ W.T).log_prob(y))    ## tensor(-4.6935), same
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Why $|\det J|$, not $\det J$?*
+
+- Density ≥ 0. A negative determinant only means $g$ flips orientation.
+
+*Why does a PMF need no Jacobian?*
+
+- Discrete mass sits on points, not volumes → no stretching.
+- $P(Y=y)=\sum_{x:\,g(x)=y}P(X=x)$.
+
+*Samples vs densities?*
+
+- Samples transform directly: $y=g(x)$. No Jacobian.
+- Expectations need no Jacobian either: $E[h(Y)]=E[h(g(X))]$.
+- Only the density of $Y$ needs the Jacobian. See [Marginalization & Reparameterization](bayes.md#marginalization-reparameterization).
+
+*Is the mode invariant under reparameterization?*
+
+- No. Density = per-volume quantity, not a function value → nonlinear $g$ moves the mode (Example: $e^{-1}\neq e^0$).
+- → MAP estimates depend on the parameterization.
+- Mean also moves: $E[g(X)]\neq g(E[X])$ in general; equality for affine $g$.
+
+*What if $g$ changes dimension, e.g., $Y=X_1+X_2$?*
+
+- Augment to a bijection $(X_1,X_1+X_2)$ → Jacobian det = 1 → marginalize the extra coordinate.
+- $X_1\perp X_2$ → convolution: $f_Y(y)=\int f_{X_1}(x)f_{X_2}(y-x)\,dx$.
+
+*How do normalizing flows use it?*
+
+- Stack invertible layers $g_\ell$ w/ cheap $\log|\det J_{g_\ell}|$ (e.g., triangular Jacobian → det = product of the diagonal).
+- → exact log-likelihood → train by MLE.
+- Continuous-time limit: log-det sum → integral of a trace. See [Continuous Normalizing Flow](../diffeq.md#continuous-normalizing-flow).
+
+*How does the reparameterization trick relate?*
+
+- Write $z=g_\phi(\varepsilon)$, e.g., $z=m_\phi+s_\phi\varepsilon$ w/ $\varepsilon\sim\mathcal{N}(0,1)$.
+- → $\nabla_\phi E_{z\sim q_\phi}[h(z)]=E_\varepsilon[\nabla_\phi h(g_\phi(\varepsilon))]$ → low-variance pathwise gradients.
+- Uses only the pushforward of samples. The Jacobian appears only if $\log q_\phi(z)$ itself is needed.
+- $m_\phi$, $s_\phi$: mean & std output by a network w/ params $\phi$.
+
+*How to sample any 1-D distribution from a uniform?*
+
+- Inverse CDF: $U\sim\text{Uniform}(0,1)$ → $X=F^{-1}(U)$ has CDF $F$.
+    - $F^{-1}(u)=\inf\{x:F(x)\geq u\}$: generalized inverse → works for discrete $F$ too.
+- Reverse: continuous $F$ → $F(X)\sim\text{Uniform}(0,1)$ (probability integral transform).
+```
 
 &nbsp;
 
@@ -152,10 +614,10 @@ $$\begin{align*}
 &nbsp;
 
 ### Variance
-- **What**: Average deviation between outcomes and mean.
+- **What**: Average squared deviation between outcomes and mean.
 $$\begin{align*}
-&\text{Discrete:}   && Var[X]=E[(X-\mu^2)]=\sum_i (x_i-\mu)^2p_i \\
-&\text{Continuous:} && Var[X]=E[(X-\mu^2)]=\int_{-\infty}^{\infty}(x-\mu)^2f(x)dx
+&\text{Discrete:}   && Var[X]=E[(X-\mu)^2]=\sum_i (x_i-\mu)^2p_i \\
+&\text{Continuous:} && Var[X]=E[(X-\mu)^2]=\int_{-\infty}^{\infty}(x-\mu)^2f(x)dx
 \end{align*}$$
 - **Why**:
     - *Why squared?*
@@ -177,6 +639,308 @@ $$\begin{align*}
 | Relationship w/ Mean | $Var[X]=E[X^2]-E[X]^2$             |
 | Law of total variance            | $Var[X]=E[Var[X\|Y]]+Var[E[X\|Y]]$   |
 | Chebyshev Inequality             | $\forall\lambda>0: P(\|X-\mu\|\geq \lambda\sigma)\leq\frac{1}{\lambda^2}$<br>It's very unlikely for $X$ to be farther from $\mu$ than a multiple of $\sigma$. |
+
+&nbsp;
+
+### Covariance & Correlation
+- **What**: Expected product of 2 RVs' deviations from their means.
+    - **Correlation** $\rho$: covariance / product of std devs → unit-free, in $[-1,1]$.
+- **Why**: Linear co-movement in one number.
+    - Variance of sums & linear combinations needs it.
+- **How**:
+    - $X$ & $Y$ on the same side of their means → product > 0 → $Cov>0$.
+    - Opposite sides → product < 0 → $Cov<0$.
+    - Divide by $\sigma_X\sigma_Y$ → remove units & scale → $\rho$.
+
+```{note} Math
+:class: dropdown
+Notations:
+- IO:
+    - $\mathbf{X}=(X_1,\ldots,X_n)^T$: Random vector.
+- Misc:
+    - $\sigma_X$: Std dev of $X$.
+    - $\sigma_Y$: Std dev of $Y$.
+    - $\rho_{X,Y}$: Pearson correlation.
+    - $\Sigma\in\mathbb{R}^{n\times n}$: Covariance matrix of $\mathbf{X}$.
+    - $Z$: Third RV.
+    - $a$: Scalar constant.
+    - $b$: Scalar constant.
+    - $c$: Scalar constant.
+    - $d$: Scalar constant.
+    - $\mathbf{a}\in\mathbb{R}^n$: Constant vector.
+    - $W\in\mathbb{R}^{k\times n}$: Constant matrix; $k$ = #outputs (overrides class idx).
+    - $\mathbf{b}\in\mathbb{R}^k$: Constant vector.
+
+Definition:
+
+$$
+\begin{align*}
+Cov[X,Y]&=E[(X-E[X])(Y-E[Y])]=E[XY]-E[X]E[Y] \\
+\rho_{X,Y}&=\frac{Cov[X,Y]}{\sigma_X\sigma_Y}\in[-1,1],\qquad\sigma_X,\sigma_Y>0 \\
+\Sigma&=E\left[(\mathbf{X}-E[\mathbf{X}])(\mathbf{X}-E[\mathbf{X}])^T\right],\qquad\Sigma_{jj'}=Cov[X_j,X_{j'}]
+\end{align*}
+$$
+
+Properties:
+- Symmetric: $Cov[X,Y]=Cov[Y,X]$. $Cov[X,X]=Var[X]$.
+- Bilinear: $Cov[aX+bY,Z]=aCov[X,Z]+bCov[Y,Z]$.
+- Shift-invariant: $Cov[X+c,Y]=Cov[X,Y]$.
+- Linear map: $Cov[W\mathbf{X}+\mathbf{b}]=W\Sigma W^T$.
+- $\rho_{aX+b,cY+d}=\text{sign}(ac)\,\rho_{X,Y}$ for $a,c\neq 0$.
+- $|\rho_{X,Y}|=1\Leftrightarrow Y=aX+b$ almost surely for some $a\neq 0$.
+- $X\perp Y$ → $Cov[X,Y]=0$. ❌ Converse.
+
+Linear combination:
+
+$$
+Var[\mathbf{a}^T\mathbf{X}]=\sum_{j,j'}a_ja_{j'}Cov[X_j,X_{j'}]=\mathbf{a}^T\Sigma\mathbf{a}\geq 0
+$$
+
+- → $\Sigma$ symmetric PSD.
+```
+
+```{tip} Derivation
+:class: dropdown
+*Why $E[XY]-E[X]E[Y]$?*
+
+1. Expand: $E[XY-XE[Y]-E[X]Y+E[X]E[Y]]$.
+2. Linearity: $E[XY]-E[X]E[Y]-E[X]E[Y]+E[X]E[Y]=E[XY]-E[X]E[Y]$.
+
+*Why $|\rho|\leq 1$?*
+
+1. Apply [Cauchy–Schwarz](limits.md#cauchy-schwarz-inequality) to the centered RVs $X-E[X]$ & $Y-E[Y]$:
+
+$$
+|Cov[X,Y]|=\left|E[(X-E[X])(Y-E[Y])]\right|\leq\sqrt{Var[X]}\sqrt{Var[Y]}=\sigma_X\sigma_Y
+$$
+
+2. Divide by $\sigma_X\sigma_Y$.
+3. Equality ⇔ centered RVs linearly dependent ⇔ $Y=aX+b$ almost surely.
+
+*Why is $\Sigma$ PSD?*
+
+1. $\mathbf{a}^T\mathbf{X}-E[\mathbf{a}^T\mathbf{X}]=\mathbf{a}^T(\mathbf{X}-E[\mathbf{X}])$.
+2. $Var[\mathbf{a}^T\mathbf{X}]=E\left[\mathbf{a}^T(\mathbf{X}-E[\mathbf{X}])(\mathbf{X}-E[\mathbf{X}])^T\mathbf{a}\right]=\mathbf{a}^T\Sigma\mathbf{a}$.
+3. Variance ≥ 0 for every $\mathbf{a}$ → PSD.
+```
+
+```{note} Example
+:class: dropdown
+**Uncorrelated ≠ independent**: $X$ uniform on $\{-1,0,1\}$, $Y=X^2$.
+- $E[X]=0$, $E[XY]=E[X^3]=0$ → $Cov[X,Y]=0$.
+- $P(Y=0\mid X=0)=1\neq P(Y=0)=\frac{1}{3}$ → dependent. $Y$ is even a function of $X$.
+- Same w/ $X\sim\mathcal{N}(0,1)$: $Cov[X,X^2]=E[X^3]=0$.
+```
+
+````{important} Code
+:class: dropdown
+```python
+import numpy as np
+
+class Covariance:
+    def __call__(self, X):
+        ## X: (m, n) samples; center each feature, then average outer products
+        Xc = X - X.mean(axis=0)
+        return Xc.T @ Xc / (len(X) - 1)        ## (n, n); m-1 -> unbiased (mean is estimated)
+
+    def corr(self, X):
+        S = self(X)
+        s = np.sqrt(np.diag(S))
+        return S / np.outer(s, s)              ## rho_jj' = Sigma_jj' / (sigma_j sigma_j')
+
+## Example: x^2 is a function of x, yet uncorrelated w/ x
+rng = np.random.default_rng(0)
+x = rng.standard_normal(100_000)
+X = np.stack([x, x**2, 2 * x + 1], axis=1)     ## (m, 3)
+print(Covariance().corr(X).round(2))           ## [0,1] ~ 0; [0,2] = 1
+## PSD; col 3 is linear in col 1 -> min eigenvalue ~ 0 (singular)
+print(np.linalg.eigvalsh(Covariance()(X)).min() > -1e-9)   ## True
+```
+````
+
+```{attention} Q&A
+:class: dropdown
+*Does uncorrelated imply independent?*
+
+- No. $X$ & $X^2$ (Example).
+- Exception: **jointly** Gaussian → uncorrelated ⇔ independent.
+- Marginally Gaussian is not enough: $X\sim\mathcal{N}(0,1)$, random sign $S=\pm 1$ indep. of $X$, $Y=SX$ → $Y\sim\mathcal{N}(0,1)$, $Cov[X,Y]=E[S]E[X^2]=0$, but $|Y|=|X|$.
+
+*What does $\rho$ measure?*
+
+- Strength of the **linear** relation only.
+- $\rho^2$ = fraction of $Var[Y]$ explained by the best linear predictor $aX+b$.
+- Nonlinear dependence can give $\rho=0$.
+
+*Covariance vs correlation?*
+
+- $Cov$: units of $X$ × units of $Y$, scale-dependent.
+- $\rho$: unit-free, invariant to positive affine rescaling of either RV.
+
+*When is $\Sigma$ singular?*
+
+- $\exists\mathbf{a}\neq\mathbf{0}$: $\mathbf{a}^T\Sigma\mathbf{a}=Var[\mathbf{a}^T\mathbf{X}]=0$ → $\mathbf{a}^T\mathbf{X}$ constant almost surely.
+- → $\mathbf{X}$ lives on an affine subspace → no density on $\mathbb{R}^n$.
+
+*Is correlation transitive?*
+
+- No. $\rho_{X,Y}=\rho_{Y,Z}=0.5$ allows $\rho_{X,Z}=-0.5$ (correlation matrix still PSD).
+
+*Pearson vs Spearman?*
+
+- Spearman = Pearson on ranks → measures monotone (not only linear) association, robust to outliers.
+
+*Does $Cov[X,Y]=0$ for independent RVs always hold?*
+
+- Only w/ finite 2nd moments. e.g., Cauchy RVs: covariance undefined.
+
+*Correlation vs causation?*
+
+- A common cause $Z$ can correlate $X$ & $Y$ w/o any causal link between them.
+
+*Where does ML use $\Sigma$?*
+
+- [PCA](../../ml/unsupervised.md#pca): eigenvectors of $\Sigma$ = directions of max variance.
+- Whitening ($\Sigma\succ0$): $\Sigma^{-1/2}(\mathbf{X}-E[\mathbf{X}])$ → identity covariance.
+- Mahalanobis distance ($\Sigma\succ0$): $\sqrt{(\mathbf{x}-E[\mathbf{X}])^T\Sigma^{-1}(\mathbf{x}-E[\mathbf{X}])}$.
+```
+
+&nbsp;
+
+### Conditional Expectation
+- **What**: Mean of $Y$ under $f(y\mid x)$, as a function of $X$.
+    - $E[Y\mid X=x]=h(x)$: a number.
+    - $E[Y\mid X]=h(X)$: a RV.
+- **Why**: Best prediction of $Y$ from $X$.
+    - Also: compute hard expectations in stages (condition first, then average).
+- **How**:
+    1. Fix $X=x$ → conditional distribution $f(y\mid x)$.
+    2. Take its mean → $h(x)$.
+    3. Plug the RV back in → $E[Y\mid X]=h(X)$.
+
+```{note} Math
+:class: dropdown
+Notations:
+- Misc:
+    - $h(x)=E[Y\mid X=x]$: Regression function.
+    - $g$: Any function w/ $E[g(X)^2]<\infty$.
+    - $\mathcal{G}\subseteq\mathcal{F}$: Sub-σ-algebra (partial info).
+
+Definition:
+
+$$
+\begin{align*}
+&\text{Discrete:}   && E[Y\mid X=x]=\sum_yyf(y\mid x) \\
+&\text{Continuous:} && E[Y\mid X=x]=\int_{-\infty}^{\infty}yf(y\mid x)\,dy
+\end{align*}
+$$
+
+- General ($E[|Y|]<\infty$): $E[Y\mid\mathcal{G}]$ = the $\mathcal{G}$-measurable RV w/ $E[E[Y\mid\mathcal{G}]\mathbb{1}_G]=E[Y\mathbb{1}_G]$ $\forall G\in\mathcal{G}$. Unique almost surely.
+- $E[Y\mid X]=E[Y\mid\sigma(X)]$; $\sigma(X)$: σ-algebra generated by $X$.
+
+Properties:
+- Tower: $E[E[Y\mid X]]=E[Y]$.
+- Take out what is known: $E[g(X)Y\mid X]=g(X)E[Y\mid X]$.
+- Independence: $X\perp Y$ → $E[Y\mid X]=E[Y]$.
+- Orthogonality: $E[(Y-E[Y\mid X])g(X)]=0$ $\forall g$ w/ $E[g(X)^2]<\infty$ ($E[Y^2]<\infty$).
+
+MSE-optimal ($E[Y^2]<\infty$):
+
+$$
+E[Y\mid X]=\arg\min_gE[(Y-g(X))^2]
+$$
+
+Law of total variance:
+
+$$
+Var[Y]=E[Var[Y\mid X]]+Var[E[Y\mid X]],\qquad Var[Y\mid X]=E[(Y-E[Y\mid X])^2\mid X]
+$$
+```
+
+```{tip} Derivation
+:class: dropdown
+*Tower (continuous):*
+
+$$
+E[h(X)]=\int h(x)f_X(x)\,dx=\iint yf(y\mid x)f_X(x)\,dy\,dx=\iint yf(x,y)\,dx\,dy=E[Y]
+$$
+
+*Orthogonality:*
+
+1. Tower: $E[(Y-h(X))g(X)]=E\left[E[(Y-h(X))g(X)\mid X]\right]$.
+2. Take out $g(X)$: $=E\left[g(X)\left(E[Y\mid X]-h(X)\right)\right]=E[g(X)\cdot 0]=0$.
+
+*MSE-optimal:*
+
+1. Add & subtract $h(X)$:
+
+$$
+E[(Y-g(X))^2]=E[(Y-h(X))^2]+2E[(Y-h(X))(h(X)-g(X))]+E[(h(X)-g(X))^2]
+$$
+
+2. $h(X)-g(X)$ is a function of $X$ → cross term = 0 (orthogonality).
+3. → $E[(Y-g(X))^2]=E[(Y-h(X))^2]+E[(h(X)-g(X))^2]\geq E[(Y-h(X))^2]$.
+4. Equality ⇔ $g(X)=h(X)$ almost surely.
+
+*Law of total variance:*
+
+1. Add & subtract $h(X)$; $E[h(X)]=E[Y]$ by tower:
+
+$$
+Var[Y]=E[(Y-h(X))^2]+E[(h(X)-E[Y])^2]+2E[(Y-h(X))(h(X)-E[Y])]
+$$
+
+2. $h(X)-E[Y]$ is a function of $X$ → cross term = 0 (orthogonality).
+3. 1st term: tower → $E\left[E[(Y-h(X))^2\mid X]\right]=E[Var[Y\mid X]]$.
+4. 2nd term: $E[(h(X)-E[h(X)])^2]=Var[E[Y\mid X]]$.
+```
+
+```{note} Example
+:class: dropdown
+$X\in\{0,1\}$ w/ prob $\frac{1}{2}$ each. $Y\mid X=0\sim\mathcal{N}(0,1)$. $Y\mid X=1\sim\mathcal{N}(2,1)$.
+- $h(0)=0$, $h(1)=2$ → $E[Y\mid X]=2X$.
+- Tower: $E[Y]=E[2X]=1$.
+- Within-group: $E[Var[Y\mid X]]=1$.
+- Between-group: $Var[E[Y\mid X]]=Var[2X]=4\cdot\frac{1}{4}=1$.
+- → $Var[Y]=2$. Check: $E[Y^2]=\frac{1}{2}(1)+\frac{1}{2}(1+4)=3$ → $Var[Y]=3-1^2=2$ ✅.
+```
+
+```{attention} Q&A
+:class: dropdown
+*$E[Y\mid X=x]$ vs $E[Y\mid X]$?*
+
+- $E[Y\mid X=x]$: a number for each $x$.
+- $E[Y\mid X]$: a RV, the function $h$ applied to $X$.
+
+*Why does MSE training learn $E[Y\mid X]$?*
+
+- Population [MSE](../../ml/obj.md#mse) is minimized by $h(X)=E[Y\mid X]$ (Derivation).
+- → Flexible model + enough data + MSE → approximates the conditional mean.
+- Other losses → other targets: absolute error → conditional median; cross-entropy → full $p(y\mid x)$.
+
+*What is the geometric picture?*
+
+- $E[Y\mid X]$ = orthogonal projection of $Y$ onto the space of square-integrable functions of $X$.
+- Residual ⊥ every $g(X)$ → orthogonality.
+- Linear regression projects onto a smaller subspace (linear functions) → never beats $E[Y\mid X]$; ties if $E[Y\mid X]$ is affine (e.g., jointly Gaussian).
+
+*Residual orthogonal to $X$ → residual independent of $X$?*
+
+- No. Only $E[Y-h(X)\mid X]=0$.
+- Residual spread can depend on $X$ (heteroskedastic noise).
+
+*What does the law of total variance say?*
+
+- Total = unexplained (avg within-group) + explained (between-group).
+- → $E[Var[Y\mid X]]\leq Var[Y]$: conditioning reduces variance on average.
+- Basis of [Rao–Blackwellization](sampling.md#rao-blackwellization): replace an estimator by its conditional expectation → same mean, ≤ variance.
+
+*Where else does it appear?*
+
+- [Martingale](process.md#martingale): $E[X_{t+1}\mid\mathcal{F}_t]=X_t$ for process $X_t$ & filtration $\mathcal{F}_t$.
+- Bellman equation: value = conditional expectation of return given the state.
+- EM E-step: expected complete-data log-likelihood given the observed data.
+```
 
 &nbsp;
 
@@ -271,7 +1035,7 @@ $$
 
 | Property                | Formula                                                                                    |
 | ----------------------- | ------------------------------------------------------------------------------------------ |
-| Normalization           | $M_X(0)=1$                                                                                 |
+| Normalization           | $\varphi_X(0)=1$                                                                               |
 | Moment generation       | $\varphi_X^{(k)}(0)=i^kE[X^k]$                                                             |
 | Linearity               | $Y=aX+b\rightarrow \varphi_Y(t)=e^{itb}\varphi_X(at)$                                      |
 | Sum (*independence*)    | $\varphi_{\sum X_i}(t)=\prod_i\varphi_{X_i}(t)$                                            |
@@ -280,710 +1044,3 @@ $$
 
 
 &nbsp;
-
-## Named Distributions
-The math of each distribution is contained in its Math block, following this structure:
-- PDF/CDF
-- Support & Constraints
-- Parameters (stable parameterization)
-    - How parameters affect location, spread, shape.
-- Shape & tails
-- Moments (at least Mean & Variance)
-- Entropy
-- Transformations (only choose the ones that are applicable)
-    - Affine transform
-    - Recursion
-    - Sum
-    - Product/Ratio
-    - Log/Exp
-    - Min/Max
-- Marginals/Conditionals (if multivariate)
-- Sampling
-- Relationship w/ other distributions (including KL if applicable)
-
-### Discrete
-#### Bernoulli
-- **What**: Description of **a random event** w/ ONLY 2 possible outcomes, w/ a fixed probability of one of them happening.
-- **Why**:
-    - "Yes/No" situations show up everywhere.
-    - Once we can model one event, we can model multiple (i.e., Binomial).
-
-```{note} Math
-:class: dropdown
-Notation:
-$$
-X\sim\text{Bern}(p)
-$$
-
-PMF/CDF:
-$$\begin{align*}
-&\text{PMF:} && P(X=x)=p^x(1-p)^{1-x} \\
-&\text{CDF:} && F(x)=\begin{cases}
-1-p & x=0 \\
-1   & x=1
-\end{cases}
-\end{align*}$$
-- Support: $x\in\{0,1\}$
-- Params: 
-    - $p=P(X=1)\in[0,1]$: Probability of $X=1$.
-
-Shape:
-- 2 points.
-    - Right point: $P(X=1)$
-    - Left point: $P(X=0)$
-
-Moments:
-|  |  |
-|------ |------- |
-| Mean   | $E[X]=p$ |
-| Variance | $Var[X]=p(1-p)$ |
-| MGF    | $M_X(t)=(1-p)+pe^t$ |
-
-Entropy:
-$$
-H(X)=-p\log p-(1-p)\log(1-p)
-$$
-- $\arg\max_pH(p)=\frac{1}{2}$
-- $\max_pH(p)=\log2$
-- $p\updownarrow$ $\longrightarrow$ $H(p)\rightarrow 0$
-
-Transformations:
-|  |  |
-|:-------- |:------- |
-| Sum (i.i.d.)   | $\sum_{i=1}^nX_i\sim\text{Bin}(n,p)$ |
-| Product        | $X,Y\sim\text{Bern}(p)(q)\rightarrow XY\sim\text{Bern}(pq)$ |
-
-Sampling:
-1. Draw $U\sim\text{Unif}(0,1)$.
-2. Set $X=\bm{1}\{U\leq p\}$.
-
-KLD:
-- $P=\text{Bern}(p),Q=\text{Bern}(q),p,q\in(0,1)$:
-$$
-D_{KL}(P||Q)=p\log\frac{p}{q}+(1-p)\log\frac{1-p}{1-q}
-$$
-```
-
-&nbsp;
-
-#### Binomial
-- **What**: Probability of **#times** an event occurs out of a fixed number of independent, identical binary trials.
-- **Why**: To monitor repeated chance events.
-
-```{note} Math
-:class: dropdown
-Notation:
-$$
-X\sim\text{Bin}(n,p)
-$$
-
-PMF/CDF:
-$$\begin{align*}
-&\text{PMF:} && P(X=k)=\begin{pmatrix}
-n \\ k
-\end{pmatrix}p^k(1-p)^{n-k} \\
-&\text{CDF:} && P(X\leq x)=\sum_{k=0}^{\lfloor x\rfloor}\begin{pmatrix}
-n \\ k
-\end{pmatrix}p^k(1-p)^{n-k}
-\end{align*}$$
-- Support: $x\in\{0,\cdots,n\}$: #times the event occurs.
-- Params: 
-    - $n\in\mathbb{N}$: #trials.
-    - $p=P(X=x)\in[0,1]$: Probability that the event occurs per trial.
-
-Shape:
-- Unimodal (i.e., one peak/mode) at $m=\lfloor(n+1)p\rfloor$.
-- Skewness:
-    - $p\leq\frac{1}{2}$: Right (mass → 0)
-    - $p>\frac{1}{2}$: Left (mass → $n$)
-
-Moments:
-|  |  |
-|:------ |:------- |
-| Mean   | $E[X]=np$ |
-| Variance | $Var[X]=np(1-p)$ |
-| MGF    | $M_X(t)=(1-p+pe^t)^n$ |
-
-Entropy:
-$$
-H(X)=-\sum_{x=0}^nP(X=x)\log P(X=x)
-$$
-- $\forall n\in\mathbb{N}: \arg\max_pH(p)=\frac{1}{2}$
-
-Transformations:
-|  |  |
-|:-------- |:------- |
-| Recursion                                | $\frac{P(X=k+1)}{P(X=k)}=\frac{n-k}{k+1}\frac{p}{1-p}$   |
-| Sum                                      | $X_n\sim\text{Bin}(n,p),X_m\sim\text{Bin}(m,p)$ <br>$\rightarrow X=X_n+X_m\sim\text{Bin}(n+m,p)$  |
-| Approximation by Normal Distribution | $X\sim\text{Bin}(n,p)\rightarrow \frac{X-E[X]}{Var[X]} \xRightarrow[n\to\infty]{} N(0,1)$ |
-
-Sampling:
-1. Draw $n$ independent $U_i\sim\text{Unif}(0,1)$.
-2. Set $X_i=\bm{1}\{U_i\leq p\}$.
-3. Output $X=\sum_iX_i$.
-
-Relationship w/ other distributions:
-- Poisson limit:
-$$
-X_n\sim\text{Bin}(n,\frac{\lambda}{n})\longrightarrow X_n \xRightarrow[n\to\infty]{} \text{Pois}(\lambda)
-$$
-- Normal approximation (CLT):
-$$
-X\sim\text{Bin}(n,p)\rightarrow \frac{X-E[X]}{Var[X]} \xRightarrow[n\to\infty]{} N(0,1)
-$$
-
-KLD:
-- $P=\text{Bin}(n,p),Q=\text{Bin}(n,q),p,q\in(0,1)$:
-$$
-D_{KL}(P||Q)=n\left[p\log\frac{p}{q}+(1-p)\log\frac{1-p}{1-q}\right]
-$$
-```
-
-&nbsp;
-
-#### Categorical
-- **What**: Bernoulli BUT w/ >2 possible outcomes.
-- **Why**: Many random events have >2 possible outcomes, so Bernoulli isn't enough.
-
-```{note} Math
-:class: dropdown
-Notation:
-$$
-X\sim\text{Cat}(\mathbf{p})
-$$
-
-PMF/CDF:
-$$\begin{align*}
-&\text{PMF:} && P(X=k)=p_k \\
-&\text{CDF:} && F(x)=P(X\leq x)=\sum_{i=1}^{\lfloor x\rfloor}p_i
-\end{align*}$$
-- Support: $x\in\{1,\dots,K\}$
-- Params:
-    - $\mathbf{p}=(p_1,\dots,p_K)$: Probabilities for all categories. 
-        - $p_k=P(X=k)\in[0,1]$: Probability of category $k$.
-        - $\sum_i p_i=1$
-
-Shape:
-- $K$ point masses (a bar plot over categories)
-
-Moments:
-- Assume one-hot view: $Y\in\{0,1\}^K$ by $Y_k=\mathbf 1\{X=k\}$.
-
-|  |  |
-|:------ |:------- |
-| Mean   | $E[Y]=\mathbf{p}$ |
-| Variance | $Var[Y_k]=p_k(1-p_k)$ |
-| Covariance | $Cov(Y_i,Y_j)=-p_ip_j,\quad\forall i\neq j$ |
-| MGF (scalar view)    | $M_X(t)=\sum_{k=1}^Kp_ke^{tk}$ |
-
-Entropy:
-$$
-H(X)=-\sum_{k=1}^K p_k\log p_k
-$$
-
-- $\arg\max_{\mathbf p} H(\mathbf p)$ is the uniform distribution $p_k=\frac1K$.
-- $\max H=\log K$.
-- If $p_k\to 1$ & others $\to 0$, then $H\to 0$.
-
-Sampling:
-1. Draw $U\sim\text{Unif}(0,1)$.
-2. Set $X=\min\{j:\sum_{i=1}^j p_i\ge U\}$
-   - (i.e., pick the first category whose cumulative probability exceeds $U$.)
-
-KLD:
-- $P=\text{Cat}(\mathbf p),\ Q=\text{Cat}(\mathbf q)$, $p_k,q_k\in(0,1)$:
-$$
-D_{KL}(P|Q)=\sum_{k=1}^K p_k\log\frac{p_k}{q_k}
-$$
-```
-
-&nbsp;
-
-#### Multinomial
-- **What**: Binomial BUT w/ >2 possible outcomes.
-- **Why**: Many random events have >2 possible outcomes, so Binomial isn't enough.
-
-```{note} Math
-:class: dropdown
-Notation:
-$$
-\mathbf{X}\sim\text{Mult}(n,\mathbf{p})
-$$
-
-PMF/CDF:
-$$\begin{align*}
-&\text{PMF:} && P(\mathbf{X}=\mathbf{x})=\frac{n!}{\prod_{k=1}^K x_k!}\prod_{k=1}^K p_k^{x_k} \\
-&\text{CDF:} && F(\mathbf{x})=P(\mathbf{X}\le \mathbf{x})=\sum_{\substack{\mathbf{y}\in\mathbb{N}_0^K:\ \sum_k y_k=n,\forall k:\ y_k\le x_k}}\frac{n!}{\prod_{k=1}^K y_k!}\prod_{k=1}^K p_k^{y_k}
-\end{align*}$$
-- Support: $\mathbf{x}=(x_1,\dots,x_K)\in\mathbb{N}_0^K$
-    - $x_k$: #occurrences of category $k$.
-    - $\sum_{k=1}^K x_k=n$.
-- Params:
-    - $n\in\mathbb{N}$: #trials.
-    - $\mathbf{p}=(p_1,\dots,p_K)$: Probabilities for all categories.
-        - $p_k\in[0,1]$: Probability of category $k$ per trial.
-        - $\sum_i p_i=1$.
-
-Shape:
-- A distribution over $K$-dimensional count vectors (mass on $\sum_k x_k=n$)
-
-Moments:
-|  |  |
-|:------ |:------- |
-| Mean   | $E[\mathbf{X}]=n\mathbf{p}$ |
-| Variance | $Var[X_k]=np_k(1-p_k)$ |
-| Covariance | $Cov(X_i,X_j)=-np_ip_j,\quad\forall i\neq j$ |
-| MGF    | $M_{\mathbf{X}}(\mathbf{t})=\left(\sum_{k=1}^K p_k e^{t_k}\right)^n$ |
-
-Entropy:
-$$
-H(\mathbf{X})=-\sum_{\substack{\mathbf{x}\in\mathbb{N}_0^K:\ \sum_k x_k=n}} P(\mathbf{X}=\mathbf{x})\log P(\mathbf{X}=\mathbf{x})
-$$
-- $\arg\max_{\mathbf p} H(\mathbf{X})$ occurs at the uniform distribution $p_k=\frac1K$ (for fixed $n,K$).
-- No simple closed form for $\max H$.
-- If $p_k\to 1$ & others $\to 0$, $\mathbf{X}$ concentrates on $(0,\dots,n,\dots,0)$, $H\to 0$.
-
-Sampling:
-1. Draw $X^{(1)},\dots,X^{(n)}\overset{i.i.d.}{\sim}\text{Cat}(\mathbf{p})$.
-2. Set $X_k=\sum_{m=1}^n \mathbf{1}\{X^{(m)}=k\}$ for each $k$.
-   - (i.e., count how many times each category appears.)
-
-KLD:
-- $P=\text{Mult}(n,\mathbf p),\ Q=\text{Mult}(n,\mathbf q)$, $p_k,q_k\in(0,1)$:
-$$
-D_{KL}(P|Q)=n\sum_{k=1}^K p_k\log\frac{p_k}{q_k}
-$$
-```
-
-&nbsp;
-
-#### Poisson
-- **What**: Probability of #occurrences of an event in a fixed time/space interval, given an average occurrence rate.
-- **Why**: "How many times will something happen?"
-
-```{note} Math
-:class: dropdown
-Notation:
-$$
-X\sim\text{Pois}(\lambda)
-$$
-
-PMF/CDF:
-$$\begin{align*}
-&\text{PMF:} && P(X=k)=e^{-\lambda}\frac{\lambda^k}{k!} \\
-&\text{CDF:} && P(X\leq x)=e^{-\lambda}\sum_{k=0}^{x}\frac{\lambda^k}{k!}
-\end{align*}$$
-- Support: $x\in\{0,1,\dots\}$: #times the event occurs.
-- Params:
-    - $\lambda>0$: Avg occurrence rate.
-
-Shape:
-- For small $\lambda$, mass is concentrated near 0 & is right-skewed.
-- For large $\lambda$, it approaches Normal distribution shape.
-
-Moments:
-|  |  |
-|:------ |:------- |
-| Mean   | $E[X]=\lambda$ |
-| Variance | $Var[X]=\lambda$ |
-| MGF    | $M_X(t)=\exp(\lambda(e^t-1))$ |
-
-Transformations:
-|  |  |
-|:-------- |:------- |
-| Recursion                                | $P(X=k+1)=\frac{\lambda}{k+1}P(X=k)$   |
-| Sum (independent)         | $X_i\sim\text{Pois}(\lambda_i)\rightarrow \sum_{i=1}^nX_i\sim\text{Pois}\left(\sum_{i=1}^n\lambda_i\right)$  |
-
-Sampling:
-- Knuth's product method (for small $\lambda$):
-    1. Set $L=e^{-\lambda},k=0,P=1$.
-    2. While $P>L$:
-        1. $k\leftarrow k+1$.
-        2. $P\leftarrow PU_k,\quad U_k\sim\text{Unif}(0,1)$.
-    3. Output $X=k-1$.
-- CDF inversion:
-    1. Draw $U\sim\text{Unif}(0,1)$.
-    2. Output smallest $k$ with $F_\lambda(k)\geq U$.
-
-Relationship w/ other distributions:
-- Poisson limit for Binomial:
-$$
-X_n\sim\text{Bin}(n,\frac{\lambda}{n})\longrightarrow X_n \xRightarrow[n\to\infty]{} \text{Pois}(\lambda)
-$$
-- Normal approximation: For large $\lambda$:
-$$
-X\approx N(\lambda,\lambda)
-$$
-
-KLD:
-- $P=\text{Pois}(\lambda),Q=\text{Pois}(\mu)$:
-$$
-D_{KL}(P||Q)=\lambda\log\frac{\lambda}{\mu}+\mu-\lambda
-$$
-```
-
-&nbsp;
-
-### Continuous
-#### Normal/Gaussian
-- **What**: Probability of the sum/avg of many independent random outcomes.
-    - Most outcomes land near the mean.
-    - Very large/small outcomes are rare.
-
-```{note} Math
-:class: dropdown
-Notation:
-$$
-X\sim N(\mu,\sigma^2)
-$$
-
-PDF/CDF:
-$$\begin{align*}
-&\text{PDF:} && f(x)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right) \\
-&\text{CDF:} && F(x)=\Phi\left(\frac{x-\mu}{\sigma}\right) \\
-&\text{Standard CDF:} && \Phi(z)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^z\exp\left(-\frac{t^2}{2}\right)dt
-\end{align*}$$
-- Support: $x\in\mathbb{R}$: A random outcome.
-- Params:
-    - $\mu\in\mathbb{R}$: Mean (center location).
-    - $\sigma>0$: Standard deviation (scale).
-
-Shape:
-- Unimodal at $\mu$.
-- Symmetric about $\mu$.
-- Gaussian tails:
-$$
-P(|X-\mu|\ge t)\leq 2\exp\left(-\frac{t^2}{2\sigma^2}\right)
-$$
-
-Moments:
-|  |  |
-|:------ |:------- |
-| Mean   | $E[X]=\mu$ |
-| Variance | $Var[X]=\sigma^2$ |
-| MGF    | $M_X(t)=\exp\left(\mu t+\frac{1}{2}\sigma^2t^2\right)$ |
-
-Entropy:
-$$
-h(X)=\frac{1}{2}\log(2\pi e \sigma^2)
-$$
-- Independent of $\mu$.
-- **Max** among all continuous distributions with fixed $\sigma^2$.
-
-Transformations:
-|  |  |
-|:-------- |:------- |
-| Linearity                     | $a\neq0\rightarrow aX+b\sim N(a\mu+b,a^2\sigma^2)$ |
-| Sum (*independence*)                                        | $\sum_{i=1}^{n}X_i\sim N\left(\sum_{i=1}^{n}\mu_i,\sum_{i=1}^{n}\sigma_i^2\right)$ |
-| Standardization | $Z=\frac{X-\mu}{\sigma}\sim N(0,1)$                                        |
-| Inflection Points | $f''_X(x)=0\Longleftrightarrow x=\mu\pm\sigma$ |
-| Empirical Probabilities | $P(\|X-\mu\|\leq\sigma)\approx 0.68$<br>$P(\|X-\mu\|\leq2\sigma)\approx 0.95$<br>$P(\|X-\mu\|\leq3\sigma)\approx 0.997$ |
-
-Sampling:
-- Box-Muller:
-    1. Sample $U_1,U_2\sim\text{Unif}(0,1)$.
-    2. Set $Z_1=\sqrt{-2\log U_1}\cos(2\pi U_2),Z_2=\sqrt{-2\log U_1}\sin(2\pi U_2)$.
-    3. Output $Z_1,Z_2\sim N(0,1)$.
-- Sampling (after Box-Muller):
-    1. Sample $Z\sim N(0,1)$.
-    2. Output $X=\mu+\sigma Z$.
-
-Relationship w/ other distributions:
-- Chi-square:
-$$
-Z_i\overset{i.i.d.}{\sim}N(0,1)\longrightarrow\sum_{i=1}^nZ_i^2\sim\chi_n^2
-$$
-- Chi-square & Student t:
-$$
-Z\sim N(0,1),V\sim\chi_v^2\longrightarrow\frac{Z}{\sqrt{\frac{V}{v}}}\sim t_v
-$$
-- Lognormal:
-$$
-X\sim N(\mu,\sigma^2)\longrightarrow \exp(X)\sim\text{LogN}(\mu,\sigma^2)
-$$
-
-
-KLD:
-- $P=N(\mu_0,\sigma_0^2),Q=N(\mu_1,\sigma_1^2)$:
-$$
-D_{KL}(P||Q)=\log\frac{\sigma_1}{\sigma_0}+\frac{\sigma_0^2+(\mu_0-\mu_1)^2}{2\sigma_1^2}-\frac{1}{2}
-$$
-```
-
-&nbsp;
-
-#### Lognormal
-- **What**: Probability of the product of many independent, **positive** random growth factors.
-    - If the **log** of a variable is **Normal**, then the variable is **Lognormal**.
-- **Why**:
-    - Many quantities are made by multiplying & can't go below 0.
-    - BUT once they take a log, they behave like normal.
-
-```{note} Math
-:class: dropdown
-Notation:
-$$
-X\sim\text{LogN}(\mu,\sigma^2)\Leftrightarrow\log X\sim N(\mu,\sigma^2)
-$$
-
-PDF/CDF:
-$$\begin{align*}
-&\text{PDF:} && f(x)=\frac{1}{x\sqrt{2\pi}\sigma}\exp\left(-\frac{(\log x-\mu)^2}{2\sigma^2}\right), x>0 \\
-&\text{CDF:} && F(x)=\Phi\left(\frac{\log x-\mu}{\sigma}\right), x>0
-\end{align*}$$
-- Support: $x\in(0,\infty)$: A random growth factor.
-- Params:
-    - $\mu\in\mathbb{R}$: Mean.
-    - $\sigma>0$: Standard deviation.
-
-Shape:
-- Unimodal at $\mu$.
-- Strictly right-skewed.
-
-Moments:
-|  |  |
-|:------ |:------- |
-| Mean     | $E[X]=\exp\left(\mu+\frac{\sigma^2}{2}\right)$  |
-| Variance | $Var[X]=\left(e^{\sigma^2}-1\right)\exp\left(2\mu+\sigma^2\right)$ |
-| MGF    | Non-existent |
-
-Entropy:
-$$
-h(X)=\mu+\log(\sigma\sqrt{2\pi})+\frac 1 2
-$$
-
-Transformations:
-|  |  |
-|:-------- |:------- |
-| Scale    | $a>0\rightarrow aX\sim\text{LogN}(\mu+\log c,\sigma^2)$                                                                                                         |
-| Power    | $k\in\mathbb{R}\rightarrow X^k\sim\text{LogN}(k\mu,k^2\sigma^2)$                                                                                                |
-| Product  | $X_1\sim\text{LogN}(\mu_1,\sigma_1^2),X_2\sim\text{LogN}(\mu_2,\sigma_2^2)$<br>$\rightarrow X_1X_2\sim\text{LogN}(\mu_1+\mu_2,\sigma_1^2+\sigma_2^2)$ |
-| Ratio    | If independent as above, $\frac{X_1}{X_2}\sim\text{LogN}(\mu_1-\mu_2,\sigma_1^2+\sigma_2^2)$                                                                    |
-
-Sampling:
-1. Sample $Z\sim N(0,1)$.
-2. Output $X=\exp(\mu+\sigma Z)$.
-
-KLD:
-- $P=\text{LogN}(\mu_0,\sigma_0^2),Q=\text{LogN}(\mu_1,\sigma_1^2)$:
-$$
-D_{KL}(P||Q)=D_{KL}(\log P||\log Q)
-$$
-```
-
-&nbsp;
-
-#### Exponential
-- **What**: Probability of the waiting time till the next event when events happen randomly at an avg rate.
-- **Why**: A good match with Poisson distribution.
-    - If events happen randomly at a steady avg rate, then "no event yet" gets exponentially unlikely as time passes.
-        - Constant-rate randomness forces exponential waiting.
-        - Poisson randomness over time is memoryless.
-
-```{note} Math
-:class: dropdown
-Notation:
-$$
-X\sim\text{Exp}(\lambda)
-$$
-
-PDF/CDF:
-$$\begin{align*}
-&\text{PDF:} && f(x)=\lambda e^{-\lambda x}, x\geq 0 \\
-&\text{CDF:} && F(x)=1-e^{-\lambda x}, x\geq 0
-\end{align*}$$
-- Support: $x\in[0,\infty)$: Waiting time.
-- Params:
-    - $\lambda>0$: Avg event occurrence rate (i.e., time scale).
-
-Shape:
-- Unimodal at 0.
-- Strictly decreasing as $\lambda$ increases.
-
-Moments:
-|  |  |
-|:------ |:------- |
-| Mean     | $E[X]=\frac 1 \lambda$  |
-| Variance | $Var[X]=\frac 1 \lambda^2$ |
-| All moments    | $E[X^k]=\frac{k!}{\lambda^k}$ |
-| MGF | $M_X(t)=E[e^{tX}]=\frac \lambda {\lambda-t},\quad \forall t<\lambda$ |
-
-Entropy:
-$$
-h(X)=1-\log\lambda
-$$
-- Spread ↑ → Entropy ↑.
-
-Transformations:
-|  |  |
-|:-------- |:------- |
-| Scale    | $a>0\rightarrow aX\sim\text{Exp}(\frac\lambda a)$ |
-| Recursion (Memoryless)    | $P(X>s+x\|X>s)=P(X>x)$<br>No matter how long you've waited, you are starting over. |
-| Sum (*i.i.d.*) | $X_i\overset{i.i.d.}{\sim}\text{Exp}(\lambda)\rightarrow\sum_{i=1}^nX_i\sim\text{Gamma}(n,\text{rate}=\lambda)$ |
-
-Sampling:
-1. Sample $U\sim\text{Unif}(0,1)$.
-2. Output $X=\frac{-\log U}{\lambda}$.
-
-Relationship w/ other distributions:
-- Gamma special case:
-$$
-\text{Exp}(\lambda)=\text{Gamma}(1,\text{rate}=\lambda)
-$$
-- Uniform:
-$$
-U\sim\text{Unif}(0,1)\Leftrightarrow\frac{-\log U}{\lambda}\sim\text{Exp}(\lambda)
-$$
-
-KLD:
-- $P=\text{Exp}(\lambda_0),Q=\text{LogN}(\lambda_1)$:
-$$
-D_{KL}(P||Q)=\log\frac{\lambda_0}{\lambda_1}+\frac{\lambda_1}{\lambda_0}-1
-$$
-```
-
-&nbsp;
-
-#### Gamma
-- **What**: Description of **wait time** till a certain number of random events have happened. 
-    - Exponential: till 1 occurrence.
-    - Gamma: till $k$ occurrences.
-- **Why**: Generalization of Exponential distribution.
-
-```{note} Math
-:class: dropdown
-Notation:
-$$
-X\sim\text{Gamma}(\alpha,\beta)
-$$
-
-PDF/CDF:
-$$\begin{align*}
-&\text{PDF:} && f(x)=\frac{\beta^\alpha}{\Gamma(\alpha)}x^{\alpha-1}e^{-\beta x} \\
-&\text{CDF:} && F(x)=\frac{\gamma(\alpha,\beta x)}{\Gamma(\alpha)}
-\end{align*}$$
-- Support: $x\ge 0$: Wait time.
-- Params:
-    - $\alpha>0$: Shape.
-    - $\beta>0$: Rate.
-
-Gamma Functions:
-- **Complete**: Full area under a Gamma-shaped curve.
-$$\begin{align*}
-&\Gamma(x)=\int_0^\infty t^{x-1}e^{-t}dt \\
-&\Gamma(x+1)=x\Gamma(x) \\
-&\Gamma(n)=(n-1)!,\quad n\in\mathbb{Z},n>0
-\end{align*}$$
-- **Lower incomplete**: Left.
-$$
-\gamma(\alpha,x)=\int_0^x t^{\alpha-1}e^{-t}dt
-$$
-- **Upper incomplete**: Right.
-$$
-\Gamma(\alpha,x)=\int_x^\infty t^{\alpha-1}e^{-t}dt
-$$
-- Relationship:
-$$
-\Gamma(\alpha)=\gamma(\alpha,x)+\Gamma(\alpha,x)
-$$
-
-Shape:
-- Shape w.r.t. $\alpha$:
-    - $\alpha\in(0,1)$: Blows up at 0 then decreases.
-    - $\alpha=1$: Exponential distribution.
-    - $\alpha>1$: Unimodal at $\frac{\alpha-1}{\beta}$.
-- Tail behavior:
-    - $x\rightarrow0: f(x)\propto x^{\alpha-1}$
-    - $x\rightarrow1: f(x)\approx \text{poly}(x)e^{-\beta x}$
-        - i.e., Exponential tail with rate $\beta$.
-
-Moments:
-|  |  |
-|:------ |:------- |
-| Mean     | $E[X]=\frac\alpha\beta$  |
-| Variance | $Var[X]=\frac{\alpha}{\beta^2}$ |
-| All moments    | $E[X^k]=\frac{\Gamma(\alpha+k)}{\Gamma(\alpha)}\frac{1}{\beta^k}$ |
-| MGF | $M_X(t)=\left(\frac{\beta}{\beta-t}\right)^\alpha,\quad t<\beta$ |
-
-Entropy:
-$$
-h(X)=\alpha-\log\beta+\log\Gamma(\alpha)+(1-\alpha)\varphi(\alpha)
-$$
-- $\varphi(\alpha)=\frac{\Gamma'(x)}{\Gamma(x)}$: Digamma function.
-- Rate: $\beta$↑ → $h$↓.
-- Shape: $\alpha$↑ → approximates Normal distribution.
-
-Transformations:
-|  |  |
-|:-------- |:------- |
-| Scale    | $c>0\rightarrow cX\sim\text{Gamma}(\alpha,\frac\beta c)$ |
-| Recursion (*shape increment*) | $E\sim\text{Exp}(\beta)\rightarrow X+E\sim\text{Gamma}(\alpha+1,\beta)$ |
-| Sum (*independent, common rate*) | $X_i\sim\text{Gamma}(\alpha_i,\beta)\rightarrow\sum_{i=1}^nX_i\sim\text{Gamma}(\sum_{i=1}^n\alpha_i,\beta)$ |
-| Ratio (*independent, common rate*) | $Y\sim\text{Gamma}(\gamma,\beta)\rightarrow\frac{X}{X+Y}\sim\text{Beta}(\alpha,\gamma)$ |
-```
-
-&nbsp;
-
-#### Beta
-- **What**: Description of **uncertainty about a probability**.
-- **Why**: We don't always know the actual probabilities.
-    - We need something to monitor probabilities themselves.
-    - This thing updates cleanly when we get new info about the probability.
-    - This thing represents prior beliefs.
-
-```{note} Math
-:class: dropdown
-Notation:
-$$
-X\sim\text{Beta}(\alpha,\beta)
-$$
-
-PDF/CDF:
-$$\begin{align*}
-&\text{PDF:} && f(x)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1} \\
-&\text{CDF:} && F(x)=\frac{B(x;\alpha,\beta)}{B(\alpha,\beta)}
-\end{align*}$$
-- Support: $x\in[0,1]$: Probability.
-- Params:
-    - Standard:
-        - $\alpha>0$: Behavior control near 0.
-        - $\beta>0$: Behavior control near 1.
-    - Interpretable:
-        - $\mu=E[X]=\frac{\alpha}{\alpha+\beta}\in(0,1)$: Mean.
-        - $\kappa=\alpha+\beta>0$: Concentration.
-            - $\alpha=\mu\kappa,\quad\beta=(1-\mu)\kappa$.
-
-Beta Function:
-$$\begin{align*}
-&B(\alpha,\beta)=\int_0^1t^{\alpha-1}(1-t)^{\beta-1}dt=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} \\
-&B(x;\alpha,\beta)=\int_0^xt^{\alpha-1}(1-t)^{\beta-1}dt \\
-&B(\alpha+1,\beta)=\frac{\alpha}{\alpha+\beta}B(\alpha,\beta) \\
-&B(\alpha,\beta+1)=\frac{\beta}{\alpha+\beta}B(\alpha,\beta)
-\end{align*}$$
-
-Shape:
-- Location: Mass sits at $\mu$.
-- Spread: For fixed $\mu$, larger $\kappa$ concentrates around $\mu$ (smaller variance).
-- Skewness: For fixed $\kappa$, moving $\mu$ toward 0 or 1 shifts skew accordingly.
-- Tail behavior:
-    - $x\rightarrow0: f(x)\propto x^{\alpha-1}$
-    - $x\rightarrow1: f(x)\propto (1-x)^{\beta-1}$
-- Typical global shapes:
-    - $\alpha>1,\beta>1$: Unimodal at $\frac{\alpha-1}{\alpha+\beta-2}$.
-    - $\alpha<1,\beta<1$: U-shaped (mass near both ends).
-    - $\alpha<1,\beta>1$: J-shaped (mass near 0).
-    - $\alpha>1,\beta<1$: Reverse J-shaped (mass near 1).
-    - $\alpha=\beta=1$: Uniform(0,1).
-
-Moments:
-|  |  |
-|:------ |:------- |
-| Mean     | $E[X]=\mu$  |
-| Variance | $Var[X]=\frac{\mu(1-\mu)}{\kappa+1}$ |
-| All moments    | $(a)_k=a(a+1)\cdots(a+k-1)\rightarrow E[X^k]=\frac{(\alpha)_k}{(\alpha+\beta)_k}$ |
-
-Sampling:
-- Gamma ratio:
-    1. Sample $G_1\sim\Gamma(\alpha,1),G_2\sim\Gamma(\beta,1)$.
-    2. Output $X=\frac{G_1}{G_1+G_2}$.
-```

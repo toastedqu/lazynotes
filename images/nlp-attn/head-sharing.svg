@@ -1,0 +1,200 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" width="960" height="360" data-generator="fireworks-tech-graph" data-schema-version="1" data-text-metrics="heuristic-v1" data-style-id="4" data-visual-theme="Notion Clean" data-diagram-type="architecture" data-motion-scene="" data-semantic-profile="generic" data-semantic-valid="true" data-quality-profile="standard" data-max-bends-per-edge="12" data-max-total-bends="100" data-max-route-stretch="5.0" data-max-bridged-crossings="8" data-min-node-gap="0.0" data-min-container-gutter="0.0" data-min-label-clearance="2.0" data-min-segment-length="0.0">
+  <defs>
+    <marker id="arrowA" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowB" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowC" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowE" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowF" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#9ca3af"/>
+    </marker>
+    <marker id="arrowG" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#9ca3af"/>
+    </marker>
+    <marker id="arrowH" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#d1d5db"/>
+    </marker>
+    <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', 'Microsoft JhengHei', 'SimHei', sans-serif; }
+    .title { font-size: 18px; font-weight: 700; fill: #111827; }
+    .subtitle { font-size: 13px; font-weight: 500; fill: #9ca3af; }
+    .section { font-size: 13px; font-weight: 700; fill: #6b7280; letter-spacing: 1.4px; }
+    .section-sub { font-size: 12px; font-weight: 500; fill: #6b7280; }
+    .node-title { font-weight: 700; fill: #111827; }
+    .node-sub { font-weight: 500; fill: #374151; }
+    .node-type { font-size: 11px; font-weight: 700; fill: #6b7280; letter-spacing: 0.08em; }
+    .arrow-label { font-size: 12px; font-weight: 600; fill: #6b7280; }
+    .legend { font-size: 12px; font-weight: 500; fill: #6b7280; }
+    .footnote { font-size: 12px; font-weight: 500; fill: #6b7280; }
+    .metric-label { font-size: 8.5px; font-weight: 700; fill: #6b7280; text-transform: uppercase; }
+    .metric-value { font-size: 9.5px; font-weight: 700; fill: #111827; }
+    </style>
+  </defs>
+  <rect data-graph-role="background" width="960.0" height="360.0" fill="#ffffff"/>
+  <g id="mha" data-graph-role="container" data-container-id="mha" data-semantic-role="boundary" data-graph-bounds="16,20,232,320">
+  <rect data-graph-role="container" x="16.0" y="20.0" width="216.0" height="300.0" rx="4.0" fill="none" stroke="#e5e7eb" stroke-width="1.4"/>
+  <text x="34.0" y="44.0" class="section">MHA</text>
+  <text x="34.0" y="64.0" class="section-sub">4 KV heads</text>
+    <rect id="mha-header" data-graph-role="reserved" data-reserved-kind="container-header" x="24" y="26" width="94.32" height="54" fill="none" stroke="none"/>
+  </g>
+  <g id="gqa" data-graph-role="container" data-container-id="gqa" data-semantic-role="boundary" data-graph-bounds="248,20,464,320">
+  <rect data-graph-role="container" x="248.0" y="20.0" width="216.0" height="300.0" rx="4.0" fill="none" stroke="#e5e7eb" stroke-width="1.4"/>
+  <text x="266.0" y="44.0" class="section">GQA</text>
+  <text x="266.0" y="64.0" class="section-sub">2 KV heads, 1 per group</text>
+    <rect id="gqa-header" data-graph-role="reserved" data-reserved-kind="container-header" x="256" y="26" width="173.76" height="54" fill="none" stroke="none"/>
+  </g>
+  <g id="mqa" data-graph-role="container" data-container-id="mqa" data-semantic-role="boundary" data-graph-bounds="480,20,696,320">
+  <rect data-graph-role="container" x="480.0" y="20.0" width="216.0" height="300.0" rx="4.0" fill="none" stroke="#e5e7eb" stroke-width="1.4"/>
+  <text x="498.0" y="44.0" class="section">MQA</text>
+  <text x="498.0" y="64.0" class="section-sub">1 KV head, shared by all</text>
+    <rect id="mqa-header" data-graph-role="reserved" data-reserved-kind="container-header" x="488" y="26" width="174.48" height="54" fill="none" stroke="none"/>
+  </g>
+  <g id="mla" data-graph-role="container" data-container-id="mla" data-semantic-role="boundary" data-graph-bounds="712,20,928,320">
+  <rect data-graph-role="container" x="712.0" y="20.0" width="216.0" height="300.0" rx="4.0" fill="none" stroke="#e5e7eb" stroke-width="1.4"/>
+  <text x="730.0" y="44.0" class="section">MLA</text>
+  <text x="730.0" y="64.0" class="section-sub">1 latent per token</text>
+    <rect id="mla-header" data-graph-role="reserved" data-reserved-kind="container-header" x="720" y="26" width="144.24" height="54" fill="none" stroke="none"/>
+  </g>
+  <path id="mha-q0-kv0" data-graph-role="edge" data-edge-id="mha-q0-kv0" data-source="mha-q0" data-target="mha-kv0" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 49,260 L 49,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mha-q1-kv1" data-graph-role="edge" data-edge-id="mha-q1-kv1" data-source="mha-q1" data-target="mha-kv1" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 99,260 L 99,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mha-q2-kv2" data-graph-role="edge" data-edge-id="mha-q2-kv2" data-source="mha-q2" data-target="mha-kv2" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 149,260 L 149,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mha-q3-kv3" data-graph-role="edge" data-edge-id="mha-q3-kv3" data-source="mha-q3" data-target="mha-kv3" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 199,260 L 199,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="gqa-q0-kv0" data-graph-role="edge" data-edge-id="gqa-q0-kv0" data-source="gqa-q0" data-target="" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 281,260 L 281,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="gqa-q1-kv0" data-graph-role="edge" data-edge-id="gqa-q1-kv0" data-source="gqa-q1" data-target="" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 331,260 L 331,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="gqa-q2-kv1" data-graph-role="edge" data-edge-id="gqa-q2-kv1" data-source="gqa-q2" data-target="" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 381,260 L 381,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="gqa-q3-kv1" data-graph-role="edge" data-edge-id="gqa-q3-kv1" data-source="gqa-q3" data-target="" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 431,260 L 431,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mqa-q0-kv0" data-graph-role="edge" data-edge-id="mqa-q0-kv0" data-source="mqa-q0" data-target="" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 513,260 L 513,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mqa-q1-kv0" data-graph-role="edge" data-edge-id="mqa-q1-kv0" data-source="mqa-q1" data-target="" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 563,260 L 563,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mqa-q2-kv0" data-graph-role="edge" data-edge-id="mqa-q2-kv0" data-source="mqa-q2" data-target="" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 613,260 L 613,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mqa-q3-kv0" data-graph-role="edge" data-edge-id="mqa-q3-kv0" data-source="mqa-q3" data-target="" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 663,260 L 663,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mla-q0-kv0" data-graph-role="edge" data-edge-id="mla-q0-kv0" data-source="mla-q0" data-target="mla-kv0" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 745,260 L 745,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mla-q1-kv1" data-graph-role="edge" data-edge-id="mla-q1-kv1" data-source="mla-q1" data-target="mla-kv1" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 795,260 L 795,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mla-q2-kv2" data-graph-role="edge" data-edge-id="mla-q2-kv2" data-source="mla-q2" data-target="mla-kv2" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 845,260 L 845,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mla-q3-kv3" data-graph-role="edge" data-edge-id="mla-q3-kv3" data-source="mla-q3" data-target="mla-kv3" data-edge-kind="flow" data-topic-id="" data-flow="read" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 895,260 L 895,210" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowA)"/>
+  <path id="mla-up0" data-graph-role="edge" data-edge-id="mla-up0" data-source="" data-target="mla-kv0" data-edge-kind="flow" data-topic-id="" data-flow="feedback" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 745,125 L 745,170" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowF)" stroke-dasharray="6,4"/>
+  <path id="mla-up1" data-graph-role="edge" data-edge-id="mla-up1" data-source="" data-target="mla-kv1" data-edge-kind="flow" data-topic-id="" data-flow="feedback" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 795,125 L 795,170" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowF)" stroke-dasharray="6,4"/>
+  <path id="mla-up2" data-graph-role="edge" data-edge-id="mla-up2" data-source="" data-target="mla-kv2" data-edge-kind="flow" data-topic-id="" data-flow="feedback" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 845,125 L 845,170" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowF)" stroke-dasharray="6,4"/>
+  <path id="mla-up3" data-graph-role="edge" data-edge-id="mla-up3" data-source="" data-target="mla-kv3" data-edge-kind="flow" data-topic-id="" data-flow="feedback" data-motion-role="" data-motion-stage="" data-motion-order="" data-protocol="" data-via="" data-critical-path-id="" data-critical-hop="" data-critical-hops="" data-critical="false" data-bends="0" data-route-stretch="1.0" data-bridges="" d="M 895,125 L 895,170" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowF)" stroke-dasharray="6,4"/>
+  <g id="node-mha-q0" data-graph-role="node" data-node-id="mha-q0" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="28,260,70,300">
+  <rect x="28.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="49.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mha-q1" data-graph-role="node" data-node-id="mha-q1" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="78,260,120,300">
+  <rect x="78.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="99.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mha-q2" data-graph-role="node" data-node-id="mha-q2" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="128,260,170,300">
+  <rect x="128.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="149.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mha-q3" data-graph-role="node" data-node-id="mha-q3" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="178,260,220,300">
+  <rect x="178.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="199.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mha-kv0" data-graph-role="node" data-node-id="mha-kv0" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="28,170,70,210">
+  <rect x="28.0" y="170.0" width="42.0" height="40.0" rx="4.0" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="18.0" x="49.0" y="190.0" text-anchor="middle" class="node-title" font-size="12.0">KV</text>
+  </g>
+  <g id="node-mha-kv1" data-graph-role="node" data-node-id="mha-kv1" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="78,170,120,210">
+  <rect x="78.0" y="170.0" width="42.0" height="40.0" rx="4.0" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="18.0" x="99.0" y="190.0" text-anchor="middle" class="node-title" font-size="12.0">KV</text>
+  </g>
+  <g id="node-mha-kv2" data-graph-role="node" data-node-id="mha-kv2" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="128,170,170,210">
+  <rect x="128.0" y="170.0" width="42.0" height="40.0" rx="4.0" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="18.0" x="149.0" y="190.0" text-anchor="middle" class="node-title" font-size="12.0">KV</text>
+  </g>
+  <g id="node-mha-kv3" data-graph-role="node" data-node-id="mha-kv3" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="178,170,220,210">
+  <rect x="178.0" y="170.0" width="42.0" height="40.0" rx="4.0" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="18.0" x="199.0" y="190.0" text-anchor="middle" class="node-title" font-size="12.0">KV</text>
+  </g>
+  <g id="node-gqa-q0" data-graph-role="node" data-node-id="gqa-q0" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="260,260,302,300">
+  <rect x="260.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="281.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-gqa-q1" data-graph-role="node" data-node-id="gqa-q1" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="310,260,352,300">
+  <rect x="310.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="331.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-gqa-q2" data-graph-role="node" data-node-id="gqa-q2" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="360,260,402,300">
+  <rect x="360.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="381.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-gqa-q3" data-graph-role="node" data-node-id="gqa-q3" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="410,260,452,300">
+  <rect x="410.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="431.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-gqa-kv0" data-graph-role="node" data-node-id="gqa-kv0" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="260,170,352,210">
+  <rect x="260.0" y="170.0" width="92.0" height="40.0" rx="4.0" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="68.0" x="306.0" y="190.0" text-anchor="middle" class="node-title" font-size="13.0">KV</text>
+  </g>
+  <g id="node-gqa-kv1" data-graph-role="node" data-node-id="gqa-kv1" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="360,170,452,210">
+  <rect x="360.0" y="170.0" width="92.0" height="40.0" rx="4.0" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="68.0" x="406.0" y="190.0" text-anchor="middle" class="node-title" font-size="13.0">KV</text>
+  </g>
+  <g id="node-mqa-q0" data-graph-role="node" data-node-id="mqa-q0" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="492,260,534,300">
+  <rect x="492.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="513.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mqa-q1" data-graph-role="node" data-node-id="mqa-q1" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="542,260,584,300">
+  <rect x="542.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="563.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mqa-q2" data-graph-role="node" data-node-id="mqa-q2" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="592,260,634,300">
+  <rect x="592.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="613.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mqa-q3" data-graph-role="node" data-node-id="mqa-q3" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="642,260,684,300">
+  <rect x="642.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="663.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mqa-kv0" data-graph-role="node" data-node-id="mqa-kv0" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="492,170,684,210">
+  <rect x="492.0" y="170.0" width="192.0" height="40.0" rx="4.0" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="168.0" x="588.0" y="190.0" text-anchor="middle" class="node-title" font-size="13.0">KV</text>
+  </g>
+  <g id="node-mla-q0" data-graph-role="node" data-node-id="mla-q0" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="724,260,766,300">
+  <rect x="724.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="745.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mla-q1" data-graph-role="node" data-node-id="mla-q1" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="774,260,816,300">
+  <rect x="774.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="795.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mla-q2" data-graph-role="node" data-node-id="mla-q2" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="824,260,866,300">
+  <rect x="824.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="845.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mla-q3" data-graph-role="node" data-node-id="mla-q3" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="874,260,916,300">
+  <rect x="874.0" y="260.0" width="42.0" height="40.0" rx="4.0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="Q" data-text-max-width="18.0" x="895.0" y="280.0" text-anchor="middle" class="node-title" font-size="12.0">Q</text>
+  </g>
+  <g id="node-mla-kv0" data-graph-role="node" data-node-id="mla-kv0" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="724,170,766,210">
+  <rect x="724.0" y="170.0" width="42.0" height="40.0" rx="4.0" fill="#ffffff" stroke="#d1d5db" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="18.0" x="745.0" y="190.0" text-anchor="middle" class="node-title" font-size="12.0">KV</text>
+  </g>
+  <g id="node-mla-kv1" data-graph-role="node" data-node-id="mla-kv1" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="774,170,816,210">
+  <rect x="774.0" y="170.0" width="42.0" height="40.0" rx="4.0" fill="#ffffff" stroke="#d1d5db" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="18.0" x="795.0" y="190.0" text-anchor="middle" class="node-title" font-size="12.0">KV</text>
+  </g>
+  <g id="node-mla-kv2" data-graph-role="node" data-node-id="mla-kv2" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="824,170,866,210">
+  <rect x="824.0" y="170.0" width="42.0" height="40.0" rx="4.0" fill="#ffffff" stroke="#d1d5db" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="18.0" x="845.0" y="190.0" text-anchor="middle" class="node-title" font-size="12.0">KV</text>
+  </g>
+  <g id="node-mla-kv3" data-graph-role="node" data-node-id="mla-kv3" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="874,170,916,210">
+  <rect x="874.0" y="170.0" width="42.0" height="40.0" rx="4.0" fill="#ffffff" stroke="#d1d5db" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="KV" data-text-max-width="18.0" x="895.0" y="190.0" text-anchor="middle" class="node-title" font-size="12.0">KV</text>
+  </g>
+  <g id="node-mla-latent" data-graph-role="node" data-node-id="mla-latent" data-semantic-role="rect" data-motion-role="" data-motion-stage="" data-motion-order="" data-parent="" data-deployment-id="" data-topic-id="" data-span-id="" data-station-order="" data-status="" data-start-ms="" data-duration-ms="" data-parent-span="" data-graph-bounds="724,85,916,125">
+  <rect x="724.0" y="85.0" width="192.0" height="40.0" rx="4.0" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8"/>
+  <text data-text-role="title" data-full-text="latent + RoPE key" data-text-max-width="168.0" x="820.0" y="105.0" text-anchor="middle" class="node-title" font-size="13.0">latent + RoPE key</text>
+  </g>
+  <g id="footer" data-graph-role="reserved" data-graph-bounds="16,333,660,349">
+  <text x="16.0" y="345.0" class="footnote">amber = stored in KV cache · dashed = implicit per-head K/V, never materialized at inference</text>
+  </g>
+</svg>

@@ -202,7 +202,7 @@ print(SFTLoss()(logits, labels).shape)   ## torch.Size([]): scalar loss
 - Both help & they compose: DAPT → TAPT → SFT.
 
 *Why replay original data?*
-- Pure domain text → the model drifts onto it & loses general ability → [catastrophic forgetting](../../dl/issues.md#catastrophic-forgetting).
+- Pure domain text → the model drifts onto it & loses general ability → [catastrophic forgetting](../../dl/train/issues.md#catastrophic-forgetting).
 - Replay keeps the old distribution in the gradient at a fraction of its original cost.
 
 *Why re-warm up the LR?*
@@ -373,7 +373,7 @@ print(RFT(gen, ver, K=8)(["2+3"]))  ## <= 2 pairs: distinct correct paths only
 - **Why**: Full fine-tuning does not scale to many tasks or small budgets.
     - Optimizer state dominates: mixed-precision Adam keeps 2 fp32 moments + an fp32 master copy → 12 bytes/param, vs 2 for bf16 weights.
     - 1 full checkpoint per task → storage = #tasks × model size.
-    - Small dataset + all params trainable → fast overfitting & [catastrophic forgetting](../../dl/issues.md#catastrophic-forgetting).
+    - Small dataset + all params trainable → fast overfitting & [catastrophic forgetting](../../dl/train/issues.md#catastrophic-forgetting).
 - **How**:
     1. Freeze $W_0$ everywhere.
     2. Inject a small trainable module, or select a small subset of existing params.

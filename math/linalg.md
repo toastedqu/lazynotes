@@ -420,7 +420,7 @@ $$
 :class: dropdown
 *Is a NN's “linear” layer actually linear?*
 
-- With bias → affine; see [Linear](../dl/module.md#linear).
+- With bias → affine; see [Linear](../dl/foundation/module.md#linear).
 - Stacking affine layers w/o nonlinearities → still one affine map.
 - More such layers can change parameterization, NOT the class of representable functions.
 ```

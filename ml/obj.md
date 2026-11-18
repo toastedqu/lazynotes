@@ -79,7 +79,7 @@ $$
 
 *Assumptions?*
 - Samples i.i.d. from a fixed $P$.
-- Train & test drawn from the SAME $P$ → breaks under [covariate shift](../dl/issues.md#covariate-shift).
+- Train & test drawn from the SAME $P$ → breaks under [covariate shift](../dl/train/issues.md#covariate-shift).
 - $\ell$ decomposes over samples → ❌F1, ❌AUC.
 
 *What controls the generalization gap?*
@@ -134,7 +134,7 @@ $$
 *How is the penalty actually implemented?*
 - Explicit norm penalty ([L2](#l2), [L1](#l1)).
 - Hard constraint (norm ball, max-norm clipping).
-- Implicit: [early stopping](../dl/train.md#early-stopping), dropout, data augmentation, smaller architecture, ensembling.
+- Implicit: [early stopping](../dl/train/reg.md#early-stopping), dropout, data augmentation, smaller architecture, ensembling.
 
 *How is $\lambda$ chosen?*
 - Validation set / CV. NEVER training loss ← $\lambda=0$ always wins on training loss.
@@ -255,7 +255,7 @@ $$
 
 *Gradient accumulation gotcha?*
 - Accumulating $k$ mean-reduced micro-batch losses sums them → effective LR is $k\times$ too large.
-- Fix: divide each micro-batch loss by $k$. → [Gradient Accumulation](../dl/train.md#gradient-accumulation)
+- Fix: divide each micro-batch loss by $k$. → [Gradient Accumulation](../dl/sys.md#gradient-accumulation)
 
 *Masked / padded sequences?*
 - Normalize by #**valid** elements, not by tensor size, or padding silently shrinks the loss.
@@ -2023,7 +2023,7 @@ Bayesian reading: MAP under $\mathbf{w}\sim N(0,\tau^2I)$ with Gaussian noise $\
 
 *Is L2 penalty the same as weight decay?*
 - ✅ For plain SGD — identical up to the constant $2\eta\lambda$.
-- ❌ For **adaptive** optimizers. Adam divides the whole gradient (penalty included) by $\sqrt{v_t}$ → weights with large gradient history get decayed LESS. AdamW instead applies the shrink directly to $\mathbf{w}$, outside the adaptive rescaling. → [AdamW](../dl/optim.md#adamw)
+- ❌ For **adaptive** optimizers. Adam divides the whole gradient (penalty included) by $\sqrt{v_t}$ → weights with large gradient history get decayed LESS. AdamW instead applies the shrink directly to $\mathbf{w}$, outside the adaptive rescaling. → [AdamW](../dl/train/optim.md#adamw)
 
 *What must NOT be penalized?*
 - The **bias/intercept** — penalizing it breaks **translation equivariance**: adding a constant $c$ to every $y_i$ should just shift the intercept by $c$, but a penalized intercept shrinks toward 0 → the fit depends on where the target's origin happens to sit.

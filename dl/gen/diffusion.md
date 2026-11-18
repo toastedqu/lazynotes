@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 # Diffusion
-Generative models that learn to invert a gradual noising process. Covers continuous (Gaussian) diffusion: theory, samplers, guidance, denoiser architectures, flow matching. Discrete text diffusion → [Diffusion LM](../nlp/pre/obj.md#diffusion-lm).
+Generative models that learn to invert a gradual noising process. Covers continuous (Gaussian) diffusion: theory, samplers, guidance, denoiser architectures, flow matching. Discrete text diffusion → [Diffusion LM](../../nlp/pre/obj.md#diffusion-lm).
 
 Notations:
 - $x_0$: Clean data sample (image or latent)
@@ -319,7 +319,7 @@ $$
 3. Bayes, for $t\geq2$: $q(x_t|x_{t-1})=q(x_t|x_{t-1},x_0)=\frac{q(x_{t-1}|x_t,x_0)\,q(x_t|x_0)}{q(x_{t-1}|x_0)}$.
 4. The ratios $q(x_t|x_0)/q(x_{t-1}|x_0)$ telescope → $q(x_T|x_0)/q(x_1|x_0)$.
 5. Regroup → $L_T+\sum_{t\geq2}L_{t-1}+L_0$.
-6. Each $L_{t-1}$ compares 2 Gaussians → closed form → low-variance loss. See [VI](../math/prob/bayes.md#vi) & [KL Divergence](../math/info.md#kl-divergence).
+6. Each $L_{t-1}$ compares 2 Gaussians → closed form → low-variance loss. See [VI](../../math/prob/sampling.md#vi) & [KL Divergence](../../math/info.md#kl-divergence).
 ```
 
 ```{attention} Q&A
@@ -1456,7 +1456,7 @@ print(cfg(x, t, c).shape)   ## torch.Size([2, 3, 8, 8])
 - **Why**: 1 shared net serves all noise levels → it must know the level ← denoising strength depends on it.
     - Raw scalar $t$ = 1 weak input. Sinusoids → multi-scale features → MLP → rich per-block signal.
 - **How**:
-    1. $t$ → [sinusoidal](../nlp/pos.md#sinusoidal) features.
+    1. $t$ → [sinusoidal](../../nlp/pos.md#sinusoidal) features.
     2. → MLP (Linear–SiLU–Linear).
     3. Inject into each residual block:
         - Add as a per-channel bias (DDPM).
@@ -1622,7 +1622,7 @@ print(UNet()(torch.randn(2, 3, 16, 16), torch.tensor([10, 900])).shape)   ## tor
 &nbsp;
 
 ### Cross-Attention Conditioning
-- **What**: Condition on a token sequence (e.g., text) via [cross-attention](../nlp/attn.md#cross-attention): queries from image features, keys/values from condition tokens. {cite:p}`rombach2022high`
+- **What**: Condition on a token sequence (e.g., text) via [cross-attention](../../nlp/attn.md#cross-attention): queries from image features, keys/values from condition tokens. {cite:p}`rombach2022high`
 - **Why**: A class label = 1 vector → add it to the timestep embedding.
     - Text = variable-length token sequence → needs per-token, spatially varying conditioning.
 - **How**:

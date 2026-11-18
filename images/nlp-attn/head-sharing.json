@@ -1,0 +1,568 @@
+{
+ "schema_version": 1,
+ "mode": "architecture",
+ "template_type": "architecture",
+ "style": 4,
+ "text_policy": "strict",
+ "quality_profile": "standard",
+ "width": 960,
+ "height": 360,
+ "containers": [
+  {
+   "id": "mha",
+   "x": 16,
+   "y": 20,
+   "width": 216,
+   "height": 300,
+   "label": "MHA",
+   "subtitle": "4 KV heads"
+  },
+  {
+   "id": "gqa",
+   "x": 248,
+   "y": 20,
+   "width": 216,
+   "height": 300,
+   "label": "GQA",
+   "subtitle": "2 KV heads, 1 per group"
+  },
+  {
+   "id": "mqa",
+   "x": 480,
+   "y": 20,
+   "width": 216,
+   "height": 300,
+   "label": "MQA",
+   "subtitle": "1 KV head, shared by all"
+  },
+  {
+   "id": "mla",
+   "x": 712,
+   "y": 20,
+   "width": 216,
+   "height": 300,
+   "label": "MLA",
+   "subtitle": "1 latent per token"
+  }
+ ],
+ "nodes": [
+  {
+   "id": "mha-q0",
+   "kind": "rect",
+   "x": 28,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mha-q1",
+   "kind": "rect",
+   "x": 78,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mha-q2",
+   "kind": "rect",
+   "x": 128,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mha-q3",
+   "kind": "rect",
+   "x": 178,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mha-kv0",
+   "kind": "rect",
+   "x": 28,
+   "y": 170,
+   "width": 42,
+   "height": 40,
+   "label": "KV",
+   "fill": "#fef3c7",
+   "stroke": "#f59e0b",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "mha-kv1",
+   "kind": "rect",
+   "x": 78,
+   "y": 170,
+   "width": 42,
+   "height": 40,
+   "label": "KV",
+   "fill": "#fef3c7",
+   "stroke": "#f59e0b",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "mha-kv2",
+   "kind": "rect",
+   "x": 128,
+   "y": 170,
+   "width": 42,
+   "height": 40,
+   "label": "KV",
+   "fill": "#fef3c7",
+   "stroke": "#f59e0b",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "mha-kv3",
+   "kind": "rect",
+   "x": 178,
+   "y": 170,
+   "width": 42,
+   "height": 40,
+   "label": "KV",
+   "fill": "#fef3c7",
+   "stroke": "#f59e0b",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "gqa-q0",
+   "kind": "rect",
+   "x": 260,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "gqa-q1",
+   "kind": "rect",
+   "x": 310,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "gqa-q2",
+   "kind": "rect",
+   "x": 360,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "gqa-q3",
+   "kind": "rect",
+   "x": 410,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "gqa-kv0",
+   "kind": "rect",
+   "x": 260,
+   "y": 170,
+   "width": 92,
+   "height": 40,
+   "label": "KV",
+   "fill": "#fef3c7",
+   "stroke": "#f59e0b",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "gqa-kv1",
+   "kind": "rect",
+   "x": 360,
+   "y": 170,
+   "width": 92,
+   "height": 40,
+   "label": "KV",
+   "fill": "#fef3c7",
+   "stroke": "#f59e0b",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "mqa-q0",
+   "kind": "rect",
+   "x": 492,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mqa-q1",
+   "kind": "rect",
+   "x": 542,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mqa-q2",
+   "kind": "rect",
+   "x": 592,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mqa-q3",
+   "kind": "rect",
+   "x": 642,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mqa-kv0",
+   "kind": "rect",
+   "x": 492,
+   "y": 170,
+   "width": 192,
+   "height": 40,
+   "label": "KV",
+   "fill": "#fef3c7",
+   "stroke": "#f59e0b",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "mla-q0",
+   "kind": "rect",
+   "x": 724,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mla-q1",
+   "kind": "rect",
+   "x": 774,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mla-q2",
+   "kind": "rect",
+   "x": 824,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mla-q3",
+   "kind": "rect",
+   "x": 874,
+   "y": 260,
+   "width": 42,
+   "height": 40,
+   "label": "Q",
+   "fill": "#eff6ff",
+   "stroke": "#93c5fd",
+   "flat": true
+  },
+  {
+   "id": "mla-kv0",
+   "kind": "rect",
+   "x": 724,
+   "y": 170,
+   "width": 42,
+   "height": 40,
+   "label": "KV",
+   "fill": "#ffffff",
+   "stroke": "#d1d5db",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "mla-kv1",
+   "kind": "rect",
+   "x": 774,
+   "y": 170,
+   "width": 42,
+   "height": 40,
+   "label": "KV",
+   "fill": "#ffffff",
+   "stroke": "#d1d5db",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "mla-kv2",
+   "kind": "rect",
+   "x": 824,
+   "y": 170,
+   "width": 42,
+   "height": 40,
+   "label": "KV",
+   "fill": "#ffffff",
+   "stroke": "#d1d5db",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "mla-kv3",
+   "kind": "rect",
+   "x": 874,
+   "y": 170,
+   "width": 42,
+   "height": 40,
+   "label": "KV",
+   "fill": "#ffffff",
+   "stroke": "#d1d5db",
+   "flat": true,
+   "title_size": 13
+  },
+  {
+   "id": "mla-latent",
+   "kind": "rect",
+   "x": 724,
+   "y": 85,
+   "width": 192,
+   "height": 40,
+   "label": "latent + RoPE key",
+   "fill": "#fef3c7",
+   "stroke": "#f59e0b",
+   "flat": true,
+   "title_size": 13
+  }
+ ],
+ "arrows": [
+  {
+   "id": "mha-q0-kv0",
+   "source": "mha-q0",
+   "target": "mha-kv0",
+   "source_port": "top",
+   "target_port": "bottom",
+   "flow": "read"
+  },
+  {
+   "id": "mha-q1-kv1",
+   "source": "mha-q1",
+   "target": "mha-kv1",
+   "source_port": "top",
+   "target_port": "bottom",
+   "flow": "read"
+  },
+  {
+   "id": "mha-q2-kv2",
+   "source": "mha-q2",
+   "target": "mha-kv2",
+   "source_port": "top",
+   "target_port": "bottom",
+   "flow": "read"
+  },
+  {
+   "id": "mha-q3-kv3",
+   "source": "mha-q3",
+   "target": "mha-kv3",
+   "source_port": "top",
+   "target_port": "bottom",
+   "flow": "read"
+  },
+  {
+   "id": "gqa-q0-kv0",
+   "source": "gqa-q0",
+   "source_port": "top",
+   "flow": "read",
+   "x2": 281.0,
+   "y2": 210
+  },
+  {
+   "id": "gqa-q1-kv0",
+   "source": "gqa-q1",
+   "source_port": "top",
+   "flow": "read",
+   "x2": 331.0,
+   "y2": 210
+  },
+  {
+   "id": "gqa-q2-kv1",
+   "source": "gqa-q2",
+   "source_port": "top",
+   "flow": "read",
+   "x2": 381.0,
+   "y2": 210
+  },
+  {
+   "id": "gqa-q3-kv1",
+   "source": "gqa-q3",
+   "source_port": "top",
+   "flow": "read",
+   "x2": 431.0,
+   "y2": 210
+  },
+  {
+   "id": "mqa-q0-kv0",
+   "source": "mqa-q0",
+   "source_port": "top",
+   "flow": "read",
+   "x2": 513.0,
+   "y2": 210
+  },
+  {
+   "id": "mqa-q1-kv0",
+   "source": "mqa-q1",
+   "source_port": "top",
+   "flow": "read",
+   "x2": 563.0,
+   "y2": 210
+  },
+  {
+   "id": "mqa-q2-kv0",
+   "source": "mqa-q2",
+   "source_port": "top",
+   "flow": "read",
+   "x2": 613.0,
+   "y2": 210
+  },
+  {
+   "id": "mqa-q3-kv0",
+   "source": "mqa-q3",
+   "source_port": "top",
+   "flow": "read",
+   "x2": 663.0,
+   "y2": 210
+  },
+  {
+   "id": "mla-q0-kv0",
+   "source": "mla-q0",
+   "target": "mla-kv0",
+   "source_port": "top",
+   "target_port": "bottom",
+   "flow": "read"
+  },
+  {
+   "id": "mla-q1-kv1",
+   "source": "mla-q1",
+   "target": "mla-kv1",
+   "source_port": "top",
+   "target_port": "bottom",
+   "flow": "read"
+  },
+  {
+   "id": "mla-q2-kv2",
+   "source": "mla-q2",
+   "target": "mla-kv2",
+   "source_port": "top",
+   "target_port": "bottom",
+   "flow": "read"
+  },
+  {
+   "id": "mla-q3-kv3",
+   "source": "mla-q3",
+   "target": "mla-kv3",
+   "source_port": "top",
+   "target_port": "bottom",
+   "flow": "read"
+  },
+  {
+   "id": "mla-up0",
+   "target": "mla-kv0",
+   "target_port": "top",
+   "flow": "feedback",
+   "dashed": true,
+   "x1": 745.0,
+   "y1": 125
+  },
+  {
+   "id": "mla-up1",
+   "target": "mla-kv1",
+   "target_port": "top",
+   "flow": "feedback",
+   "dashed": true,
+   "x1": 795.0,
+   "y1": 125
+  },
+  {
+   "id": "mla-up2",
+   "target": "mla-kv2",
+   "target_port": "top",
+   "flow": "feedback",
+   "dashed": true,
+   "x1": 845.0,
+   "y1": 125
+  },
+  {
+   "id": "mla-up3",
+   "target": "mla-kv3",
+   "target_port": "top",
+   "flow": "feedback",
+   "dashed": true,
+   "x1": 895.0,
+   "y1": 125
+  }
+ ],
+ "footer": "amber = stored in KV cache \u00b7 dashed = implicit per-head K/V, never materialized at inference",
+ "footer_x": 16,
+ "footer_y": 345,
+ "title": ""
+}
