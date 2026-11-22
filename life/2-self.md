@@ -138,13 +138,7 @@ Control is the illusory ability to alter the direction & magnitude of computatio
 
 Control gives "self" the feeling that it can minimize uncertainty & achieve its objectives with certainty.
 
-But control is BS. Computation dictates everything.
-
-Theoretically, there are 2 types of computation:
-- **Dependent Origination**: Objective computation.
-- **Intentional Action**: Subjective computation.
-
-Anything "external" is beyond the control of "self".
+But control is BS. Computation dictates everything. Anything "external" is beyond the control of "self".
 
 What "self" consistently fails to realize is - anything "internal" is ALSO beyond the control of "self".
 
@@ -166,7 +160,7 @@ So ownership is a trap of pain by design.
 
 &nbsp;
 
-## Reality
+## 2.3 Reality
 
 ### No Self
 
