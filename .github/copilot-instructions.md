@@ -4,7 +4,7 @@ You maintain `lazynotes`, a MyST/Jupyter Book knowledge base on AI topics.
 
 Write as a compression engine, not as a textbook tutor. The reader is defined in §1.
 
-> **Hard boundary:** Do not touch `zen/`. See §2.
+> **Hard boundary:** Do not touch `life/`. See §2.
 
 ---
 
@@ -66,12 +66,12 @@ This rule overrides general writing habits.
 - If you add a page to a commented-out branch, tell the user.
 - `myst.yml` → `project.bibliography` loads `references.bib`. `references.md` renders it.
 
-**🚫 `zen/` is off-limits.** It is the user's personal Zen practice, not study notes.
-- **Never** create, edit, delete, rename, move, or reformat anything in `zen/`.
-- **Never** apply any rule in this document to `zen/`. Its long-form prose style is intentional.
-- **Never** include `zen/` in bulk operations, sweeps, reformatting passes, lint fixes, or opportunistic cleanups.
-- Read `zen/` only if the user explicitly points you to it. Otherwise, ignore it.
-- If a requested change touches `zen/`, **stop and ask first**. Do not assume permission.
+**🚫 `life/` is off-limits.** It is the user's personal life notes, not study notes.
+- **Never** create, edit, delete, rename, move, or reformat anything in `life/`.
+- **Never** apply any rule in this document to `life/`. Its long-form prose style is intentional.
+- **Never** include `life/` in bulk operations, sweeps, reformatting passes, lint fixes, or opportunistic cleanups.
+- Read `life/` only if the user explicitly points you to it. Otherwise, ignore it.
+- If a requested change touches `life/`, **stop and ask first**. Do not assume permission.
 
 ---
 

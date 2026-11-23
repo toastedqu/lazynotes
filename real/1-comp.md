@@ -1,5 +1,9 @@
 # 1. Computation
 
+**Everything is an illusion directed by computation.**
+
+And,
+
 **Computation is the true reality of the observable universe.**
 
 *What is computation?*

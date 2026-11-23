@@ -1,8 +1,8 @@
-# 2. Self
+# 2. You
 
-**Self is an illusion.**
+**You are a slave to computation.**
 
-Let's talk about you. You are an illusion. We kinda demonstrated it in the last chapter. Now let's do a deep dive.
+Not only that, you are an illusion. We kinda demonstrated it in the last chapter. Now let's do a deep dive.
 
 &nbsp;
 

@@ -2,9 +2,9 @@
 
 1. Everything is an illusion directed by computation.
 
-2. You are a slave of computation.
+2. You are a slave to computation.
 
-3. Your life experience is your emotions. 
+3. You experience life through emotions.
 
 4. Your emotional strength dictates your quality of life.
 

@@ -985,7 +985,7 @@ $$
 | **FP32** | 32   | 8             | 23            | $\approx[1e^{-38}, 1e^{38}]$ | \~7 digits        | 4 bytes          |
 | **FP16** | 16   | 5             | 10            | $\approx[6e^{-5}, 6e^{4}]$   | \~3–4 digits      | 2 bytes          |
 | **BF16** | 16   | 8             | 7             | $\approx[1e^{-38}, 1e^{38}]$ | \~3 digits        | 2 bytes          |
-| **INT8** | 8    | –             | –             | $=[–128,127]$                | \~2–3 digits      | 1 byte           |
+| **INT8** | 8    | –             | –             | $=[-128,127]$                | \~2–3 digits      | 1 byte           |
 ```
 
 ```{dropdown} Table 2: Precision Usage

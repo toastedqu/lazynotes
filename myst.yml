@@ -2,8 +2,13 @@ version: 1
 project:
   title: Lazynotes
   authors:
-    - name: Q
+    - name:
+        literal: Q
   github: executablebooks/jupyter-book
+  error_rules:
+    ## Repo convention: cross-link via implicit heading anchors (lowercase-hyphen).
+    - rule: reference-target-explicit
+      severity: ignore
   bibliography:
     - references.bib
   numbering:
@@ -113,14 +118,23 @@ project:
         - file: cv/image.md
         - file: cv/cnn.md
         - file: cv/vit.md
+    - title: Neuro
+      children:
+        - file: neuro/neuron.md
+        - file: neuro/coding.md
+        - file: neuro/network.md
+        - file: neuro/learning.md
+        - file: neuro/systems.md
+        - file: neuro/theory.md
     # - title: Misc
     #   children:
     #     - file: misc/dsa.md
-    - title: Life
+    - title: Reality
       children:
-        - file: life/1-comp.md
-        - file: life/2-self.md
-        - file: life/3-emo.md
+        - file: real/0-tldr.md
+        - file: real/1-comp.md
+        - file: real/2-self.md
+        - file: real/3-emo.md
     - file: about.md
 site:
   options:
