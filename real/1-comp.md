@@ -6,6 +6,8 @@ And,
 
 **Computation is the true reality of the observable universe.**
 
+&nbsp;
+
 *What is computation?*
 
 Let's define the prerequisite terms first:
@@ -13,7 +15,7 @@ Let's define the prerequisite terms first:
 - **Attribute**: A distinguishable feature of a phenomenon.
 - **State**: A static set of phenomena & their attributes at one timestamp.
 - **Cause**: The state where a transition begins.
-- **Condition**: A state outside the cause that shapes the direction & magnitude of the transition.
+- **Condition**: The state outside the cause that shapes the direction & magnitude of the transition.
 - **Consequence**: The state that results from the transition.
 
 An apple is a phenomenon. Its red color, round shape, and sweet taste are attributes. The arrangement of its molecules at a given moment is its state. I want to eat the apple. The thought becomes the cause. The apple being perceived as tasty is the condition. Then I bite the apple. I feel happy. The apple gets bitten. That's the consequence.
@@ -23,6 +25,8 @@ An apple is a phenomenon. Its red color, round shape, and sweet taste are attrib
 Computation is **state transition**. When state A transitions to state B, that's computation.
 
 I eat an apple, computation. The wind blows, computation. Earth explodes, computation. I die, computation.
+
+In a narrower sense, computation is **"Cause (+ Condition) -> Consequence"**.
 
 Computation operates at **any spatial-temporal scale**. Smaller than a quark, larger than the observable universe. Shorter than the Planck time, longer than a cosmological decade. There's no scale constraint on any term above.
 
@@ -36,7 +40,7 @@ In reality, everything is dependent origination. We differentiate for the sake o
 
 &nbsp;
 
-## 1.1 The holy trinity
+## 1.1 The Holy Trinity
 *Ok. Who cares?*
 
 You should. Computation dictates everything throughout the entire lifespan of the observable universe, including your entire miserable life.

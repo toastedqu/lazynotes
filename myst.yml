@@ -133,8 +133,10 @@ project:
       children:
         - file: real/0-tldr.md
         - file: real/1-comp.md
-        - file: real/2-self.md
+        - file: real/2-you.md
         - file: real/3-emo.md
+        - file: real/4-rep.md
+        - file: real/5-acc.md
     - file: about.md
 site:
   options:

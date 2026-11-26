@@ -6,14 +6,16 @@
 
 3. You experience life through emotions.
 
-4. Your emotional strength dictates your quality of life.
+4. Face your emotions directly without losing your frame.
 
 5. You need absolute certainty in your frame to live in accordance with uncertainty.
 
-6. Your current frame is a sum of all your past actions.
+6. You suffer because you aren't here right now.
 
 7. You absolutely reap what you sow.
 
-8. Your current action is the only thing that matters in your life, if anything matters at all.
+8. You are absolutely a sum of your actions.
 
 9. You can only truly absorb life lessons by repeatedly fucking up.
+
+10. Have fun.

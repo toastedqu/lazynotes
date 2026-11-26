@@ -2,11 +2,13 @@
 
 **You are a slave to computation.**
 
-Not only that, you are an illusion. We kinda demonstrated it in the last chapter. Now let's do a deep dive.
+So,
+
+**You are an illusion.**
 
 &nbsp;
 
-## 2.1 Illusory Objective
+## 2.1 Illusion
 
 ### Survival Instinct
 Computation has optimized the human brain for 2 objectives: **perceived survival** & **perceived reproduction**.
@@ -74,7 +76,7 @@ We mistake labels for reality, so we form irrational desires which reversely dam
 
 &nbsp;
 
-### Loss Aversion
+### Loss Aversion & Attachment
 There are levels to desires. "Self" typically separates desires into 2 main categories:
 - **"Want"**: I am better off with them.
 - **"Need"**: I am worse off without them.
@@ -85,34 +87,30 @@ There are levels to desires. "Self" typically separates desires into 2 main cate
 
 Loss aversion is, by definition, associated with "needs", not "wants". A missed gain only forgoes a chance to reproduce later, BUT a loss may drop "self" below survival threshold. Throughout centuries of evolution, brains that overweighted downside left more descendants, causing loss aversion.
 
-In fact, loss aversion is so deeply ingrained in our DNA, it has a critical impact on our perception of value. We can take one thing for granted and only truly realize our deep-rooted need for it when we lose it. Throw you in the middle of Sahara Desert, now you finally recognize how valuable water was. Your bestie just got a partner, now you finally recognize how valuable they were. Loss is the only way for a person to switch from "I don't give a fuck" to "I give a fuck".
+In fact, loss aversion is so deeply ingrained in our DNA, it has a critical impact on our perception of value. We can take one thing for granted and only truly realize our deep-rooted need for it when we lose it. Throw you in the middle of Sahara Desert, now you finally recognize how valuable water was. The bestie you friendzoned for years just got a partner. Suddenly you find them more attractive. Loss is the only way for a person to switch from "I don't give a fuck" to "I give a fuck".
 
-&nbsp;
-
-### Attachment
 This is a critical distinction. We only give a fuck about things we give a fuck about. We don't give a fuck about things we don't give a fuck about. How does the "self" distinguish the two? Of course, it varies by person, but humans share a common pool of fundamental needs - food, water, sleep, fitness, etc. We give a fuck about the things we perceive as "needs". The perceived survival is threatened without satisfying the needs, so the "self" constantly seeks methods to satisfy the needs, till they are satisfied. 
 
 This, is **attachment**. We pay much more attention to these needs. Fear of loss comes into play. ANY subtle signal from the needs gets amplified, processed, and analyzed in depth. As these needs continuously don't get satisfied, we gradually form stronger and stronger emotional attachment to them, causing obsession and ultimately giving up control of our emotions to them.
 
 &nbsp;
 
-### Suffering
-(TBD)
+### Suffering & The Void
+Suppose you are deeply attached to a target - a job, a relationship, an object, whatever - and luckily computation has gifted it to you. Now your needs are met, the void inside yourself is filled. You feel a ephemeral sense of satisfaction. All is well. You can finally rest now, yeah?
+
+Computation is dynamic. Things change. You may lose what you have. Your boss may fire you. Your partner may leave. You may lose your bracelet at an airport. Your needs change. Your targets change. Your void remains active.
+
+So you keep seeking external matters to fill the void inside you, making you feel satisfied and, more importantly, secure. A better job. A better partner. A better object, whatever. You feel temporarily secured again, then things change again, and the cycle repeats.
+
+The mismatch between computation and self needs is perceived as "survival threatened". Self demands reality to change, but computation does not give a fuck about the self.
+
+The void inside your heart never truly gets filled. This unfulfilled demand causes unwanted emotions which you interpret as suffering.
 
 **Attachment is the root of suffering. Suffering is the rejection of reality.**
 
-Computation is the true reality, and computation dictates everything autonomously. 
-
-The mismatch between computation and self needs is perceived as "survival threatened".
-
-Self demands reality to change, but computation does not give a fuck about the illusory self.
-
-This unfulfilled demand is suffering.
-
 &nbsp;
 
-## 2.2 Illusory Optimization
-### Expectation
+### Expectation & Control
 To optimize the objective, "self" needs to first know its current level with respect to the objective. 
 
 The brain evolved to run probability estimation (i.e., **expectation**) in various scenarios for calibration, summarizable in 3 situations:
@@ -126,63 +124,35 @@ Theoretically, expectation works - given ALL INFO about the current state, the n
 
 Practically, ALL INFO is unreachable. We can only observe a fragment of the computation network.
 
-Missing info guarantees prediction error (i.e., **uncertainty**, quantified).
+Missing info guarantees prediction error, which we call **uncertainty** - the inevitable major threat to the optimization process.
 
-Uncertainty is an inevitable major threat to the optimization process.
+**Control** is the illusory ability to alter the direction & magnitude of computation. Control gives "self" the feeling that it can minimize uncertainty & achieve its objectives with certainty.
 
-&nbsp;
-
-### Control
-
-Control is the illusory ability to alter the direction & magnitude of computation.
-
-Control gives "self" the feeling that it can minimize uncertainty & achieve its objectives with certainty.
-
-But control is BS. Computation dictates everything. Anything "external" is beyond the control of "self".
-
-What "self" consistently fails to realize is - anything "internal" is ALSO beyond the control of "self".
-
-The 5 aggregates & 6 senses are beyond the control of "self". Computation dictates them since the birth of "self".
+But control is BS. Computation dictates everything. Anything "external" is beyond the control of "self". What "self" consistently fails to realize is - anything "internal" is ALSO beyond the control of "self". The 5 aggregates & 6 senses are beyond the control of "self". Computation dictates them since the birth of "self".
 
 If we stay in the illusory realm, the only thing "self" effectively has control over is its own action given the current state.
 
 &nbsp;
 
-### Ownership
-
-There's no loss if there's no ownership. "Self" believes it owns external phenomena to consistently satisfy its needs & desires.
-
-In reality, everything is impermanent due to computation. "Self" will certainly lose what it "owns" at some point. This fact causes 2 issues:
-- If "self" is NOT aware of this fact: When "self" loses what it owns, it feels pain.
-- If "self" IS aware of this fact: "Self" will consistently take measures to sustain the "ownership", just to lose it anyway.
-
-So ownership is a trap of pain by design.
-
-&nbsp;
-
-## 2.3 Reality
+## 2.2 Reality
 
 ### No Self
 
 "Self" is a character created by computation to optimize for the illusion of survival & reproduction.
 
-**No "self" exists in reality.**
-
 Remove the "self" character, then EVERYTHING ABOVE falls apart - No control. No expectation. No suffering. No attachment. No loss aversion. No desire. No condition. No label. No survival or reproduction. No optimization. No objective. Nothing.
 
-Computation is the true reality.
+And that's the reality the "self" actively tries to reject.
+
+That's why the "self" consistently feels "empty". That's why the "self" wants to fill the void with "external objects".
+
+Essentially, an illusion wants to fill an illusion with illusions.
+
+All but an ephemeral dream. A movie directed & acted out by yours truly, computation.
 
 &nbsp;
 
-### We are fucked from the beginning.
-There are ONLY 3 inevitable certainties in this survival game run by computation:
-- Uncertainty
-- Change
-- Death
-
-ALL 3 of them are threats to our optimization objectives.
-
-The first 2 have been discussed above. The last one - Death - is the most fucked-up one.
+### Death
 
 We optimize for perceived survival & reproduction just to die in the end.
 
@@ -194,6 +164,10 @@ Everything dies.
 
 But nothing dies. Only the "self" identity dies, which is an illusion created by computation anyway.
 
-Death is an illusion conditioned on the existence of the "self" identity.
+When "you" die, it's really just your sense of "self" dies. Your body will be recycled by computation depending on how people process it. The event of your death, together with your actions up till then, will influence people's actions for a while. If you are famous or powerful enough, the influence will linger for quite a while. Computation continues.
 
-Computation is the true reality.
+So you see, even death is an illusion conditioned on the existence of the "self" identity, directed by computation.
+
+Your birth, your entire life, and your death are all part of the illusion created by computation.
+
+You are ALWAYS a slave to computation throughout your illusory lifetime.
