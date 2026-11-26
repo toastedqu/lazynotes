@@ -8,13 +8,13 @@
 
 4. Face your emotions directly without losing your frame.
 
-5. You need absolute certainty in your frame to live in accordance with uncertainty.
+5. You need absolute certainty about your frame to live in harmony with uncertainty.
 
 6. You suffer because you aren't here right now.
 
 7. You absolutely reap what you sow.
 
-8. You are absolutely a sum of your actions.
+8. You are absolutely the sum of your actions.
 
 9. You can only truly absorb life lessons by repeatedly fucking up.
 
