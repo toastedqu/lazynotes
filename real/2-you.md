@@ -23,7 +23,7 @@ But what's the difference between perceived survival and actual survival?
 
 Look. If the human brain had truly been optimized for **survival**, no one would commit suicide. No one would be addicted to alcohol or drugs or doomscrolling. No one would procrastinate or avoid hard tasks that actually support their survival. These activities go against survival by definition, yet we humans suffer from them, A LOT. In fact, very few people are truly disciplined. That's why self-help has been profitable for decades. Gyms make most of their money from people who rarely visit. It's precisely the discrepancy between "perceived survival" and "survival" that causes all the bullshit in life. Computation fucked us up real hard through millions of years of evolution.
 
-If the human brain had truly been optimized for **reproduction**, the human population would decline dramatically because hypergamy would dictate the dating market for everyone. Men would go for the hottest women. Women would go for the strongest men. Monogamy would be destroyed at a conceptual level. Every match would become purely biological. Thank fucking computation, everyone had a chance to reproduce and sustain their genes, but the chance is dropping nowadays. The real reason why dating is so fucking difficult now is the diminishing gap between "perceived reproduction" and "reproduction". Everyone has easy access to everyone owing to the internet. Hypergamy rules.
+If the human brain had truly been optimized for **reproduction**, the human population would decline dramatically because hypergamy would dictate the dating market for everyone, and only the most desirable few would get to reproduce. Men would go for the hottest women. Women would go for the strongest men. Monogamy would be destroyed at a conceptual level. Every match would become purely biological. Thank fucking computation, everyone had a chance to reproduce and sustain their genes, but the chance is dropping nowadays owing to social media.
 
 We are going off-topic here. Let's continue.
 
@@ -39,7 +39,7 @@ Computation binds "self" to external phenomena through:
 - **6 senses**: eye, ear, nose, tongue, body, mind.
 
 Then, computation draws a boundary - "me against the world":
-- Everything above: **me**
+- Everything listed above: **me**
 - Everything else: **the world**
 
 Evolution. Millions of years of computation created an extremely powerful prior in our brain that prevents us from seeing reality.
@@ -83,7 +83,7 @@ There are levels to desires. "Self" typically separates desires into 2 main cate
 
 "Want" is typically healthy. If we succeed, we gain. If we fail, nothing changes. It's a positive-neutral situation.
 
-"Need" is typically unhealthy, depending on the exact target. If we succeed, we gain. If we fail, we lose. It's a positive-negative situation.
+"Need" is typically unhealthy, depending on the exact target. If we succeed, we gain. If we fail, we lose. It's a positive-negative situation. Needing water is healthy. Needing one specific outcome isn't.
 
 Loss aversion is, by definition, associated with "needs", not "wants". A missed gain only forgoes a chance to reproduce later, BUT a loss may drop "self" below the survival threshold. Throughout millions of years of evolution, brains that overweighted the downside left more descendants, causing loss aversion.
 
@@ -111,7 +111,7 @@ The void inside your heart never truly gets filled. This unfulfilled demand caus
 &nbsp;
 
 ### Expectation & Control
-To optimize its objectives, "self" needs to first know its current level with respect to the objective. 
+To optimize its objectives, "self" needs to first know where it stands and what's coming. 
 
 The brain evolved to run probability estimation (i.e., **expectation**) in various scenarios for calibration, summarizable in 3 situations:
 - **"Good" is coming**: Ok.

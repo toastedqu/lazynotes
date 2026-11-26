@@ -105,7 +105,7 @@ This one is the hardest to grasp. For the label "hard" to exist, we would need t
 
 Who wrote these dualistic labels? Why is it different for different people? Who's the judge? Are the laws and rules and standards created by human beings the judge? If, in court, a woman kills a guy who raped and murdered her only daughter, is she good or bad? If a man does nothing to a guy who raped and murdered his only daughter and just silently sits in court, is he good or bad?
 
-That's too extreme? Who defines the concept of "extreme"? Let's dial it down a bit. You break up with your partner of 10 years because they got bored of you and cheated on you. Do you feel happy or sad? You can feel sad because all those years of love and commitment and effort were a waste of your time. You can also feel happy because you have enough self-respect to get rid of someone who no longer respects you. Oh, worse, you have been secretly hitting on your backup options too.
+That's too extreme? Who defines the concept of "extreme"? Let's dial it down a bit. You break up with your partner of 10 years because they got bored of you and cheated on you. Do you feel happy or sad? You can feel sad because all those years of love and commitment and effort were a waste of your time. You can also feel happy because you have enough self-respect to get rid of someone who no longer respects you. Oh, worse, what if you've been secretly hitting on your backup options too?
 
 Are you the good guy in the picture? Are they the bad guy in the picture? What if they cheated on you because you are a fucking asshole who gives them no attention and treats them like a piece of shit? Then are you an asshole now? You act like this because you are insanely stressed over your career. You literally have no bandwidth for them, and you let your temper get the better of you.
 
@@ -150,7 +150,7 @@ What is an apple? All the nutrients it consists of? What if it's not ripe yet? W
 
 I can go on and on, but can't you see the pattern?
 
-We humans define concepts upon concepts upon concepts upon concepts, in the pursuit of understanding the observable universe. We define each concept with a fixed, separable self-identity, yet we use other concepts to write that definition, or no concept holds at all.
+We humans define concepts upon concepts upon concepts upon concepts, in the pursuit of understanding the observable universe. We define each concept with a fixed, separable self-identity, yet every definition leans on other concepts. Without them, no concept holds at all.
 
 **No concept exists in reality.**
 

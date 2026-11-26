@@ -1,6 +1,6 @@
 # 3. Emotions
 
-Depressing, ain't it? Notice how you feel "depressed". That's your body's response to all these illusions and reality.
+Depressing, ain't it? Notice how you feel "depressed". That's your body's response to all these illusions.
 
 Or maybe you feel something else. Fear. Boredom. Confusion. Maybe even happiness, depending on how you interpret it.
 
@@ -14,7 +14,7 @@ This is your entire life experience.
 
 ## 3.1 Parent-Child Relationship
 
-There are 2 cognitive systems in the human brain:
+There are 2 cognitive systems in the human brain (Daniel Kahneman, *Thinking, Fast and Slow*):
 - System 1: the fast, intuitive, unconscious, and emotional.
 - System 2: the slow, deliberate, conscious, and rational.
 
@@ -22,7 +22,7 @@ System 1 is like a child. They want whatever they perceive as valuable and cry w
 
 System 2, **it is your job as the rational parent to guide the child**.
 
-"Bad" parenting means you get reactive toward the child. You become emotional like the child. You try your very best to control the child. You want the child to shut the fuck up. You give up, surrender to the child, and just let them do whatever they want. Annoying. Super annoying. You know. You've become the child.
+"Bad" parenting means you get reactive toward the child. You become emotional like the child. You try your very best to control the child. You want the child to shut the fuck up. Or you give up, surrender to the child, and just let them do whatever they want. Annoying. Super annoying. You know. You've become the child.
 
 "Good" parenting means you embrace your child fully without getting reactive. You stay calm. You listen to the child and understand what exactly they are dealing with. You tell the child what the best thing to do is and show them why. The child may react even harder, and it is your job to stay rock solid.
 
@@ -109,9 +109,9 @@ It's all about continuing intentional actions instead of letting dependent origi
 
 ### Emotional Awareness
 
-Emotional Awareness is noticing & facing your emotions. As we only experience life through emotions and everything else is just an illusion created by computation, I disagree with the conventional definition and advocacy of awareness. Thoughts are also products of computation. We can have conscious thoughts, which belong to intentional action. We can also have unconscious thoughts (which happen significantly more often), which belong to dependent origination. Being aware of thoughts is ok, but it's also a trap because you tend to easily get absorbed into those thoughts by adding more thoughts on top of them. Once you start thinking about thoughts at all, you easily get into an endless spiral of thoughts.
+Emotional Awareness is noticing & facing your emotions. Conventional mindfulness teaches you to be aware of your thoughts. As we only experience life through emotions and everything else is just an illusion created by computation, I disagree. Thoughts are also products of computation. We can have conscious thoughts, which belong to intentional action. We can also have unconscious thoughts (which happen significantly more often), which belong to dependent origination. Being aware of thoughts is ok, but it's also a trap because you tend to easily get absorbed into those thoughts by adding more thoughts on top of them. Once you start thinking about thoughts at all, you easily get into an endless spiral of thoughts.
 
-Conscious thoughts are already a part of our frame. Any intentional action is a part of our frame. Unconscious thoughts are not, so they trigger emotions. And the emotions are the parts we truly need to be aware of. Again, they are NOT the enemy. They are the experience. They are the child. So, you notice them, and you look at them.
+Conscious thoughts are already a part of our frame. Any intentional action is a part of our frame. Unconscious thoughts are not. They originate from System 1, which is naturally emotional, so they trigger emotions. And the emotions are the parts we truly need to be aware of. Again, they are NOT the enemy. They are the experience. They are the child. So, you notice them, and you look at them.
 
 *So why is emotional awareness overpowered?*
 
@@ -133,15 +133,15 @@ But that's hardly enough.
 
 ### Emotional Strength
 
-Emotional strength is the single most overpowered skill that everyone should absolutely master. It is IMHO so much more important than the 2 skills above. You can have no frame at all, no action plan for anything. You can get yourself swamped in endless thoughts and emotions. But if you have emotional strength, you can STILL take intentional actions amid ANYTHING. That's why it matters most - intentional action vs dependent origination.
+Emotional strength is the single most overpowered skill that everyone should absolutely master. It is IMHO so much more important than the 2 skills above. You can have no frame at all, no action plan for anything. You can get yourself swamped in endless thoughts and emotions. But if you have emotional strength, you can STILL take intentional actions amid ANYTHING, even if you have to form the intention on the spot. That's why it matters most - intentional action vs dependent origination.
 
 *So how? And what exactly is emotional strength?* I only defined it with one word - "directly". Why? Let's follow the previous example.
 
 > You feel hurt.
 
-Pain is a direct signal from your brain that your perceived survival is at stake. Every single negative emotion originates from pain. Every single negative scenario results in pain. Pain is specifically designed by computation to feel super terrible and hard to ignore, in order to alert you to take immediate action - to ensure your perceived survival. 
+Pain is a direct signal from your brain that your perceived survival is at stake. Every single negative emotion originates from pain. Every single negative scenario results in pain. Pain happens to feel super terrible and hard to ignore, which alerts you to take immediate action - to ensure your perceived survival. 
 
-You see the problem? As soon as computation presses the "Pain" button, it can easily take over your body, your mind, your attention, your frame, everything about you. Why? Because your perceived survival is threatened, and you are designed to immediately do something about it. It's literally the underlying biological mechanism.
+You see the problem? As soon as computation presses the "Pain" button, it can easily take over your body, your mind, your attention, your frame, everything about you. Why? Because your perceived survival is threatened, and you are wired to immediately do something about it. It's literally the underlying biological mechanism.
 
 Strength is, by definition, **"the ability to resist being moved or broken by a force"** ([Merriam-Webster Dictionary](https://www.merriam-webster.com/dictionary/strength)).
 
@@ -153,7 +153,7 @@ Now you see why it's much more important than frame control and emotional awaren
 
 *But, didn't you just say in the last chapter that we are slaves to computation?*
 
-Yes, and we always are, but we don't have to yield. Remember Sisyphus? He kept pushing the boulder, even though it was futile. He made sense of the struggle, even though it was inevitable. **THAT IS US WITH COMPUTATION!**
+Yes, and we always are, but we don't have to yield. Remember Sisyphus (as Camus told it)? He kept pushing the boulder, even though it was futile. He made sense of the struggle, even though it was inevitable. **THAT IS US WITH COMPUTATION!**
 
 Look how absurd our miserable life is. We are born to die. Yet we are somehow given some bullshit objectives to optimize for in this illusory realm created by computation. We are pushing the boulder till the day we die.
 
@@ -183,6 +183,6 @@ You are addicted to doomscrolling, alcohol, or whatever instant gratification is
 
 ---
 
-Whatever situation computation puts you in, you face it fully and take intentional actions anyway. You don't avoid it. You don't waste time or energy or attention on engaging with it. You just act.
+Whatever situation computation puts you in, you face it fully and take intentional actions anyway. You don't avoid it. You don't waste time or energy or attention on engaging with the thoughts it stirs up. You just act.
 
 And in doing so, you refuse to be moved by computation.

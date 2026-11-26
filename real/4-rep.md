@@ -10,6 +10,8 @@ Computation is the true reality. Computation created & manages this illusory sur
 
 So the only way to win at its game is to play by its own rules.
 
+&nbsp;
+
 ## 4.1 Action
 
 Recall that computation is state transition. Given a cause and a set of conditions, a consequence is guaranteed to take place upon computation. That's the fundamental mechanism of computation, and therefore,
@@ -68,7 +70,7 @@ That's why you have to work WITH your baseline brain, NOT AGAINST it. You have t
 
 The fact that you are finding this annoying is also a consequence of computation.
 
-What is "intention" in "intentional action" anyway? Intention is formed by consciousness, i.e., the "self", which is itself a byproduct of computation. Here, it's the "self" alerting you that you are deviating from your survival objectives. It's System 2 feeling threatened that System 1 has messed things up a bit too much. That's why you suddenly have the motivation to "make your life better".
+What is "intention" in "intentional action" anyway? Intention is formed by consciousness, i.e., the "self", which is itself a byproduct of computation. Here, it's the "self" alerting you that you are deviating from your survival objectives. It's System 2 noticing that System 1 has messed things up a bit too much. That's why you suddenly have the motivation to "make your life better".
 
 Every fuck-up triggers intention. Every small step makes it stick.
 
