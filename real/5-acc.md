@@ -26,6 +26,8 @@ There is only computation. Action. Process. Continuum. Karma. God's plan. Whatev
 
 Everything else? Illusion.
 
+---
+
 **Accept everything.**
 
 **Take nothing seriously.**
